@@ -1,0 +1,1 @@
+export { initDb, saveChapter, getLastChapters } from "./database.js";
