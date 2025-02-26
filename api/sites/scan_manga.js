@@ -18,11 +18,12 @@ async function scan_manga(page) {
                         chapter: chapterElement.innerText.trim().split(' ').slice(-1)[0],
                         chapterLink: chapterElement.href,
                         mangaLink: mangaElement.href,
+                        mangaName: mangaElement.innerText.trim()
                     }
                 }
             })
         })
-        mangas.forEach(m=>saveChapter('scan-manga', m.chapter, m.chapterLink, m.mangaLink))
+        mangas.forEach(m=>saveChapter('scan-manga', m.chapter, m.chapterLink, m.mangaLink, m.mangaName));
         console.log('✅ Scraping Scan-manga terminé.');
 
     } catch (error) {

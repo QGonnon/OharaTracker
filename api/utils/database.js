@@ -8,6 +8,7 @@ function initDb() {
         CREATE TABLE IF NOT EXISTS chapters (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             site TEXT,
+            name TEXT,
             lastChapter TEXT,
             chapterUrl TEXT UNIQUE,
             mangaUrl TEXT UNIQUE,
@@ -17,12 +18,12 @@ function initDb() {
     db.close();
 }
 
-function saveChapter(site, chapter, chapterUrl, mangaUrl) {
+function saveChapter(site, chapter, chapterUrl, mangaUrl, mangaName) {
     const db = new sqlite3.Database(DB_NAME);
     db.run(`
-        INSERT INTO chapters (site, lastChapter, chapterUrl, mangaUrl) 
-        VALUES (?, ?, ?, ?)
-    `, [site, chapter, chapterUrl, mangaUrl], (err) => {
+        INSERT INTO chapters (site, lastChapter, chapterUrl, mangaUrl, name) 
+        VALUES (?, ?, ?, ?, ?)
+    `, [site, chapter, chapterUrl, mangaUrl, mangaName], (err) => {
         if (err && err.code !== 'SQLITE_CONSTRAINT') {
             console.error(`🛑 Erreur lors de l'insertion dans la base de données: ${err.message}`);
         }
@@ -33,7 +34,7 @@ function saveChapter(site, chapter, chapterUrl, mangaUrl) {
 function getLastChapters(callback){
     const db = new sqlite3.Database(DB_NAME);
     db.all(`
-        SELECT site, lastChapter, chapterUrl, mangaUrl, created_at
+        SELECT site, name, lastChapter, chapterUrl, mangaUrl, created_at
         FROM chapters
         ORDER BY created_at DESC
         LIMIT 40
