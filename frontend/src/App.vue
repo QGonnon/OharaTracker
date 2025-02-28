@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import MangaList from "./components/MangaList.vue";
+import MangaList from "./components/MangaList/MangaList.vue";
 
 export default defineComponent({
   components: {
