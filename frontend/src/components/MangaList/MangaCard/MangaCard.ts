@@ -6,6 +6,7 @@ interface Manga {
     lastChapter: string;
     chapterUrl: string;
     mangaUrl: string;
+    site: string;
 }
 
 export default defineComponent({

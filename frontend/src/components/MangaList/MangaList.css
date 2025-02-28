@@ -1,8 +1,11 @@
 .container {
-    max-width: 900px;
+    display: flex;
+    width: 1200px;
     margin: auto;
     text-align: center;
     padding: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 h1 {

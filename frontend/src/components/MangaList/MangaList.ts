@@ -7,6 +7,7 @@ interface Manga {
     lastChapter: string;
     chapterUrl: string;
     mangaUrl: string;
+    site: string;
 }
 
 export default defineComponent({
@@ -30,8 +31,9 @@ export default defineComponent({
                     const lastChapter = chapter.lastChapter;
                     const chapterUrl = chapter.chapterUrl;
                     const mangaUrl = chapter.mangaUrl;
+                    const site = chapter.site;
 
-                    return { id: chapterId, title, lastChapter, chapterUrl, mangaUrl };
+                    return { id: chapterId, title, lastChapter, chapterUrl, mangaUrl, site };
                 });
 
                 mangas.value = mangaList.filter((manga) => manga !== null) as Manga[];

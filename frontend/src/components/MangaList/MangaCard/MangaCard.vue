@@ -2,6 +2,7 @@
     <div class="manga-card">
         <h2>{{ manga.title }}</h2>
         <p class="chapter"><strong>Chapitre :</strong> {{ manga.lastChapter }}</p>
+        <p class="chapter"><strong>Site :</strong> {{ manga.site }}</p>
         <p>
         <a :href="manga.chapterUrl" target="_blank" class="link">📖 Lire le chapitre</a>
         </p>
