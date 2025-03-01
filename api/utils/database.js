@@ -34,7 +34,7 @@ function saveChapter(site, chapter, chapterUrl, mangaUrl, mangaName) {
 function getLastChapters(callback){
     const db = new sqlite3.Database(DB_NAME);
     db.all(`
-        SELECT site, name, lastChapter, chapterUrl, mangaUrl, created_at
+        SELECT id, site, name, lastChapter, chapterUrl, mangaUrl, created_at
         FROM chapters
         ORDER BY created_at DESC
         LIMIT 40
