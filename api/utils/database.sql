@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Library(
-   id INT,
+   id INTEGER,
    name VARCHAR(200) NOT NULL,
    description VARCHAR(500),
    type VARCHAR(50),
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Library(
 );
 
 CREATE TABLE IF NOT EXISTS Tag(
-   id INT,
+   id INTEGER,
    name VARCHAR(50),
    type VARCHAR(50),
    id_library INT NOT NULL,
@@ -23,41 +23,35 @@ CREATE TABLE IF NOT EXISTS Tag(
 );
 
 CREATE TABLE IF NOT EXISTS AssociativeTitle(
-   id INT,
+   id INTEGER,
    title VARCHAR(200),
    id_library INT NOT NULL,
    PRIMARY KEY(id),
    FOREIGN KEY(id_library) REFERENCES Library(id)
 );
 
-CREATE TABLE IF NOT EXISTS UserLibrary(
-   id INT,
-   score DECIMAL(15,1),
-   note VARCHAR(500),
-   PRIMARY KEY(id)
-);
 
 CREATE TABLE IF NOT EXISTS UserCategory(
-   id INT,
+   id INTEGER,
    name VARCHAR(50),
    description VARCHAR(150),
    PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS Subscription(
-   id INT,
+   id INTEGER,
    name VARCHAR(50),
    PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS Permissions(
-   id INT,
+   id INTEGER,
    name VARCHAR(50),
    PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS Languages(
-   id INT,
+   id INTEGER,
    name VARCHAR(50),
    PRIMARY KEY(id)
 );
@@ -69,27 +63,26 @@ CREATE TABLE IF NOT EXISTS Client(
    display_name VARCHAR(24),
    date_of_birth DATE,
    id_subscription INT NOT NULL,
-   id_user_library INT NOT NULL,
    PRIMARY KEY(name),
-   UNIQUE(id_user_library),
-   FOREIGN KEY(id_subscription) REFERENCES Subscription(id),
-   FOREIGN KEY(id_user_library) REFERENCES UserLibrary(id)
+   FOREIGN KEY(id_subscription) REFERENCES Subscription(id)
 );
 
 CREATE TABLE IF NOT EXISTS ClientCategoryAssignment(
-   id_user_library INT,
+   name_client VARCHAR(24),
    id_user_category INT,
-   PRIMARY KEY(id_user_library, id_user_category),
-   FOREIGN KEY(id_user_library) REFERENCES UserLibrary(id),
+   PRIMARY KEY(name_client, id_user_category),
+   FOREIGN KEY(name_client) REFERENCES client(name),
    FOREIGN KEY(id_user_category) REFERENCES UserCategory(id)
 );
 
-CREATE TABLE IF NOT EXISTS LibraryUsage(
-   id_library INT,
-   id_user_library INT,
-   PRIMARY KEY(id_library, id_user_library),
-   FOREIGN KEY(id_library) REFERENCES Library(id),
-   FOREIGN KEY(id_user_library) REFERENCES UserLibrary(id)
+CREATE TABLE IF NOT EXISTS libraryusage(
+	id_library INT,
+	name_client VARCHAR(24),
+	score DECIMAL(15,1),
+	note VARCHAR(500),
+	PRIMARY KEY(id_library, name_client),
+	FOREIGN KEY(id_library) REFERENCES Library(id),
+	FOREIGN KEY(name_client) REFERENCES client(name)
 );
 
 CREATE TABLE IF NOT EXISTS SubscriptionPermissions(
@@ -100,10 +93,34 @@ CREATE TABLE IF NOT EXISTS SubscriptionPermissions(
    FOREIGN KEY(id_permissions) REFERENCES Permissions(id)
 );
 
-CREATE TABLE IF NOT EXISTS Asso_9(
+CREATE TABLE IF NOT EXISTS LangPref(
    id_library INT,
    id_languages INT,
    PRIMARY KEY(id_library, id_languages),
    FOREIGN KEY(id_library) REFERENCES Library(id),
    FOREIGN KEY(id_languages) REFERENCES Languages(id)
+);
+
+CREATE TABLE IF NOT EXISTS Source(
+    id_source INT PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS LastChapters(
+    id_library INT,
+    id_source INT,
+    chapter VARCHAR(50),
+    url VARCHAR(200),
+    PRIMARY KEY(id_library, id_source),
+    FOREIGN KEY(id_library) REFERENCES Library(id),
+    FOREIGN KEY(id_source) REFERENCES Source(id_source)
+);
+
+CREATE TABLE IF NOT EXISTS LibrarySource(
+    id_library INT,
+    id_source INT,
+    url VARCHAR(200),
+    PRIMARY KEY(id_library, id_source),
+    FOREIGN KEY(id_library) REFERENCES Library(id),
+    FOREIGN KEY(id_source) REFERENCES Source(id_source)
 );
