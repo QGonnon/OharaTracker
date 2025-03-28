@@ -1,9 +1,9 @@
 <template>
-    <!-- contenu de la page html -->
+test n1
 </template>
 
-<script src="./NomComposant.ts"></script>
+<script src="./Menu.ts"></script>
 
 <style>
-    @import './NomComposant.css';
+    @import './Menu.css';
 </style>
