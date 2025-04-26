@@ -4,9 +4,14 @@ export default defineComponent({
   name: 'Menu',
   setup() {
     const isShrunk = ref(false)
+    const activeDropdown = ref<string | null>(null)
 
     const handleScroll = () => {
       isShrunk.value = window.scrollY > 50
+    }
+
+    const toggleDropdown = (name: string | null) => {
+      activeDropdown.value = name
     }
 
     onMounted(() => {
@@ -18,7 +23,9 @@ export default defineComponent({
     })
 
     return {
-      isShrunk
+      isShrunk,
+      activeDropdown,
+      toggleDropdown
     }
   }
 })

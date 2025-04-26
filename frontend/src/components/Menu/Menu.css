@@ -1,58 +1,88 @@
 .menu-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-  }
-  
-  /* ↓↓↓ Applique aussi la classe shrink à .menu-nav */
-  .menu--shrink .menu-nav {
-    padding: 0.4rem 1.5rem;
-  }
-  
-  .menu--shrink {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  }
-  
-  .menu-nav {
-    max-width: 1200px;
-    margin: auto;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: padding 0.3s ease;
-  }
-  
-  .menu-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #4f46e5;
-    transition: font-size 0.3s ease;
-  }
-  
-  .menu--shrink .menu-title {
-    font-size: 1.4rem;
-  }
-  
-  .menu-links {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
-  }
-  
-  .menu-link {
-    text-decoration: none;
-    font-weight: bold;
-    color: #333;
-    transition: color 0.3s ease;
-  }
-  
-  .menu-link:hover {
-    color: #4f46e5;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* ↓↓↓ Applique aussi la classe shrink à .menu-nav */
+.menu--shrink .menu-nav {
+  padding: 0.4rem 1.5rem;
+}
+
+.menu--shrink {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.menu-nav {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: padding 0.3s ease;
+}
+
+.menu-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #4f46e5;
+  transition: font-size 0.3s ease;
+}
+
+.menu--shrink .menu-title {
+  font-size: 1.4rem;
+}
+
+.menu-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+.menu-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.menu-link:hover {
+  color: #4f46e5;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.dropdown {
+  list-style: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 0 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 11;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 1rem;
+  color: #111;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
