@@ -165,4 +165,54 @@ function getLastChapters(callback, limit = 40) {
     );
 }
 
-export {initDb, initSource, saveChapter, getLastChapters};
+function getAllMangas(callback) {
+    const db = new sqlite3.Database(DB_NAME);
+    db.all(
+        `SELECT DISTINCT
+            l.id,
+            l.name AS title,
+            l.status,
+            'Reading' AS readingStatus,
+            COALESCE(ur.rating, NULL) AS rating,
+            COALESCE(ur.last_read_chapter, 0) AS lastReadChapter,
+            COALESCE(MAX(lc.chapter), 0) AS latestChapter,
+            CASE 
+                WHEN ur.last_read_date IS NOT NULL THEN 
+                    CASE 
+                        WHEN DATE(ur.last_read_date) = DATE('now') THEN 'Read today'
+                        WHEN DATE(ur.last_read_date) = DATE('now', '-1 day') THEN 'Read a day ago'
+                        WHEN DATE(ur.last_read_date) >= DATE('now', '-7 days') THEN 
+                            'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) AS INTEGER) || ' days ago'
+                        WHEN DATE(ur.last_read_date) >= DATE('now', '-30 days') THEN 
+                            'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) / 7 AS INTEGER) || ' weeks ago'
+                        ELSE 'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) / 30 AS INTEGER) || ' months ago'
+                    END
+                ELSE 'Haven''t read yet'
+            END AS lastReadDate,
+            CASE 
+                WHEN MAX(lc.date_added) IS NOT NULL THEN 
+                    CASE 
+                        WHEN DATE(MAX(lc.date_added)) = DATE('now') THEN 'Released today'
+                        WHEN DATE(MAX(lc.date_added)) = DATE('now', '-1 day') THEN 'Released a day ago'
+                        WHEN DATE(MAX(lc.date_added)) >= DATE('now', '-7 days') THEN 
+                            'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) AS INTEGER) || ' days ago'
+                        WHEN DATE(MAX(lc.date_added)) >= DATE('now', '-30 days') THEN 
+                            'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) / 7 AS INTEGER) || ' weeks ago'
+                        ELSE 'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) / 30 AS INTEGER) || ' months ago'
+                    END
+                ELSE 'No release info'
+            END AS lastReleaseDate
+         FROM Library l
+         LEFT JOIN UserReading ur ON l.id = ur.id_library
+         LEFT JOIN LastChapters lc ON l.id = lc.id_library
+         GROUP BY l.id, l.name, l.status, ur.rating, ur.last_read_chapter, ur.last_read_date
+         ORDER BY l.name`,
+        [],
+        (err, rows) => {
+            callback(err, rows);
+            db.close();
+        }
+    );
+}
+
+export {initDb, initSource, saveChapter, getLastChapters, getAllMangas};

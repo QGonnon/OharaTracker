@@ -1,0 +1,248 @@
+.mangas-list-container {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* États de chargement et d'erreur */
+.loading-state, .error-state, .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #333;
+    border-top: 4px solid #00d4aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-state p, .empty-state p {
+    font-size: 16px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.error-message {
+    font-size: 16px;
+    color: #ef4444;
+    margin-bottom: 16px;
+}
+
+.retry-button {
+    background-color: #00d4aa;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+    background-color: #00b894;
+}
+
+.manga-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #333;
+    transition: background-color 0.2s ease;
+}
+
+.manga-item:hover {
+    background-color: #2a2a2a;
+}
+
+.manga-item:last-child {
+    border-bottom: none;
+}
+
+.manga-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 8px;
+}
+
+.manga-title-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.manga-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.manga-dot.ongoing {
+    background-color: #00d4aa;
+}
+
+.manga-dot.completed {
+    background-color: #6366f1;
+}
+
+.manga-dot.hiatus {
+    background-color: #f59e0b;
+}
+
+.manga-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #e5e5e5;
+}
+
+.manga-rating {
+    font-size: 14px;
+    color: #fbbf24;
+    font-weight: 500;
+}
+
+.manga-status {
+    margin-left: 22px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-badge.Reading {
+    background-color: #00d4aa;
+    color: white;
+}
+
+.status-badge.completed {
+    background-color: #6366f1;
+    color: white;
+}
+
+.status-badge.paused {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.status-badge.dropped {
+    background-color: #ef4444;
+    color: white;
+}
+
+.manga-chapters {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-shrink: 0;
+}
+
+.chapter-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 80px;
+}
+
+.chapter-read {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e5e5;
+}
+
+.chapter-latest {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.chapter-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.read-date,
+.release-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.date-icon {
+    font-size: 14px;
+}
+
+.read-date .date-icon {
+    filter: grayscale(1);
+}
+
+.release-date .date-icon {
+    filter: hue-rotate(120deg);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .manga-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .manga-chapters {
+        width: 100%;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    
+    .chapter-dates {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .mangas-list-container {
+        padding: 15px;
+    }
+    
+    .manga-chapters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .chapter-info {
+        flex-direction: row;
+        align-items: center;
+        min-width: auto;
+        gap: 20px;
+    }
+}
