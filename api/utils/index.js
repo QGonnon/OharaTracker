@@ -1,1 +1,1 @@
-export { initDb, saveChapter, getLastChapters } from "./database.js";
+export { initDb, initSource, saveChapter, getLastChapters } from "./database.js";

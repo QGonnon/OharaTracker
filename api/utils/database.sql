@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Library(
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    name VARCHAR(200) NOT NULL,
    description VARCHAR(500),
    type VARCHAR(50),
@@ -9,61 +9,53 @@ CREATE TABLE IF NOT EXISTS Library(
    artist VARCHAR(50),
    author VARCHAR(50),
    theme VARCHAR(50),
-   publishers VARCHAR(50),
-   PRIMARY KEY(id)
+   publishers VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS Tag(
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    name VARCHAR(50),
    type VARCHAR(50),
    id_library INT NOT NULL,
-   PRIMARY KEY(id),
    FOREIGN KEY(id_library) REFERENCES Library(id)
 );
 
 CREATE TABLE IF NOT EXISTS AssociativeTitle(
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    title VARCHAR(200),
    id_library INT NOT NULL,
-   PRIMARY KEY(id),
    FOREIGN KEY(id_library) REFERENCES Library(id)
 );
 
 
 CREATE TABLE IF NOT EXISTS UserCategory(
-   id INTEGER,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
    name VARCHAR(50),
-   description VARCHAR(150),
-   PRIMARY KEY(id)
+   description VARCHAR(150)
 );
 
 CREATE TABLE IF NOT EXISTS Subscription(
-   id INTEGER,
-   name VARCHAR(50),
-   PRIMARY KEY(id)
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS Permissions(
-   id INTEGER,
-   name VARCHAR(50),
-   PRIMARY KEY(id)
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS Languages(
-   id INTEGER,
-   name VARCHAR(50),
-   PRIMARY KEY(id)
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS Client(
-   name VARCHAR(24),
+   name VARCHAR(24) PRIMARY KEY,
    email VARCHAR(50),
    password VARCHAR(50),
    display_name VARCHAR(24),
    date_of_birth DATE,
    id_subscription INT NOT NULL,
-   PRIMARY KEY(name),
    FOREIGN KEY(id_subscription) REFERENCES Subscription(id)
 );
 
@@ -102,13 +94,13 @@ CREATE TABLE IF NOT EXISTS LangPref(
 );
 
 CREATE TABLE IF NOT EXISTS Source(
-    id_source INT PRIMARY KEY,
+    id_source INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS LastChapters(
-    id_library INT,
-    id_source INT,
+    id_library INTEGER,
+    id_source INTEGER,
     chapter VARCHAR(50),
     url VARCHAR(200),
     PRIMARY KEY(id_library, id_source),
@@ -117,8 +109,8 @@ CREATE TABLE IF NOT EXISTS LastChapters(
 );
 
 CREATE TABLE IF NOT EXISTS LibrarySource(
-    id_library INT,
-    id_source INT,
+    id_library INTEGER,
+    id_source INTEGER,
     url VARCHAR(200),
     PRIMARY KEY(id_library, id_source),
     FOREIGN KEY(id_library) REFERENCES Library(id),

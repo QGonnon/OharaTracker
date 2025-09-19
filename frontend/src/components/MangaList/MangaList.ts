@@ -24,10 +24,11 @@ export default defineComponent({
             try {
                 const response = await fetch(chapterUrl);
                 const chapters = await response.json() || [];
+                console.log(chapters)
                 
                 const mangaList: Manga[] = chapters.map((chapter: any) => {
-                    const chapterId = chapter.id;
-                    const title = chapter.name;
+                    const chapterId = chapter.chapterId;
+                    const title = chapter.title;
                     const lastChapter = chapter.lastChapter;
                     const chapterUrl = chapter.chapterUrl;
                     const mangaUrl = chapter.mangaUrl;
