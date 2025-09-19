@@ -11,9 +11,9 @@
   </template>
    
   <style scoped>
-  @import url('./MangaList.css');
+  @import url('./MangasCoverView.css');
   </style>
 
-  <script src="./MangaList.ts">
+  <script src="./MangasCoverView.ts">
   </script>
   
