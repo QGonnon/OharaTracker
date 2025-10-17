@@ -1,4 +1,5 @@
 import { defineComponent, onMounted, ref } from "vue";
+import Menu from "../Menu/Menu.vue";
 import MangaCard from "./MangaCard/MangaCard.vue";
 
 interface Manga {
@@ -12,6 +13,7 @@ interface Manga {
 
 export default defineComponent({
     components: {
+        Menu,
         MangaCard,
     },
     setup() {
