@@ -1,18 +1,14 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import MangaList from "../components/MangaList/MangaList.vue";
+import MangasListView from "../components/MangasListView/MangasListView.vue";
+import MangasCoverView from "../components/MangasCoverView/MangasCoverView.vue";
 
 const routes = [
   {
     path: '/',
-    name: 'Sorties',
-    component: MangaList
+    name: 'Accueil',
+    component: MangasCoverView
   },
-//   {
-//     path: '/about',
-//     name: 'About',
-//     component: About
-//   }
 ]
 
 const router = createRouter({
