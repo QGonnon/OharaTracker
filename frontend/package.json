@@ -9,13 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@primeuix/themes": "^1.2.5",
+    "@tailwindcss/vite": "^4.1.14",
     "axios": "^1.8.1",
-    "vue": "^3.5.13"
+    "primeicons": "^7.0.0",
+    "primevue": "^4.4.1",
+    "tailwindcss": "^4.1.14",
+    "tailwindcss-primeui": "^0.6.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "sass": "^1.93.2",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vue-tsc": "^2.2.4"
