@@ -1,16 +1,18 @@
 import fetch from 'node-fetch';
-import { saveChapter } from '../utils/index.js';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
-// Fonction pour récupérer le titre du manga à partir de son URL
-async function getMangaTitle(mangaUrl) {
-    const mangaIdMatch = mangaUrl.match(/title\/([a-f0-9-]+)/);
-    if (!mangaIdMatch) {
-        console.error("❌ ID de manga introuvable dans l'URL !");
-        return 'Titre inconnu';
-    }
+// --- Connexion SQLite ---
+async function openDb() {
+    return open({
+        filename: './manga.db', // 🔧 adapte selon ton projet
+        driver: sqlite3.Database
+    });
+}
 
-    const mangaId = mangaIdMatch[1];
-    const apiUrl = `https://api.mangadex.org/manga/${mangaId}`;
+// --- Récupération complète des infos du manga ---
+async function getMangaInfo(mangaId) {
+    const apiUrl = `https://api.mangadex.org/manga/${mangaId}?includes[]=author&includes[]=artist&includes[]=cover_art`;
 
     try {
         const response = await fetch(apiUrl);
@@ -18,27 +20,134 @@ async function getMangaTitle(mangaUrl) {
 
         const mangaData = await response.json();
         const attributes = mangaData.data.attributes;
+        const relationships = mangaData.data.relationships;
 
-        // Priorité au titre en français, sinon en anglais
-        let mangaTitle = attributes.title.fr || attributes.title.en || 'Titre inconnu';
+        const title = attributes.title.fr || attributes.title.en || 'Titre inconnu';
+        const description = attributes.description.fr || attributes.description.en || '';
+        const type = attributes.originalLanguage || 'N/A';
+        const demographic = attributes.publicationDemographic || 'N/A';
+        const published = attributes.year || 'N/A';
+        const status = attributes.status || 'N/A';
 
-        // Vérification des titres alternatifs (altTitles)
-        if (attributes.altTitles.length > 0) {
-            const altTitleFr = attributes.altTitles.find(title => title.fr)?.fr;
-            if (altTitleFr) mangaTitle = altTitleFr;
-        }
+        const author = relationships.find(r => r.type === 'author')?.attributes?.name || 'Inconnu';
+        const artist = relationships.find(r => r.type === 'artist')?.attributes?.name || 'Inconnu';
 
-        return mangaTitle;
+        const theme = attributes.tags.map(tag => tag.attributes.name.en).join(', ') || '';
+        const tags = attributes.tags.map(tag => ({
+            name: tag.attributes.name.en || tag.attributes.name.fr || 'N/A',
+            type: tag.attributes.group || 'general'
+        }));
+
+        return {
+            title,
+            description,
+            type,
+            demographic,
+            published,
+            status,
+            artist,
+            author,
+            theme,
+            publishers: 'N/A',
+            tags
+        };
+
     } catch (error) {
-        console.error(`❌ Erreur lors de la récupération du titre : ${error}`);
-        return 'Titre inconnu';
+        console.error(`❌ Erreur lors de la récupération des infos du manga : ${error}`);
+        return null;
     }
 }
 
+// --- Enregistre le manga, ses tags, et le dernier chapitre ---
+async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
+    const db = await openDb();
+
+    try {
+        // 1️⃣ Vérifie ou crée la source
+        let source = await db.get('SELECT id_source FROM Source WHERE name = ?', [sourceName]);
+        if (!source) {
+            await db.run('INSERT INTO Source (name) VALUES (?)', [sourceName]);
+            source = await db.get('SELECT id_source FROM Source WHERE name = ?', [sourceName]);
+        }
+
+        // 2️⃣ Vérifie si le manga existe déjà
+        let library = await db.get('SELECT id FROM Library WHERE name = ?', [mangaInfo.title]);
+        if (!library) {
+            await db.run(
+                `INSERT INTO Library (name, description, type, demographic, published, status, artist, author, theme, publishers)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    mangaInfo.title,
+                    mangaInfo.description,
+                    mangaInfo.type,
+                    mangaInfo.demographic,
+                    mangaInfo.published,
+                    mangaInfo.status,
+                    mangaInfo.artist,
+                    mangaInfo.author,
+                    mangaInfo.theme,
+                    mangaInfo.publishers
+                ]
+            );
+            library = await db.get('SELECT id FROM Library WHERE name = ?', [mangaInfo.title]);
+        }
+
+        // 3️⃣ Insertion des tags
+        for (const tag of mangaInfo.tags) {
+            const exists = await db.get(
+                'SELECT id FROM Tag WHERE name = ? AND id_library = ?',
+                [tag.name, library.id]
+            );
+            if (!exists) {
+                await db.run(
+                    'INSERT INTO Tag (name, type, id_library) VALUES (?, ?, ?)',
+                    [tag.name, tag.type, library.id]
+                );
+            }
+        }
+
+        // 4️⃣ Liaison Library ↔ Source
+        const existingLink = await db.get(
+            `SELECT id, url FROM LibrarySource WHERE id_library = ? AND id_source = ?`,
+            [library.id, source.id_source]
+        );
+
+        if (!existingLink) {
+            // 📌 La liaison n'existe pas → on insère
+            await db.run(
+                `INSERT INTO LibrarySource (id_library, id_source, url)
+                VALUES (?, ?, ?)`,
+                [library.id, source.id_source, mangaUrl]
+            );
+        }
+
+        // 5️⃣ Enregistrement du dernier chapitre
+        const existingChapter = await db.get(
+            `SELECT id FROM LastChapters WHERE id_library = ? AND id_source = ? AND chapter = ?`,
+            [library.id, source.id_source, lastChapter]
+        );
+
+        if (!existingChapter) {
+            // 📌 Nouveau chapitre → on l'insère
+            await db.run(
+                `INSERT INTO LastChapters (id_library, id_source, chapter, url)
+                VALUES (?, ?, ?, ?)`,
+                [library.id, source.id_source, lastChapter, chapterUrl]
+            );
+        }
+    } catch (err) {
+        console.error('❌ Erreur lors de la sauvegarde :', err);
+    } finally {
+        await db.close();
+    }
+}
+
+// --- Scraping MangaDex ---
 async function mangadex() {
     const baseUrl = 'https://api.mangadex.org/';
-    const chapterUrl = `${baseUrl}chapter?limit=10&translatedLanguage[]=fr&order[createdAt]=desc`;
-    
+    // 🔥 On prend les 20 derniers chapitres FR et EN
+    const chapterUrl = `${baseUrl}chapter?limit=20&translatedLanguage[]=fr&translatedLanguage[]=en&order[createdAt]=desc`;
+
     try {
         const response = await fetch(chapterUrl);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -49,22 +158,19 @@ async function mangadex() {
         for (const chapter of chapters) {
             const lastChapter = chapter.attributes.chapter || 'N/A';
             const chapterId = chapter.id;
-            const chapterUrl = `https://mangadex.org/chapter/${chapterId}`;
-            
-            // Récupération de l'ID du manga lié au chapitre
+            const chapterUrlFull = `https://mangadex.org/chapter/${chapterId}`;
+
             const mangaId = chapter.relationships.find(rel => rel.type === 'manga')?.id;
             if (!mangaId) continue;
 
             const mangaUrl = `https://mangadex.org/title/${mangaId}`;
 
-            // Récupération du titre du manga
-            const mangaTitle = await getMangaTitle(mangaUrl);
+            const mangaInfo = await getMangaInfo(mangaId);
+            if (!mangaInfo) continue;
 
-            // Enregistrement avec le bon titre
-            saveChapter('MangaDex',  lastChapter, chapterUrl, mangaUrl, mangaTitle);
+            await saveChapter('MangaDex', lastChapter, chapterUrlFull, mangaUrl, mangaInfo);
         }
 
-        console.log('✅ Scraping MangaDex terminé.');
     } catch (error) {
         console.error(`❌ Erreur MangaDex: ${error}`);
     }

@@ -17,6 +17,7 @@
     "fs": "^0.0.1-security",
     "node-fetch": "^3.3.2",
     "puppeteer": "^24.3.0",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   }
 }

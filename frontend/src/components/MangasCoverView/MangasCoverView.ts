@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, ref } from "vue";
 import Menu from "../Menu/Menu.vue";
-import MangaCard from "./MangaCard/MangaCard.vue";
+import MangaCard from "../MangaCard/MangaCard.vue";
 
 interface Manga {
     id: string;

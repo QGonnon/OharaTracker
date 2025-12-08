@@ -147,6 +147,10 @@ function getLastChapters(callback, limit = 40) {
         `SELECT 
             lc.rowid AS chapterId,
             l.name AS title,
+            l.author AS author,
+            l.theme AS theme,
+            l.status AS status,
+            l.description AS description,
             lc.chapter AS lastChapter,
             lc.url AS chapterUrl,
             ls.url AS mangaUrl,
