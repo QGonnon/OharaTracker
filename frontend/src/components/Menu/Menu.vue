@@ -14,16 +14,31 @@
           isShrunk ? 'text-xl' : 'text-2xl'
         ]"
       >
-        Ohara Tracker
+        <router-link to="/" class="hover:opacity-80 transition-opacity">
+          Ohara Tracker
+        </router-link>
       </h1>
 
-      <Menubar
-        :model="menuItems"
-        class="border-none bg-transparent shadow-none"
-      />
+      <div class="flex items-center gap-4">
+        <Menubar
+          :model="menuItems"
+          class="border-none bg-transparent shadow-none"
+        />
+
+        <button
+          v-if="!isLoggedIn"
+          class="nav-login"
+          @click="goLogin"
+        >
+          Se connecter
+        </button>
+      </div>
     </nav>
   </header>
 </template>
 
-<script lang="ts" src="./Menu.ts"></script>
+<script lang="ts">
+import component from './Menu.ts'
+export default component
+</script>
 <link rel="stylesheet" href="Menu.css">

@@ -8,12 +8,19 @@ dotenv.config();
 function startApp(){
     const app = express();
 
-    const cors_origin = process.env.APP_URL+":"+process.env.APP_PORT;
-    console.log(cors_origin);
+    // CORS configuration pour permettre les requêtes du frontend
+    const corsOptions = {
+        origin: ['http://localhost:5173', 'http://localhost:3000'],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+    };
+    
+    app.use(cors(corsOptions));
 
-    app.use(cors({
-        origin: cors_origin
-    }));
+    // Middleware pour parser JSON
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
     app.use('/', routes)
     

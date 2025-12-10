@@ -2,6 +2,12 @@ import { defineComponent, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Menu from '../Menu/Menu.vue'
 import { slugify } from '../../utils'
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import Tag from 'primevue/tag'
+import Chip from 'primevue/chip'
+import Divider from 'primevue/divider'
 
 interface Manga {
   id: string
@@ -19,7 +25,15 @@ interface Manga {
 
 export default defineComponent({
   name: 'MangaInfo',
-  components: { Menu },
+  components: { 
+    Menu, 
+    Card, 
+    Button, 
+    Message, 
+    Tag, 
+    Chip, 
+    Divider 
+  },
 
   setup() {
     const route = useRoute()
@@ -73,7 +87,7 @@ export default defineComponent({
     // 🕓 Chargement initial
     onMounted(fetchMangas)
 
-    // 🔁 Mise à jour si l’URL change
+    // 🔁 Mise à jour si l'URL change
     watch(
       () => route.params.name,
       (newName, oldName) => {
@@ -81,6 +95,13 @@ export default defineComponent({
       }
     )
 
-    return { manga, loading, error }
+    // 📖 Ouvrir le chapitre
+    const openChapter = () => {
+      if (manga.value.chapterUrl) {
+        window.open(manga.value.chapterUrl, '_blank')
+      }
+    }
+
+    return { manga, loading, error, openChapter }
   }
 })

@@ -108,7 +108,7 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
 
         // 4️⃣ Liaison Library ↔ Source
         const existingLink = await db.get(
-            `SELECT id, url FROM LibrarySource WHERE id_library = ? AND id_source = ?`,
+            `SELECT url FROM LibrarySource WHERE id_library = ? AND id_source = ?`,
             [library.id, source.id_source]
         );
 
@@ -121,20 +121,12 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
             );
         }
 
-        // 5️⃣ Enregistrement du dernier chapitre
-        const existingChapter = await db.get(
-            `SELECT id FROM LastChapters WHERE id_library = ? AND id_source = ? AND chapter = ?`,
-            [library.id, source.id_source, lastChapter]
+        // 5️⃣ Enregistrement du dernier chapitre (remplace si existe déjà)
+        await db.run(
+            `INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url)
+            VALUES (?, ?, ?, ?)`,
+            [library.id, source.id_source, lastChapter, chapterUrl]
         );
-
-        if (!existingChapter) {
-            // 📌 Nouveau chapitre → on l'insère
-            await db.run(
-                `INSERT INTO LastChapters (id_library, id_source, chapter, url)
-                VALUES (?, ?, ?, ?)`,
-                [library.id, source.id_source, lastChapter, chapterUrl]
-            );
-        }
     } catch (err) {
         console.error('❌ Erreur lors de la sauvegarde :', err);
     } finally {

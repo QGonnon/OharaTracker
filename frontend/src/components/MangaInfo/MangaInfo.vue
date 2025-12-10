@@ -1,79 +1,113 @@
 <template>
   <Menu />
 
-  <div v-if="loading" class="text-center p-8 text-gray-500">
-    Chargement du manga...
-  </div>
-
-  <div v-else-if="error" class="text-center text-red-500">
-    {{ error }}
-  </div>
-
-  <div v-else-if="manga && manga.title" class="manga-container">
-    <div class="column image-column">
-      <img
-        :src="`https://picsum.photos/seed/${manga.id}/400/568`"
-        :alt="manga.title"
-      />
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex flex-col items-center justify-center py-20">
+      <i class="pi pi-spin pi-spinner text-4xl text-primary mb-4"></i>
+      <p class="text-lg text-surface-500">Chargement du manga...</p>
     </div>
 
-    <div class="column info-column">
-      <h2>{{ manga.title }}</h2>
-      <p><strong>Auteur :</strong> {{ manga.author || 'Inconnu' }}</p>
-      <p><strong>Genre :</strong> {{ manga.theme || 'N/A' }}</p>
-      <p><strong>Statut :</strong> {{ manga.status || 'Inconnu' }}</p>
-      <p><strong>Synopsis :</strong> {{ manga.description || 'Aucune description disponible.' }}</p>
+    <!-- Error State -->
+    <Message v-else-if="error" severity="error" :closable="false" class="mb-4">
+      {{ error }}
+    </Message>
 
-      <div class="mt-6">
-        <a
+    <!-- Manga Content -->
+    <div v-else-if="manga && manga.title" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Image Column -->
+      <div class="lg:col-span-1">
+        <Card class="overflow-hidden">
+          <template #content>
+            <img
+              :src="`https://picsum.photos/seed/${manga.id}/400/568`"
+              :alt="manga.title"
+              class="w-full h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+            />
+          </template>
+        </Card>
+      </div>
+
+      <!-- Info Column -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Title Card -->
+        <Card>
+          <template #title>
+            <h1 class="text-3xl sm:text-4xl font-bold text-surface-900 dark:text-surface-0">
+              {{ manga.title }}
+            </h1>
+          </template>
+          <template #content>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <Tag v-if="manga.status" :value="manga.status" severity="info" />
+              <Tag v-if="manga.theme" :value="manga.theme" />
+              <Chip v-if="manga.site" :label="manga.site" icon="pi pi-globe" />
+            </div>
+          </template>
+        </Card>
+
+        <!-- Details Card -->
+        <Card>
+          <template #title>
+            <h2 class="text-xl font-semibold text-surface-800 dark:text-surface-100">
+              Informations
+            </h2>
+          </template>
+          <template #content>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <i class="pi pi-user text-primary mt-1"></i>
+                <div>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">Auteur</p>
+                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{ manga.author || 'Inconnu' }}
+                  </p>
+                </div>
+              </div>
+
+              <Divider />
+
+              <div class="flex items-start gap-3">
+                <i class="pi pi-bookmark text-primary mt-1"></i>
+                <div>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">Dernier chapitre</p>
+                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    Chapitre {{ manga.lastChapter }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+
+        <!-- Synopsis Card -->
+        <Card>
+          <template #title>
+            <h2 class="text-xl font-semibold text-surface-800 dark:text-surface-100">
+              Synopsis
+            </h2>
+          </template>
+          <template #content>
+            <p class="text-surface-700 dark:text-surface-300 leading-relaxed">
+              {{ manga.description || 'Aucune description disponible.' }}
+            </p>
+          </template>
+        </Card>
+
+        <!-- Action Button -->
+        <Button
           v-if="manga.chapterUrl"
-          :href="manga.chapterUrl"
-          target="_blank"
-          class="text-blue-600 hover:underline font-medium"
-        >
-          📖 Lire le dernier chapitre ({{ manga.lastChapter }})
-        </a>
+          :label="`Lire le chapitre ${manga.lastChapter}`"
+          icon="pi pi-book"
+          iconPos="left"
+          severity="primary"
+          size="large"
+          class="w-full sm:w-auto"
+          @click="openChapter"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script src="./MangaInfo.ts"></script>
-<style scoped>
-.manga-container {
-  display: flex;
-  gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.column {
-  flex: 1;
-}
-
-.image-column {
-  max-width: 400px;
-}
-
-img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.info-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.info-column h2 {
-  margin-bottom: 0.5rem;
-}
-
-.info-column p {
-  line-height: 1.6;
-}
-</style>
