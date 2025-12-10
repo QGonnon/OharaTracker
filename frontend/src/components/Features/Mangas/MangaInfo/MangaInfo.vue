@@ -1,7 +1,7 @@
 <template>
   <Menu />
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20">
       <i class="pi pi-spin pi-spinner text-4xl text-primary mb-4"></i>
@@ -20,7 +20,7 @@
         <Card class="overflow-hidden">
           <template #content>
             <img
-              :src="`https://picsum.photos/seed/${manga.id}/400/568`"
+              :src="coverSrc"
               :alt="manga.title"
               class="w-full h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
             />

@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Menu from '../../../Common/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
@@ -8,20 +8,7 @@ import Message from 'primevue/message'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
-
-interface Manga {
-  id: string
-  title: string
-  lastChapter: string
-  chapterUrl: string
-  mangaUrl: string
-  site: string
-  theme: string
-  status: string
-  author: string
-  description: string
-  publishers: string
-}
+import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
   name: 'MangaInfo',
@@ -41,6 +28,16 @@ export default defineComponent({
     const loading = ref<boolean>(true)
     const error = ref<string | null>(null)
 
+    const coverSrc = computed(() => {
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+      
+      if (manga.value.coverPath) {
+        return `${apiBase}/cdn/${manga.value.coverPath}`
+      }
+      if (manga.value.coverUrl) return manga.value.coverUrl
+      return `https://picsum.photos/seed/${manga.value.id}/400/300`
+    })
+
     // 🚀 Récupération du manga depuis ton API
     const fetchMangas = async () => {
       loading.value = true
@@ -54,15 +51,16 @@ export default defineComponent({
         const mangaList: Manga[] = chapters.map((chapter: any) => ({
           id: chapter.chapterId || chapter.id,
           title: chapter.title || chapter.name,
+          author: chapter.author,
+          theme: chapter.theme,
+          status: chapter.status,
+          description: chapter.description,
+          coverPath: chapter.coverPath,
+          coverUrl: chapter.coverUrl,
           lastChapter: chapter.lastChapter || chapter.chapter,
           chapterUrl: chapter.chapterUrl || chapter.url,
           mangaUrl: chapter.mangaUrl,
           site: chapter.site,
-          theme: chapter.theme,
-          status: chapter.status,
-          author: chapter.author,
-          description: chapter.description,
-          publishers: chapter.publishers
         }))
 
         // Trouver le manga correspondant à l'URL
@@ -102,6 +100,6 @@ export default defineComponent({
       }
     }
 
-    return { manga, loading, error, openChapter }
+    return { manga, loading, error, openChapter, coverSrc }
   }
 })
