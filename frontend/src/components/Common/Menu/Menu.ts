@@ -1,8 +1,7 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import Menubar from 'primevue/menubar'
-import { useRouter } from 'vue-router'
+import { useRouter, type NavigationFailure } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
-import { icon } from '@fortawesome/fontawesome-svg-core'
 
 export default defineComponent({
   name: 'Menu',
@@ -70,7 +69,7 @@ export default defineComponent({
             isLoggedIn.value && authStore.currentUser?.role === 'moderator' ? { label: 'Modération', command: () => router.push('/moderator') } : null,
             isLoggedIn.value && authStore.currentUser?.role === 'admin' ? { label: 'Administration', command: () => router.push('/admin') } : null,
             { label: 'Se déconnecter', command: handleLogout },
-          ].filter(Boolean)
+          ].filter((item): item is { label: string; command: () => Promise<void | NavigationFailure | undefined> } => item !== null)
         })
       }
 
