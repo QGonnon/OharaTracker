@@ -3,29 +3,30 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../store/auth.module'
 
 // Import de tes composants existants
-import MangasCoverView from '../components/MangasCoverView/MangasCoverView.vue'
-import MangaInfo from '../components/MangaInfo/MangaInfo.vue' // nouveau composant
-import Login from '../components/Login/Login.vue'
-import Register from '../components/Register/Register.vue'
-import Home from '../components/Home/Home'
+import MangasCoverView from '../components/Features/Mangas/MangasCoverView/MangasCoverView.vue'
+import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
+import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
+import Login from '../components/Auth/Login/Login.vue'
+import Register from '../components/Auth/Register/Register.vue'
+import Home from '../components/Features/Home/Home'
 
 
-const Profile = () => import("../components/Profile/Profile.vue")
-const BoardAdmin = () => import("../components/BoardAdmin/BoardAdmin.vue")
-const BoardModerator = () => import("../components/BoardModerator/BoardModerator.vue")
-const BoardUser = () => import("../components/BoardUser/BoardUser.vue")
+const Profile = () => import("../components/Features/User/Profile/Profile.vue")
+const BoardAdmin = () => import("../components/Features/User/BoardAdmin/BoardAdmin.vue")
+const BoardModerator = () => import("../components/Features/User/BoardModerator/BoardModerator.vue")
+const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.vue")
 
 const routes = [
   {
     path: '/',
     name: 'Accueil',
-    component: MangasCoverView,
+    component: MangasListView,
   },
   {
     path: '/manga/:name',
     name: 'MangaInfo',
     component: MangaInfo,
-    props: true, // permet de récupérer "name" dans le composant via props ou useRoute()
+    props: true,
   },
   {
     path: '/login',
@@ -54,23 +55,19 @@ const routes = [
   {
     path: "/admin",
     name: "admin",
-    // lazy-loaded
     component: BoardAdmin,
   },
   {
     path: "/mod",
     name: "moderator",
-    // lazy-loaded
     component: BoardModerator,
   },
   {
     path: "/user",
     name: "user",
-    // lazy-loaded
     component: BoardUser,
   },
   {
-    // route facultative : page 404 si le manga n’existe pas
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: {
