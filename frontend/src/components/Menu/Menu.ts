@@ -35,45 +35,8 @@ export default defineComponent({
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const displayName = computed(() => authStore.currentUser?.displayName || authStore.currentUser?.username || authStore.currentUser?.name || '')
-    const initials = computed(() => {
-      const name = displayName.value || ''
-      const parts = name.trim().split(' ').filter(Boolean)
-      if (!parts.length) return 'U'
-      const first = parts[0].charAt(0)
-      const second = parts.length > 1 ? parts[1].charAt(0) : ''
-      return (first + second).toUpperCase()
-    })
-
-    const goProfile = () => router.push('/profile')
-    const goSettings = () => router.push('/user')
+    
     const goLogin = () => router.push('/login')
-    const handleLogout = () => {
-      authStore.logout()
-      router.push('/login')
-    }
-
-    const handleProfileClick = () => {
-      closePersona()
-      goProfile()
-    }
-
-    const handleSettingsClick = () => {
-      closePersona()
-      goSettings()
-    }
-
-    const handleLogoutClick = () => {
-      closePersona()
-      handleLogout()
-    }
-
-    const togglePersona = () => {
-      personaOpen.value = !personaOpen.value
-    }
-
-    const closePersona = () => {
-      personaOpen.value = false
-    }
 
     const menuItems = computed(() => {
       const items = [
@@ -131,18 +94,9 @@ export default defineComponent({
       menuItems,
       isLoggedIn,
       displayName,
-      initials,
-      goProfile,
-      goSettings,
       goLogin,
-      handleLogout,
-      handleProfileClick,
-      handleSettingsClick,
-      handleLogoutClick,
       personaOpen,
       personaRef,
-      togglePersona,
-      closePersona
     }
   }
 })
