@@ -1,27 +1,44 @@
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import Menu from '../../../Common/Menu/Menu.vue'
-
-interface Manga {
-    id: number;
-    title: string;
-    status: string;
-    readingStatus: string;
-    rating?: number;
-    lastReadChapter: number;
-    latestChapter: number;
-    lastReadDate: string;
-    lastReleaseDate: string;
-}
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import InputIcon from 'primevue/inputicon'
+import IconField from 'primevue/iconfield'
+import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
+import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
     name: 'MangasListView',
     components: {
         Menu,
+        Card,
+        Button,
+        Tag,
+        DataTable,
+        Column,
+        InputIcon,
+        IconField,
+        InputText,
+        Message,
     },
     setup() {
         const mangas = ref<Manga[]>([]);
         const loading = ref(true);
         const error = ref<string | null>(null);
+        const searchQuery = ref('');
+
+        const filteredMangas = computed(() => {
+            if (!searchQuery.value) return mangas.value;
+            return mangas.value.filter(manga =>
+                manga.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                manga.author?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                manga.site?.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
+        });
 
         const fetchMangas = async () => {
             try {
@@ -44,15 +61,22 @@ export default defineComponent({
             }
         };
 
+        const openChapter = (url: string) => {
+            window.open(url, '_blank');
+        };
+
         onMounted(() => {
             fetchMangas();
         });
 
         return {
             mangas,
+            filteredMangas,
             loading,
             error,
-            fetchMangas
+            searchQuery,
+            fetchMangas,
+            openChapter
         };
     }
 });
