@@ -57,10 +57,21 @@ export default defineComponent({
       const authStore = useAuthStore();
 
       authStore.register(user).then(
-        (data) => {
+        async (data) => {
           this.message = data.message;
           this.successful = true;
-          this.loading = false;
+          
+          // Connecter automatiquement l'utilisateur après l'inscription
+          try {
+            await authStore.login({ username: user.username, password: user.password });
+            this.$router.push("/profile");
+          } catch (loginError) {
+            this.loading = false;
+            // Si la connexion automatique échoue, rediriger vers la page de login
+            setTimeout(() => {
+              this.$router.push("/login");
+            }, 2000);
+          }
         },
         (error) => {
           this.message =

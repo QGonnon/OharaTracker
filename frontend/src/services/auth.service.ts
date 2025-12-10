@@ -29,6 +29,20 @@ class AuthService {
       password: user.password
     });
   }
+
+  googleLogin(credential: string) {
+    return axios
+      .post(API_URL + 'google', {
+        credential: credential
+      })
+      .then(response => {
+        if (response.data.accessToken) {
+          localStorage.setItem('user', JSON.stringify(response.data));
+        }
+
+        return response.data;
+      });
+  }
 }
 
 export default new AuthService();

@@ -1,16 +1,6 @@
 import { defineStore } from 'pinia';
 import AuthService from '../services/auth.service';
-
-interface User {
-  [key: string]: any;
-}
-
-interface AuthState {
-  status: {
-    loggedIn: boolean;
-  };
-  user: User | null;
-}
+import type { User, AuthState } from '../types/index'
 
 // Restore user only if it exists *and* has an accessToken; otherwise clear it.
 let storedUser: User | null = null;
@@ -64,6 +54,19 @@ export const useAuthStore = defineStore('auth', {
         return Promise.resolve(response.data);
       } catch (error) {
         this.status.loggedIn = false;
+        return Promise.reject(error);
+      }
+    },
+
+    async googleLogin(credential: string) {
+      try {
+        const userData = await AuthService.googleLogin(credential);
+        this.status.loggedIn = true;
+        this.user = userData;
+        return Promise.resolve(userData);
+      } catch (error) {
+        this.status.loggedIn = false;
+        this.user = null;
         return Promise.reject(error);
       }
     },

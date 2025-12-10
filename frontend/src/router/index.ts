@@ -20,7 +20,7 @@ const routes = [
   {
     path: '/',
     name: 'Accueil',
-    component: MangasListView,
+    component: MangasCoverView,
   },
   {
     path: '/manga/:name',

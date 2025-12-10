@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS Library(
    artist VARCHAR(50),
    author VARCHAR(50),
    theme VARCHAR(50),
-   publishers VARCHAR(50)
+   publishers VARCHAR(50),
+   cover_path VARCHAR(255),
+   cover_url VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS Tag(
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS Client(
    password VARCHAR(50),
    display_name VARCHAR(24),
    date_of_birth DATE,
+   google_id VARCHAR(100),
    id_subscription INT NOT NULL,
    FOREIGN KEY(id_subscription) REFERENCES Subscription(id)
 );

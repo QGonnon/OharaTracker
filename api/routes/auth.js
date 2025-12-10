@@ -118,4 +118,73 @@ router.post('/signin', async (req, res) => {
     }
 });
 
+// Route de connexion Google
+router.post('/google', async (req, res) => {
+    const { credential } = req.body;
+
+    if (!credential) {
+        return res.status(400).json({ message: 'Credential Google manquant' });
+    }
+
+    const db = await openDb();
+
+    try {
+        // Décoder le JWT Google (sans vérification - en production, utilisez google-auth-library)
+        const base64Url = credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(Buffer.from(base64, 'base64').toString().split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const googleUser = JSON.parse(jsonPayload);
+        const email = googleUser.email;
+        const name = googleUser.name || googleUser.email.split('@')[0];
+        const googleId = googleUser.sub;
+
+        // Vérifier si l'utilisateur existe déjà
+        let user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE email = ?', [email]);
+
+        if (!user) {
+            // Créer une subscription par défaut (id=1) si elle n'existe pas
+            let subscription = await db.get('SELECT id FROM Subscription WHERE id = 1');
+            if (!subscription) {
+                await db.run('INSERT INTO Subscription (id, name) VALUES (1, ?)', ['Free']);
+            }
+
+            // Créer un nouvel utilisateur
+            await db.run(
+                `INSERT INTO Client (name, email, password, display_name, google_id, id_subscription) 
+                 VALUES (?, ?, ?, ?, ?, 1)`,
+                [name, email, '', name, googleId]
+            );
+
+            user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE email = ?', [email]);
+        } else if (!user.google_id) {
+            // Lier le compte Google à un compte existant
+            await db.run('UPDATE Client SET google_id = ? WHERE email = ?', [googleId, email]);
+        }
+
+        // Générer un token JWT
+        const token = jwt.sign(
+            { username: user.name, email: user.email },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        // Retourner les infos utilisateur et le token
+        res.json({
+            username: user.name,
+            email: user.email,
+            displayName: user.display_name,
+            accessToken: token
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la connexion Google:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la connexion Google' });
+    } finally {
+        await db.close();
+    }
+});
+
 export default router;

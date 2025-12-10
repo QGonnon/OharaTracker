@@ -63,6 +63,21 @@
                 {{ message }}
               </div>
             </Form>
+
+            <div class="mt-6">
+              <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-slate-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                  <span class="px-2 bg-white text-slate-500">Ou continuer avec</span>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <div id="google-signin-button"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

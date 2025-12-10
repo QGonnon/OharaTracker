@@ -151,6 +151,8 @@ function getLastChapters(callback, limit = 40) {
             l.theme AS theme,
             l.status AS status,
             l.description AS description,
+            l.cover_path AS coverPath,
+            l.cover_url AS coverUrl,
             lc.chapter AS lastChapter,
             lc.url AS chapterUrl,
             ls.url AS mangaUrl,

@@ -3,7 +3,7 @@
     <!-- Image -->
     <template #header>
       <img
-        :src="randomImage"
+        :src="coverSrc"
         alt="Manga cover"
         class="w-full h-48 object-cover"
       />
@@ -31,9 +31,9 @@
     <template #footer>
       <div class="flex gap-3 justify-center mt-2 pb-3">
         <Button asChild v-slot="slotProps" class="flex-1 max-w-[130px]">
-          <RouterLink :href="manga.chapterUrl" target="_blank" :class="slotProps.class">
+          <a :href="manga.chapterUrl" target="_blank" rel="noopener noreferrer" :class="slotProps.class">
             📖 Lire le chapitre
-          </RouterLink>
+          </a>
         </Button>
 
         <Button asChild v-slot="slotProps" class="flex-1 max-w-[130px]">

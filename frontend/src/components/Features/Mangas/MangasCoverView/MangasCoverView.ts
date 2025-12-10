@@ -1,15 +1,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import Menu from "../../../Common/Menu/Menu.vue";
 import MangaCard from "../../../Shared/MangaCard/MangaCard.vue";
-
-interface Manga {
-    id: string;
-    title: string;
-    lastChapter: string;
-    chapterUrl: string;
-    mangaUrl: string;
-    site: string;
-}
+import type { Manga } from "../../../../types/index";
 
 export default defineComponent({
     components: {
@@ -26,18 +18,21 @@ export default defineComponent({
             try {
                 const response = await fetch(chapterUrl);
                 const chapters = await response.json() || [];
-                console.log(chapters)
                 
-                const mangaList: Manga[] = chapters.map((chapter: any) => {
-                    const chapterId = chapter.chapterId;
-                    const title = chapter.title;
-                    const lastChapter = chapter.lastChapter;
-                    const chapterUrl = chapter.chapterUrl;
-                    const mangaUrl = chapter.mangaUrl;
-                    const site = chapter.site;
-
-                    return { id: chapterId, title, lastChapter, chapterUrl, mangaUrl, site };
-                });
+                const mangaList: Manga[] = chapters.map((chapter: any) => ({
+                    id: chapter.chapterId,
+                    title: chapter.title,
+                    author: chapter.author,
+                    theme: chapter.theme,
+                    status: chapter.status,
+                    description: chapter.description,
+                    coverPath: chapter.coverPath,
+                    coverUrl: chapter.coverUrl,
+                    lastChapter: chapter.lastChapter,
+                    chapterUrl: chapter.chapterUrl,
+                    mangaUrl: chapter.mangaUrl,
+                    site: chapter.site,
+                }));
 
                 mangas.value = mangaList.filter((manga) => manga !== null) as Manga[];
                 loading.value = false;

@@ -1,6 +1,14 @@
 import fetch from 'node-fetch';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Stockage des couvertures dans /cdn à la racine du projet
+const CDN_DIR = path.resolve(__dirname, '../..', 'cdn');
 
 // --- Connexion SQLite ---
 async function openDb() {
@@ -8,6 +16,32 @@ async function openDb() {
         filename: './manga.db', // 🔧 adapte selon ton projet
         driver: sqlite3.Database
     });
+}
+
+// --- Télécharge la cover dans le dossier cdn ---
+async function downloadCover(coverUrl, coverFileName) {
+    if (!coverUrl || !coverFileName) return null;
+
+    await fs.mkdir(CDN_DIR, { recursive: true });
+    const targetPath = path.join(CDN_DIR, coverFileName);
+
+    try {
+        await fs.access(targetPath);
+        return coverFileName; // Déjà présent
+    } catch (_) {
+        // continue pour télécharger
+    }
+
+    try {
+        const response = await fetch(coverUrl);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        await fs.writeFile(targetPath, buffer);
+        return coverFileName;
+    } catch (error) {
+        console.error(`❌ Erreur lors du téléchargement de la cover ${coverUrl}:`, error);
+        return null;
+    }
 }
 
 // --- Récupération complète des infos du manga ---
@@ -22,7 +56,7 @@ async function getMangaInfo(mangaId) {
         const attributes = mangaData.data.attributes;
         const relationships = mangaData.data.relationships;
 
-        const title = attributes.title.fr || attributes.title.en || 'Titre inconnu';
+        const title = attributes.title.fr || attributes.title.en || attributes.title[Object.keys(attributes.title)[0]];
         const description = attributes.description.fr || attributes.description.en || '';
         const type = attributes.originalLanguage || 'N/A';
         const demographic = attributes.publicationDemographic || 'N/A';
@@ -38,6 +72,10 @@ async function getMangaInfo(mangaId) {
             type: tag.attributes.group || 'general'
         }));
 
+        const coverRelation = relationships.find(r => r.type === 'cover_art');
+        const coverFileName = coverRelation?.attributes?.fileName;
+        const coverUrl = coverFileName ? `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}` : null;
+
         return {
             title,
             description,
@@ -49,7 +87,9 @@ async function getMangaInfo(mangaId) {
             author,
             theme,
             publishers: 'N/A',
-            tags
+            tags,
+            coverUrl,
+            coverFileName
         };
 
     } catch (error) {
@@ -71,11 +111,11 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
         }
 
         // 2️⃣ Vérifie si le manga existe déjà
-        let library = await db.get('SELECT id FROM Library WHERE name = ?', [mangaInfo.title]);
+        let library = await db.get('SELECT id, cover_path, cover_url FROM Library WHERE name = ?', [mangaInfo.title]);
         if (!library) {
             await db.run(
-                `INSERT INTO Library (name, description, type, demographic, published, status, artist, author, theme, publishers)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO Library (name, description, type, demographic, published, status, artist, author, theme, publishers, cover_path, cover_url)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     mangaInfo.title,
                     mangaInfo.description,
@@ -86,10 +126,21 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
                     mangaInfo.artist,
                     mangaInfo.author,
                     mangaInfo.theme,
-                    mangaInfo.publishers
+                    mangaInfo.publishers,
+                    mangaInfo.coverPath || null,
+                    mangaInfo.coverUrl || null
                 ]
             );
-            library = await db.get('SELECT id FROM Library WHERE name = ?', [mangaInfo.title]);
+            library = await db.get('SELECT id, cover_path, cover_url FROM Library WHERE name = ?', [mangaInfo.title]);
+        } else {
+            // Met à jour la cover si non présente
+            if (!library.cover_path && (mangaInfo.coverPath || mangaInfo.coverUrl)) {
+                await db.run(
+                    `UPDATE Library SET cover_path = COALESCE(?, cover_path), cover_url = COALESCE(?, cover_url) WHERE id = ?`,
+                    [mangaInfo.coverPath || null, mangaInfo.coverUrl || null, library.id]
+                );
+                library = await db.get('SELECT id, cover_path, cover_url FROM Library WHERE name = ?', [mangaInfo.title]);
+            }
         }
 
         // 3️⃣ Insertion des tags
@@ -137,7 +188,6 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
 // --- Scraping MangaDex ---
 async function mangadex() {
     const baseUrl = 'https://api.mangadex.org/';
-    // 🔥 On prend les 20 derniers chapitres FR et EN
     const chapterUrl = `${baseUrl}chapter?limit=20&translatedLanguage[]=fr&translatedLanguage[]=en&order[createdAt]=desc`;
 
     try {
@@ -159,6 +209,12 @@ async function mangadex() {
 
             const mangaInfo = await getMangaInfo(mangaId);
             if (!mangaInfo) continue;
+
+            // Téléchargement et stockage local de la cover
+            const coverPath = await downloadCover(mangaInfo.coverUrl, mangaInfo.coverFileName);
+            if (coverPath) {
+                mangaInfo.coverPath = coverPath; // store filename only
+            }
 
             await saveChapter('MangaDex', lastChapter, chapterUrlFull, mangaUrl, mangaInfo);
         }
