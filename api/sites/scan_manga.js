@@ -21,7 +21,10 @@ async function scan_manga(page) {
                         chapterLink: chapterElement.href,
                         mangaLink: mangaElement.href,
                         mangaName: mangaElement.innerText.trim(),
-                        coverUrl: coverElement?.src || null
+                        coverUrl: coverElement?.src || null,
+                        coverName: (coverElement?.alt || '')
+                            .replace(/\s+/g, '-')
+                            .toLowerCase() || null
                     }
                 }
             })
@@ -43,7 +46,7 @@ async function scan_manga(page) {
 
             // Téléchargement de la cover si disponible
             if (m.coverUrl) {
-                const coverFileName = `scan-manga-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
+                const coverFileName = `scan-manga-${m.coverName}.jpg`;
                 const coverPath = await downloadCover(m.coverUrl, coverFileName);
                 if (coverPath) {
                     mangaInfo.coverPath = coverPath;
