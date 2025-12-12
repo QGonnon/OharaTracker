@@ -2,13 +2,11 @@ import express from 'express';
 import routes from './routes/index.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config();
 
 function startApp(){
     const app = express();
-    const cdnPath = path.resolve(process.cwd(), '../cdn');
 
     // CORS configuration pour permettre les requêtes du frontend
     const corsOptions = {
@@ -23,9 +21,6 @@ function startApp(){
     // Middleware pour parser JSON
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-
-    // Expose le dossier CDN pour servir les images/covers
-    app.use('/cdn', express.static(cdnPath));
 
     app.use('/', routes)
     

@@ -1,4 +1,5 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router'
 import Menu from '../../../Common/Menu/Menu.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
@@ -9,6 +10,7 @@ import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
+import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
@@ -26,6 +28,8 @@ export default defineComponent({
         Message,
     },
     setup() {
+        const router = useRouter()
+        const authStore = useAuthStore()
         const mangas = ref<Manga[]>([]);
         const loading = ref(true);
         const error = ref<string | null>(null);
@@ -45,7 +49,16 @@ export default defineComponent({
                 loading.value = true;
                 error.value = null;
                 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/chapters`);
+                if (!authStore.isLoggedIn || !authStore.user?.accessToken) {
+                    await router.push('/login')
+                    return
+                }
+
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/library/user`, {
+                    headers: {
+                        Authorization: `Bearer ${authStore.user.accessToken}`
+                    }
+                });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
