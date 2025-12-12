@@ -54,88 +54,181 @@ function initSource(name){
     });
 }
 
-function saveChapter(sourceName, chapter, chapterUrl, mangaUrl, mangaName) {
+async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
     const db = new sqlite3.Database(DB_NAME);
 
-    // Step 1: Ensure source exists and get its id
-    db.get('SELECT id_source FROM Source WHERE name = ?', [sourceName], (err, sourceRow) => {
-        if (err || !sourceRow) {
-            console.error(`🛑 Source "${sourceName}" introuvable ou erreur: ${err?.message}`);
-            db.close();
-            return;
-        }
-        const id_source = sourceRow.id_source;
-
-        // Step 2: Ensure manga exists in Library
-        db.get('SELECT id FROM Library WHERE name = ?', [mangaName], (err, libraryRow) => {
+    return new Promise((resolve, reject) => {
+        // 1️⃣ Vérifie ou crée la source
+        db.get('SELECT id_source FROM Source WHERE name = ?', [sourceName], (err, source) => {
             if (err) {
-                console.error(`🛑 Erreur lors de la recherche du manga: ${err.message}`);
+                console.error('❌ Erreur lors de la récupération de la source:', err);
                 db.close();
+                reject(err);
                 return;
             }
 
-            function insertChapter(id_library) {
-                // Step 4: Insert chapter in LastChapters
-                db.run(
-                    `INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)`,
-                    [id_library, id_source, chapter, chapterUrl],
-                    (err) => {
-                        if (err && err.code !== 'SQLITE_CONSTRAINT') {
-                            console.error(`🛑 Erreur lors de l'insertion dans LastChapters: ${err.message}`);
-                        }
+            function processWithSource(sourceId) {
+                // 2️⃣ Vérifie si le manga existe déjà
+                db.get('SELECT id, cover_path, cover_url FROM Library WHERE name = ?', [mangaInfo.title], (err, library) => {
+                    if (err) {
+                        console.error('❌ Erreur lors de la récupération du manga:', err);
                         db.close();
+                        reject(err);
+                        return;
                     }
-                );
-            }
 
-            if (!libraryRow) {
-                // Step 3: Insert manga in Library
-                db.run(
-                    'INSERT INTO Library (name) VALUES (?)',
-                    [mangaName],
-                    function(err) {
-                        if (err) {
-                            console.error(`🛑 Erreur lors de l'insertion du manga: ${err.message}`);
-                            db.close();
-                            return;
-                        }
-                        const id_library = this.lastID;
-                        // Step 3b: Insert relation in LibrarySource
-                        db.run(
-                            'INSERT INTO LibrarySource (id_library, id_source, url) VALUES (?, ?, ?)',
-                            [id_library, id_source, mangaUrl],
-                            (err) => {
-                                if (err && err.code !== 'SQLITE_CONSTRAINT') {
-                                    console.error(`🛑 Erreur lors de l'insertion dans LibrarySource: ${err.message}`);
-                                }
-                                insertChapter(id_library);
+                    function processWithLibrary(libraryId, existingCoverPath, existingCoverUrl) {
+                        // 3️⃣ Met à jour la cover si non présente
+                        const shouldUpdateCover = !existingCoverPath && (mangaInfo.coverPath || mangaInfo.coverUrl);
+                        
+                        function insertTags() {
+                            // 4️⃣ Insertion des tags
+                            if (!mangaInfo.tags || mangaInfo.tags.length === 0) {
+                                linkLibrarySource();
+                                return;
                             }
-                        );
-                    }
-                );
-            } else {
-                const id_library = libraryRow.id;
-                // Ensure LibrarySource relation exists
-                db.get(
-                    'SELECT 1 FROM LibrarySource WHERE id_library = ? AND id_source = ?',
-                    [id_library, id_source],
-                    (err, relRow) => {
-                        if (!relRow) {
-                            db.run(
-                                'INSERT INTO LibrarySource (id_library, id_source, url) VALUES (?, ?, ?)',
-                                [id_library, id_source, mangaUrl],
-                                (err) => {
-                                    if (err && err.code !== 'SQLITE_CONSTRAINT') {
-                                        console.error(`🛑 Erreur lors de l\'insertion dans LibrarySource: ${err.message}`);
+
+                            let tagIndex = 0;
+                            function insertNextTag() {
+                                if (tagIndex >= mangaInfo.tags.length) {
+                                    linkLibrarySource();
+                                    return;
+                                }
+
+                                const tag = mangaInfo.tags[tagIndex];
+                                db.get(
+                                    'SELECT id FROM Tag WHERE name = ? AND id_library = ?',
+                                    [tag.name, libraryId],
+                                    (err, exists) => {
+                                        if (!exists) {
+                                            db.run(
+                                                'INSERT INTO Tag (name, type, id_library) VALUES (?, ?, ?)',
+                                                [tag.name, tag.type, libraryId],
+                                                (err) => {
+                                                    if (err) console.error('❌ Erreur insertion tag:', err);
+                                                    tagIndex++;
+                                                    insertNextTag();
+                                                }
+                                            );
+                                        } else {
+                                            tagIndex++;
+                                            insertNextTag();
+                                        }
                                     }
-                                    insertChapter(id_library);
+                                );
+                            }
+                            insertNextTag();
+                        }
+
+                        function linkLibrarySource() {
+                            // 5️⃣ Liaison Library ↔ Source
+                            db.get(
+                                'SELECT url FROM LibrarySource WHERE id_library = ? AND id_source = ?',
+                                [libraryId, sourceId],
+                                (err, existingLink) => {
+                                    if (err) {
+                                        console.error('❌ Erreur vérification LibrarySource:', err);
+                                        db.close();
+                                        reject(err);
+                                        return;
+                                    }
+
+                                    function insertLastChapter() {
+                                        // 6️⃣ Enregistrement du dernier chapitre
+                                        db.run(
+                                            'INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)',
+                                            [libraryId, sourceId, lastChapter, chapterUrl],
+                                            (err) => {
+                                                if (err) {
+                                                    console.error('❌ Erreur insertion LastChapters:', err);
+                                                    db.close();
+                                                    reject(err);
+                                                } else {
+                                                    db.close();
+                                                    resolve();
+                                                }
+                                            }
+                                        );
+                                    }
+
+                                    if (!existingLink) {
+                                        db.run(
+                                            'INSERT INTO LibrarySource (id_library, id_source, url) VALUES (?, ?, ?)',
+                                            [libraryId, sourceId, mangaUrl],
+                                            (err) => {
+                                                if (err) console.error('❌ Erreur insertion LibrarySource:', err);
+                                                insertLastChapter();
+                                            }
+                                        );
+                                    } else {
+                                        insertLastChapter();
+                                    }
+                                }
+                            );
+                        }
+
+                        if (shouldUpdateCover) {
+                            db.run(
+                                'UPDATE Library SET cover_path = COALESCE(?, cover_path), cover_url = COALESCE(?, cover_url) WHERE id = ?',
+                                [mangaInfo.coverPath || null, mangaInfo.coverUrl || null, libraryId],
+                                (err) => {
+                                    if (err) console.error('❌ Erreur mise à jour cover:', err);
+                                    insertTags();
                                 }
                             );
                         } else {
-                            insertChapter(id_library);
+                            insertTags();
                         }
                     }
-                );
+
+                    if (!library) {
+                        // Créer le manga
+                        db.run(
+                            `INSERT INTO Library (name, description, type, demographic, published, status, artist, author, theme, publishers, cover_path, cover_url)
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                            [
+                                mangaInfo.title,
+                                mangaInfo.description || null,
+                                mangaInfo.type || null,
+                                mangaInfo.demographic || null,
+                                mangaInfo.published || null,
+                                mangaInfo.status || null,
+                                mangaInfo.artist || null,
+                                mangaInfo.author || null,
+                                mangaInfo.theme || null,
+                                mangaInfo.publishers || null,
+                                mangaInfo.coverPath || null,
+                                mangaInfo.coverUrl || null
+                            ],
+                            function(err) {
+                                if (err) {
+                                    console.error('❌ Erreur insertion Library:', err);
+                                    db.close();
+                                    reject(err);
+                                    return;
+                                }
+                                processWithLibrary(this.lastID, mangaInfo.coverPath, mangaInfo.coverUrl);
+                            }
+                        );
+                    } else {
+                        processWithLibrary(library.id, library.cover_path, library.cover_url);
+                    }
+                });
+            }
+
+            if (!source) {
+                // Créer la source
+                db.run('INSERT INTO Source (name) VALUES (?)', [sourceName], function(err) {
+                    if (err) {
+                        console.error('❌ Erreur insertion Source:', err);
+                        db.close();
+                        reject(err);
+                        return;
+                    }
+                    processWithSource(this.lastID);
+                });
+            } else {
+                processWithSource(source.id_source);
             }
         });
     });
