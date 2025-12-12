@@ -94,17 +94,42 @@
           </template>
         </Card>
 
-        <!-- Action Button -->
-        <Button
-          v-if="manga.chapterUrl"
-          :label="`Lire le chapitre ${manga.lastChapter}`"
-          icon="pi pi-book"
-          iconPos="left"
-          severity="primary"
-          size="large"
-          class="w-full sm:w-auto"
-          @click="openChapter"
-        />
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+          <Message v-if="addSuccess || isInLibrary" severity="success" :closable="false" icon="pi pi-check">
+            {{ addSuccess ? 'Manga ajouté à votre bibliothèque.' : 'Déjà dans votre bibliothèque.' }}
+          </Message>
+          <Message v-if="addError && !isInLibrary" severity="error" :closable="false">
+            {{ addError }}
+          </Message>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+          <Button
+            v-if="manga.chapterUrl"
+            :label="`Lire le chapitre ${manga.lastChapter}`"
+            icon="pi pi-book"
+            iconPos="left"
+            severity="primary"
+            size="large"
+            class="w-full sm:w-auto"
+            @click="openChapter"
+          />
+
+          <Button
+            v-if="isLoggedIn"
+            :label="isInLibrary ? 'Déjà dans la bibliothèque' : 'Ajouter à ma bibliothèque'"
+            :icon="isInLibrary ? 'pi pi-check' : 'pi pi-bookmark'"
+            iconPos="left"
+            severity="secondary"
+            size="large"
+            class="w-full sm:w-auto"
+            outlined
+            :loading="adding"
+            :disabled="addSuccess || isInLibrary"
+            @click="addToLibrary"
+          />
+          </div>
+        </div>
       </div>
     </div>
   </div>

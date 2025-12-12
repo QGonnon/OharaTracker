@@ -4,11 +4,11 @@ import { useAuthStore } from '../store/auth.module'
 
 // Import de tes composants existants
 import MangasCoverView from '../components/Features/Mangas/MangasCoverView/MangasCoverView.vue'
-import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
 import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
 import Home from '../components/Features/Home/Home'
+import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
 
 
 const Profile = () => import("../components/Features/User/Profile/Profile.vue")
@@ -45,6 +45,11 @@ const routes = [
     name: 'Home',
     component: Home,
     
+  },
+  {
+    path: '/list',
+    name: 'Library',
+    component: MangasListView,
   },
   {
     path: '/profile',
@@ -90,6 +95,7 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   // Only protect restricted pages; keep the rest public
   const protectedPages = ['/profile', '/admin', '/mod', '/user'];
+  protectedPages.push('/list');
   const requiresAuth = protectedPages.includes(to.path);
 
   const authStore = useAuthStore();
