@@ -37,7 +37,7 @@ export default defineComponent({
       isLoading: false,
       hasSearched: false,
       viewMode: "grid" as "grid" | "list",
-      searchTimeout: null as NodeJS.Timeout | null,
+      searchTimeout: null as ReturnType<typeof setTimeout> | null,
       
       // Filters
       selectedGenres: [] as string[],
