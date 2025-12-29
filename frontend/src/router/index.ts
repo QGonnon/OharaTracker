@@ -9,6 +9,7 @@ import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
 import Home from '../components/Features/Home/Home'
 import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
+import Search from '../components/Features/Search/Search.vue'
 
 
 const Profile = () => import("../components/Features/User/Profile/Profile.vue")
@@ -50,6 +51,11 @@ const routes = [
     path: '/list',
     name: 'Library',
     component: MangasListView,
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search,
   },
   {
     path: '/profile',
