@@ -3,7 +3,8 @@
   flex-direction: column;
   min-height: 100vh;
   justify-content: space-between;
-  padding: 6rem 2rem 0 2rem;
+  /* Ensure content starts below the topbar (use layout-topbar-height variable) */
+  padding: calc(var(--layout-topbar-height) + 1rem) 2rem 0 2rem;
   transition: margin-left var(--layout-section-transition-duration);
 }
 

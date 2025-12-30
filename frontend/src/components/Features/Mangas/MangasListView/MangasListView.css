@@ -1,6 +1,6 @@
 .mangas-list-container {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--surface-card);
+    color: var(--text-color);
     padding: 20px;
     border-radius: 8px;
     max-width: 1200px;
@@ -20,8 +20,8 @@
 .loading-spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid #333;
-    border-top: 4px solid #00d4aa;
+    border: 4px solid var(--surface-border);
+    border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 16px;
@@ -34,7 +34,7 @@
 
 .loading-state p, .empty-state p {
     font-size: 16px;
-    color: #9ca3af;
+    color: var(--text-color-secondary);
     margin: 0;
 }
 
@@ -45,8 +45,8 @@
 }
 
 .retry-button {
-    background-color: #00d4aa;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--p-primary-contrast-color);
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
@@ -57,7 +57,7 @@
 }
 
 .retry-button:hover {
-    background-color: #00b894;
+    background-color: var(--primary-color);
 }
 
 .manga-item {
@@ -65,12 +65,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--surface-border);
     transition: background-color 0.2s ease;
 }
 
 .manga-item:hover {
-    background-color: #2a2a2a;
+    background-color: var(--surface-hover);
 }
 
 .manga-item:last-child {
@@ -98,7 +98,7 @@
 }
 
 .manga-dot.ongoing {
-    background-color: #00d4aa;
+    background-color: var(--primary-color);
 }
 
 .manga-dot.completed {
@@ -112,7 +112,7 @@
 .manga-title {
     font-size: 16px;
     font-weight: 500;
-    color: #e5e5e5;
+    color: var(--text-color);
 }
 
 .manga-rating {
@@ -194,7 +194,7 @@
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--text-color-secondary);
 }
 
 .date-icon {

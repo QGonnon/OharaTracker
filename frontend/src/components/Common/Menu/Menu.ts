@@ -54,7 +54,7 @@ export default defineComponent({
         {
           label: 'Mangas',
           items: [
-            { label: 'Derniers chapitres', command: () => router.push('/cover') },
+            { label: 'Derniers chapitres', command: () => router.push('/new') },
             { label: 'Ma bibliothèque', command: () => router.push('/list') },
             { label: 'Recherche', command: () => router.push('/search') },
           ]

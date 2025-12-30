@@ -7,7 +7,7 @@ import MangasCoverView from '../components/Features/Mangas/MangasCoverView/Manga
 import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
-import Home from '../components/Features/Home/Home'
+import Home from '../components/Features/Home/Home.vue'
 import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
 import Search from '../components/Features/Search/Search.vue'
 
@@ -19,8 +19,8 @@ const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.
 
 const routes = [
   {
-    path: '/',
-    name: 'Accueil',
+    path: '/new',
+    name: 'Nouveautés',
     component: MangasCoverView,
   },
   {
@@ -42,10 +42,10 @@ const routes = [
     
   },
   {
-    path: '/home',
+    path: '/',
+    alias: ['/home'],
     name: 'Home',
     component: Home,
-    
   },
   {
     path: '/list',

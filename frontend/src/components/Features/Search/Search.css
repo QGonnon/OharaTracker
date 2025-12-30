@@ -33,7 +33,7 @@
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .search-page {
-    background-color: #111827;
+    background-color: var(--surface-ground);
   }
 }
 
