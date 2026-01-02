@@ -1,5 +1,20 @@
 :root[class*='dark-theme'] {
-  --surface-ground: var(--p-surface-700);
+  --surface-ground: var(--p-surface-900);
+  --surface-card: var(--p-surface-800);
+  --surface-hover: var(--p-surface-700);
+  --surface-overlay: var(--p-overlay-popover-background);
+
+  --text-color: var(--p-surface-50);
+  --text-color-secondary: var(--p-surface-200);
+
   --code-background: var(--p-surface-800);
   --code-color: var(--p-surface-100);
+
+  /* PrimeVue token overrides for dark mode so components use readable colors */
+  --p-text-color: var(--p-surface-50);
+  --p-text-muted-color: var(--p-surface-300);
+  --p-content-background: var(--p-surface-800);
+  --p-content-border-color: rgba(255,255,255,0.06);
+  --p-content-hover-background: rgba(255,255,255,0.02);
+  --p-overlay-popover-background: rgba(15, 15, 15, 0.6);
 }

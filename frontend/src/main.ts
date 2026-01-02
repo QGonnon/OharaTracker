@@ -30,4 +30,16 @@ app.use(router)
     .use(pinia)
     .component('font-awesome-icon', FontAwesomeIcon)
 
+// Initialise theme from localStorage (persist user preference)
+try {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme')
+    } else {
+        document.documentElement.classList.remove('dark-theme')
+    }
+} catch (e) {
+    // ignore (e.g., during SSR or strict environments)
+}
+
 app.mount('#app')

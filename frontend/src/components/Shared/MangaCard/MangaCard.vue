@@ -1,5 +1,5 @@
 <template>
-  <Card class="flex flex-col justify-between w-80 h-[450px] overflow-hidden rounded-2xl shadow-lg bg-white">
+  <Card class="flex flex-col justify-between w-80 h-[450px] overflow-hidden rounded-2xl shadow-lg bg-white dark:bg-gray-800">
     <!-- Image -->
     <template #header>
       <img
@@ -11,19 +11,19 @@
 
     <!-- Titre + sous-titre -->
     <template #title>
-      <h2 class="text-center text-lg font-semibold text-gray-800 px-2 truncate">
+      <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white px-2 truncate">
         {{ manga.title }}
       </h2>
     </template>
 
     <template #subtitle>
-      <p class="text-center text-blue-500 text-sm">{{ manga.site }}</p>
+      <p class="text-center text-blue-500 dark:text-green-300 text-sm">{{ manga.site }}</p>
     </template>
 
     <!-- Contenu -->
     <template #content>
       <div class="flex-grow flex flex-col justify-center text-center px-3">
-        <p class="text-gray-600 text-sm">Dernier chapitre : {{ manga.lastChapter }}</p>
+        <p class="text-gray-600 dark:text-gray-300 text-sm">Dernier chapitre : {{ manga.lastChapter }}</p>
       </div>
     </template>
 

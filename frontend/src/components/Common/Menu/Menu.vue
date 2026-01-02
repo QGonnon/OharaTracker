@@ -26,6 +26,15 @@
         />
 
         <button
+          v-if="isLoggedIn"
+          class="nav-theme-toggle p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          @click="toggleTheme"
+          :title="theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'"
+        >
+          <font-awesome-icon :icon="theme === 'dark' ? ['fas','sun'] : ['fas','moon']" />
+        </button>
+
+        <button
           v-if="!isLoggedIn"
           class="nav-login"
           @click="goLogin"

@@ -42,6 +42,21 @@ export default defineComponent({
       router.push('/')
     }
 
+    // Theme handling (persisted in localStorage). Uses the `.dark-theme` root class.
+    const theme = ref(document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light')
+
+    const toggleTheme = () => {
+      if (theme.value === 'dark') {
+        theme.value = 'light'
+        document.documentElement.classList.remove('dark-theme')
+        try { localStorage.setItem('theme', 'light') } catch (e) { }
+      } else {
+        theme.value = 'dark'
+        document.documentElement.classList.add('dark-theme')
+        try { localStorage.setItem('theme', 'dark') } catch (e) { }
+      }
+    }
+
     const menuItems = computed(() => {
       const items = [
         {
@@ -81,6 +96,8 @@ export default defineComponent({
       isLoggedIn,
       goLogin,
       isShrunk,
+      theme,
+      toggleTheme,
     }
   },
 })
