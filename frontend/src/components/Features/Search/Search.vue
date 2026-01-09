@@ -153,7 +153,7 @@
       <!-- Results - Grid View -->
       <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <div
-          v-for="manga in searchResults"
+          v-for="manga in visibleResults"
           :key="manga.id"
           class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
           @click="goToManga(manga)"
@@ -183,7 +183,7 @@
       <!-- Results - List View -->
       <div v-else-if="viewMode === 'list'" class="space-y-4">
         <div
-          v-for="manga in searchResults"
+          v-for="manga in visibleResults"
           :key="manga.id"
           class="manga-card-list bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow duration-300 cursor-pointer flex gap-4"
           @click="goToManga(manga)"

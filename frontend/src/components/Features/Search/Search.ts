@@ -110,6 +110,12 @@ export default defineComponent({
       this.performSearch();
     },
   },
+  computed: {
+    visibleResults(): Manga[] {
+      const start = this.currentPage * this.itemsPerPage;
+      return this.searchResults.slice(start, start + this.itemsPerPage);
+    },
+  },
   methods: {
     async loadMangas() {
       try {
@@ -211,6 +217,8 @@ export default defineComponent({
         
         this.searchResults = results;
         this.totalResults = results.length;
+        // Reset to first page when new search performed
+        this.currentPage = 0;
         
         // Update URL with search query
         if (this.searchQuery) {
