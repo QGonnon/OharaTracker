@@ -13,6 +13,8 @@ export interface Manga {
   coverPath?: string;
   coverUrl?: string;
   lastChapter?: string;
+  userLastChapter?: string;
+  readingStatus?: string;
   chapterUrl: string;
   mangaUrl: string;
   site: string;

@@ -128,11 +128,24 @@
             :disabled="addSuccess || isInLibrary"
             @click="addToLibrary"
           />
+          <Button
+            v-if="isLoggedIn && isInLibrary"
+            label="Éditer"
+            icon="pi pi-pencil"
+            iconPos="left"
+            severity="warning"
+            size="large"
+            class="w-full sm:w-auto"
+            @click="openEdit"
+          />
           </div>
         </div>
       </div>
     </div>
   </div>
+  
+  <!-- Edit Dialog (shared) -->
+  <EditLibraryDialog v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
 </template>
 
 <script src="./MangaInfo.ts"></script>

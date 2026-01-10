@@ -1,4 +1,5 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import Menu from '../../../Common/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
@@ -9,22 +10,25 @@ import Message from 'primevue/message'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
+import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
   name: 'MangaInfo',
   components: { 
-    Menu, 
-    Card, 
-    Button, 
-    Message, 
-    Tag, 
-    Chip, 
-    Divider 
+    Menu,
+    Card,
+    Button,
+    Message,
+    Tag,
+    Chip,
+    Divider,
+    EditLibraryDialog
   },
 
   setup() {
-    const route = useRoute()
+  const route = useRoute()
+  const router = useRouter()
     const authStore = useAuthStore()
     const manga = ref<Manga>({} as Manga)
     const loading = ref<boolean>(true)
@@ -36,7 +40,7 @@ export default defineComponent({
     const isLoggedIn = computed(() => authStore.isLoggedIn)
 
     const coverSrc = computed(() => {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+      const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
       
       if (manga.value.coverPath) {
         return `${apiBase}/cdn/${manga.value.coverPath}`
@@ -51,7 +55,8 @@ export default defineComponent({
       error.value = null
 
       try {
-        const apiUrl = `${import.meta.env.VITE_API_URL}/chapters`
+        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+        const apiUrl = `${apiBase}/chapters`
         const response = await fetch(apiUrl)
         const chapters = (await response.json()) || []
 
@@ -125,20 +130,51 @@ export default defineComponent({
       }
     }
 
+    const goEditLibrary = () => {
+      // deprecated: navigation to list edit. kept for compatibility
+      if (!manga.value?.id) return
+      router.push({ path: '/list', query: { editId: String(manga.value.id) } })
+    }
+
+    const editDialog = ref(false)
+    const openEdit = () => {
+      editDialog.value = true
+    }
+
+    const onUpdated = (payload: any) => {
+      if (payload?.lastChapter !== undefined) {
+        manga.value.lastChapter = payload.lastChapter
+        ;(manga.value as any).userLastChapter = payload.lastChapter
+      }
+      if (payload?.readingStatus !== undefined) {
+        ;(manga.value as any).readingStatus = payload.readingStatus
+      }
+    }
+
     const checkLibraryStatus = async () => {
       if (!authStore.user?.accessToken || !manga.value?.title) return
       try {
-        const apiUrl = `${import.meta.env.VITE_API_URL}/library/status?title=${encodeURIComponent(manga.value.title)}&site=${encodeURIComponent(manga.value.site || 'Unknown')}`
+        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+        const apiUrl = `${apiBase}/library/user`
         const response = await fetch(apiUrl, {
           headers: { Authorization: `Bearer ${authStore.user.accessToken}` }
         })
 
         if (!response.ok) return
-        const data = await response.json()
-        isInLibrary.value = Boolean(data?.inLibrary)
-        if (isInLibrary.value) {
+        const rows = await response.json()
+        const found = (rows || []).find((r: any) => {
+          if (!r || !r.title) return false
+          const sameTitle = r.title === manga.value.title
+          const sameSite = !manga.value.site || !r.site ? true : r.site === manga.value.site
+          return sameTitle && sameSite
+        })
+
+        isInLibrary.value = Boolean(found)
+        if (isInLibrary.value && found) {
           addSuccess.value = false
           addError.value = null
+          ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter ?? manga.value.lastChapter
+          ;(manga.value as any).readingStatus = found.readingStatus ?? (manga.value as any).readingStatus
         }
       } catch (err) {
         console.error('Erreur vérification bibliothèque', err)
@@ -152,7 +188,8 @@ export default defineComponent({
       adding.value = true
 
       try {
-        const apiUrl = `${import.meta.env.VITE_API_URL}/library`
+        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+        const apiUrl = `${apiBase}/library`
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -193,6 +230,23 @@ export default defineComponent({
       }
     }
 
-    return { manga, loading, error, openChapter, coverSrc, isLoggedIn, addToLibrary, adding, addError, addSuccess, isInLibrary }
+    return { 
+      manga,
+      loading,
+      error,
+      openChapter,
+      coverSrc,
+      isLoggedIn,
+      addToLibrary,
+      adding,
+      addError,
+      addSuccess,
+      isInLibrary,
+      goEditLibrary,
+      // edit dialog bindings
+      editDialog,
+      openEdit,
+      onUpdated
+    }
   }
 })

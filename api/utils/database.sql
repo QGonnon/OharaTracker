@@ -73,8 +73,10 @@ CREATE TABLE IF NOT EXISTS ClientCategoryAssignment(
 CREATE TABLE IF NOT EXISTS libraryusage(
 	id_library INT,
 	name_client VARCHAR(24),
-	score DECIMAL(15,1),
-	note VARCHAR(500),
+   score DECIMAL(15,1),
+   note VARCHAR(500),
+   last_chapter VARCHAR(50),
+   reading_status VARCHAR(50),
 	PRIMARY KEY(id_library, name_client),
 	FOREIGN KEY(id_library) REFERENCES Library(id),
 	FOREIGN KEY(name_client) REFERENCES client(name)

@@ -168,7 +168,9 @@ router.get('/user', authenticate, async (req, res) => {
                 lc.chapter AS lastChapter,
                 lc.url AS chapterUrl,
                 ls.url AS mangaUrl,
-                s.name AS site
+                s.name AS site,
+                lu.last_chapter AS userLastChapter,
+                lu.reading_status AS readingStatus
              FROM libraryusage lu
              JOIN Library l ON lu.id_library = l.id
              LEFT JOIN LibrarySource ls ON l.id = ls.id_library
@@ -187,5 +189,55 @@ router.get('/user', authenticate, async (req, res) => {
         await db.close();
     }
 });
+
+    router.patch('/user', authenticate, async (req, res) => {
+        const { id, lastChapter, readingStatus, title, site } = req.body;
+
+        const db = await openDb();
+        try {
+            let id_library = id;
+
+            // If no id provided, try to resolve by title (+ site if available)
+            if (!id_library) {
+                if (!title) return res.status(400).json({ message: 'id or title requis' });
+
+                const mangaRow = await db.get(
+                    `SELECT l.id FROM Library l
+                     LEFT JOIN LibrarySource ls ON l.id = ls.id_library
+                     LEFT JOIN Source s ON ls.id_source = s.id_source
+                     WHERE l.name = ? AND (s.name = ? OR ? IS NULL OR s.name IS NULL)
+                     LIMIT 1`,
+                    [title, site || null, site || null]
+                );
+
+                if (!mangaRow) return res.status(404).json({ message: 'Manga introuvable' });
+                id_library = mangaRow.id;
+            }
+
+            const existing = await db.get(
+                `SELECT 1 FROM libraryusage WHERE id_library = ? AND name_client = ?`,
+                [id_library, req.user.username]
+            );
+
+            if (existing) {
+                await db.run(
+                    `UPDATE libraryusage SET last_chapter = COALESCE(?, last_chapter), reading_status = COALESCE(?, reading_status) WHERE id_library = ? AND name_client = ?`,
+                    [lastChapter || null, readingStatus || null, id_library, req.user.username]
+                );
+            } else {
+                await db.run(
+                    `INSERT INTO libraryusage (id_library, name_client, last_chapter, reading_status) VALUES (?, ?, ?, ?)`,
+                    [id_library, req.user.username, lastChapter || null, readingStatus || null]
+                );
+            }
+
+            res.json({ message: 'Mise à jour enregistrée', idLibrary: id_library });
+        } catch (error) {
+            console.error('❌ Erreur lors de la mise à jour de la bibliothèque utilisateur:', error);
+            res.status(500).json({ message: 'Erreur serveur' });
+        } finally {
+            await db.close();
+        }
+    });
 
 export default router;

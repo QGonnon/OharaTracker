@@ -97,8 +97,8 @@
                             <Column field="status" header="Statut" sortable style="min-width: 120px;">
                                 <template #body="{ data }">
                                     <Tag 
-                                        :value="data.status || 'Inconnu'"
-                                        :severity="data.status === 'Ongoing' ? 'success' : data.status === 'Completed' ? 'info' : 'warning'"
+                                        :value="data.readingStatus || data.status || 'Inconnu'"
+                                        :severity="(data.readingStatus ? 'info' : (data.status === 'Ongoing' ? 'success' : data.status === 'Completed' ? 'info' : 'warning'))"
                                     />
                                 </template>
                             </Column>
@@ -107,12 +107,24 @@
                             <Column field="lastChapter" header="Dernier Chapitre" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button 
-                                        :label="`Ch. ${data.lastChapter}`"
+                                        :label="`Ch. ${data.userLastChapter || data.lastChapter || '-'}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
                                         text
                                         class="text-indigo-600 dark:text-indigo-400"
+                                    />
+                                </template>
+                            </Column>
+
+                            <!-- Actions Column -->
+                            <Column header="Actions" style="min-width: 120px;">
+                                <template #body="{ data }">
+                                    <Button 
+                                        label="Éditer"
+                                        icon="pi pi-pencil"
+                                        class="p-button-text p-button-plain"
+                                        @click.prevent="openEdit(data)"
                                     />
                                 </template>
                             </Column>
@@ -150,8 +162,12 @@
                         </DataTable>
                     </template>
                 </Card>
-            </div>
+                </div>
         </div>
+
+    <!-- Edit Dialog (shared) -->
+    <EditLibraryDialog v-model:visible="editDialog" :manga="editingManga" @updated="onDialogUpdated" />
+
     </div>
 </template>
 
