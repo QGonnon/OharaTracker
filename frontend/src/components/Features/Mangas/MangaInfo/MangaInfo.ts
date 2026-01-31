@@ -137,7 +137,11 @@ export default defineComponent({
     }
 
     const editDialog = ref(false)
-    const openEdit = () => {
+    const openEdit = async () => {
+      // Ensure library status is loaded before opening edit dialog
+      if (isLoggedIn.value && manga.value?.title) {
+        await checkLibraryStatus()
+      }
       editDialog.value = true
     }
 

@@ -234,10 +234,9 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
     });
 }
 
-function getLastChapters(callback, limit = 40) {
+function getLastChapters(callback, limit = null) {
     const db = new sqlite3.Database(DB_NAME);
-    db.all(
-        `SELECT 
+    let query = `SELECT 
             lc.rowid AS chapterId,
             l.name AS title,
             l.author AS author,
@@ -254,14 +253,20 @@ function getLastChapters(callback, limit = 40) {
          JOIN Library l ON lc.id_library = l.id
          JOIN Source s ON lc.id_source = s.id_source
          JOIN LibrarySource ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
-         ORDER BY lc.rowid DESC
-         LIMIT ?`,
-        [limit],
-        (err, rows) => {
+         ORDER BY lc.rowid DESC`;
+    
+    if (limit) {
+        query += ` LIMIT ?`;
+        db.all(query, [limit], (err, rows) => {
             callback(err, rows);
             db.close();
-        }
-    );
+        });
+    } else {
+        db.all(query, (err, rows) => {
+            callback(err, rows);
+            db.close();
+        });
+    }
 }
 
 function getAllMangas(callback) {

@@ -240,4 +240,46 @@ router.get('/user', authenticate, async (req, res) => {
         }
     });
 
+// DELETE endpoint - remove manga from user library
+router.delete('/user', authenticate, async (req, res) => {
+    const { title, site } = req.body;
+
+    if (!title) {
+        return res.status(400).json({ message: 'Title requis' });
+    }
+
+    const db = await openDb();
+
+    try {
+        // Find the library entry by title (and site if provided)
+        const mangaRow = await db.get(
+            `SELECT l.id FROM Library l
+             LEFT JOIN LibrarySource ls ON l.id = ls.id_library
+             LEFT JOIN Source s ON ls.id_source = s.id_source
+             WHERE l.name = ? AND (s.name = ? OR ? IS NULL OR s.name IS NULL)
+             LIMIT 1`,
+            [title, site || null, site || null]
+        );
+
+        if (!mangaRow) {
+            return res.status(404).json({ message: 'Manga introuvable dans votre bibliothèque' });
+        }
+
+        const id_library = mangaRow.id;
+
+        // Delete from libraryusage table
+        await db.run(
+            `DELETE FROM libraryusage WHERE id_library = ? AND name_client = ?`,
+            [id_library, req.user.username]
+        );
+
+        res.json({ message: 'Manga supprimé de votre bibliothèque' });
+    } catch (error) {
+        console.error('❌ Erreur lors de la suppression du manga utilisateur:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    } finally {
+        await db.close();
+    }
+});
+
 export default router;
