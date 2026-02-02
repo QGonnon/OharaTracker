@@ -49,6 +49,42 @@ export default defineComponent({
       return `https://picsum.photos/seed/${manga.value.id}/400/300`
     })
 
+    // Sanitize description HTML to avoid executing scripts or inline handlers
+    const sanitizeHtml = (dirty: string) => {
+      if (!dirty) return ''
+      try {
+        const container = document.createElement('div')
+        container.innerHTML = dirty
+
+        // Remove script/style tags
+        container.querySelectorAll('script, style').forEach(n => n.remove())
+
+        // Remove dangerous attributes from all elements
+        const nodes = container.querySelectorAll('*')
+        nodes.forEach(node => {
+          Array.from(node.attributes).forEach(attr => {
+            const name = attr.name.toLowerCase()
+            const value = attr.value || ''
+            if (name.startsWith('on')) {
+              node.removeAttribute(attr.name)
+            }
+            if ((name === 'href' || name === 'src') && value.trim().toLowerCase().startsWith('javascript:')) {
+              node.removeAttribute(attr.name)
+            }
+            if (name === 'style') {
+              node.removeAttribute(attr.name)
+            }
+          })
+        })
+
+        return container.innerHTML
+      } catch (e) {
+        return ''
+      }
+    }
+
+    const sanitizedDescription = computed(() => sanitizeHtml(manga.value?.description || ''))
+
     const fetchMangas = async () => {
       loading.value = true
       error.value = null
@@ -63,6 +99,7 @@ export default defineComponent({
           id: chapter.chapterId || chapter.id,
           title: chapter.title || chapter.name,
           author: chapter.author,
+          artist: chapter.artist,
           theme: chapter.theme,
           status: chapter.status,
           description: chapter.description,
@@ -202,7 +239,7 @@ export default defineComponent({
             description: manga.value.description,
             coverPath: manga.value.coverPath,
             coverUrl: manga.value.coverUrl,
-            lastChapter: manga.value.lastEpisode || manga.value.lastChapter,
+            lastChapter: (manga.value as any).lastEpisode || manga.value.lastChapter,
             chapterUrl: manga.value.chapterUrl,
             mangaUrl: manga.value.mangaUrl,
             site: manga.value.site || 'Unknown'
@@ -234,6 +271,7 @@ export default defineComponent({
       error,
       openChapter,
       coverSrc,
+      sanitizedDescription,
       isLoggedIn,
       addToLibrary,
       adding,

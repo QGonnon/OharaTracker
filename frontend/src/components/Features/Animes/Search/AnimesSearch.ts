@@ -7,9 +7,9 @@ import InputNumber from "primevue/inputnumber";
 import Tag from "primevue/tag";
 import ProgressSpinner from "primevue/progressspinner";
 import Paginator from "primevue/paginator";
-import Menu from "../../Common/Menu/Menu.vue";
-import type { Manga } from "../../../types/index";
-import { slugify } from "../../../utils";
+import Menu from "../../../Common/Menu/Menu.vue";
+import type { Manga } from "../../../../types/index";
+import { slugify } from "../../../../utils";
 
 interface SortOption {
   label: string;
@@ -17,7 +17,7 @@ interface SortOption {
 }
 
 export default defineComponent({
-  name: "Search",
+  name: "AnimesSearch",
   components: {
     Menu,
     InputText,
@@ -33,28 +33,26 @@ export default defineComponent({
     return {
       searchQuery: "",
       searchResults: [] as Manga[],
-      allMangas: [] as Manga[], // Tous les mangas de la BDD
+      allMangas: [] as Manga[],
       isLoading: false,
       hasSearched: false,
       viewMode: "grid" as "grid" | "list",
       searchTimeout: null as ReturnType<typeof setTimeout> | null,
-      
-      // Filters
+
       selectedGenres: [] as string[],
       selectedStatus: null as string | null,
       selectedYear: null as number | null,
       sortBy: "popularity" as string,
-      
-      // Filter options
-      genres: [] as string[], // Sera rempli dynamiquement depuis la BDD
-      
+
+      genres: [] as string[],
+
       statusOptions: [
         "En cours",
         "Terminé",
         "En pause",
         "Abandonné",
       ] as string[],
-      
+
       sortOptions: [
         { label: "Popularité", value: "popularity" },
         { label: "Note", value: "rating" },
@@ -63,18 +61,15 @@ export default defineComponent({
         { label: "Plus récent", value: "newest" },
         { label: "Plus ancien", value: "oldest" },
       ] as SortOption[],
-      
-      // Pagination
+
       itemsPerPage: 12,
       totalResults: 0,
       currentPage: 0,
     };
   },
   mounted() {
-    // Load all mangas from database
     this.loadMangas();
-    
-    // Load search query from URL if present
+
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get("q");
     if (query) {
@@ -84,15 +79,10 @@ export default defineComponent({
   },
   watch: {
     searchQuery() {
-      // Afficher le spinner immédiatement
       this.isLoading = true;
-      
-      // Annuler le délai précédent
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout);
       }
-      
-      // Attendre 500ms avant de lancer la recherche
       this.searchTimeout = setTimeout(() => {
         this.performSearch();
       }, 1000);
@@ -122,33 +112,31 @@ export default defineComponent({
         const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
         const response = await fetch(chapterUrl);
         const chapters = await response.json() || [];
-        // Exclude anime entries (AniList or items marked as ANIME)
-        const mangaOnly = (chapters || []).filter((chapter: any) => {
-          if (!chapter) return false;
-          const site = (chapter.site || '').toString().toLowerCase();
-          const type = (chapter.type || '').toString().toUpperCase();
-          const theme = (chapter.theme || '').toString().toLowerCase();
-          // exclude AniList entries or items explicitly marked as ANIME or with theme containing 'anime'
-          if (site === 'anilist' || type === 'ANIME' || theme.includes('anime')) return false;
-          return true;
+
+        // Keep only anime entries (AniList source or type ANIME)
+        const animeOnly = chapters.filter((c: any) => {
+          if (!c) return false;
+          const site = (c.site || "").toString().toLowerCase();
+          const type = (c.type || "").toString().toUpperCase();
+          return site === 'anilist' || type === 'ANIME' || (c.theme && c.theme.toLowerCase().includes('anime'));
         });
 
-        const allMangasWithDuplicates = mangaOnly.map((chapter: any) => ({
-          id: chapter.chapterId,
-          title: chapter.title,
+        const allMangasWithDuplicates = animeOnly.map((chapter: any) => ({
+          id: chapter.chapterId || chapter.id,
+          title: chapter.title || chapter.name,
           author: chapter.author,
           theme: chapter.theme,
           status: chapter.status,
           description: chapter.description,
           coverPath: chapter.coverPath,
           coverUrl: chapter.coverUrl,
-          lastChapter: chapter.lastChapter,
-          chapterUrl: chapter.chapterUrl,
+          lastChapter: chapter.lastChapter || chapter.chapter,
+          lastEpisode: (chapter.lastEpisode !== undefined) ? chapter.lastEpisode : chapter.lastChapter,
+          chapterUrl: chapter.chapterUrl || chapter.url,
           mangaUrl: chapter.mangaUrl,
           site: chapter.site,
         }));
-        
-        // Dédupliquer les mangas par titre
+
         const mangaMap = new Map<string, Manga>();
         allMangasWithDuplicates.forEach((manga: Manga) => {
           const normalizedTitle = manga.title?.toLowerCase().trim();
@@ -156,81 +144,60 @@ export default defineComponent({
             mangaMap.set(normalizedTitle, manga);
           }
         });
-        
+
         this.allMangas = Array.from(mangaMap.values());
-        
-        // Extraire tous les genres uniques depuis les mangas
         this.extractGenres();
       } catch (error) {
-        console.error("❌ Erreur lors du chargement des mangas :", error);
+        console.error("❌ Erreur lors du chargement des animes :", error);
       }
     },
 
     extractGenres() {
       const genresSet = new Set<string>();
-      
       this.allMangas.forEach((manga) => {
         if (manga.theme) {
-          // Séparer les genres s'ils sont séparés par des virgules, des points-virgules, ou des pipes
           const themeGenres = manga.theme
             .split(/[,;|]+/)
-            .map(g => g.trim())
-            .filter(g => g.length > 0);
-          
-          themeGenres.forEach(genre => genresSet.add(genre));
+            .map((g: string) => g.trim())
+            .filter((g: string) => g.length > 0);
+          themeGenres.forEach((genre: string) => genresSet.add(genre));
         }
       });
-      
-      // Trier les genres par ordre alphabétique
       this.genres = Array.from(genresSet).sort((a, b) => a.localeCompare(b));
     },
 
     async performSearch() {
       this.isLoading = true;
       this.hasSearched = true;
-
-      // Petit délai pour éviter trop de re-rendus
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       try {
-        // Filter mangas based on search criteria
         let results = [...this.allMangas];
-        
-        // Text search (title, author, description)
         if (this.searchQuery) {
           const query = this.searchQuery.toLowerCase();
-          results = results.filter(manga => 
-            manga.title?.toLowerCase().includes(query) ||
-            manga.author?.toLowerCase().includes(query) ||
-            manga.description?.toLowerCase().includes(query)
+          results = results.filter((manga) =>
+            (manga.title || "").toLowerCase().includes(query) ||
+            (manga.author || "").toLowerCase().includes(query) ||
+            (manga.description || "").toLowerCase().includes(query)
           );
         }
-        
-        // Filter by genres (theme)
+
         if (this.selectedGenres.length > 0) {
-          results = results.filter(manga => 
-            this.selectedGenres.some(genre => 
-              manga.theme?.toLowerCase().includes(genre.toLowerCase())
-            )
+          results = results.filter((manga) =>
+            this.selectedGenres.some((genre) => manga.theme?.toLowerCase().includes(genre.toLowerCase()))
           );
         }
-        
-        // Filter by status
+
         if (this.selectedStatus) {
-          results = results.filter(manga => 
-            manga.status?.toLowerCase() === this.selectedStatus?.toLowerCase()
-          );
+          results = results.filter((manga) => manga.status?.toLowerCase() === this.selectedStatus?.toLowerCase());
         }
-        
-        // Sort results
+
         results = this.sortResults(results);
-        
+
         this.searchResults = results;
         this.totalResults = results.length;
-        // Reset to first page when new search performed
         this.currentPage = 0;
-        
-        // Update URL with search query
+
         if (this.searchQuery) {
           const url = new URL(window.location.href);
           url.searchParams.set("q", this.searchQuery);
@@ -238,12 +205,6 @@ export default defineComponent({
         }
       } catch (error) {
         console.error("Erreur lors de la recherche:", error);
-        this.$toast?.add({
-          severity: "error",
-          summary: "Erreur",
-          detail: "Une erreur est survenue lors de la recherche",
-          life: 3000,
-        });
       } finally {
         this.isLoading = false;
       }
@@ -260,23 +221,15 @@ export default defineComponent({
       this.totalResults = 0;
     },
 
-    goToManga(manga: Manga) {
-      const cleanTitle = slugify(manga.title);
-      this.$router.push(`/manga/${cleanTitle}`);
+    goToAnime(manga: Manga) {
+      const cleanTitle = slugify(manga.title || "");
+      this.$router.push(`/anime/${cleanTitle}`);
     },
 
     getCoverUrl(manga: Manga): string {
       const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      
-      if (manga.coverPath) {
-        return `${apiBase}/cdn/${manga.coverPath}`;
-      }
-      
-      if (manga.coverUrl) {
-        return manga.coverUrl;
-      }
-      
-      // Fallback image
+      if (manga.coverPath) return `${apiBase}/cdn/${manga.coverPath}`;
+      if (manga.coverUrl) return manga.coverUrl;
       return `https://picsum.photos/seed/${manga.id}/400/600`;
     },
 

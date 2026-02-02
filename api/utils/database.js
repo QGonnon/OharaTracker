@@ -241,6 +241,7 @@ function getLastChapters(callback, limit = null) {
             lc.rowid AS chapterId,
             l.name AS title,
             l.author AS author,
+            l.artist AS artist,
             l.theme AS theme,
             l.status AS status,
             l.description AS description,

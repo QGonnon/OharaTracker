@@ -45,6 +45,8 @@ async function fetchLatestAnimes() {
                     episodes
                     status
                     description
+                    studios { nodes { id name } }
+                    staff { edges { role node { id name { full } } } }
                 }
             }
         }
@@ -83,7 +85,7 @@ async function fetchLatestAnimes() {
 
     // Fallback: if no schedules returned, fall back to popularity fetch (smaller set)
     if (medias.length === 0) {
-        const fallbackQuery = `query ($page: Int, $perPage: Int) { Page(page: $page, perPage: $perPage) { media(type: ANIME, sort: START_DATE_DESC, isAdult: false) { id title { romaji english native } coverImage { large medium } siteUrl episodes status description nextAiringEpisode { episode airingAt } } } }`;
+        const fallbackQuery = `query ($page: Int, $perPage: Int) { Page(page: $page, perPage: $perPage) { media(type: ANIME, sort: START_DATE_DESC, isAdult: false) { id title { romaji english native } coverImage { large medium } siteUrl episodes status description nextAiringEpisode { episode airingAt } studios { nodes { id name } } staff { edges { role node { id name { full } } } } } } }`;
         const fb = await queryAniList(fallbackQuery, { page: 1, perPage: 50 });
         const fbMedias = fb?.Page?.media || [];
         for (const m of fbMedias) {
@@ -105,13 +107,39 @@ async function anilist(page) {
                 const title = m.title?.english || m.title?.romaji || m.title?.native || `Anime ${m.id}`;
                 const coverUrl = m.coverImage?.large || m.coverImage?.medium || null;
 
-                let lastEpisode = '0';
-                if (m.nextAiringEpisode && typeof m.nextAiringEpisode.episode === 'number') {
-                    const last = m.nextAiringEpisode.episode - 1;
-                    lastEpisode = last > 0 ? String(last) : '0';
-                } else if (m.episodes) {
-                    lastEpisode = String(m.episodes);
+                // Prefer lastEpisode computed from schedules, otherwise fallback to nextAiringEpisode or total episodes
+                let lastEpisode = (m.lastEpisode !== undefined && m.lastEpisode !== null) ? String(m.lastEpisode) : null;
+                if (!lastEpisode) {
+                    if (m.nextAiringEpisode && typeof m.nextAiringEpisode.episode === 'number') {
+                        const last = m.nextAiringEpisode.episode - 1;
+                        lastEpisode = last > 0 ? String(last) : '0';
+                    } else if (m.episodes) {
+                        lastEpisode = String(m.episodes);
+                    } else {
+                        lastEpisode = '0';
+                    }
                 }
+
+                // Extract studio (artist) and original author from media info
+                let studioName = null;
+                try {
+                    if (m.studios && m.studios.nodes && m.studios.nodes.length) {
+                        // prefer first studio
+                        studioName = m.studios.nodes[0].name || null;
+                    }
+                } catch (e) { studioName = null }
+
+                let originalAuthor = null;
+                try {
+                    if (m.staff && m.staff.edges && m.staff.edges.length) {
+                        // search for staff edge with role containing 'original'
+                        const match = m.staff.edges.find((e) => (e.role || '').toLowerCase().includes('original'))
+                        const candidate = match || m.staff.edges[0]
+                        if (candidate && candidate.node && candidate.node.name) {
+                            originalAuthor = candidate.node.name.full || null
+                        }
+                    }
+                } catch (e) { originalAuthor = null }
 
                 const mangaInfo = {
                     title: title.trim(),
@@ -120,8 +148,8 @@ async function anilist(page) {
                     demographic: null,
                     published: null,
                     status: m.status || null,
-                    artist: null,
-                    author: null,
+                    artist: studioName,
+                    author: originalAuthor,
                     theme: null,
                     publishers: null,
                     tags: []

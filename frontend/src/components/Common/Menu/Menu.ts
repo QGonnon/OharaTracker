@@ -63,6 +63,7 @@ export default defineComponent({
           label: 'Anime',
           items: [
             { label: 'Dernières sorties', command: () => router.push('/animes/new') },
+            { label: 'Recherche', command: () => router.push('/search/anime') },
             { label: 'Bibliothèque complète', command: () => router.push('/animes/library') },
           ]
         },

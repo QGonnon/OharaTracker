@@ -58,9 +58,21 @@
               <div class="flex items-start gap-3">
                 <i class="pi pi-user text-primary mt-1"></i>
                 <div>
-                  <p class="text-sm text-surface-500 dark:text-surface-400">Auteur / Studio</p>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">Auteur original</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
                     {{ manga.author || 'Inconnu' }}
+                  </p>
+                </div>
+              </div>
+
+              <Divider />
+
+              <div class="flex items-start gap-3">
+                <i class="pi pi-building text-primary mt-1"></i>
+                <div>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">Studio</p>
+                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{ manga.artist || 'Inconnu' }}
                   </p>
                 </div>
               </div>
@@ -88,9 +100,10 @@
             </h2>
           </template>
           <template #content>
-            <p class="text-surface-700 dark:text-surface-300 leading-relaxed">
-              {{ manga.description || 'Aucune description disponible.' }}
-            </p>
+            <div class="text-surface-700 dark:text-surface-300 leading-relaxed">
+              <div v-if="sanitizedDescription" v-html="sanitizedDescription"></div>
+              <p v-else>Aucune description disponible.</p>
+            </div>
           </template>
         </Card>
 
