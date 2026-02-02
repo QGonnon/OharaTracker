@@ -34,7 +34,41 @@ export default defineComponent({
                     site: chapter.site,
                 }));
 
-                mangas.value = mangaList.filter((manga) => manga !== null) as Manga[];
+                // Dédupliquer par titre normalisé - garder l'entrée avec le chapitre le plus récent
+                const uniqueMangaMap = new Map<string, Manga>();
+                for (const manga of mangaList) {
+                    // Normaliser le titre : minuscules, supprimer espaces inutiles et caractères spéciaux
+                    const normalizedKey = (manga.title || '')
+                        .toLowerCase()
+                        .trim()
+                        .replace(/[^a-z0-9\s]/g, '') // Supprimer caractères spéciaux
+                        .replace(/\s+/g, ' ');       // Normaliser les espaces
+                    
+                    if (!normalizedKey) continue;
+                    
+                    const existing = uniqueMangaMap.get(normalizedKey);
+                    
+                    if (!existing) {
+                        uniqueMangaMap.set(normalizedKey, manga);
+                    } else {
+                        // Garder celui avec le chapitre le plus élevé
+                        const currentChapter = Number(manga.lastChapter) || 0;
+                        const existingChapter = Number(existing.lastChapter) || 0;
+                        if (currentChapter > existingChapter) {
+                            uniqueMangaMap.set(normalizedKey, manga);
+                        }
+                    }
+                }
+
+                // Convertir en tableau et trier par chapitre décroissant
+                const uniqueMangaList = Array.from(uniqueMangaMap.values());
+                uniqueMangaList.sort((a, b) => {
+                    const aChapter = Number(a.lastChapter) || 0;
+                    const bChapter = Number(b.lastChapter) || 0;
+                    return bChapter - aChapter;
+                });
+
+                mangas.value = uniqueMangaList.filter((manga) => manga !== null) as Manga[];
                 loading.value = false;
             } catch (error) {
                 console.error("❌ Erreur lors de la récupération des mangas :", error);

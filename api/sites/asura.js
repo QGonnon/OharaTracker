@@ -37,7 +37,15 @@ async function asura(page) {
                     
                     if (href.includes('/series/') && !href.includes('/chapter/') && text && text.length > 0) {
                         seriesUrl = href.split('#')[0].split('?')[0];
-                        title = text;
+                        // Essayer plusieurs sources pour le titre complet
+                        title = link.title || link.getAttribute('aria-label') || link.getAttribute('data-title') || text;
+                        // Si vide ou avec "...", utiliser le slug de l'URL
+                        if (!title || title.includes('...')) {
+                            const slug = seriesUrl.split('/series/')[1]?.replace(/-[a-f0-9]{8}$/, '').replace(/-/g, ' ') || '';
+                            if (slug) {
+                                title = slug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                            }
+                        }
                         break;
                     }
                 }
@@ -83,12 +91,11 @@ async function asura(page) {
             return mangas;
         });
 
-        console.log(`📚 Found ${mangaList.length} manga in Latest Updates`);
         
         for (const manga of mangaList) {
             try {
                 // Normalise le titre
-                const mangaTitle = manga.title
+                let mangaTitle = manga.title
                     .replace(/[\u2012\u2013\u2014\u2015]/g, '-')
                     .replace(/[-–—]\s*Asura(?:\s*Scans?)?\s*$/i, '')
                     .replace(/\s*Asura(?:\s*Scans?)?\s*$/i, '')
