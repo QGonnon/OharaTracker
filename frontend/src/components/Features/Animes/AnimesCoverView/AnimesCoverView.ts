@@ -1,31 +1,31 @@
 import { defineComponent, onMounted, ref } from "vue";
 import Menu from "../../../Common/Menu/Menu.vue";
-import MangaCard from "../../../Shared/MangaCard/MangaCard.vue";
+import AnimeCard from "../../../Shared/AnimeCard/AnimeCard.vue";
 import type { Manga } from "../../../../types/index";
 
 export default defineComponent({
     components: {
         Menu,
-        MangaCard,
+        AnimeCard,
     },
     setup() {
         const mangas = ref<Manga[]>([]);
         const loading = ref<boolean>(true);
 
-        const fetchMangas = async () => {
+        const fetchAnimes = async () => {
             const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
 
             try {
                 const response = await fetch(chapterUrl);
                 const chapters = await response.json() || [];
-                
-                // Exclude AniList (anime) entries so only mangas remain
-                const filteredChapters = (chapters || []).filter((c: any) => {
+
+                // Garder uniquement les entrées provenant d'AniList (anime)
+                const animeChapters = (chapters || []).filter((c: any) => {
                     const site = (c.site || '').toString().toLowerCase();
-                    return site !== 'anilist';
+                    return site === 'anilist' || site === 'anime' || site === 'animes';
                 });
 
-                const mangaList: Manga[] = filteredChapters.map((chapter: any) => ({
+                const mangaList: Manga[] = animeChapters.map((chapter: any) => ({
                     id: chapter.chapterId,
                     title: chapter.title,
                     author: chapter.author,
@@ -43,21 +43,16 @@ export default defineComponent({
                 // Dédupliquer par titre normalisé - garder l'entrée avec le chapitre le plus récent
                 const uniqueMangaMap = new Map<string, Manga>();
                 for (const manga of mangaList) {
-                    // Normaliser le titre : minuscules, supprimer espaces inutiles et caractères spéciaux
                     const normalizedKey = (manga.title || '')
                         .toLowerCase()
                         .trim()
-                        .replace(/[^a-z0-9\s]/g, '') // Supprimer caractères spéciaux
-                        .replace(/\s+/g, ' ');       // Normaliser les espaces
-                    
+                        .replace(/[^a-z0-9\s]/g, '')
+                        .replace(/\s+/g, ' ');
                     if (!normalizedKey) continue;
-                    
                     const existing = uniqueMangaMap.get(normalizedKey);
-                    
                     if (!existing) {
                         uniqueMangaMap.set(normalizedKey, manga);
                     } else {
-                        // Garder celui avec le chapitre le plus élevé
                         const currentChapter = Number(manga.lastChapter) || 0;
                         const existingChapter = Number(existing.lastChapter) || 0;
                         if (currentChapter > existingChapter) {
@@ -66,7 +61,6 @@ export default defineComponent({
                     }
                 }
 
-                // Convertir en tableau et trier par chapitre décroissant
                 const uniqueMangaList = Array.from(uniqueMangaMap.values());
                 uniqueMangaList.sort((a, b) => {
                     const aChapter = Number(a.lastChapter) || 0;
@@ -74,15 +68,15 @@ export default defineComponent({
                     return bChapter - aChapter;
                 });
 
-                mangas.value = uniqueMangaList.filter((manga) => manga !== null) as Manga[];
+                mangas.value = uniqueMangaList as Manga[];
                 loading.value = false;
             } catch (error) {
-                console.error("❌ Erreur lors de la récupération des mangas :", error);
+                console.error("❌ Erreur lors de la récupération des animes :", error);
                 loading.value = false;
             }
         };
 
-        onMounted(fetchMangas);
+        onMounted(fetchAnimes);
 
         return { mangas, loading };
     },

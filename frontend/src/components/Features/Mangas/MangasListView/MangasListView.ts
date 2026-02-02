@@ -37,6 +37,7 @@ export default defineComponent({
         const loading = ref(true);
         const error = ref<string | null>(null);
         const searchQuery = ref('');
+        const viewMode = ref<'list' | 'grid'>('list');
 
         const filteredMangas = computed(() => {
             if (!searchQuery.value) return mangas.value;
@@ -100,6 +101,15 @@ export default defineComponent({
             window.open(url, '_blank');
         };
 
+        const getCoverUrl = (manga: Manga): string => {
+            const apiBase = import.meta.env.VITE_API_URL;
+            if (manga.coverPath) {
+                return `${apiBase}/cdn/${manga.coverPath}`;
+            }
+            if (manga.coverUrl) return manga.coverUrl;
+            return '';
+        };
+
         onMounted(() => {
             fetchMangas().then(() => {
                 const q = route.query.editId
@@ -117,8 +127,10 @@ export default defineComponent({
             loading,
             error,
             searchQuery,
+            viewMode,
             fetchMangas,
             openChapter,
+            getCoverUrl,
             // edit bindings
             editDialog,
             editingManga,

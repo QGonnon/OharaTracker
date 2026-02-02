@@ -1,0 +1,22 @@
+.container {
+	display: flex;
+	width: 1200px;
+	margin: auto;
+	text-align: center;
+	padding: 20px;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+h1 {
+	font-size: 2.2rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#AnimeList {
+	margin-top: 4rem;
+}
+
+.mb-6 { margin-bottom: 1.5rem; }

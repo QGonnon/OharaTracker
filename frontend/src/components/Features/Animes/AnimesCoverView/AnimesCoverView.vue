@@ -1,19 +1,18 @@
 <template>
   <Menu />
-  <div id="MangaList">
-    <h1 class="text-center">Derniers Chapitres</h1>
+  <div id="AnimeList">
+    <h1 class="text-center">Dernières sorties</h1>
     <div class="container">
       <div v-if="loading">Chargement...</div>
         <div v-else v-for="manga in mangas" :key="manga.id" class="mb-6">
-          <MangaCard :manga="manga" />
+          <AnimeCard :manga="manga" />
         </div>
     </div>
   </div>
 </template>
    
 <style scoped>
-@import url('./MangasCoverView.css');
+@import url('./AnimesCoverView.css');
 </style>
 
-<script src="./MangasCoverView.ts">
-</script>
+<script src="./AnimesCoverView.ts"></script>

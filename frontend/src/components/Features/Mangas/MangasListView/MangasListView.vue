@@ -45,22 +45,42 @@
 
             <!-- Content -->
             <div v-else>
-                <!-- Search Bar -->
+                <!-- Search Bar and View Toggle -->
                 <Card class="mb-6">
                     <template #content>
-                        <IconField class="w-full">
-                            <InputIcon class="pi pi-search"></InputIcon>
-                            <InputText 
-                                v-model="searchQuery" 
-                                placeholder="Rechercher par titre, auteur ou site..."
-                                class="w-full"
-                            />
-                        </IconField>
+                        <div class="flex gap-4 items-center">
+                            <IconField class="flex-1">
+                                <InputIcon class="pi pi-search"></InputIcon>
+                                <InputText 
+                                    v-model="searchQuery" 
+                                    placeholder="Rechercher par titre, auteur ou site..."
+                                    class="w-full"
+                                />
+                            </IconField>
+                            <div class="flex gap-2">
+                                <Button 
+                                    @click="viewMode = 'list'"
+                                    :severity="viewMode === 'list' ? 'info' : 'secondary'"
+                                    icon="pi pi-list"
+                                    rounded
+                                    text
+                                    v-tooltip="'Vue en liste'"
+                                />
+                                <Button 
+                                    @click="viewMode = 'grid'"
+                                    :severity="viewMode === 'grid' ? 'info' : 'secondary'"
+                                    icon="pi pi-th-large"
+                                    rounded
+                                    text
+                                    v-tooltip="'Vue en grille'"
+                                />
+                            </div>
+                        </div>
                     </template>
                 </Card>
 
-                <!-- Table View -->
-                <Card>
+                <!-- List View -->
+                <Card v-if="viewMode === 'list'">
                     <template #content>
                         <DataTable 
                             :value="filteredMangas"
@@ -162,6 +182,66 @@
                         </DataTable>
                     </template>
                 </Card>
+
+                <!-- Grid View -->
+                <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <Card v-for="manga in filteredMangas" :key="manga.id" class="flex flex-col">
+                        <template #content>
+                            <div class="flex flex-col h-full">
+                                <!-- Cover Image -->
+                                <div class="relative mb-4 overflow-hidden rounded-lg bg-slate-200 dark:bg-slate-700 h-48">
+                                    <img 
+                                        v-if="getCoverUrl(manga)"
+                                        :src="getCoverUrl(manga)" 
+                                        :alt="manga.title"
+                                        class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                                    />
+                                    <div v-else class="w-full h-full flex items-center justify-center">
+                                        <i class="pi pi-image text-4xl text-slate-400"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Manga Info -->
+                                <h3 class="font-bold text-sm mb-2 line-clamp-2">{{ manga.title }}</h3>
+                                
+                                <!-- Status Badge -->
+                                <div class="mb-3">
+                                    <Tag 
+                                        :value="manga.readingStatus || manga.status || 'Inconnu'"
+                                        :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))"
+                                        class="text-xs"
+                                    />
+                                </div>
+
+                                <!-- Chapter and Source -->
+                                <div class="text-xs text-slate-600 dark:text-slate-400 mb-3 space-y-1">
+                                    <p><strong>Ch.</strong> {{ manga.userLastChapter || manga.lastChapter || '-' }}</p>
+                                    <p><strong>Source:</strong> {{ manga.site }}</p>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="mt-auto flex gap-2">
+                                    <Button 
+                                        @click="openChapter(manga.chapterUrl)"
+                                        icon="pi pi-arrow-up-right"
+                                        text
+                                        rounded
+                                        class="flex-1 text-indigo-600 dark:text-indigo-400"
+                                        v-tooltip="'Ouvrir le chapitre'"
+                                    />
+                                    <Button 
+                                        @click="openEdit(manga)"
+                                        icon="pi pi-pencil"
+                                        text
+                                        rounded
+                                        class="text-slate-600 dark:text-slate-400"
+                                        v-tooltip="'Éditer'"
+                                    />
+                                </div>
+                            </div>
+                        </template>
+                    </Card>
+                </div>
                 </div>
         </div>
 

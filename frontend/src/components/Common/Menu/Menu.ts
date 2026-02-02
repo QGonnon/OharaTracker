@@ -60,10 +60,10 @@ export default defineComponent({
     const menuItems = computed(() => {
       const items = [
         {
-          label: 'Scans',
+          label: 'Anime',
           items: [
-            { label: 'Dernières sorties', command: () => router.push('/scans/new') },
-            { label: 'Bibliothèque complète', command: () => router.push('/scans/library') },
+            { label: 'Dernières sorties', command: () => router.push('/animes/new') },
+            { label: 'Bibliothèque complète', command: () => router.push('/animes/library') },
           ]
         },
         {

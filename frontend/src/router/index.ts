@@ -4,6 +4,8 @@ import { useAuthStore } from '../store/auth.module'
 
 // Import de tes composants existants
 import MangasCoverView from '../components/Features/Mangas/MangasCoverView/MangasCoverView.vue'
+import AnimesCoverView from '../components/Features/Animes/AnimesCoverView/AnimesCoverView.vue'
+import AnimeInfo from '../components/Features/Animes/AnimeInfo/AnimeInfo.vue'
 import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
@@ -22,6 +24,17 @@ const routes = [
     path: '/new',
     name: 'Nouveautés',
     component: MangasCoverView,
+  },
+  {
+    path: '/animes/new',
+    name: 'AnimeNouveautes',
+    component: AnimesCoverView,
+  },
+  {
+    path: '/anime/:name',
+    name: 'AnimeInfo',
+    component: AnimeInfo,
+    props: true,
   },
   {
     path: '/manga/:name',

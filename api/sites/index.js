@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import { mangadex } from './mangadex.js';
 import { scan_manga } from './scan_manga.js';
 import { asura } from './asura.js';
+import { anilist } from './anilist.js';
 
 async function scrapeAll() {
     const browser = await puppeteer.launch();
@@ -10,6 +11,7 @@ async function scrapeAll() {
     console.log('🔍 Scraping des sites...');
     await mangadex();
     await asura(page);
+    await anilist();
     await scan_manga(page);
     console.log('⏳ Prochaine mise à jour dans 30 secondes...');
     await browser.close();
