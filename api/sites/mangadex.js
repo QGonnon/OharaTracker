@@ -88,7 +88,9 @@ async function mangadex() {
             }
 
             await saveChapter('MangaDex', lastChapter, chapterUrlFull, mangaUrl, mangaInfo);
+            
         }
+        console.log(`✅ Scraped MangaDex terminé.`);
 
     } catch (error) {
         console.error(`❌ Erreur MangaDex: ${error}`);

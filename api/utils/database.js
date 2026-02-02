@@ -22,6 +22,7 @@ function initDb() {
             // Now run initSource after schema setup
             initSource('MangaDex');
             initSource('scan-manga');
+            initSource('AsuraComic');
         });
     });
 }
