@@ -11,6 +11,7 @@ import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
+import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
 import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 
@@ -24,6 +25,7 @@ export default defineComponent({
         DataTable,
         Column,
         EditLibraryDialog,
+        EditAnimeDialog,
         InputIcon,
         IconField,
         InputText,
@@ -38,6 +40,7 @@ export default defineComponent({
         const error = ref<string | null>(null);
         const searchQuery = ref('');
         const viewMode = ref<'list' | 'grid'>('list');
+        const filterType = ref<'all' | 'anime' | 'lecture'>('all');
 
         const filteredMangas = computed(() => {
             if (!searchQuery.value) return mangas.value;
@@ -46,6 +49,17 @@ export default defineComponent({
                 manga.author?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                 manga.site?.toLowerCase().includes(searchQuery.value.toLowerCase())
             );
+        });
+
+        const displayedMangas = computed(() => {
+            const list = (filteredMangas.value || []).slice();
+            if (filterType.value === 'anime') {
+                return list.filter((i: any) => (i.type || 'Manga') === 'Anime');
+            }
+            if (filterType.value === 'lecture') {
+                return list.filter((i: any) => (i.type || 'Manga') !== 'Anime');
+            }
+            return list;
         });
 
         const fetchMangas = async () => {
@@ -69,7 +83,13 @@ export default defineComponent({
                 }
                 
                 const data = await response.json();
-                mangas.value = data;
+                // Detect type (Manga/Anime) based on known source names
+                const animeSources = new Set(['anilist', 'asura']);
+                mangas.value = (data || []).map((item: any) => {
+                    const site = (item.site || '').toLowerCase();
+                    const type = animeSources.has(site) ? 'Anime' : 'Manga';
+                    return { ...item, type };
+                });
             } catch (err) {
                 error.value = err instanceof Error ? err.message : 'Une erreur est survenue';
                 console.error('Erreur lors du chargement des mangas:', err);
@@ -78,23 +98,34 @@ export default defineComponent({
             }
         };
 
-        // Édition utilisateur (centralisé)
+        // Édition utilisateur (deux dialogs différents selon le type)
         const editDialog = ref(false);
+        const editAnimeDialog = ref(false);
         const editingManga = ref<Manga | null>(null);
 
         const openEdit = (data: Manga) => {
             editingManga.value = data;
-            editDialog.value = true;
+            // Ouvrir le bon dialog selon le type
+            if ((data.type || 'Manga') === 'Anime') {
+                editAnimeDialog.value = true;
+            } else {
+                editDialog.value = true;
+            }
         };
 
         const onDialogUpdated = (payload: any) => {
             if (!editingManga.value) return;
             const idx = mangas.value.findIndex(m => String(m.id) === String(editingManga.value?.id));
             if (idx >= 0) {
+                // Handle both lastChapter (manga) and lastEpisode (anime)
                 if (payload?.lastChapter !== undefined) mangas.value[idx].userLastChapter = payload.lastChapter
+                if (payload?.lastEpisode !== undefined) mangas.value[idx].userLastEpisode = payload.lastEpisode
                 if (payload?.readingStatus !== undefined) mangas.value[idx].readingStatus = payload.readingStatus
+                // Synchronize editingManga with updated data for next edit
+                editingManga.value = mangas.value[idx];
             }
             editDialog.value = false
+            editAnimeDialog.value = false
         };
 
         const openChapter = (url: string) => {
@@ -102,28 +133,30 @@ export default defineComponent({
         };
 
         const getCoverUrl = (manga: Manga): string => {
-            const apiBase = import.meta.env.VITE_API_URL;
+            const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
             if (manga.coverPath) {
                 return `${apiBase}/cdn/${manga.coverPath}`;
             }
             if (manga.coverUrl) return manga.coverUrl;
-            return '';
+            // fallback image similar to Search component
+            return `https://picsum.photos/seed/${manga.id}/400/600`;
         };
 
-        onMounted(() => {
-            fetchMangas().then(() => {
-                const q = route.query.editId
-                if (q) {
-                    const idToEdit = Number(q)
-                    const found = mangas.value.find(m => Number(m.id) === idToEdit)
-                    if (found) openEdit(found)
-                }
-            })
+        onMounted(async () => {
+            await fetchMangas();
+            const q = route.query.editId
+            if (q) {
+                const idToEdit = Number(q)
+                const found = mangas.value.find(m => Number(m.id) === idToEdit)
+                if (found) openEdit(found)
+            }
         });
 
         return {
             mangas,
             filteredMangas,
+            displayedMangas,
+            filterType,
             loading,
             error,
             searchQuery,
@@ -133,6 +166,7 @@ export default defineComponent({
             getCoverUrl,
             // edit bindings
             editDialog,
+            editAnimeDialog,
             editingManga,
             openEdit,
             onDialogUpdated

@@ -157,8 +157,8 @@
     </div>
   </div>
   
-  <!-- Edit Dialog (shared) -->
-  <EditLibraryDialog v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
+  <!-- Edit Dialog (anime-specific) -->
+  <EditAnimeDialog v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
 </template>
 
 <script src="./AnimeInfo.ts"></script>

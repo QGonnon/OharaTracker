@@ -5,6 +5,8 @@
 export interface Manga {
   id?: number | string;
   title: string;
+  /** "Manga" or "Anime" when known */
+  type?: 'Lecture' | 'Anime';
   author?: string;
   artist?: string;
   theme?: string;

@@ -6,13 +6,14 @@
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">Ma Bibliothèque</h1>
-                <p class="text-slate-600 dark:text-slate-400">{{ filteredMangas.length }} manga{{ filteredMangas.length !== 1 ? 's' : '' }}</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ displayedMangas.length }} Lecture{{ displayedMangas.length !== 1 ? 's' : '' }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">(total raw: {{ mangas.length }}, filtered: {{ filteredMangas.length }})</p>
             </div>
 
             <!-- Loading State -->
             <div v-if="loading" class="flex flex-col items-center justify-center py-20">
                 <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4"></i>
-                <p class="text-lg text-slate-600 dark:text-slate-400">Chargement des mangas...</p>
+                <p class="text-lg text-slate-600 dark:text-slate-400">Chargement des lectures...</p>
             </div>
 
             <!-- Error State -->
@@ -27,11 +28,11 @@
             </Message>
 
             <!-- Empty State -->
-            <Card v-else-if="filteredMangas.length === 0" class="text-center py-12">
+            <Card v-else-if="displayedMangas.length === 0" class="text-center py-12">
                 <template #content>
                     <i class="pi pi-inbox text-5xl text-slate-300 dark:text-slate-600 mb-4"></i>
                     <p class="text-lg text-slate-600 dark:text-slate-400">
-                        {{ searchQuery ? 'Aucun manga ne correspond à votre recherche.' : 'Aucun manga trouvé dans votre bibliothèque.' }}
+                        {{ searchQuery ? 'Aucune lecture ne correspond à votre recherche.' : 'Aucune lecture trouvée dans votre bibliothèque.' }}
                     </p>
                     <Button 
                         v-if="!searchQuery"
@@ -50,30 +51,53 @@
                     <template #content>
                         <div class="flex gap-4 items-center">
                             <IconField class="flex-1">
-                                <InputIcon class="pi pi-search"></InputIcon>
-                                <InputText 
-                                    v-model="searchQuery" 
+                                <InputIcon class="pi pi-search" />
+                                <InputText
+                                    v-model="searchQuery"
                                     placeholder="Rechercher par titre, auteur ou site..."
                                     class="w-full"
                                 />
                             </IconField>
-                            <div class="flex gap-2">
-                                <Button 
-                                    @click="viewMode = 'list'"
-                                    :severity="viewMode === 'list' ? 'info' : 'secondary'"
-                                    icon="pi pi-list"
-                                    rounded
-                                    text
-                                    v-tooltip="'Vue en liste'"
-                                />
-                                <Button 
-                                    @click="viewMode = 'grid'"
-                                    :severity="viewMode === 'grid' ? 'info' : 'secondary'"
-                                    icon="pi pi-th-large"
-                                    rounded
-                                    text
-                                    v-tooltip="'Vue en grille'"
-                                />
+
+                            <div class="flex items-center gap-4">
+                                <div v-if="viewMode === 'grid'" class="flex items-center gap-2">
+                                    <label class="text-sm text-slate-500 dark:text-slate-400">Filtrer:</label>
+                                    <Button
+                                        label="Anime"
+                                        :severity="filterType === 'anime' ? 'info' : 'secondary'"
+                                        class="!px-3"
+                                        text
+                                        rounded
+                                        @click="filterType = filterType === 'anime' ? 'all' : 'anime'"
+                                    />
+                                    <Button
+                                        label="Lecture"
+                                        :severity="filterType === 'lecture' ? 'info' : 'secondary'"
+                                        class="!px-3"
+                                        text
+                                        rounded
+                                        @click="filterType = filterType === 'lecture' ? 'all' : 'lecture'"
+                                    />
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <Button
+                                        @click="viewMode = 'list'"
+                                        :severity="viewMode === 'list' ? 'info' : 'secondary'"
+                                        icon="pi pi-list"
+                                        rounded
+                                        text
+                                        v-tooltip="'Vue en liste'"
+                                    />
+                                    <Button
+                                        @click="viewMode = 'grid'"
+                                        :severity="viewMode === 'grid' ? 'info' : 'secondary'"
+                                        icon="pi pi-th-large"
+                                        rounded
+                                        text
+                                        v-tooltip="'Vue en grille'"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -82,8 +106,8 @@
                 <!-- List View -->
                 <Card v-if="viewMode === 'list'">
                     <template #content>
-                        <DataTable 
-                            :value="filteredMangas"
+                            <DataTable 
+                                :value="displayedMangas"
                             stripedRows
                             paginator
                             :rows="10"
@@ -159,24 +183,14 @@
                                 </template>
                             </Column>
 
-                            <!-- Theme Column -->
-                            <Column field="theme" header="Genre" style="min-width: 150px;">
+                            <!-- Type Column -->
+                            <Column field="type" header="Type" sortable style="min-width: 120px;">
                                 <template #body="{ data }">
-                                    <div class="flex flex-wrap gap-1">
-                                        <Tag 
-                                            v-for="tag in (data.theme ? data.theme.split(', ') : []).slice(0, 2)"
-                                            :key="tag"
-                                            :value="tag"
-                                            severity="info"
-                                            class="text-xs"
-                                        />
-                                        <Tag 
-                                            v-if="data.theme && data.theme.split(', ').length > 2"
-                                            :value="`+${data.theme.split(', ').length - 2}`"
-                                            severity="info"
-                                            class="text-xs"
-                                        />
-                                    </div>
+                                    <Tag
+                                        :value="data.type || 'Manga'"
+                                        :severity="(data.type === 'Anime' ? 'success' : 'info')"
+                                        class="text-xs"
+                                    />
                                 </template>
                             </Column>
                         </DataTable>
@@ -185,68 +199,54 @@
 
                 <!-- Grid View -->
                 <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <Card v-for="manga in filteredMangas" :key="manga.id" class="flex flex-col">
-                        <template #content>
-                            <div class="flex flex-col h-full">
-                                <!-- Cover Image -->
-                                <div class="relative mb-4 overflow-hidden rounded-lg bg-slate-200 dark:bg-slate-700 h-48">
-                                    <img 
-                                        v-if="getCoverUrl(manga)"
-                                        :src="getCoverUrl(manga)" 
-                                        :alt="manga.title"
-                                        class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                                    />
-                                    <div v-else class="w-full h-full flex items-center justify-center">
-                                        <i class="pi pi-image text-4xl text-slate-400"></i>
-                                    </div>
-                                </div>
-
-                                <!-- Manga Info -->
-                                <h3 class="font-bold text-sm mb-2 line-clamp-2">{{ manga.title }}</h3>
-                                
-                                <!-- Status Badge -->
-                                <div class="mb-3">
-                                    <Tag 
-                                        :value="manga.readingStatus || manga.status || 'Inconnu'"
-                                        :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))"
-                                        class="text-xs"
-                                    />
-                                </div>
-
-                                <!-- Chapter and Source -->
-                                <div class="text-xs text-slate-600 dark:text-slate-400 mb-3 space-y-1">
-                                    <p><strong>Ch.</strong> {{ manga.userLastChapter || manga.lastChapter || '-' }}</p>
-                                    <p><strong>Source:</strong> {{ manga.site }}</p>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="mt-auto flex gap-2">
-                                    <Button 
-                                        @click="openChapter(manga.chapterUrl)"
-                                        icon="pi pi-arrow-up-right"
-                                        text
-                                        rounded
-                                        class="flex-1 text-indigo-600 dark:text-indigo-400"
-                                        v-tooltip="'Ouvrir le chapitre'"
-                                    />
-                                    <Button 
-                                        @click="openEdit(manga)"
-                                        icon="pi pi-pencil"
-                                        text
-                                        rounded
-                                        class="text-slate-600 dark:text-slate-400"
-                                        v-tooltip="'Éditer'"
-                                    />
-                                </div>
+                    <div
+                        v-for="manga in displayedMangas"
+                        :key="manga.id"
+                        class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative"
+                        @click="openChapter(manga.chapterUrl)"
+                    >
+                        <div class="aspect-[3/4] overflow-hidden">
+                            <img
+                                v-if="getCoverUrl(manga)"
+                                :src="getCoverUrl(manga)"
+                                :alt="manga.title"
+                                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                            />
+                            <div v-else class="w-full h-full flex items-center justify-center bg-slate-300 dark:bg-slate-600">
+                                <i class="pi pi-image text-4xl text-slate-400"></i>
                             </div>
-                        </template>
-                    </Card>
+                        </div>
+
+                        <!-- Edit Button (top-left bubble) -->
+                        <Button
+                            icon="pi pi-pencil"
+                            rounded
+                            text
+                            class="!absolute top-2 left-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-2"
+                            @click.stop="openEdit(manga)"
+                            v-tooltip="'Éditer'"
+                        />
+
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2">
+                                {{ manga.title }}
+                            </h3>
+                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                                <span class="flex items-center" v-if="manga.userLastChapter || manga.lastChapter">
+                                    <i class="pi pi-book mr-1"></i>
+                                    Ch. {{ manga.userLastChapter || manga.lastChapter }}
+                                </span>
+                                <Tag v-if="manga.readingStatus || manga.status" :value="manga.readingStatus || manga.status" :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 </div>
         </div>
 
-    <!-- Edit Dialog (shared) -->
+    <!-- Edit Dialogs (manga and anime) -->
     <EditLibraryDialog v-model:visible="editDialog" :manga="editingManga" @updated="onDialogUpdated" />
+    <EditAnimeDialog v-model:visible="editAnimeDialog" :anime="editingManga" @updated="onDialogUpdated" />
 
     </div>
 </template>

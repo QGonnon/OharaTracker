@@ -52,22 +52,17 @@ async function fetchLatestAnimes() {
         }
     }`;
 
-    // We request a larger perPage to collect recent schedules
-    const data = await queryAniList(query, { page: 1, perPage: 100 });
+    // We request a larger perPage to collect recent schedules (including already aired)
+    const data = await queryAniList(query, { page: 1, perPage: 150 });
     const schedules = data?.Page?.airingSchedules || [];
 
-    // Aggregate by media id and keep the highest episode that has already aired
-    const nowTs = Math.floor(Date.now() / 1000);
+    // Aggregate by media id and keep the highest episode
     const mediaMap = new Map();
 
     for (const s of schedules) {
         if (!s || !s.media) continue;
         const mediaId = s.media.id;
-        const airingAt = s.airingAt || 0;
         const episode = Number(s.episode) || 0;
-
-        // Only consider items that have already aired
-        if (airingAt > nowTs) continue;
 
         const existing = mediaMap.get(mediaId);
         if (!existing) {
@@ -83,10 +78,10 @@ async function fetchLatestAnimes() {
         medias.push({ ...obj.media, lastEpisode: String(obj.lastEpisode) });
     }
 
-    // Fallback: if no schedules returned, fall back to popularity fetch (smaller set)
+    // Fallback: if no schedules returned, fetch completed and ongoing anime
     if (medias.length === 0) {
-        const fallbackQuery = `query ($page: Int, $perPage: Int) { Page(page: $page, perPage: $perPage) { media(type: ANIME, sort: START_DATE_DESC, isAdult: false) { id title { romaji english native } coverImage { large medium } siteUrl episodes status description nextAiringEpisode { episode airingAt } studios { nodes { id name } } staff { edges { role node { id name { full } } } } } } }`;
-        const fb = await queryAniList(fallbackQuery, { page: 1, perPage: 50 });
+        const fallbackQuery = `query ($page: Int, $perPage: Int) { Page(page: $page, perPage: $perPage) { media(type: ANIME, sort: START_DATE_DESC, status_in: [FINISHED, RELEASING], isAdult: false) { id title { romaji english native } coverImage { large medium } siteUrl episodes status description nextAiringEpisode { episode airingAt } studios { nodes { id name } } staff { edges { role node { id name { full } } } } } } }`;
+        const fb = await queryAniList(fallbackQuery, { page: 1, perPage: 100 });
         const fbMedias = fb?.Page?.media || [];
         for (const m of fbMedias) {
             medias.push(m);

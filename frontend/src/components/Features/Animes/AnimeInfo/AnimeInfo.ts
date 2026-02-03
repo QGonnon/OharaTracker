@@ -10,7 +10,7 @@ import Message from 'primevue/message'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
-import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
+import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
 import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
@@ -23,7 +23,7 @@ export default defineComponent({
     Tag,
     Chip,
     Divider,
-    EditLibraryDialog
+    EditAnimeDialog
   },
 
   setup() {
@@ -176,14 +176,19 @@ export default defineComponent({
       editDialog.value = true
     }
 
-    const onUpdated = (payload: any) => {
+    const onUpdated = async (payload: any) => {
       if (payload?.lastChapter !== undefined) {
         manga.value.lastChapter = payload.lastChapter
         ;(manga.value as any).userLastChapter = payload.lastChapter
       }
+      if (payload?.lastEpisode !== undefined) {
+        ;(manga.value as any).userLastEpisode = payload.lastEpisode
+      }
       if (payload?.readingStatus !== undefined) {
         ;(manga.value as any).readingStatus = payload.readingStatus
       }
+      // Re-sync with library to ensure fresh data
+      await checkLibraryStatus()
     }
 
     const checkLibraryStatus = async () => {
@@ -209,6 +214,7 @@ export default defineComponent({
           addSuccess.value = false
           addError.value = null
           ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter ?? manga.value.lastChapter
+          ;(manga.value as any).userLastEpisode = found.userLastEpisode ?? found.lastEpisode ?? found.userLastChapter ?? found.lastChapter ?? manga.value.lastChapter
           ;(manga.value as any).readingStatus = found.readingStatus ?? (manga.value as any).readingStatus
         }
       } catch (err) {
