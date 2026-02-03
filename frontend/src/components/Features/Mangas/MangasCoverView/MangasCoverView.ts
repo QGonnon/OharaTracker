@@ -19,10 +19,10 @@ export default defineComponent({
                 const response = await fetch(chapterUrl);
                 const chapters = await response.json() || [];
                 
-                // Exclude AniList (anime) entries so only mangas remain
+                // Exclude MovieDB (anime) entries so only mangas remain
                 const filteredChapters = (chapters || []).filter((c: any) => {
                     const site = (c.site || '').toString().toLowerCase();
-                    return site !== 'anilist';
+                    return site !== 'moviedb';
                 });
 
                 const mangaList: Manga[] = filteredChapters.map((chapter: any) => ({

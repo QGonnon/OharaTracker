@@ -14,9 +14,18 @@
 
   <section class="featured container py-10">
     <div class="max-w-6xl mx-auto">
-      <h2 class="section-title text-2xl font-bold mb-4">À la une</h2>
+      <h2 class="section-title text-2xl font-bold mb-4">À la une — Mangas</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <MangaCard v-for="m in featuredMangas" :key="m.id" :manga="m" />
+      </div>
+    </div>
+  </section>
+
+  <section class="featured container py-10">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="section-title text-2xl font-bold mb-4">Dernières sorties — Anime</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <MangaCard v-for="a in featuredAnimes" :key="a.id" :manga="a" />
       </div>
     </div>
   </section>

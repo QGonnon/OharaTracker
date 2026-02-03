@@ -122,14 +122,14 @@ export default defineComponent({
         const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
         const response = await fetch(chapterUrl);
         const chapters = await response.json() || [];
-        // Exclude anime entries (AniList or items marked as ANIME)
+        // Exclude anime entries (MovieDB or items marked as ANIME)
         const mangaOnly = (chapters || []).filter((chapter: any) => {
           if (!chapter) return false;
           const site = (chapter.site || '').toString().toLowerCase();
           const type = (chapter.type || '').toString().toUpperCase();
           const theme = (chapter.theme || '').toString().toLowerCase();
           // exclude AniList entries or items explicitly marked as ANIME or with theme containing 'anime'
-          if (site === 'anilist' || type === 'ANIME' || theme.includes('anime')) return false;
+          if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) return false;
           return true;
         });
 

@@ -10,6 +10,7 @@ export default defineComponent({
   },
   setup() {
     const featuredMangas = ref<any[]>([]);
+    const featuredAnimes = ref<any[]>([]);
     const latestChapters = ref<any[]>([]);
     const loading = ref(true);
 
@@ -19,32 +20,57 @@ export default defineComponent({
         const res = await fetch(chapterUrl);
         const chapters = (await res.json()) || [];
 
-        // Conserver derniers chapitres
+        // Séparer les animes et les mangas
+        const animes: any[] = [];
+        const mangas: any[] = [];
+
+        chapters.forEach((ch: any) => {
+          const item = {
+            id: ch.chapterId,
+            title: ch.title,
+            author: ch.author,
+            theme: ch.theme,
+            status: ch.status,
+            description: ch.description,
+            coverPath: ch.coverPath,
+            coverUrl: ch.coverUrl,
+            lastChapter: ch.lastChapter,
+            chapterUrl: ch.chapterUrl,
+            mangaUrl: ch.mangaUrl,
+            site: ch.site,
+            type: ch.type,
+          };
+
+          const site = (ch.site || '').toString().toLowerCase();
+          const type = (ch.type || '').toString().toUpperCase();
+          const theme = (ch.theme || '').toString().toLowerCase();
+
+          // Classer comme anime si: site === 'moviedb' OU type === 'ANIME' OU theme contient 'anime'
+          if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) {
+            animes.push(item);
+          } else {
+            mangas.push(item);
+          }
+        });
+
+        // Conserver derniers chapitres (tous)
         latestChapters.value = chapters.slice(0, 10);
 
-        // Construire liste de mangas dédupliquée
-        const map = new Map();
-        const mangas = chapters.map((ch: any) => ({
-          id: ch.chapterId,
-          title: ch.title,
-          author: ch.author,
-          theme: ch.theme,
-          status: ch.status,
-          description: ch.description,
-          coverPath: ch.coverPath,
-          coverUrl: ch.coverUrl,
-          lastChapter: ch.lastChapter,
-          chapterUrl: ch.chapterUrl,
-          mangaUrl: ch.mangaUrl,
-          site: ch.site,
-        }));
-
-        for (const m of mangas) {
+        // Dédupliquér et construire listes de mangas et animes
+        const mangaMap = new Map();
+        mangas.forEach((m: any) => {
           const key = (m.title || "").toLowerCase().trim();
-          if (!map.has(key)) map.set(key, m);
-        }
+          if (!mangaMap.has(key)) mangaMap.set(key, m);
+        });
 
-        featuredMangas.value = Array.from(map.values()).slice(0, 6);
+        const animeMap = new Map();
+        animes.forEach((a: any) => {
+          const key = (a.title || "").toLowerCase().trim();
+          if (!animeMap.has(key)) animeMap.set(key, a);
+        });
+
+        featuredMangas.value = Array.from(mangaMap.values()).slice(0, 6);
+        featuredAnimes.value = Array.from(animeMap.values()).slice(0, 6);
       } catch (err) {
         console.error("Erreur fetching mangas:", err);
       } finally {
@@ -54,6 +80,6 @@ export default defineComponent({
 
     onMounted(fetchMangas);
 
-    return { featuredMangas, latestChapters, loading };
+    return { featuredMangas, featuredAnimes, latestChapters, loading };
   },
 });

@@ -22,7 +22,7 @@ export default defineComponent({
                 // Garder uniquement les entrées provenant d'AniList (anime)
                 const animeChapters = (chapters || []).filter((c: any) => {
                     const site = (c.site || '').toString().toLowerCase();
-                    return site === 'anilist' || site === 'anime' || site === 'animes';
+                    return site === 'moviedb' || site === 'anime' || site === 'animes';
                 });
 
                 const mangaList: Manga[] = animeChapters.map((chapter: any) => ({

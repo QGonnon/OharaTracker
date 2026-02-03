@@ -113,12 +113,12 @@ export default defineComponent({
         const response = await fetch(chapterUrl);
         const chapters = await response.json() || [];
 
-        // Keep only anime entries (AniList source or type ANIME)
+        // Keep only anime entries (MovieDB source or type ANIME)
         const animeOnly = chapters.filter((c: any) => {
           if (!c) return false;
           const site = (c.site || "").toString().toLowerCase();
           const type = (c.type || "").toString().toUpperCase();
-          return site === 'anilist' || type === 'ANIME' || (c.theme && c.theme.toLowerCase().includes('anime'));
+          return site === 'moviedb' || type === 'ANIME' || (c.theme && c.theme.toLowerCase().includes('anime'));
         });
 
         const allMangasWithDuplicates = animeOnly.map((chapter: any) => ({
