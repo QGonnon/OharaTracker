@@ -71,10 +71,6 @@ const routes = [
     component: Search,
   },
   {
-    path: '/search/anime',
-    redirect: '/search',
-  },
-  {
     path: '/profile',
     name: 'Profile',
     component: Profile,

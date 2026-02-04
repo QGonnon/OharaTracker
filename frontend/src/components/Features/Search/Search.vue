@@ -5,7 +5,7 @@
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          <i class="pi pi-search mr-3"></i>Recherche
+          Bibliothèque
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
           Trouvez vos mangas et animes préférés parmi notre collection
@@ -16,7 +16,6 @@
       <div class="mb-8">
         <div class="flex gap-4">
           <span class="p-input-icon-left flex-1">
-            <i class="pi pi-search" />
             <InputText
               v-model="searchQuery"
               placeholder="Rechercher un manga ou anime par titre, auteur ou genre..."

@@ -60,14 +60,9 @@ export default defineComponent({
     const menuItems = computed(() => {
       const items = [
         {
-          label: 'Anime',
-          command: () => router.push('/animes/new'),
+          label: 'Dernière sorties', command: () => router.push('/new')
         },
-        {
-          label: 'Mangas',
-          command: () => router.push('/new'),
-        },
-        { label: 'Recherche', command: () => router.push('/search') },
+        { label: 'Bibliothèque', command: () => router.push('/search') },
       ]
 
       if (isLoggedIn.value) {

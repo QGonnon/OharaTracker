@@ -27,23 +27,6 @@
                 </template>
             </Message>
 
-            <!-- Empty State -->
-            <Card v-else-if="displayedMangas.length === 0" class="text-center py-12">
-                <template #content>
-                    <i class="pi pi-inbox text-5xl text-slate-300 dark:text-slate-600 mb-4"></i>
-                    <p class="text-lg text-slate-600 dark:text-slate-400">
-                        {{ searchQuery ? 'Aucune lecture ne correspond à votre recherche.' : 'Aucune lecture trouvée dans votre bibliothèque.' }}
-                    </p>
-                    <Button 
-                        v-if="!searchQuery"
-                        @click="fetchMangas" 
-                        label="Recharger" 
-                        icon="pi pi-refresh" 
-                        class="mt-6"
-                    />
-                </template>
-            </Card>
-
             <!-- Content -->
             <div v-else>
                 <!-- Search Bar and View Toggle -->
@@ -60,7 +43,7 @@
                             </IconField>
 
                             <div class="flex items-center gap-4">
-                                <div v-if="viewMode === 'grid'" class="flex items-center gap-2">
+                                <div  class="flex items-center gap-2">
                                     <label class="text-sm text-slate-500 dark:text-slate-400">Filtrer:</label>
                                     <Button
                                         label="Anime"
@@ -194,6 +177,23 @@
                                 </template>
                             </Column>
                         </DataTable>
+                        <!-- Empty message shown below the table so controls remain usable -->
+                        <div v-if="displayedMangas.length === 0" class="text-center py-6">
+                            <i class="pi pi-inbox text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                                <span v-if="searchQuery">Aucune lecture ne correspond à votre recherche.</span>
+                                <span v-else-if="filterType === 'anime'">Aucun anime trouvé dans votre bibliothèque.</span>
+                                <span v-else-if="filterType === 'lecture'">Aucune lecture trouvée dans votre bibliothèque.</span>
+                                <span v-else>Aucune lecture trouvée dans votre bibliothèque.</span>
+                            </p>
+                            <Button 
+                                v-if="!searchQuery"
+                                @click="fetchMangas" 
+                                label="Recharger" 
+                                icon="pi pi-refresh" 
+                                class="mt-2"
+                            />
+                        </div>
                     </template>
                 </Card>
 

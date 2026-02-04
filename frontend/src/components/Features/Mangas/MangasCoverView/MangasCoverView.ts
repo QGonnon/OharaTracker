@@ -1,16 +1,35 @@
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, computed } from "vue";
 import Menu from "../../../Common/Menu/Menu.vue";
 import MangaCard from "../../../Shared/MangaCard/MangaCard.vue";
+import Button from "primevue/button";
 import type { Manga } from "../../../../types/index";
 
 export default defineComponent({
     components: {
         Menu,
         MangaCard,
+        Button,
     },
     setup() {
         const mangas = ref<Manga[]>([]);
         const loading = ref<boolean>(true);
+        const filterType = ref<'all' | 'anime' | 'lecture'>('all');
+
+        const isAnime = (manga: Manga): boolean => {
+            const animeSources = ['moviedb', 'asura'];
+            return animeSources.includes((manga.site || '').toLowerCase());
+        };
+
+        const displayedMangas = computed(() => {
+            if (filterType.value === 'all') {
+                return mangas.value;
+            } else if (filterType.value === 'anime') {
+                return mangas.value.filter(m => isAnime(m));
+            } else if (filterType.value === 'lecture') {
+                return mangas.value.filter(m => !isAnime(m));
+            }
+            return mangas.value;
+        });
 
         const fetchMangas = async () => {
             const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
@@ -19,13 +38,12 @@ export default defineComponent({
                 const response = await fetch(chapterUrl);
                 const chapters = await response.json() || [];
                 
-                // Exclude MovieDB (anime) entries so only mangas remain
-                const filteredChapters = (chapters || []).filter((c: any) => {
-                    const site = (c.site || '').toString().toLowerCase();
-                    return site !== 'moviedb';
+                // Keep all entries (both anime and manga)
+                const allChapters = (chapters || []).filter((c: any) => {
+                    return c !== null;
                 });
 
-                const mangaList: Manga[] = filteredChapters.map((chapter: any) => ({
+                const mangaList: Manga[] = allChapters.map((chapter: any) => ({
                     id: chapter.chapterId,
                     title: chapter.title,
                     author: chapter.author,
@@ -38,6 +56,7 @@ export default defineComponent({
                     chapterUrl: chapter.chapterUrl,
                     mangaUrl: chapter.mangaUrl,
                     site: chapter.site,
+                    type: chapter.type,
                 }));
 
                 // Dédupliquer par titre normalisé - garder l'entrée avec le chapitre le plus récent
@@ -84,6 +103,6 @@ export default defineComponent({
 
         onMounted(fetchMangas);
 
-        return { mangas, loading };
+        return { mangas, loading, filterType, displayedMangas, isAnime };
     },
 });
