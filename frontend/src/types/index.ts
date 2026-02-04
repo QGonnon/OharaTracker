@@ -16,6 +16,8 @@ export interface Manga {
   coverUrl?: string;
   lastChapter?: string;
   userLastChapter?: string;
+  lastEpisode?: string;
+  userLastEpisode?: string;
   readingStatus?: string;
   chapterUrl: string;
   mangaUrl: string;

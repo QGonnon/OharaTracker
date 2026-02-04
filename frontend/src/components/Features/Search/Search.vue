@@ -5,10 +5,10 @@
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          <i class="pi pi-search mr-3"></i>Recherche de Mangas
+          <i class="pi pi-search mr-3"></i>Recherche
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
-          Trouvez vos mangas préférés parmi notre collection
+          Trouvez vos mangas et animes préférés parmi notre collection
         </p>
       </div>
 
@@ -19,7 +19,7 @@
             <i class="pi pi-search" />
             <InputText
               v-model="searchQuery"
-              placeholder="Rechercher un manga par titre, auteur ou genre..."
+              placeholder="Rechercher un manga ou anime par titre, auteur ou genre..."
               class="w-full"
               @keyup.enter="performSearch"
             />
@@ -46,6 +46,39 @@
             text
             @click="resetFilters"
           />
+        </div>
+
+        <!-- Type Filter (Anime/Lecture) -->
+        <div class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+          <label class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 block">
+            Filtrer par type
+          </label>
+          <div class="flex gap-2">
+            <Button
+              label="Tous"
+              :severity="filterType === 'all' ? 'info' : 'secondary'"
+              class="!px-3"
+              text
+              rounded
+              @click="filterType = filterType === 'all' ? 'all' : 'all'"
+            />
+            <Button
+              label="Anime"
+              :severity="filterType === 'anime' ? 'info' : 'secondary'"
+              class="!px-3"
+              text
+              rounded
+              @click="filterType = filterType === 'anime' ? 'all' : 'anime'"
+            />
+            <Button
+              label="Lecture"
+              :severity="filterType === 'lecture' ? 'info' : 'secondary'"
+              class="!px-3"
+              text
+              rounded
+              @click="filterType = filterType === 'lecture' ? 'all' : 'lecture'"
+            />
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

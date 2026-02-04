@@ -33,7 +33,7 @@ export default defineComponent({
     return {
       searchQuery: "",
       searchResults: [] as Manga[],
-      allMangas: [] as Manga[], // Tous les mangas de la BDD
+      allMangas: [] as Manga[], // Tous les mangas et animes de la BDD
       isLoading: false,
       hasSearched: false,
       viewMode: "grid" as "grid" | "list",
@@ -44,6 +44,7 @@ export default defineComponent({
       selectedStatus: null as string | null,
       selectedYear: null as number | null,
       sortBy: "popularity" as string,
+      filterType: "all" as "all" | "anime" | "lecture",
       
       // Filter options
       genres: [] as string[], // Sera rempli dynamiquement depuis la BDD
@@ -80,6 +81,15 @@ export default defineComponent({
     if (query) {
       this.searchQuery = query;
     }
+    
+    // Load filter type from URL if present (anime or lecture)
+    const type = urlParams.get("type");
+    if (type === "anime") {
+      this.filterType = "anime";
+    } else if (type === "lecture") {
+      this.filterType = "lecture";
+    }
+    
     this.performSearch();
   },
   watch: {
@@ -109,6 +119,9 @@ export default defineComponent({
     sortBy() {
       this.performSearch();
     },
+    filterType() {
+      this.performSearch();
+    },
   },
   computed: {
     visibleResults(): Manga[] {
@@ -122,18 +135,13 @@ export default defineComponent({
         const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
         const response = await fetch(chapterUrl);
         const chapters = await response.json() || [];
-        // Exclude anime entries (MovieDB or items marked as ANIME)
-        const mangaOnly = (chapters || []).filter((chapter: any) => {
+        // Get both anime and manga entries
+        const allChapters = (chapters || []).filter((chapter: any) => {
           if (!chapter) return false;
-          const site = (chapter.site || '').toString().toLowerCase();
-          const type = (chapter.type || '').toString().toUpperCase();
-          const theme = (chapter.theme || '').toString().toLowerCase();
-          // exclude AniList entries or items explicitly marked as ANIME or with theme containing 'anime'
-          if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) return false;
           return true;
         });
 
-        const allMangasWithDuplicates = mangaOnly.map((chapter: any) => ({
+        const allMangasWithDuplicates = allChapters.map((chapter: any) => ({
           id: chapter.chapterId,
           title: chapter.title,
           author: chapter.author,
@@ -146,11 +154,12 @@ export default defineComponent({
           chapterUrl: chapter.chapterUrl,
           mangaUrl: chapter.mangaUrl,
           site: chapter.site,
+          type: chapter.type,
         }));
         
         // Dédupliquer les mangas par titre
         const mangaMap = new Map<string, Manga>();
-        allMangasWithDuplicates.forEach((manga: Manga) => {
+        allMangasWithDuplicates.forEach((manga: any) => {
           const normalizedTitle = manga.title?.toLowerCase().trim();
           if (normalizedTitle && !mangaMap.has(normalizedTitle)) {
             mangaMap.set(normalizedTitle, manga);
@@ -162,7 +171,7 @@ export default defineComponent({
         // Extraire tous les genres uniques depuis les mangas
         this.extractGenres();
       } catch (error) {
-        console.error("❌ Erreur lors du chargement des mangas :", error);
+        console.error("❌ Erreur lors du chargement des mangas/animes :", error);
       }
     },
 
@@ -195,6 +204,23 @@ export default defineComponent({
       try {
         // Filter mangas based on search criteria
         let results = [...this.allMangas];
+        
+        // Filter by type (Anime/Lecture)
+        if (this.filterType === "anime") {
+          results = results.filter(manga => {
+            const site = (manga.site || '').toString().toLowerCase();
+            const type = (manga.type || '').toString().toUpperCase();
+            const theme = (manga.theme || '').toString().toLowerCase();
+            return site === 'moviedb' || type === 'ANIME' || theme.includes('anime');
+          });
+        } else if (this.filterType === "lecture") {
+          results = results.filter(manga => {
+            const site = (manga.site || '').toString().toLowerCase();
+            const type = (manga.type || '').toString().toUpperCase();
+            const theme = (manga.theme || '').toString().toLowerCase();
+            return !(site === 'moviedb' || type === 'ANIME' || theme.includes('anime'));
+          });
+        }
         
         // Text search (title, author, description)
         if (this.searchQuery) {
@@ -255,6 +281,7 @@ export default defineComponent({
       this.selectedStatus = null;
       this.selectedYear = null;
       this.sortBy = "popularity";
+      this.filterType = "all";
       this.searchResults = [];
       this.hasSearched = false;
       this.totalResults = 0;
@@ -262,7 +289,16 @@ export default defineComponent({
 
     goToManga(manga: Manga) {
       const cleanTitle = slugify(manga.title);
-      this.$router.push(`/manga/${cleanTitle}`);
+      const site = (manga.site || '').toString().toLowerCase();
+      const type = (manga.type || '').toString().toUpperCase();
+      const theme = (manga.theme || '').toString().toLowerCase();
+      
+      // Determine if it's anime or manga
+      if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) {
+        this.$router.push(`/anime/${cleanTitle}`);
+      } else {
+        this.$router.push(`/manga/${cleanTitle}`);
+      }
     },
 
     getCoverUrl(manga: Manga): string {

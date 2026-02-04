@@ -6,7 +6,6 @@ import { useAuthStore } from '../store/auth.module'
 import MangasCoverView from '../components/Features/Mangas/MangasCoverView/MangasCoverView.vue'
 import AnimesCoverView from '../components/Features/Animes/AnimesCoverView/AnimesCoverView.vue'
 import AnimeInfo from '../components/Features/Animes/AnimeInfo/AnimeInfo.vue'
-import AnimesSearch from '../components/Features/Animes/Search/AnimesSearch.vue'
 import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
@@ -73,8 +72,7 @@ const routes = [
   },
   {
     path: '/search/anime',
-    name: 'SearchAnime',
-    component: AnimesSearch,
+    redirect: '/search',
   },
   {
     path: '/profile',

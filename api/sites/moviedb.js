@@ -59,6 +59,14 @@ async function fetchPopularAnime() {
                         continue;
                     }
 
+                    // Filter out hentai content
+                    const title = (show.name || show.original_name || '').toLowerCase();
+                    const overview = (show.overview || '').toLowerCase();
+                    const hentaiKeywords = ['hentai', 'xxx'];
+                    if (hentaiKeywords.some(keyword => title.includes(keyword) || overview.includes(keyword))) {
+                        continue;
+                    }
+
                     const anime = {
                         id: show.id,
                         title: show.name || show.original_name || `Anime ${show.id}`,

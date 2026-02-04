@@ -61,32 +61,27 @@ export default defineComponent({
       const items = [
         {
           label: 'Anime',
-          items: [
-            { label: 'Dernières sorties', command: () => router.push('/animes/new') },
-            { label: 'Recherche', command: () => router.push('/search/anime') },
-            { label: 'Bibliothèque complète', command: () => router.push('/animes/library') },
-          ]
+          command: () => router.push('/animes/new'),
         },
         {
           label: 'Mangas',
-          items: [
-            { label: 'Derniers chapitres', command: () => router.push('/new') },
-            { label: 'Ma bibliothèque', command: () => router.push('/list') },
-            { label: 'Recherche', command: () => router.push('/search') },
-          ]
+          command: () => router.push('/new'),
         },
+        { label: 'Recherche', command: () => router.push('/search') },
       ]
 
       if (isLoggedIn.value) {
         items.push({
           label: displayName.value,
+          command: async () => {},
           items: [
             { label: 'Mon profil', command: () => router.push('/profile') },
+            { label: 'Ma bibliothèque', command: () => router.push('/list') },
             isLoggedIn.value && authStore.currentUser?.role === 'moderator' ? { label: 'Modération', command: () => router.push('/moderator') } : null,
             isLoggedIn.value && authStore.currentUser?.role === 'admin' ? { label: 'Administration', command: () => router.push('/admin') } : null,
             { label: 'Se déconnecter', command: handleLogout },
-          ].filter((item): item is { label: string; command: () => Promise<void | NavigationFailure | undefined> } => item !== null)
-        })
+          ].filter((item): item is { label: string; command: () => Promise<void | NavigationFailure | undefined>; items?: any[] } => item !== null)
+        } as any)
       }
 
       return items
