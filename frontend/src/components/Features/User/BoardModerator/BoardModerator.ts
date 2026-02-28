@@ -9,7 +9,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    UserService.getModeratorBoard().then
+    UserService.getModeratorBoard().then(
       (response) => {
         this.content = response.data;
       },

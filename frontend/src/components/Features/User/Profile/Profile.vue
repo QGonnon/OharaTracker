@@ -52,13 +52,13 @@
             <h3 class="text-lg font-bold text-slate-900">Actions rapides</h3>
             <button
               class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-indigo-600 text-white font-semibold py-3 shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition"
-              @click="$router.push('/')"
+              @click="$router.push({ name: 'Home' })"
             >
               Retour à l'accueil
             </button>
             <button
               class="w-full inline-flex justify-center items-center gap-2 rounded-xl border border-slate-200 text-slate-800 font-semibold py-3 hover:border-indigo-200 hover:bg-indigo-50 transition"
-              @click="$router.push('/user')"
+              @click="$router.push({ name: 'User' })"
             >
               Voir tableau utilisateur
             </button>

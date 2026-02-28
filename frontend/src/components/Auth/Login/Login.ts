@@ -38,7 +38,7 @@ export default defineComponent({
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push("/profile");
+      this.$router.push({ name: 'Profile' });
     }
   },
   mounted() {
@@ -51,7 +51,7 @@ export default defineComponent({
 
       authStore.login(user).then(
         () => {
-          this.$router.push("/profile");
+          this.$router.push({ name: 'Profile' });
         },
         (error:any) => {
           this.loading = false;
@@ -101,7 +101,7 @@ export default defineComponent({
         if (response && response.credential) {
           const authStore = useAuthStore();
           await authStore.googleLogin(response.credential);
-          this.$router.push("/profile");
+          this.$router.push({ name: 'Profile' });
         }
       } catch (error: any) {
         this.loading = false;

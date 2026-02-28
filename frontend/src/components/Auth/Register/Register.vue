@@ -64,7 +64,7 @@
                 <div class="pt-2">
                   <button
                     type="button"
-                    @click="$router.push('/login')"
+                    @click="$router.push({ name: 'Login' })"
                     class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-200 text-slate-700 font-semibold py-3 hover:bg-slate-300 transition"
                   >
                     <span>Déjà inscrit ? Se connecter</span>

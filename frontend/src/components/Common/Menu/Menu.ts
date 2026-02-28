@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import Menubar from 'primevue/menubar'
 import { useRouter, type NavigationFailure } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
+import type { MenuItem } from 'primevue/menuitem'
 
 export default defineComponent({
   name: 'Menu',
@@ -35,11 +36,11 @@ export default defineComponent({
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const displayName = computed(() => authStore.currentUser?.displayName || authStore.currentUser?.username || authStore.currentUser?.name || '')
     
-    const goLogin = () => router.push('/login')
+    const goLogin = () => router.push({ name: 'Login' })
 
     const handleLogout = async () => {
       await authStore.logout()
-      router.push('/')
+      router.push({ name: 'Login' })
     }
 
     // Theme handling (persisted in localStorage). Uses the `.dark-theme` root class.
@@ -57,30 +58,21 @@ export default defineComponent({
       }
     }
 
-    const menuItems = computed(() => {
-      const items = [
-        {
-          label: 'Dernière sorties', command: () => router.push('/new')
-        },
-        { label: 'Bibliothèque', command: () => router.push('/search') },
-      ]
-
-      if (isLoggedIn.value) {
-        items.push({
-          label: displayName.value,
-          command: async () => {},
-          items: [
-            { label: 'Mon profil', command: () => router.push('/profile') },
-            { label: 'Ma bibliothèque', command: () => router.push('/list') },
-            isLoggedIn.value && authStore.currentUser?.role === 'moderator' ? { label: 'Modération', command: () => router.push('/moderator') } : null,
-            isLoggedIn.value && authStore.currentUser?.role === 'admin' ? { label: 'Administration', command: () => router.push('/admin') } : null,
-            { label: 'Se déconnecter', command: handleLogout },
-          ].filter((item): item is { label: string; command: () => Promise<void | NavigationFailure | undefined>; items?: any[] } => item !== null)
-        } as any)
+    const menuItems:MenuItem[] =  [
+      {
+        label: 'Dernière sorties', command: () => router.push({ name: 'Home' })
+      },
+      { label: 'Bibliothèque', command: () => router.push({ name: 'Search' }) },
+      {
+        label: displayName.value,
+        visible: isLoggedIn.value,
+        items: [
+          { label: 'Mon profil', command: () => router.push({ name: 'Profile' }) },
+          { label: 'Ma bibliothèque', command: () => router.push({ name: 'Library' }) },
+          { label: 'Se déconnecter', command: handleLogout },
+        ]
       }
-
-      return items
-    })
+    ]
 
     return {
       menuItems,

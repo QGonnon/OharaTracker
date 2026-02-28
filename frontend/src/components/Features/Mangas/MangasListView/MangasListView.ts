@@ -68,7 +68,7 @@ export default defineComponent({
                 error.value = null;
                 
                 if (!authStore.isLoggedIn || !authStore.user?.accessToken) {
-                    await router.push('/login')
+                    await router.push({ name: 'Login' });
                     return
                 }
 
