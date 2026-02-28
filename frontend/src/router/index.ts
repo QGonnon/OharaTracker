@@ -18,9 +18,19 @@ import Profile from '../components/Features/User/Profile/Profile.vue'
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/home',
+    name: 'Home',
+    component: Home,
+  },
+  {
     path: '/new',
     name: 'Nouveautés',
     component: MangasCoverView,
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search,
   },
   {
     path: '/manga/:name',
@@ -44,25 +54,19 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-  },
-  {
-    path: '/list',
-    name: 'Library',
-    component: MangasListView,
-  },
-  {
-    path: '/search',
-    name: 'Search',
-    component: Search,
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    
+    path: '/user',
+    children: [
+      {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+      },
+      {
+        path: '/list',
+        name: 'Library',
+        component: MangasListView,
+      },
+    ]
   },
   // {
   //   path: "/admin",
@@ -93,19 +97,19 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   // Only protect restricted pages; keep the rest public
   const protectedPages = [
-    '/profile', 
-    '/admin', 
-    '/mod', 
-    '/user', 
-    '/list'
+    'Profile', 
+    'Admin', 
+    'Moderator', 
+    'User', 
+    'Library'
   ];
-  const requiresAuth = protectedPages.includes(to.path);
+  const requiresAuth = protectedPages.includes(to.name?.toString() || '');
 
   const authStore = useAuthStore();
   const loggedIn = authStore.isLoggedIn;
 
   if (requiresAuth && !loggedIn) {
-    next('/login');
+    next('/auth/login');
     return;
   }
 
