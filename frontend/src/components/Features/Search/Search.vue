@@ -62,7 +62,7 @@
               @click="filterType = filterType === 'all' ? 'all' : 'all'"
             />
             <Button
-              label="Anime"
+              label="Série"
               :severity="filterType === 'anime' ? 'info' : 'secondary'"
               class="!px-3"
               text

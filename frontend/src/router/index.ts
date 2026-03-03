@@ -37,6 +37,13 @@ const routes: RouteRecordRaw[] = [
     name: 'MangaInfo',
     component: MangaInfo,
     props: true,
+    
+  },
+  {
+    path: '/anime/:name',
+    name: 'AnimeInfo',
+    component: MangaInfo,
+    props: true,
   },
   {
     path: '/auth',

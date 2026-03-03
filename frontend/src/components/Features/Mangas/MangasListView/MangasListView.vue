@@ -5,7 +5,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">Ma Bibliothèque</h1>
+                <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">Mes Suivis</h1>
                 <p class="text-slate-600 dark:text-slate-400">{{ displayedMangas.length }} Lecture{{ displayedMangas.length !== 1 ? 's' : '' }}</p>
                 <p class="text-sm text-slate-500 dark:text-slate-400">(total raw: {{ mangas.length }}, filtered: {{ filteredMangas.length }})</p>
             </div>
@@ -46,7 +46,7 @@
                                 <div  class="flex items-center gap-2">
                                     <label class="text-sm text-slate-500 dark:text-slate-400">Filtrer:</label>
                                     <Button
-                                        label="Anime"
+                                        label="Série"
                                         :severity="filterType === 'anime' ? 'info' : 'secondary'"
                                         class="!px-3"
                                         text

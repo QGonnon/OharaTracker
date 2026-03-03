@@ -68,7 +68,7 @@ export default defineComponent({
         visible: isLoggedIn.value,
         items: [
           { label: 'Mon profil', command: () => router.push({ name: 'Profile' }) },
-          { label: 'Ma bibliothèque', command: () => router.push({ name: 'Library' }) },
+          { label: 'Mes Suivis', command: () => router.push({ name: 'Library' }) },
           { label: 'Se déconnecter', command: handleLogout },
         ]
       }
