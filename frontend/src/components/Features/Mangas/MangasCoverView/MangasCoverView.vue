@@ -43,7 +43,7 @@
             <span v-else-if="filterType === 'lecture'">Aucune lecture trouvée dans les derniers chapitres.</span>
           </p>
         </div>
-        <div v-else v-for="manga in displayedMangas" :key="manga.id" class="mb-6">
+        <div v-else v-for="manga in displayedMangas" :key="manga.id" class="mb-6 max-w-xs">
           <MangaCard :manga="manga" />
         </div>
       </div>

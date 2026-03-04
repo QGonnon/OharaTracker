@@ -1,18 +1,45 @@
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, onUnmounted } from "vue";
 import Menu from "../../Common/Menu/Menu.vue";
 import MangaCard from "../../Shared/MangaCard/MangaCard.vue";
+import Carousel from "primevue/carousel";
+import { slugify } from '../../../utils.js'
 
 export default defineComponent({
   name: "Home",
   components: {
     Menu,
     MangaCard,
+    Carousel,
   },
   setup() {
     const featuredMangas = ref<any[]>([]);
     const featuredAnimes = ref<any[]>([]);
     const latestChapters = ref<any[]>([]);
     const loading = ref(true);
+    const currentPage = ref(0);
+    const windowWidth = ref(window.innerWidth);
+
+    const handleResize = () => { windowWidth.value = window.innerWidth; };
+    onMounted(() => window.addEventListener('resize', handleResize));
+    onUnmounted(() => window.removeEventListener('resize', handleResize));
+
+    const currentNumVisible = computed(() => {
+      const w = windowWidth.value;
+      if (w <= 480) return 1;
+      if (w <= 768) return 2;
+      if (w <= 1024) return 3;
+      if (w <= 1400) return 4;
+      return 7;
+    });
+
+    const centerIndex = computed(() => {
+      const numVisible = currentNumVisible.value;
+      if (numVisible % 2 === 0) return -1;
+      const len = featuredMangas.value.length;
+      const half = Math.floor(numVisible / 2);
+      if (len === 0) return half;
+      return ((currentPage.value + half) % len + len) % len;
+    });
 
     const fetchMangas = async () => {
       const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
@@ -69,7 +96,7 @@ export default defineComponent({
           if (!animeMap.has(key)) animeMap.set(key, a);
         });
 
-        featuredMangas.value = Array.from(mangaMap.values()).slice(0, 6);
+        featuredMangas.value = Array.from(mangaMap.values()).slice(0, 15);
         featuredAnimes.value = Array.from(animeMap.values()).slice(0, 6);
       } catch (err) {
         console.error("Erreur fetching mangas:", err);
@@ -78,8 +105,15 @@ export default defineComponent({
       }
     };
 
+    const responsiveOptions = [
+      { breakpoint: "1400px", numVisible: 4, numScroll: 1 },
+      { breakpoint: "1024px", numVisible: 3, numScroll: 1 },
+      { breakpoint: "768px", numVisible: 2, numScroll: 1 },
+      { breakpoint: "480px", numVisible: 1, numScroll: 1 },
+    ];
+
     onMounted(fetchMangas);
 
-    return { featuredMangas, featuredAnimes, latestChapters, loading };
+    return { featuredMangas, featuredAnimes, latestChapters, loading, responsiveOptions, slugify, currentPage, centerIndex };
   },
 });

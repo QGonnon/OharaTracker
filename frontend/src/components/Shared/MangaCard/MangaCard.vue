@@ -1,5 +1,5 @@
 <template>
-  <Card class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer max-w-xs">
+  <Card class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer w-full h-full">
     <!-- Image -->
     <template #header>
       <div class="aspect-[3/4] overflow-hidden">
@@ -11,7 +11,6 @@
       </div>
     </template>
 
-    <!-- Titre + sous-titre -->
     <template #title>
       <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white px-2 truncate">
         {{ manga.title }}
