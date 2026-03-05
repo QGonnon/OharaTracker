@@ -190,6 +190,210 @@
 	color: var(--text-color);
 }
 
+/* ══════════════════════════════════════════════════
+   KEYFRAMES
+   ══════════════════════════════════════════════════ */
+
+@keyframes navbarSlideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-100%);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes logoShimmer {
+	0%   { background-position: 0% 50%; }
+	50%  { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
+@keyframes navItemFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes underlinePop {
+	0%   { transform: translateX(-50%) scaleX(0); }
+	60%  { transform: translateX(-50%) scaleX(1.12); }
+	100% { transform: translateX(-50%) scaleX(1); }
+}
+
+/* ── Topbar base ────────────────────────────────── */
+.layout-topbar {
+	position: fixed;
+	backdrop-filter: blur(14px);
+	-webkit-backdrop-filter: blur(14px);
+	background: rgba(255, 255, 255, 0.80) !important;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+	transition: padding 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+	animation: navbarSlideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Ombre renforcée quand scrollé */
+.layout-topbar.shadow-md {
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dark-theme .layout-topbar {
+	background: rgba(15, 15, 25, 0.82) !important;
+	border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark-theme .layout-topbar.shadow-md {
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Logo ───────────────────────────────────────── */
+.layout-topbar h1 a {
+	background: linear-gradient(270deg, #4f46e5, #818cf8, #c4b5fd, #4f46e5);
+	background-size: 300% 300%;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-decoration: none;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	animation: logoShimmer 6s ease infinite;
+	transition: opacity 0.2s ease, letter-spacing 0.2s ease;
+}
+
+.layout-topbar h1 a:hover {
+	opacity: 0.85;
+	letter-spacing: 0;
+}
+
+/* ── PrimeVue Menubar reset (v4 class names) ────── */
+.layout-topbar .p-menubar {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+}
+
+.layout-topbar .p-menubar-root-list {
+	gap: 0.15rem;
+}
+
+/* ── Nav items — stagger fade-in au chargement ──── */
+.layout-topbar .p-menubar-item {
+	animation: navItemFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.layout-topbar .p-menubar-item:nth-child(1) { animation-delay: 0.1s; }
+.layout-topbar .p-menubar-item:nth-child(2) { animation-delay: 0.18s; }
+.layout-topbar .p-menubar-item:nth-child(3) { animation-delay: 0.26s; }
+
+/* ── Nav items — content wrapper ────────────────── */
+.layout-topbar .p-menubar-item-content {
+	position: relative;
+	border-radius: 8px;
+	overflow: hidden;
+	transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.layout-topbar .p-menubar-item-content::after {
+	content: '';
+	position: absolute;
+	bottom: 4px;
+	left: 50%;
+	transform: translateX(-50%) scaleX(0);
+	width: 55%;
+	height: 2px;
+	border-radius: 9999px;
+	background: linear-gradient(90deg, #4f46e5, #818cf8);
+	transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+	pointer-events: none;
+}
+
+/* ── Nav items — link ───────────────────────────── */
+.layout-topbar .p-menubar-item-link {
+	padding: 0.45rem 0.85rem !important;
+	font-weight: 600 !important;
+	font-size: 0.9rem !important;
+	color: var(--text-color) !important;
+	text-decoration: none;
+	background: transparent !important;
+	transition: color 0.2s ease !important;
+}
+
+/* ── Nav items — hover ──────────────────────────── */
+.layout-topbar .p-menubar-item:not(.p-disabled) > .p-menubar-item-content:hover {
+	background: rgba(79, 70, 229, 0.08) !important;
+	transform: translateY(-1px);
+}
+
+.layout-topbar .p-menubar-item:not(.p-disabled) > .p-menubar-item-content:hover .p-menubar-item-link {
+	color: #4f46e5 !important;
+}
+
+.layout-topbar .p-menubar-item:not(.p-disabled) > .p-menubar-item-content:hover::after {
+	transform: translateX(-50%) scaleX(1);
+}
+
+.dark-theme .layout-topbar .p-menubar-item:not(.p-disabled) > .p-menubar-item-content:hover {
+	background: rgba(129, 140, 248, 0.12) !important;
+}
+
+.dark-theme .layout-topbar .p-menubar-item:not(.p-disabled) > .p-menubar-item-content:hover .p-menubar-item-link {
+	color: #818cf8 !important;
+}
+
+/* ── Nav items — active page ────────────────────── */
+.layout-topbar .nav-item--active > .p-menubar-item-content {
+	background: rgba(79, 70, 229, 0.06) !important;
+}
+
+.layout-topbar .nav-item--active > .p-menubar-item-content .p-menubar-item-link {
+	color: #4f46e5 !important;
+}
+
+.layout-topbar .nav-item--active > .p-menubar-item-content::after {
+	animation: underlinePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.dark-theme .layout-topbar .nav-item--active > .p-menubar-item-content {
+	background: rgba(129, 140, 248, 0.10) !important;
+}
+
+.dark-theme .layout-topbar .nav-item--active > .p-menubar-item-content .p-menubar-item-link {
+	color: #818cf8 !important;
+}
+
+/* ── Theme toggle button ────────────────────────── */
+.nav-theme-toggle {
+	display: grid;
+	place-items: center;
+	width: 2.1rem;
+	height: 2.1rem;
+	border-radius: 8px;
+	border: 1px solid var(--surface-border);
+	background: transparent;
+	color: var(--text-color);
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-theme-toggle:hover {
+	background: rgba(79, 70, 229, 0.08);
+	border-color: #4f46e5;
+	color: #4f46e5;
+	transform: rotate(15deg);
+}
+
+.dark-theme .nav-theme-toggle:hover {
+	background: rgba(129, 140, 248, 0.12);
+	border-color: #818cf8;
+	color: #818cf8;
+}
+
 /* PrimeVue components global dark overrides for better contrast */
 .dark-theme .p-card,
 .dark-theme .p-message,

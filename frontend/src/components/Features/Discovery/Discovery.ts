@@ -5,7 +5,7 @@ import Carousel from "primevue/carousel";
 import { slugify } from '../../../utils.js'
 
 export default defineComponent({
-  name: "Home",
+  name: "Discovery",
   components: {
     Menu,
     MangaCard,
@@ -114,61 +114,6 @@ export default defineComponent({
 
     onMounted(fetchMangas);
 
-    const stats = [
-      { icon: '📚', value: '12 400+', label: 'Mangas disponibles' },
-      { icon: '🎬', value: '3 200+', label: 'Animes référencés' },
-      { icon: '👥', value: '48 000+', label: 'Utilisateurs actifs' },
-      { icon: '⭐', value: '980K+', label: 'Chapitres suivis' },
-    ];
-
-    const features = [
-      {
-        icon: '🔍',
-        title: 'Recherche avancée',
-        desc: 'Trouvez n\'importe quel manga ou anime en quelques secondes grâce à notre moteur de recherche intelligent.',
-        detail: 'Filtrez par genre, auteur, statut, note et bien plus encore.',
-      },
-      {
-        icon: '📌',
-        title: 'Suivi personnalisé',
-        desc: 'Gardez une trace de vos lectures et visionnages avec des listes entièrement personnalisables.',
-        detail: 'Créez des listes privées ou publiques, ajoutez des notes personnelles.',
-      },
-      {
-        icon: '🔔',
-        title: 'Notifications',
-        desc: 'Soyez alerté dès qu\'un nouveau chapitre ou épisode est disponible pour vos séries favorites.',
-        detail: 'Notifications par email, push ou dans l\'application selon vos préférences.',
-      },
-      {
-        icon: '🌐',
-        title: 'Multi-sources',
-        desc: 'Agrégez le contenu de plusieurs plateformes et sources dans une interface unifiée.',
-        detail: 'Compatible avec les principales plateformes manga et streaming.',
-      },
-      {
-        icon: '📊',
-        title: 'Statistiques',
-        desc: 'Visualisez vos habitudes de lecture avec des graphiques et rapports détaillés.',
-        detail: 'Temps de lecture, genres préférés, progression mensuelle et plus.',
-      },
-      {
-        icon: '🤝',
-        title: 'Communauté',
-        desc: 'Échangez avec d\'autres passionnés, partagez vos avis et découvrez de nouvelles séries.',
-        detail: 'Forums, critiques, classements communautaires et recommandations.',
-      },
-    ];
-
-    const timeline = [
-      { date: 'Mars 2026', title: 'Mise à jour majeure v3.0', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc feugiat mi a tellus consequat imperdiet.' },
-      { date: 'Fév. 2026', title: 'Nouveau moteur de recherche', text: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.' },
-      { date: 'Jan. 2026', title: 'Intégration multi-sources', text: 'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero.' },
-      { date: 'Déc. 2025', title: 'Lancement de la bêta', text: 'Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.' },
-    ];
-
-    const marqueTags = ['Manga', 'Anime', 'Shonen', 'Seinen', 'Shojo', 'Isekai', 'Fantasy', 'Action', 'Romance', 'Thriller', 'Sci-Fi', 'Horror'];
-
-    return { featuredMangas, featuredAnimes, latestChapters, loading, responsiveOptions, slugify, currentPage, centerIndex, stats, features, timeline, marqueTags };
+    return { featuredMangas, featuredAnimes, latestChapters, loading, responsiveOptions, slugify, currentPage, centerIndex };
   },
 });

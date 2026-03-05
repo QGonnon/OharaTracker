@@ -8,6 +8,7 @@ import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
 import Home from '../components/Features/Home/Home.vue'
+import Discovery from '../components/Features/Discovery/Discovery.vue'
 import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
 import Search from '../components/Features/Search/Search.vue'
 import Profile from '../components/Features/User/Profile/Profile.vue'
@@ -17,6 +18,11 @@ import Profile from '../components/Features/User/Profile/Profile.vue'
 // const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.vue")
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/discovery',
+    name: 'Découverte',
+    component: Discovery,
+  },
   {
     path: '/home',
     name: 'Home',

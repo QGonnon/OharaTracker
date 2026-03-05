@@ -1,6 +1,6 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import Menubar from 'primevue/menubar'
-import { useRouter, type NavigationFailure } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
 import type { MenuItem } from 'primevue/menuitem'
 
@@ -9,6 +9,7 @@ export default defineComponent({
   components: { Menubar },
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const authStore = useAuthStore()
     const isShrunk = ref(false)
     const personaOpen = ref(false)
@@ -58,21 +59,28 @@ export default defineComponent({
       }
     }
 
-    const menuItems:MenuItem[] =  [
+    const menuItems = computed<MenuItem[]>(() => [
       {
-        label: 'Dernière sorties', command: () => router.push({ name: 'Home' })
+        label: 'Découverte',
+        class: route.name === 'Découverte' ? 'nav-item--active' : '',
+        command: () => router.push({ name: 'Découverte' }),
       },
-      { label: 'Bibliothèque', command: () => router.push({ name: 'Search' }) },
+      {
+        label: 'Bibliothèque',
+        class: route.name === 'Search' ? 'nav-item--active' : '',
+        command: () => router.push({ name: 'Search' }),
+      },
       {
         label: displayName.value,
         visible: isLoggedIn.value,
+        class: ['Profile', 'Library'].includes(route.name as string) ? 'nav-item--active' : '',
         items: [
           { label: 'Mon profil', command: () => router.push({ name: 'Profile' }) },
           { label: 'Mes Suivis', command: () => router.push({ name: 'Library' }) },
           { label: 'Se déconnecter', command: handleLogout },
-        ]
-      }
-    ]
+        ],
+      },
+    ])
 
     return {
       menuItems,

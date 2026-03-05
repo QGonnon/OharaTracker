@@ -50,4 +50,5 @@
 import component from './Menu.ts'
 export default component
 </script>
-<link rel="stylesheet" href="Menu.css">
+
+<style src="./Menu.css"></style>
