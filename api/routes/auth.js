@@ -187,4 +187,151 @@ router.post('/google', async (req, res) => {
     }
 });
 
+// Middleware d'authentification JWT
+function authenticate(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Token manquant' });
+    }
+    const token = authHeader.replace('Bearer ', '');
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        req.user = payload;
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Token invalide ou expiré' });
+    }
+}
+
+// Récupérer les données de l'utilisateur connecté
+router.get('/me', authenticate, async (req, res) => {
+    const username = req.user.username;
+    const db = await openDb();
+    try {
+        const user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE name = ?', [username]);
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur introuvable' });
+        }
+        res.json({
+            username: user.name,
+            email: user.email,
+            displayName: user.display_name,
+            isGoogleUser: !!user.google_id,
+        });
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération du profil:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    } finally {
+        await db.close();
+    }
+});
+
+// Mise à jour du profil
+router.put('/profile', authenticate, async (req, res) => {
+    const { username, email, displayName } = req.body;
+    const currentUsername = req.user.username;
+
+    if (!username && !email && !displayName) {
+        return res.status(400).json({ message: 'Aucun champ à mettre à jour' });
+    }
+
+    const db = await openDb();
+
+    try {
+        const user = await db.get('SELECT name, email, display_name FROM Client WHERE name = ?', [currentUsername]);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur introuvable' });
+        }
+
+        const newUsername = username || user.name;
+        const newEmail = email || user.email;
+        const newDisplayName = displayName || user.display_name;
+
+        // Vérifier les conflits si le nom ou l'email change
+        if (newUsername !== currentUsername) {
+            const conflict = await db.get('SELECT name FROM Client WHERE name = ?', [newUsername]);
+            if (conflict) {
+                return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris' });
+            }
+        }
+        if (newEmail !== user.email) {
+            const conflict = await db.get('SELECT name FROM Client WHERE email = ? AND name != ?', [newEmail, currentUsername]);
+            if (conflict) {
+                return res.status(400).json({ message: 'Cette adresse email est déjà utilisée' });
+            }
+        }
+
+        // Mettre à jour les FK si le username change
+        if (newUsername !== currentUsername) {
+            await db.run('UPDATE ClientCategoryAssignment SET name_client = ? WHERE name_client = ?', [newUsername, currentUsername]);
+        }
+
+        await db.run(
+            'UPDATE Client SET name = ?, email = ?, display_name = ? WHERE name = ?',
+            [newUsername, newEmail, newDisplayName, currentUsername]
+        );
+
+        // Générer un nouveau token avec le username mis à jour
+        const newToken = jwt.sign(
+            { username: newUsername, email: newEmail },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            username: newUsername,
+            email: newEmail,
+            displayName: newDisplayName,
+            accessToken: newToken,
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la mise à jour du profil:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la mise à jour du profil' });
+    } finally {
+        await db.close();
+    }
+});
+
+// Changement de mot de passe
+router.post('/change-password', authenticate, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const username = req.user.username;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: 'Les deux mots de passe sont requis' });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'Le nouveau mot de passe doit contenir au moins 6 caractères' });
+    }
+
+    const db = await openDb();
+
+    try {
+        const user = await db.get('SELECT name, password FROM Client WHERE name = ?', [username]);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur introuvable' });
+        }
+
+        const isValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isValid) {
+            return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await db.run('UPDATE Client SET password = ? WHERE name = ?', [hashedPassword, username]);
+
+        res.json({ message: 'Mot de passe modifié avec succès' });
+
+    } catch (error) {
+        console.error('❌ Erreur lors du changement de mot de passe:', error);
+        res.status(500).json({ message: 'Erreur serveur lors du changement de mot de passe' });
+    } finally {
+        await db.close();
+    }
+});
+
 export default router;

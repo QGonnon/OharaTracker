@@ -227,6 +227,8 @@ export default defineComponent({
 
         addSuccess.value = true
         isInLibrary.value = true
+        await checkLibraryStatus()
+        editDialog.value = true
       } catch (err: any) {
         addError.value = err?.message || 'Impossible d\'ajouter ce manga.'
       } finally {

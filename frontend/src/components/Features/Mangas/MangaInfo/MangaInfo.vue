@@ -96,9 +96,9 @@
 
         <!-- Action Buttons -->
         <div class="space-y-3">
-          <Message v-if="addSuccess || isInLibrary" severity="success" :closable="false" icon="pi pi-check">
+          <!-- <Message v-if="addSuccess || isInLibrary" severity="success" :closable="false" icon="pi pi-check">
             {{ addSuccess ? 'Manga ajouté à votre bibliothèque.' : 'Déjà dans votre bibliothèque.' }}
-          </Message>
+          </Message> -->
           <Message v-if="addError && !isInLibrary" severity="error" :closable="false">
             {{ addError }}
           </Message>
@@ -117,8 +117,8 @@
 
           <Button
             v-if="isLoggedIn"
-            :label="isInLibrary ? 'Déjà dans la bibliothèque' : 'Ajouter à ma bibliothèque'"
-            :icon="isInLibrary ? 'pi pi-check' : 'pi pi-bookmark'"
+            :label="isInLibrary ? '' : 'Ajouter à ma bibliothèque'"
+            :icon="isInLibrary ? '' : 'pi pi-bookmark'"
             iconPos="left"
             severity="secondary"
             size="large"
