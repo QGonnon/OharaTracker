@@ -11,11 +11,12 @@ import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
+import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
 import type { Manga } from '../../../../types/index'
 
 export default defineComponent({
   name: 'MangaInfo',
-  components: { 
+  components: {
     Menu,
     Card,
     Button,
@@ -23,7 +24,8 @@ export default defineComponent({
     Tag,
     Chip,
     Divider,
-    EditLibraryDialog
+    EditLibraryDialog,
+    EditAnimeDialog
   },
 
   setup() {
@@ -38,6 +40,8 @@ export default defineComponent({
     const addSuccess = ref<boolean>(false)
     const isInLibrary = ref<boolean>(false)
     const isLoggedIn = computed(() => authStore.isLoggedIn)
+    const animeSources = new Set(['moviedb', 'asura'])
+    const isAnime = computed(() => animeSources.has((manga.value.site || '').toLowerCase()))
 
     const coverSrc = computed(() => {
       const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
@@ -63,6 +67,7 @@ export default defineComponent({
         const mangaList: Manga[] = chapters.map((chapter: any) => ({
           id: chapter.chapterId || chapter.id,
           title: chapter.title || chapter.name,
+          type: chapter.type,
           author: chapter.author,
           theme: chapter.theme,
           status: chapter.status,
@@ -236,13 +241,14 @@ export default defineComponent({
       }
     }
 
-    return { 
+    return {
       manga,
       loading,
       error,
       openChapter,
       coverSrc,
       isLoggedIn,
+      isAnime,
       addToLibrary,
       adding,
       addError,

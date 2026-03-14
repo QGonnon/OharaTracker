@@ -6,8 +6,7 @@
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">Mes Suivis</h1>
-                <p class="text-slate-600 dark:text-slate-400">{{ displayedMangas.length }} Lecture{{ displayedMangas.length !== 1 ? 's' : '' }}</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">(total raw: {{ mangas.length }}, filtered: {{ filteredMangas.length }})</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ displayedMangas.length }} Médias suivis</p>
             </div>
 
             <!-- Loading State -->
@@ -89,7 +88,9 @@
                 <!-- List View -->
                 <Card v-if="viewMode === 'list'">
                     <template #content>
-                            <DataTable 
+                        <Transition name="filter-fade" mode="out-in">
+                            <div :key="filterType + searchQuery">
+                            <DataTable
                                 :value="displayedMangas"
                             stripedRows
                             paginator
@@ -101,13 +102,12 @@
                             <!-- Title Column -->
                             <Column field="title" header="Titre" sortable style="min-width: 200px;">
                                 <template #body="{ data }">
-                                    <a 
-                                        :href="data.mangaUrl" 
-                                        target="_blank"
-                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                                    <span
+                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium cursor-pointer"
+                                        @click="navigateToInfo(data)"
                                     >
                                         {{ data.title }}
-                                    </a>
+                                    </span>
                                 </template>
                             </Column>
 
@@ -186,24 +186,31 @@
                                 <span v-else-if="filterType === 'lecture'">Aucune lecture trouvée dans votre bibliothèque.</span>
                                 <span v-else>Aucune lecture trouvée dans votre bibliothèque.</span>
                             </p>
-                            <Button 
+                            <Button
                                 v-if="!searchQuery"
-                                @click="fetchMangas" 
-                                label="Recharger" 
-                                icon="pi pi-refresh" 
+                                @click="fetchMangas"
+                                label="Recharger"
+                                icon="pi pi-refresh"
                                 class="mt-2"
                             />
                         </div>
+                            </div>
+                        </Transition>
                     </template>
                 </Card>
 
                 <!-- Grid View -->
-                <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <TransitionGroup
+                    v-if="viewMode === 'grid'"
+                    name="filter-grid"
+                    tag="div"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                >
                     <div
                         v-for="manga in displayedMangas"
                         :key="manga.id"
                         class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative"
-                        @click="openChapter(manga.chapterUrl)"
+                        @click="navigateToInfo(manga)"
                     >
                         <div class="aspect-[3/4] overflow-hidden">
                             <img
@@ -240,7 +247,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </TransitionGroup>
                 </div>
         </div>
 

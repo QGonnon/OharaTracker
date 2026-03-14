@@ -145,7 +145,8 @@
   </div>
   
   <!-- Edit Dialog (shared) -->
-  <EditLibraryDialog v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
+  <EditAnimeDialog v-if="isAnime" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
+  <EditLibraryDialog v-else v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
 </template>
 
 <script src="./MangaInfo.ts"></script>

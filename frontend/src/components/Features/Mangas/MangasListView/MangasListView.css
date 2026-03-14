@@ -209,6 +209,42 @@
     filter: hue-rotate(120deg);
 }
 
+/* Filter transition — list view fade */
+.filter-fade-enter-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.filter-fade-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.filter-fade-enter-from {
+    opacity: 0;
+    transform: translateY(6px);
+}
+.filter-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+}
+
+/* Filter transition — grid view stagger */
+.filter-grid-enter-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.filter-grid-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    position: absolute;
+}
+.filter-grid-enter-from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+}
+.filter-grid-leave-to {
+    opacity: 0;
+    transform: scale(0.92);
+}
+.filter-grid-move {
+    transition: transform 0.35s ease;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .manga-item {

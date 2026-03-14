@@ -14,6 +14,7 @@ import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDial
 import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
 import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
+import { slugify } from '../../../../utils'
 
 export default defineComponent({
     name: 'MangasListView',
@@ -132,6 +133,11 @@ export default defineComponent({
             window.open(url, '_blank');
         };
 
+        const navigateToInfo = (manga: Manga) => {
+            const routeName = (manga.type || 'Manga') === 'Anime' ? 'AnimeInfo' : 'MangaInfo';
+            router.push({ name: routeName, params: { name: slugify(manga.title) } });
+        };
+
         const getCoverUrl = (manga: Manga): string => {
             const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
             if (manga.coverPath) {
@@ -169,7 +175,8 @@ export default defineComponent({
             editAnimeDialog,
             editingManga,
             openEdit,
-            onDialogUpdated
+            onDialogUpdated,
+            navigateToInfo,
         };
     }
 });

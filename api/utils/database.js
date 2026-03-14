@@ -240,6 +240,7 @@ function getLastChapters(callback, limit = null) {
     let query = `SELECT 
             lc.rowid AS chapterId,
             l.name AS title,
+            l.type AS type,
             l.author AS author,
             l.artist AS artist,
             l.theme AS theme,
