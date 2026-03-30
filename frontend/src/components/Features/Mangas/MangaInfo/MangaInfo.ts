@@ -1,7 +1,7 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
-import Menu from '../../../Common/Menu/Menu.vue'
+import Menu from '../../../Shared/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
 import { useAuthStore } from '../../../../store/auth.module'
 import Card from 'primevue/card'

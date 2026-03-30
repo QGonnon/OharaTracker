@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 import { useAuthStore } from '../../../../store/auth.module';
-import Menu from '../../../Common/Menu/Menu.vue';
+import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
 
 export default defineComponent({

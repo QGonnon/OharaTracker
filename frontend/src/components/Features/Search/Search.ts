@@ -7,7 +7,7 @@ import InputNumber from "primevue/inputnumber";
 import Tag from "primevue/tag";
 import ProgressSpinner from "primevue/progressspinner";
 import Paginator from "primevue/paginator";
-import Menu from "../../Common/Menu/Menu.vue";
+import Menu from "../../Shared/Menu/Menu.vue";
 import type { Manga } from "../../../types/index";
 import { slugify } from "../../../utils";
 

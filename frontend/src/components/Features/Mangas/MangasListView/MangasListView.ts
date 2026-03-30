@@ -1,6 +1,6 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import Menu from '../../../Common/Menu/Menu.vue'
+import Menu from '../../../Shared/Menu/Menu.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'

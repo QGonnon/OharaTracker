@@ -1,5 +1,5 @@
 import { defineComponent, ref, computed, onMounted, onUnmounted } from "vue";
-import Menu from "../../Common/Menu/Menu.vue";
+import Menu from "../../Shared/Menu/Menu.vue";
 import MangaCard from "../../Shared/MangaCard/MangaCard.vue";
 import Carousel from "primevue/carousel";
 import { slugify } from '../../../utils.js'

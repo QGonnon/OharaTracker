@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useAuthStore } from '../../../store/auth.module';
-import Menu from '../../Common/Menu/Menu.vue'
+import Menu from '../../Shared/Menu/Menu.vue'
 
 export default defineComponent({
   name: "Register",

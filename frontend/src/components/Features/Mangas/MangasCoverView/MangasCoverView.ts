@@ -1,5 +1,5 @@
 import { defineComponent, onMounted, ref, computed } from "vue";
-import Menu from "../../../Common/Menu/Menu.vue";
+import Menu from "../../../Shared/Menu/Menu.vue";
 import MangaCard from "../../../Shared/MangaCard/MangaCard.vue";
 import Button from "primevue/button";
 import type { Manga } from "../../../../types/index";
