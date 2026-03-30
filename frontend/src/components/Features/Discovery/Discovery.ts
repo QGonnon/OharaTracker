@@ -1,45 +1,107 @@
-import { defineComponent, ref, computed, onMounted, onUnmounted } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import Menu from "../../Shared/Menu/Menu.vue";
-import MangaCard from "../../Shared/MangaCard/MangaCard.vue";
-import Carousel from "primevue/carousel";
-import { slugify } from '../../../utils.js'
+import { slugify } from '../../../utils.js';
 
 export default defineComponent({
   name: "Discovery",
-  components: {
-    Menu,
-    MangaCard,
-    Carousel,
-  },
+  components: { Menu },
   setup() {
     const featuredMangas = ref<any[]>([]);
     const featuredAnimes = ref<any[]>([]);
-    const latestChapters = ref<any[]>([]);
     const loading = ref(true);
-    const currentPage = ref(0);
-    const windowWidth = ref(window.innerWidth);
+    const activeType = ref<'all' | 'manga' | 'anime'>('all');
+    const activeGenre = ref('');
+    const sortBy = ref<'latest' | 'alpha'>('latest');
+    const spotlightIndex = ref(0);
 
-    const handleResize = () => { windowWidth.value = window.innerWidth; };
-    onMounted(() => window.addEventListener('resize', handleResize));
-    onUnmounted(() => window.removeEventListener('resize', handleResize));
+    const types = [
+      { label: 'Tout', value: 'all' },
+      { label: 'Manga', value: 'manga' },
+      { label: 'Anime', value: 'anime' },
+    ];
 
-    const currentNumVisible = computed(() => {
-      const w = windowWidth.value;
-      if (w <= 480) return 1;
-      if (w <= 768) return 2;
-      if (w <= 1024) return 3;
-      if (w <= 1400) return 4;
-      return 7;
+    const isAnime = (item: any): boolean => {
+      const site = (item.site || '').toLowerCase();
+      const type = (item.type || '').toUpperCase();
+      const theme = (item.theme || '').toLowerCase();
+      return site === 'moviedb' || type === 'ANIME' || theme.includes('anime');
+    };
+
+    const getThemeTags = (item: any): string[] => {
+      if (!item.theme) return [];
+      return item.theme
+        .split(',')
+        .map((t: string) => t.trim())
+        .filter((t: string) => t && t.toLowerCase() !== 'anime')
+        .slice(0, 3);
+    };
+
+    const truncate = (text: string, max: number): string => {
+      if (!text) return '';
+      return text.length > max ? text.slice(0, max).trimEnd() + '…' : text;
+    };
+
+    const allItems = computed(() => [...featuredMangas.value, ...featuredAnimes.value]);
+
+    const spotlightItem = computed(() => {
+      const pool = allItems.value.filter(i => i.coverUrl);
+      if (!pool.length) return null;
+      return pool[spotlightIndex.value % pool.length];
     });
 
-    const centerIndex = computed(() => {
-      const numVisible = currentNumVisible.value;
-      if (numVisible % 2 === 0) return -1;
-      const len = featuredMangas.value.length;
-      const half = Math.floor(numVisible / 2);
-      if (len === 0) return half;
-      return ((currentPage.value + half) % len + len) % len;
+    const availableGenres = computed(() => {
+      const genres = new Set<string>();
+      allItems.value.forEach(item => {
+        if (item.theme) {
+          item.theme.split(',').forEach((t: string) => {
+            const trimmed = t.trim();
+            if (trimmed && trimmed.toLowerCase() !== 'anime') genres.add(trimmed);
+          });
+        }
+      });
+      return Array.from(genres).slice(0, 12);
     });
+
+    const trending = computed(() => allItems.value.slice(0, 8));
+
+    const filteredItems = computed(() => {
+      let items = allItems.value;
+
+      if (activeType.value === 'manga') items = featuredMangas.value;
+      else if (activeType.value === 'anime') items = featuredAnimes.value;
+
+      if (activeGenre.value) {
+        items = items.filter(i =>
+          (i.theme || '').toLowerCase().includes(activeGenre.value.toLowerCase())
+        );
+      }
+
+      if (sortBy.value === 'alpha') {
+        return [...items].sort((a, b) => a.title.localeCompare(b.title));
+      }
+      return items;
+    });
+
+    const sectionTitle = computed(() => {
+      if (activeType.value === 'manga') return 'Mangas';
+      if (activeType.value === 'anime') return 'Animés';
+      return 'Catalogue';
+    });
+
+    const setType = (val: string) => {
+      activeType.value = val as 'all' | 'manga' | 'anime';
+      activeGenre.value = '';
+    };
+
+    const toggleGenre = (genre: string) => {
+      activeGenre.value = activeGenre.value === genre ? '' : genre;
+    };
+
+    const resetFilters = () => {
+      activeType.value = 'all';
+      activeGenre.value = '';
+      sortBy.value = 'latest';
+    };
 
     const fetchMangas = async () => {
       const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
@@ -47,7 +109,6 @@ export default defineComponent({
         const res = await fetch(chapterUrl);
         const chapters = (await res.json()) || [];
 
-        // Séparer les animes et les mangas
         const animes: any[] = [];
         const mangas: any[] = [];
 
@@ -62,17 +123,17 @@ export default defineComponent({
             coverPath: ch.coverPath,
             coverUrl: ch.coverUrl,
             lastChapter: ch.lastChapter,
+            lastEpisode: ch.lastEpisode,
             chapterUrl: ch.chapterUrl,
             mangaUrl: ch.mangaUrl,
             site: ch.site,
             type: ch.type,
           };
 
-          const site = (ch.site || '').toString().toLowerCase();
-          const type = (ch.type || '').toString().toUpperCase();
-          const theme = (ch.theme || '').toString().toLowerCase();
+          const site = (ch.site || '').toLowerCase();
+          const type = (ch.type || '').toUpperCase();
+          const theme = (ch.theme || '').toLowerCase();
 
-          // Classer comme anime si: site === 'moviedb' OU type === 'ANIME' OU theme contient 'anime'
           if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) {
             animes.push(item);
           } else {
@@ -80,40 +141,55 @@ export default defineComponent({
           }
         });
 
-        // Conserver derniers chapitres (tous)
-        latestChapters.value = chapters.slice(0, 10);
-
-        // Dédupliquér et construire listes de mangas et animes
-        const mangaMap = new Map();
+        const mangaMap = new Map<string, any>();
         mangas.forEach((m: any) => {
-          const key = (m.title || "").toLowerCase().trim();
+          const key = (m.title || '').toLowerCase().trim();
           if (!mangaMap.has(key)) mangaMap.set(key, m);
         });
 
-        const animeMap = new Map();
+        const animeMap = new Map<string, any>();
         animes.forEach((a: any) => {
-          const key = (a.title || "").toLowerCase().trim();
+          const key = (a.title || '').toLowerCase().trim();
           if (!animeMap.has(key)) animeMap.set(key, a);
         });
 
-        featuredMangas.value = Array.from(mangaMap.values()).slice(0, 15);
-        featuredAnimes.value = Array.from(animeMap.values()).slice(0, 6);
+        featuredMangas.value = Array.from(mangaMap.values());
+        featuredAnimes.value = Array.from(animeMap.values());
+
+        // Random spotlight pick
+        const pool = [...featuredMangas.value, ...featuredAnimes.value].filter(i => i.coverUrl);
+        if (pool.length) {
+          spotlightIndex.value = Math.floor(Math.random() * Math.min(pool.length, 10));
+        }
       } catch (err) {
-        console.error("Erreur fetching mangas:", err);
+        console.error('Erreur fetching découverte:', err);
       } finally {
         loading.value = false;
       }
     };
 
-    const responsiveOptions = [
-      { breakpoint: "1400px", numVisible: 4, numScroll: 1 },
-      { breakpoint: "1024px", numVisible: 3, numScroll: 1 },
-      { breakpoint: "768px", numVisible: 2, numScroll: 1 },
-      { breakpoint: "480px", numVisible: 1, numScroll: 1 },
-    ];
-
     onMounted(fetchMangas);
 
-    return { featuredMangas, featuredAnimes, latestChapters, loading, responsiveOptions, slugify, currentPage, centerIndex };
+    return {
+      featuredMangas,
+      featuredAnimes,
+      loading,
+      activeType,
+      activeGenre,
+      sortBy,
+      types,
+      isAnime,
+      getThemeTags,
+      truncate,
+      spotlightItem,
+      availableGenres,
+      trending,
+      filteredItems,
+      sectionTitle,
+      setType,
+      toggleGenre,
+      resetFilters,
+      slugify,
+    };
   },
 });
