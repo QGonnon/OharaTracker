@@ -1,10 +1,12 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
-import Menu from "../../Shared/Menu/Menu.vue";
 import { slugify } from '../../../utils.js';
+import Menu from "../../Shared/Menu/Menu.js";
 
 export default defineComponent({
-  name: "Discovery",
-  components: { Menu },
+  name: 'Discovery',
+  components: {
+    Menu
+  },
   setup() {
     const featuredMangas = ref<any[]>([]);
     const featuredAnimes = ref<any[]>([]);
@@ -47,19 +49,6 @@ export default defineComponent({
       const pool = allItems.value.filter(i => i.coverUrl);
       if (!pool.length) return null;
       return pool[spotlightIndex.value % pool.length];
-    });
-
-    const availableGenres = computed(() => {
-      const genres = new Set<string>();
-      allItems.value.forEach(item => {
-        if (item.theme) {
-          item.theme.split(',').forEach((t: string) => {
-            const trimmed = t.trim();
-            if (trimmed && trimmed.toLowerCase() !== 'anime') genres.add(trimmed);
-          });
-        }
-      });
-      return Array.from(genres).slice(0, 12);
     });
 
     const trending = computed(() => allItems.value.slice(0, 8));
@@ -157,10 +146,6 @@ export default defineComponent({
         featuredAnimes.value = Array.from(animeMap.values());
 
         // Random spotlight pick
-        const pool = [...featuredMangas.value, ...featuredAnimes.value].filter(i => i.coverUrl);
-        if (pool.length) {
-          spotlightIndex.value = Math.floor(Math.random() * Math.min(pool.length, 10));
-        }
       } catch (err) {
         console.error('Erreur fetching découverte:', err);
       } finally {
@@ -182,7 +167,6 @@ export default defineComponent({
       getThemeTags,
       truncate,
       spotlightItem,
-      availableGenres,
       trending,
       filteredItems,
       sectionTitle,
@@ -191,5 +175,5 @@ export default defineComponent({
       resetFilters,
       slugify,
     };
-  },
+  }
 });
