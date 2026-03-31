@@ -144,8 +144,6 @@ export default defineComponent({
 
         featuredMangas.value = Array.from(mangaMap.values());
         featuredAnimes.value = Array.from(animeMap.values());
-
-        // Random spotlight pick
       } catch (err) {
         console.error('Erreur fetching découverte:', err);
       } finally {
