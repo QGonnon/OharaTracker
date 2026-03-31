@@ -23,16 +23,13 @@
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold drop-shadow-lg">{{ spotlightItem.title }}</h1>
         <p v-if="spotlightItem.description" class="text-white/80 text-sm md:text-base line-clamp-4">{{ truncate(spotlightItem.description, 180) }}</p>
-        <div v-if="spotlightItem.lastChapter || spotlightItem.lastEpisode" class="flex gap-2 mt-1">
-          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs font-semibold">
-            {{ isAnime(spotlightItem) ? 'Ép. ' + spotlightItem.lastEpisode : 'Ch. ' + spotlightItem.lastChapter }}
-          </span>
-          <span v-if="spotlightItem.status" class="bg-emerald-200 text-emerald-700 border border-emerald-300 rounded-full px-3 py-1 text-xs font-semibold">
+        <div v-if="spotlightItem.status" class="flex gap-2 mt-1">
+          <span class="bg-emerald-200 text-emerald-700 border border-emerald-300 rounded-full px-3 py-1 text-xs font-semibold">
             {{ spotlightItem.status }}
           </span>
         </div>
         <div class="flex gap-3 mt-2">
-          <a :href="spotlightItem.chapterUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-bold shadow-lg hover:scale-105 transition">
+          <a :href="spotlightItem.mangaUrl || spotlightItem.animeUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-bold shadow-lg hover:scale-105 transition">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             {{ isAnime(spotlightItem) ? 'Regarder' : 'Lire maintenant' }}
           </a>
@@ -72,7 +69,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <p class="truncate font-semibold text-sm text-gray-900 dark:text-white">{{ item.title }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-300">{{ isAnime(item) ? 'Ép. ' + (item.lastEpisode || '—') : 'Ch. ' + (item.lastChapter || '—') }}</p>
+            
           </div>
         </RouterLink>
       </div>
@@ -114,13 +111,12 @@
             </RouterLink>
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 transition-opacity duration-200">
               <p class="text-white font-semibold text-sm truncate mb-2">{{ item.title }}</p>
-              <a :href="item.chapterUrl" target="_blank" rel="noopener noreferrer" class="block text-center px-3 py-1 rounded bg-violet-500 text-white font-bold text-xs hover:bg-violet-600 transition">{{ isAnime(item) ? 'Regarder' : 'Lire' }}</a>
+              <a :href="item.mangaUrl || item.animeUrl" target="_blank" rel="noopener noreferrer" class="block text-center px-3 py-1 rounded bg-violet-500 text-white font-bold text-xs hover:bg-violet-600 transition">{{ isAnime(item) ? 'Regarder' : 'Lire' }}</a>
             </div>
             <span :class="isAnime(item) ? 'bg-red-500' : 'bg-violet-500'" class="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-extrabold text-white">{{ isAnime(item) ? 'A' : 'M' }}</span>
           </div>
           <div class="px-1">
             <p class="truncate font-semibold text-sm text-gray-900 dark:text-white">{{ item.title }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-300">{{ isAnime(item) ? 'Ép. ' + (item.lastEpisode || '—') : 'Ch. ' + (item.lastChapter || '—') }}</p>
           </div>
         </div>
       </div>
