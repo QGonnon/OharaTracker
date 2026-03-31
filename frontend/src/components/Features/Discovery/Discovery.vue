@@ -29,10 +29,10 @@
           </span>
         </div>
         <div class="flex gap-3 mt-2">
-          <a :href="spotlightItem.mangaUrl || spotlightItem.animeUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-bold shadow-lg hover:scale-105 transition">
+          <RouterLink :to="isAnime(spotlightItem) ? `/anime/${slugify(spotlightItem.title)}` : `/manga/${slugify(spotlightItem.title)}`" class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-bold shadow-lg hover:scale-105 transition">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             {{ isAnime(spotlightItem) ? 'Regarder' : 'Lire maintenant' }}
-          </a>
+          </RouterLink>
           <RouterLink :to="isAnime(spotlightItem) ? `/anime/${slugify(spotlightItem.title)}` : `/manga/${slugify(spotlightItem.title)}`" class="inline-flex items-center px-6 py-2 rounded-full border border-white/30 text-white font-bold hover:bg-white/10 transition">
             Détails
           </RouterLink>
@@ -103,21 +103,15 @@
         <button @click="resetFilters" class="px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900 transition">Réinitialiser les filtres</button>
       </div>
       <!-- Grid -->
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <div v-for="item in filteredItems" :key="item.title" class="flex flex-col gap-2">
-          <div class="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group">
-            <RouterLink :to="isAnime(item) ? `/anime/${slugify(item.title)}` : `/manga/${slugify(item.title)}`">
-              <img :src="item.coverUrl" :alt="item.title" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-            </RouterLink>
+      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        <div v-for="item in filteredItems" :key="item.title" class="flex flex-col gap-4 my-2">
+          <RouterLink :to="isAnime(item) ? `/anime/${slugify(item.title)}` : `/manga/${slugify(item.title)}`" class="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group block">
+            <img :src="item.coverUrl" :alt="item.title" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 transition-opacity duration-200">
               <p class="text-white font-semibold text-sm truncate mb-2">{{ item.title }}</p>
-              <a :href="item.mangaUrl || item.animeUrl" target="_blank" rel="noopener noreferrer" class="block text-center px-3 py-1 rounded bg-violet-500 text-white font-bold text-xs hover:bg-violet-600 transition">{{ isAnime(item) ? 'Regarder' : 'Lire' }}</a>
             </div>
             <span :class="isAnime(item) ? 'bg-red-500' : 'bg-violet-500'" class="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-extrabold text-white">{{ isAnime(item) ? 'A' : 'M' }}</span>
-          </div>
-          <div class="px-1">
-            <p class="truncate font-semibold text-sm text-gray-900 dark:text-white">{{ item.title }}</p>
-          </div>
+          </RouterLink>
         </div>
       </div>
     </section>
