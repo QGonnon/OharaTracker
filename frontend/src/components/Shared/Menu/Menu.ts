@@ -23,8 +23,6 @@ export default defineComponent({
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const displayName = computed(() =>
-      authStore.currentUser?.displayName ||
-      authStore.currentUser?.username ||
       authStore.currentUser?.name || ''
     )
 
