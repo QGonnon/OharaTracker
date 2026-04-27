@@ -1,128 +1,169 @@
 <template>
   <Menu />
 
-  <!-- HERO SECTION -->
-  <section class="hero-section">
-    <div class="hero-blob blob-1"></div>
-    <div class="hero-blob blob-2"></div>
-    <div class="hero-blob blob-3"></div>
-    <div class="hero-particles">
-      <span v-for="n in 20" :key="n" class="particle" :style="{ '--i': n }"></span>
+  <!-- HERO -->
+  <section class="relative min-h-[calc(100vh-64px)] flex items-center bg-white dark:bg-zinc-950 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-violet-500/5 dark:bg-violet-500/10 rounded-full blur-3xl" />
     </div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">Bienvenue sur OharaTracker</p>
-      <h1 class="hero-title">
-        <span class="word-reveal" style="--d: 0s">Explore</span>
-        <span class="word-reveal" style="--d: 0.15s">l'univers</span>
-        <span class="word-reveal" style="--d: 0.3s">du manga</span>
-      </h1>
-      <p class="hero-sub">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod
-        nisi vel arcu volutpat, at sodales enim convallis. Vivamus tincidunt nunc ac
-        libero aliquet, in dictum tortor vulputate.
-      </p>
-      <div class="hero-actions">
-        <RouterLink to="/discovery"><button class="btn-primary">Commencer <span class="btn-arrow">→</span></button></RouterLink>
-        <button class="btn-ghost">En savoir plus</button>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <div class="glitch-box">
-        <span class="glitch-text" data-text="OHARA">OHARA</span>
-      </div>
-      <div class="orbit-ring ring-1"></div>
-      <div class="orbit-ring ring-2"></div>
-      <div class="orbit-ring ring-3"></div>
-      <div class="orbit-dot dot-1"></div>
-      <div class="orbit-dot dot-2"></div>
-      <div class="orbit-dot dot-3"></div>
-    </div>
-  </section>
 
-  <!-- STATS SECTION -->
-  <section class="stats-section">
-    <div class="stats-grid">
-      <div class="stat-card" v-for="(stat, i) in stats" :key="i" :style="{ '--delay': i * 0.15 + 's' }">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <div class="stat-value counter">{{ stat.value }}</div>
-        <div class="stat-label">{{ stat.label }}</div>
-        <div class="stat-glow"></div>
-      </div>
-    </div>
-  </section>
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 
-  <!-- FEATURES SECTION -->
-  <section class="features-section">
-    <div class="section-header">
-      <span class="section-tag">Fonctionnalités</span>
-      <h2 class="section-title">Tout ce dont vous avez besoin</h2>
-      <p class="section-desc">
-        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-        minim veniam, quis nostrud exercitation ullamco laboris.
-      </p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card flip-card" v-for="(feat, i) in features" :key="i" :style="{ '--delay': i * 0.1 + 's' }">
-        <div class="flip-inner">
-          <div class="flip-front">
-            <div class="feat-icon-wrap">
-              <span class="feat-icon">{{ feat.icon }}</span>
+      <!-- Left: headline + CTAs -->
+      <div class="flex-1 max-w-xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 text-violet-600 dark:text-violet-400 text-xs font-semibold tracking-wide mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+          Tracker manga multi-sources
+        </div>
+
+        <h1 class="text-5xl lg:text-[3.4rem] font-extrabold leading-[1.1] text-gray-900 dark:text-white tracking-tight mb-5">
+          Suivez vos mangas<br>
+          <span class="text-violet-600 dark:text-violet-400">depuis n'importe où</span>
+        </h1>
+
+        <p class="text-gray-500 dark:text-zinc-400 text-lg leading-relaxed mb-9">
+          OharaTracker centralise vos lectures depuis plusieurs sites en une seule interface.
+          Gérez vos chapitres, vos listes et ne ratez plus aucune sortie.
+        </p>
+
+        <div class="flex flex-wrap gap-3 mb-9">
+          <RouterLink to="/discovery">
+            <Button label="Commencer gratuitement" class="font-semibold" />
+          </RouterLink>
+          <RouterLink to="/discovery">
+            <Button label="Voir la démo →" severity="secondary" outlined class="font-medium" />
+          </RouterLink>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-5 text-sm">
+          <span class="flex items-center gap-1.5 text-gray-500 dark:text-zinc-400">
+            <i class="pi pi-check-circle text-emerald-500 text-sm" /> Gratuit
+          </span>
+          <span class="flex items-center gap-1.5 text-gray-500 dark:text-zinc-400">
+            <i class="pi pi-check-circle text-emerald-500 text-sm" /> Sans publicité
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: App mockup -->
+      <div class="flex-1 w-full max-w-md lg:max-w-none lg:flex-none lg:w-[460px]">
+        <div class="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-2xl shadow-gray-200/60 dark:shadow-black/50 bg-white dark:bg-zinc-900">
+
+          <!-- Browser chrome -->
+          <div class="flex items-center gap-1.5 px-4 py-3 bg-gray-50 dark:bg-zinc-800 border-b border-gray-200 dark:border-white/5">
+            <div class="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+            <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+            <div class="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+            <div class="ml-3 flex-1 h-5 rounded bg-gray-200 dark:bg-zinc-700 flex items-center px-2.5">
+              <span class="text-[11px] text-gray-400 dark:text-zinc-500">oharatracker.app / bibliothèque</span>
             </div>
-            <h3 class="feat-title">{{ feat.title }}</h3>
-            <p class="feat-desc">{{ feat.desc }}</p>
           </div>
-          <div class="flip-back">
-            <p class="feat-back-text">{{ feat.detail }}</p>
-            <button class="feat-btn">Explorer</button>
+
+          <!-- Library -->
+          <div class="p-4">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">Ma bibliothèque</span>
+              <span class="text-xs text-violet-600 dark:text-violet-400 font-medium">{{ mockItems.length }} titres</span>
+            </div>
+
+            <div class="space-y-0.5">
+              <div v-for="item in mockItems" :key="item.title"
+                   class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer group">
+                <div :class="`w-8 h-11 rounded flex-shrink-0 ${item.color}`" />
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-gray-700 dark:text-zinc-200 truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                    {{ item.title }}
+                  </div>
+                  <div class="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">
+                    Chapitre {{ item.chapter }}
+                  </div>
+                </div>
+                <Tag :value="item.status" :severity="item.severity" class="text-xs" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- TIMELINE SECTION -->
-  <section class="timeline-section">
-    <div class="section-header">
-      <span class="section-tag">Dernières mises à jour</span>
-      <h2 class="section-title">Ce qui se passe</h2>
-    </div>
-    <div class="timeline">
-      <div class="timeline-item" v-for="(item, i) in timeline" :key="i" :style="{ '--delay': i * 0.12 + 's' }">
-        <div class="timeline-dot">
-          <div class="dot-inner"></div>
-          <div class="dot-pulse"></div>
-        </div>
-        <div class="timeline-card">
-          <span class="timeline-date">{{ item.date }}</span>
-          <h4 class="timeline-title">{{ item.title }}</h4>
-          <p class="timeline-text">{{ item.text }}</p>
-        </div>
+  <!-- Stats -->
+  <div class="border-y border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900">
+    <div class="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      <div v-for="stat in stats" :key="stat.label">
+        <div class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{{ stat.value }}</div>
+        <div class="text-sm text-gray-400 dark:text-zinc-500 mt-1">{{ stat.label }}</div>
       </div>
-    </div>
-  </section>
-
-  <!-- MARQUEE SECTION -->
-  <div class="marquee-section">
-    <div class="marquee-track">
-      <span v-for="n in 2" :key="n">
-        <span v-for="tag in marqueTags" :key="tag + n" class="marquee-item">{{ tag }}</span>
-      </span>
     </div>
   </div>
 
-  <!-- CTA SECTION -->
-  <section class="cta-section">
-    <div class="cta-bg-morph"></div>
-    <div class="cta-content">
-      <h2 class="cta-title">Prêt à commencer votre aventure ?</h2>
-      <p class="cta-sub">
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-        eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+  <!-- Features -->
+  <section class="py-24 bg-white dark:bg-zinc-950">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
+          Fonctionnalités
+        </span>
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Tout ce dont vous avez besoin
+        </h2>
+        <p class="text-gray-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
+          Un outil complet pour gérer votre collection, suivre vos lectures et découvrir de nouveaux titres.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div v-for="feat in features" :key="feat.title"
+             class="p-6 rounded-xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900 hover:border-violet-200 dark:hover:border-violet-500/30 hover:shadow-md dark:hover:shadow-none transition-all duration-200 group">
+          <div class="w-11 h-11 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform duration-200">
+            {{ feat.icon }}
+          </div>
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{{ feat.title }}</h3>
+          <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ feat.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Étapes comment ça marche -->
+  <section class="py-24 bg-gray-50 dark:bg-zinc-900 border-t border-gray-100 dark:border-white/5">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
+          Démarrage rapide
+        </span>
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">Comment ça marche</h2>
+      </div>
+
+      <div class="space-y-4">
+        <div v-for="(step, i) in steps" :key="i"
+             class="flex items-start gap-5 p-5 rounded-xl bg-white dark:bg-zinc-800/60 border border-gray-100 dark:border-white/5 hover:border-violet-200 dark:hover:border-violet-500/20 transition-colors">
+          <div class="flex-shrink-0 w-9 h-9 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-sm">
+            {{ i + 1 }}
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">{{ step.title }}</h4>
+            <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ step.text }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-28 bg-white dark:bg-zinc-950 border-t border-gray-100 dark:border-white/5">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-5 tracking-tight">
+        Prêt à commencer ?
+      </h2>
+      <p class="text-gray-500 dark:text-zinc-400 text-lg leading-relaxed mb-8">
+        Rejoignez des milliers de lecteurs qui gèrent déjà leur collection avec OharaTracker.
       </p>
-      <button class="btn-cta">
-        <span class="cta-pulse"></span>
-        Rejoindre maintenant
-      </button>
+      <RouterLink to="/discovery">
+        <Button label="Commencer gratuitement" size="large" class="px-10 font-semibold" />
+      </RouterLink>
+      <p class="text-gray-400 dark:text-zinc-600 text-sm mt-4">Gratuit · Sans publicité · Open source</p>
     </div>
   </section>
 </template>
