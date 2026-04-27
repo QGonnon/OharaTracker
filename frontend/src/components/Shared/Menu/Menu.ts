@@ -1,94 +1,85 @@
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import Menubar from 'primevue/menubar'
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { Button, Drawer } from 'primevue'
+import PopupMenu from 'primevue/menu'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
 import type { MenuItem } from 'primevue/menuitem'
 
 export default defineComponent({
-  name: 'Menu',
-  components: { Menubar },
+  name: 'AppMenu',
+  components: { Button, Drawer, PopupMenu },
   setup() {
     const router = useRouter()
     const route = useRoute()
     const authStore = useAuthStore()
+
     const isShrunk = ref(false)
-    const personaOpen = ref(false)
-    const personaRef = ref<HTMLElement | null>(null)
+    const mobileOpen = ref(false)
+    const userMenuRef = ref()
 
-    const handleScroll = () => {
-      isShrunk.value = window.scrollY > 50
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (personaRef.value && !personaRef.value.contains(event.target as Node)) {
-        personaOpen.value = false
-      }
-    }
-
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll)
-      window.addEventListener('mousedown', handleClickOutside)
-    })
-    onBeforeUnmount(() => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('mousedown', handleClickOutside)
-    })
+    const handleScroll = () => { isShrunk.value = window.scrollY > 50 }
+    onMounted(() => window.addEventListener('scroll', handleScroll))
+    onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const displayName = computed(() => authStore.currentUser?.displayName || authStore.currentUser?.username || authStore.currentUser?.name || '')
-    
+    const displayName = computed(() =>
+      authStore.currentUser?.displayName ||
+      authStore.currentUser?.username ||
+      authStore.currentUser?.name || ''
+    )
+
     const goLogin = () => router.push({ name: 'Login' })
 
-    const handleLogout = async () => {
-      await authStore.logout()
+    const handleLogout = () => {
+      authStore.logout()
       router.push({ name: 'Login' })
     }
 
-    // Theme handling (persisted in localStorage). Uses the `.dark-theme` root class.
     const theme = ref(document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light')
-
     const toggleTheme = () => {
       if (theme.value === 'dark') {
         theme.value = 'light'
         document.documentElement.classList.remove('dark-theme')
-        try { localStorage.setItem('theme', 'light') } catch (e) { }
+        try { localStorage.setItem('theme', 'light') } catch (e) {}
       } else {
         theme.value = 'dark'
         document.documentElement.classList.add('dark-theme')
-        try { localStorage.setItem('theme', 'dark') } catch (e) { }
+        try { localStorage.setItem('theme', 'dark') } catch (e) {}
       }
     }
 
-    const menuItems = computed<MenuItem[]>(() => [
-      {
-        label: 'Découverte',
-        class: route.name === 'Découverte' ? 'nav-item--active' : '',
-        command: () => router.push({ name: 'Découverte' }),
-      },
-      {
-        label: 'Bibliothèque',
-        class: route.name === 'Search' ? 'nav-item--active' : '',
-        command: () => router.push({ name: 'Search' }),
-      },
-      {
-        label: displayName.value,
-        visible: isLoggedIn.value,
-        class: ['Profile', 'Library'].includes(route.name as string) ? 'nav-item--active' : '',
-        items: [
-          { label: 'Mon profil', command: () => router.push({ name: 'Profile' }) },
-          { label: 'Mes Suivis', command: () => router.push({ name: 'Library' }) },
-          { label: 'Se déconnecter', command: handleLogout },
-        ],
-      },
+    const isActive = (name: string) => route.name === name
+
+    const navLinks = [
+      { label: 'Découverte', name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
+      { label: 'Bibliothèque', name: 'Search', to: '/search', icon: 'pi pi-book' },
+    ]
+
+    const toggleUserMenu = (event: Event) => {
+      userMenuRef.value?.toggle(event)
+    }
+
+    const userMenuItems = computed<MenuItem[]>(() => [
+      { label: 'Mon profil', icon: 'pi pi-user', command: () => router.push({ name: 'Profile' }) },
+      { label: 'Mes Suivis', icon: 'pi pi-bookmark', command: () => router.push({ name: 'Library' }) },
+      { separator: true },
+      { label: 'Se déconnecter', icon: 'pi pi-sign-out', command: handleLogout },
     ])
 
     return {
-      menuItems,
-      isLoggedIn,
-      goLogin,
       isShrunk,
+      mobileOpen,
+      userMenuRef,
+      isLoggedIn,
+      displayName,
+      goLogin,
+      handleLogout,
       theme,
       toggleTheme,
+      isActive,
+      navLinks,
+      toggleUserMenu,
+      userMenuItems,
     }
   },
 })
