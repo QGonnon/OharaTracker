@@ -37,7 +37,7 @@
         </button>
 
         <!-- Login button (desktop only) -->
-        <RouterLink v-if="!isLoggedIn" to="/login" class="hidden md:block">
+        <RouterLink v-if="!isLoggedIn" to="/auth/login" class="hidden md:block">
           <Button label="Se connecter" outlined size="small" class="font-semibold" @click="goLogin" />
         </RouterLink>
 
