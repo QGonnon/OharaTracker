@@ -52,13 +52,15 @@ CREATE TABLE IF NOT EXISTS Languages(
 );
 
 CREATE TABLE IF NOT EXISTS Client(
-   name VARCHAR(24) PRIMARY KEY,
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name VARCHAR(24),
+   code VARCHAR(4),
    email VARCHAR(50),
    password VARCHAR(50),
-   display_name VARCHAR(24),
    date_of_birth DATE,
    google_id VARCHAR(100),
    id_subscription INT NOT NULL,
+   UNIQUE (name, code) ON CONFLICT ROLLBACK,
    FOREIGN KEY(id_subscription) REFERENCES Subscription(id)
 );
 

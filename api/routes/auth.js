@@ -48,12 +48,13 @@ router.post('/signup', async (req, res) => {
 
         // Hasher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
+        const randomSuffix = Math.random().toString(36).substring(2, 6); // Ajouter un suffixe de 4 caractères alphanumériques
 
         // Insérer le nouvel utilisateur
         await db.run(
-            `INSERT INTO Client (name, email, password, display_name, id_subscription) 
+            `INSERT INTO Client (name, code, email, password, id_subscription) 
              VALUES (?, ?, ?, ?, 1)`,
-            [username, email, hashedPassword, username]
+            [username, randomSuffix, email, hashedPassword]
         );
 
         res.status(201).json({ message: 'Utilisateur créé avec succès' });
@@ -80,7 +81,7 @@ router.post('/signin', async (req, res) => {
     try {
         // Récupérer l'utilisateur
         const user = await db.get(
-            'SELECT name, email, password, display_name FROM Client WHERE name = ?',
+            'SELECT name, code, email, password FROM Client WHERE name = ?',
             [username]
         );
 
@@ -106,7 +107,7 @@ router.post('/signin', async (req, res) => {
         res.json({
             username: user.name,
             email: user.email,
-            displayName: user.display_name,
+            code: user.code,
             accessToken: token
         });
 
@@ -139,10 +140,12 @@ router.post('/google', async (req, res) => {
         const googleUser = JSON.parse(jsonPayload);
         const email = googleUser.email;
         const name = googleUser.name || googleUser.email.split('@')[0];
+        const cleanDisplayName = name.replace(/\s+/g, '_').substring(0, 24); // Limiter à 24 caractères et remplacer les espaces
+        const randomSuffix = Math.random().toString(36).substring(2, 6); // Ajouter un suffixe de 4 caractères alphanumériques
         const googleId = googleUser.sub;
 
         // Vérifier si l'utilisateur existe déjà
-        let user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE email = ?', [email]);
+        let user = await db.get('SELECT name, code, email, google_id FROM Client WHERE email = ?', [email]);
 
         if (!user) {
             // Créer une subscription par défaut (id=1) si elle n'existe pas
@@ -153,12 +156,12 @@ router.post('/google', async (req, res) => {
 
             // Créer un nouvel utilisateur
             await db.run(
-                `INSERT INTO Client (name, email, password, display_name, google_id, id_subscription) 
+                `INSERT INTO Client (name, code, email, password, google_id, id_subscription) 
                  VALUES (?, ?, ?, ?, ?, 1)`,
-                [name, email, '', name, googleId]
+                [cleanDisplayName, randomSuffix, email, '', googleId]
             );
 
-            user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE email = ?', [email]);
+            user = await db.get('SELECT name, code, email, google_id FROM Client WHERE email = ?', [email]);
         } else if (!user.google_id) {
             // Lier le compte Google à un compte existant
             await db.run('UPDATE Client SET google_id = ? WHERE email = ?', [googleId, email]);
@@ -175,7 +178,7 @@ router.post('/google', async (req, res) => {
         res.json({
             username: user.name,
             email: user.email,
-            displayName: user.display_name,
+            code: user.code,
             accessToken: token
         });
 
@@ -208,14 +211,14 @@ router.get('/me', authenticate, async (req, res) => {
     const username = req.user.username;
     const db = await openDb();
     try {
-        const user = await db.get('SELECT name, email, display_name, google_id FROM Client WHERE name = ?', [username]);
+        const user = await db.get('SELECT name, code, email, google_id FROM Client WHERE name = ?', [username]);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
         res.json({
             username: user.name,
+            code: user.code,
             email: user.email,
-            displayName: user.display_name,
             isGoogleUser: !!user.google_id,
         });
     } catch (error) {
@@ -238,7 +241,7 @@ router.put('/profile', authenticate, async (req, res) => {
     const db = await openDb();
 
     try {
-        const user = await db.get('SELECT name, email, display_name FROM Client WHERE name = ?', [currentUsername]);
+        const user = await db.get('SELECT name, code, email FROM Client WHERE name = ?', [currentUsername]);
 
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
@@ -246,7 +249,6 @@ router.put('/profile', authenticate, async (req, res) => {
 
         const newUsername = username || user.name;
         const newEmail = email || user.email;
-        const newDisplayName = displayName || user.display_name;
 
         // Vérifier les conflits si le nom ou l'email change
         if (newUsername !== currentUsername) {
@@ -268,8 +270,8 @@ router.put('/profile', authenticate, async (req, res) => {
         }
 
         await db.run(
-            'UPDATE Client SET name = ?, email = ?, display_name = ? WHERE name = ?',
-            [newUsername, newEmail, newDisplayName, currentUsername]
+            'UPDATE Client SET name = ?, email = ? WHERE name = ?',
+            [newUsername, newEmail,, currentUsername]
         );
 
         // Générer un nouveau token avec le username mis à jour

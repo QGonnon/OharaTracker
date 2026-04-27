@@ -17,8 +17,8 @@
             <div class="w-20 h-20 rounded-full bg-indigo-500 text-white grid place-items-center text-3xl font-bold mx-auto mb-4 select-none">
               {{ userInitial }}
             </div>
-            <h2 class="text-xl font-bold text-slate-900">{{ currentUser?.username || 'Utilisateur' }}</h2>
-            <p class="text-sm text-slate-500 mt-1 break-all">{{ currentUser?.email || '—' }}</p>
+            <h2 class="text-xl font-bold text-slate-900">{{ `${currentUser?.username || 'Utilisateur'}#${currentUser?.code}` }}</h2>
+            <p class="text-sm text-slate-500 mt-1 break-all">{{ currentUser?.email}}</p>
 
             <!-- Roles -->
             <div class="mt-4 flex flex-wrap justify-center gap-2">
