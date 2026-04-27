@@ -1,0 +1,11 @@
+.layout-topbar {
+  position: fixed;
+  height: var(--layout-topbar-height);
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 2rem 0 0.625rem;
+  background-color: var(--surface-card);
+  transition: all var(--layout-section-transition-duration);
+}

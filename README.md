@@ -38,7 +38,7 @@ npm run dev
 
 ## Rajouter une page :
 1. Créer un nouveau dossier dans le dossier `components` avec pour nom le nom de la page (ex: `NomComposant`)
-2. Créer un fichier `NomComposant.ts` dans le dossier créé
+2. Créer un fichier `NomComposant.vue` dans le dossier créé
 3. Ajouter le code suivant dans le fichier :
 ```html
 <template>

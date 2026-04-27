@@ -1,16 +1,10 @@
 import fetch from 'node-fetch';
-import { saveChapter } from '../utils/index.js';
+import { saveChapter } from '../utils/database.js';
+import { downloadCover } from '../utils/cover.js';
 
-// Fonction pour récupérer le titre du manga à partir de son URL
-async function getMangaTitle(mangaUrl) {
-    const mangaIdMatch = mangaUrl.match(/title\/([a-f0-9-]+)/);
-    if (!mangaIdMatch) {
-        console.error("❌ ID de manga introuvable dans l'URL !");
-        return 'Titre inconnu';
-    }
-
-    const mangaId = mangaIdMatch[1];
-    const apiUrl = `https://api.mangadex.org/manga/${mangaId}`;
+// --- Récupération complète des infos du manga ---
+async function getMangaInfo(mangaId) {
+    const apiUrl = `https://api.mangadex.org/manga/${mangaId}?includes[]=author&includes[]=artist&includes[]=cover_art`;
 
     try {
         const response = await fetch(apiUrl);
@@ -18,27 +12,55 @@ async function getMangaTitle(mangaUrl) {
 
         const mangaData = await response.json();
         const attributes = mangaData.data.attributes;
+        const relationships = mangaData.data.relationships;
 
-        // Priorité au titre en français, sinon en anglais
-        let mangaTitle = attributes.title.fr || attributes.title.en || 'Titre inconnu';
+        const title = attributes.title.fr || attributes.title.en || attributes.title[Object.keys(attributes.title)[0]];
+        const description = attributes.description.fr || attributes.description.en || '';
+        const type = attributes.originalLanguage || 'N/A';
+        const demographic = attributes.publicationDemographic || 'N/A';
+        const published = attributes.year || 'N/A';
+        const status = attributes.status || 'N/A';
 
-        // Vérification des titres alternatifs (altTitles)
-        if (attributes.altTitles.length > 0) {
-            const altTitleFr = attributes.altTitles.find(title => title.fr)?.fr;
-            if (altTitleFr) mangaTitle = altTitleFr;
-        }
+        const author = relationships.find(r => r.type === 'author')?.attributes?.name || 'Inconnu';
+        const artist = relationships.find(r => r.type === 'artist')?.attributes?.name || 'Inconnu';
 
-        return mangaTitle;
+        const theme = attributes.tags.map(tag => tag.attributes.name.en).join(', ') || '';
+        const tags = attributes.tags.map(tag => ({
+            name: tag.attributes.name.en || tag.attributes.name.fr || 'N/A',
+            type: tag.attributes.group || 'general'
+        }));
+
+        const coverRelation = relationships.find(r => r.type === 'cover_art');
+        const coverFileName = coverRelation?.attributes?.fileName;
+        const coverUrl = coverFileName ? `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}` : null;
+
+        return {
+            title,
+            description,
+            type,
+            demographic,
+            published,
+            status,
+            artist,
+            author,
+            theme,
+            publishers: 'N/A',
+            tags,
+            coverUrl,
+            coverFileName
+        };
+
     } catch (error) {
-        console.error(`❌ Erreur lors de la récupération du titre : ${error}`);
-        return 'Titre inconnu';
+        console.error(`❌ Erreur lors de la récupération des infos du manga : ${error}`);
+        return null;
     }
 }
 
+// --- Scraping MangaDex ---
 async function mangadex() {
     const baseUrl = 'https://api.mangadex.org/';
-    const chapterUrl = `${baseUrl}chapter?limit=10&translatedLanguage[]=fr&order[createdAt]=desc`;
-    
+    const chapterUrl = `${baseUrl}chapter?limit=20&translatedLanguage[]=fr&translatedLanguage[]=en&order[createdAt]=desc`;
+
     try {
         const response = await fetch(chapterUrl);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -49,22 +71,27 @@ async function mangadex() {
         for (const chapter of chapters) {
             const lastChapter = chapter.attributes.chapter || 'N/A';
             const chapterId = chapter.id;
-            const chapterUrl = `https://mangadex.org/chapter/${chapterId}`;
-            
-            // Récupération de l'ID du manga lié au chapitre
+            const chapterUrlFull = `https://mangadex.org/chapter/${chapterId}`;
+
             const mangaId = chapter.relationships.find(rel => rel.type === 'manga')?.id;
             if (!mangaId) continue;
 
             const mangaUrl = `https://mangadex.org/title/${mangaId}`;
 
-            // Récupération du titre du manga
-            const mangaTitle = await getMangaTitle(mangaUrl);
+            const mangaInfo = await getMangaInfo(mangaId);
+            if (!mangaInfo) continue;
 
-            // Enregistrement avec le bon titre
-            saveChapter('MangaDex',  lastChapter, chapterUrl, mangaUrl, mangaTitle);
+            // Téléchargement et stockage local de la cover
+            const coverPath = await downloadCover(mangaInfo.coverUrl, mangaInfo.coverFileName);
+            if (coverPath) {
+                mangaInfo.coverPath = coverPath; // store filename only
+            }
+
+            await saveChapter('MangaDex', lastChapter, chapterUrlFull, mangaUrl, mangaInfo);
+            
         }
+        console.log(`✅ Scraped MangaDex terminé.`);
 
-        console.log('✅ Scraping MangaDex terminé.');
     } catch (error) {
         console.error(`❌ Erreur MangaDex: ${error}`);
     }

@@ -1,0 +1,29 @@
+/* Theme overrides: Primary, Secondary, Tertiary */
+:root {
+  /* Primary */
+  --p-primary-500: #97b16d;
+  --p-primary-contrast-color: #ffffff;
+
+  /* Secondary (light background / surfaces) */
+  --p-surface-50: #e8e9f3;
+
+  /* Tertiary (dark color for text/background accents) */
+  --p-surface-900: #272635;
+  --p-surface-800: #272635;
+  --p-surface-700: #272635;
+  --p-surface-100: #e8e9f3;
+
+  /* Text colors */
+  --p-text-color: #272635;
+  --p-text-muted-color: #6b6b78;
+
+  /* Content / surfaces */
+  --p-content-background: var(--p-surface-50);
+  --p-content-border-color: rgba(39,38,53,0.12);
+  --p-content-hover-background: rgba(151,177,109,0.08);
+  --p-overlay-popover-background: rgba(255,255,255,0.9);
+
+  /* Misc */
+  --p-mask-background: rgba(0,0,0,0.5);
+  --p-focus-ring-color: rgba(151,177,109,0.6);
+}

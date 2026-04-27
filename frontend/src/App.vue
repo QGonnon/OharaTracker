@@ -1,23 +1,6 @@
+<script setup lang="ts"></script>
+
 <template>
-  <div id="app">
-    <MangaList />
-  </div>
+  <router-view />
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import MangaList from "./components/MangaList/MangaList.vue";
-
-export default defineComponent({
-  components: {
-    MangaList,
-  },
-});
-</script>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-}
-</style>

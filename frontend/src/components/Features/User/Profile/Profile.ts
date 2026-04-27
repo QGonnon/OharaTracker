@@ -1,0 +1,153 @@
+import { defineComponent } from 'vue';
+import { useAuthStore } from '../../../../store/auth.module';
+import Menu from '../../../Shared/Menu/Menu.vue';
+import AuthService from '../../../../services/auth.service';
+
+export default defineComponent({
+  name: 'Profile',
+  components: { Menu },
+
+  data() {
+    const authStore = useAuthStore();
+    const user = authStore.currentUser;
+    return {
+      isGoogleUser: false,
+      profileForm: {
+        username: user?.username || '',
+        email: user?.email || '',
+        displayName: (user as any)?.displayName || '',
+      },
+      passwordForm: {
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      },
+      profileLoading: false,
+      profileSuccess: '',
+      profileError: '',
+      passwordLoading: false,
+      passwordSuccess: '',
+      passwordError: '',
+    };
+  },
+
+  computed: {
+    currentUser() {
+      const authStore = useAuthStore();
+      return authStore.currentUser;
+    },
+    userInitial(): string {
+      return (this.currentUser?.username?.charAt(0)?.toUpperCase()) || 'U';
+    },
+    userRoles(): string[] {
+      return this.currentUser?.roles || [];
+    },
+    passwordStrength(): number {
+      const p = this.passwordForm.newPassword;
+      if (!p) return 0;
+      let score = 0;
+      if (p.length >= 8) score++;
+      if (/[A-Z]/.test(p)) score++;
+      if (/[0-9]/.test(p)) score++;
+      if (/[^A-Za-z0-9]/.test(p)) score++;
+      return score;
+    },
+    passwordStrengthLabel(): string {
+      const labels = ['', 'Très faible', 'Faible', 'Moyen', 'Fort'];
+      return labels[this.passwordStrength] || '';
+    },
+    passwordStrengthColor(): string {
+      if (this.passwordStrength >= 4) return 'bg-green-500';
+      if (this.passwordStrength >= 3) return 'bg-green-400';
+      if (this.passwordStrength >= 2) return 'bg-yellow-400';
+      return 'bg-red-400';
+    },
+  },
+
+  async mounted() {
+    if (!this.currentUser) {
+      this.$router.push({ name: 'Login' });
+      return;
+    }
+    // Vérifier que le token en localStorage correspond bien à un utilisateur en base.
+    // Si l'état local est corrompu (token obsolète), on déconnecte proprement.
+    try {
+      const fresh = await AuthService.getMe();
+      const authStore = useAuthStore();
+      if (authStore.user) {
+        authStore.user.username = fresh.username;
+        authStore.user.email = fresh.email;
+        authStore.user.displayName = fresh.displayName;
+      }
+      this.isGoogleUser = fresh.isGoogleUser || false;
+      this.profileForm.username = fresh.username;
+      this.profileForm.email = fresh.email;
+      this.profileForm.displayName = fresh.displayName || '';
+    } catch (err: any) {
+      // Token invalide ou utilisateur introuvable → déconnexion forcée
+      const authStore = useAuthStore();
+      authStore.logout();
+      this.$router.push({ name: 'Login' });
+    }
+  },
+
+  methods: {
+    async submitProfile() {
+      this.profileLoading = true;
+      this.profileSuccess = '';
+      this.profileError = '';
+      try {
+        const updated = await AuthService.updateProfile(this.profileForm);
+        // Mettre à jour le store avec les données retournées (nouveau token inclus)
+        const authStore = useAuthStore();
+        if (authStore.user) {
+          authStore.user.username = updated.username;
+          authStore.user.email = updated.email;
+          authStore.user.displayName = updated.displayName;
+          authStore.user.accessToken = updated.accessToken;
+        }
+        // Synchroniser le formulaire avec les valeurs confirmées par le backend
+        this.profileForm.username = updated.username;
+        this.profileForm.email = updated.email;
+        this.profileForm.displayName = updated.displayName || '';
+        this.profileSuccess = 'Profil mis à jour avec succès.';
+      } catch (err: any) {
+        this.profileError = err?.response?.data?.message || 'Erreur lors de la mise à jour du profil.';
+      } finally {
+        this.profileLoading = false;
+      }
+    },
+
+    async submitPassword() {
+      this.passwordError = '';
+      this.passwordSuccess = '';
+      if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+        this.passwordError = 'Les mots de passe ne correspondent pas.';
+        return;
+      }
+      if (this.passwordForm.newPassword.length < 6) {
+        this.passwordError = 'Le nouveau mot de passe doit faire au moins 6 caractères.';
+        return;
+      }
+      this.passwordLoading = true;
+      try {
+        await AuthService.changePassword({
+          currentPassword: this.passwordForm.currentPassword,
+          newPassword: this.passwordForm.newPassword,
+        });
+        this.passwordSuccess = 'Mot de passe modifié avec succès.';
+        this.passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+      } catch (err: any) {
+        this.passwordError = err?.response?.data?.message || 'Mot de passe actuel incorrect.';
+      } finally {
+        this.passwordLoading = false;
+      }
+    },
+
+    handleLogout() {
+      const authStore = useAuthStore();
+      authStore.logout();
+      this.$router.push({ name: 'Login' });
+    },
+  },
+});
