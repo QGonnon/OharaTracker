@@ -144,6 +144,34 @@
     </div>
   </div>
   
+  <!-- Oeuvres similaires -->
+  <div v-if="similarWorks.length > 0" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
+      <h2 class="text-xl font-bold text-surface-900 dark:text-surface-0">Oeuvres similaires</h2>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <RouterLink
+        v-for="item in similarWorks"
+        :key="item.title"
+        :to="`/${item.site?.toLowerCase() === 'moviedb' ? 'anime' : 'manga'}/${slugify(item.title)}`"
+        class="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-800 group block"
+      >
+        <img
+          :src="getItemCover(item)"
+          :alt="item.title"
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 transition-opacity duration-200">
+          <p class="text-white font-semibold text-sm truncate mb-1">{{ item.title }}</p>
+          <div class="flex flex-wrap gap-1">
+          </div>
+        </div>
+      </RouterLink>
+    </div>
+  </div>
+
   <!-- Edit Dialog (shared) -->
   <EditAnimeDialog v-if="isAnime" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
   <EditLibraryDialog v-else v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
