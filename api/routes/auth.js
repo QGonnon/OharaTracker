@@ -48,7 +48,7 @@ router.post('/signup', async (req, res) => {
 
         // Hasher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
-        const randomSuffix = Math.random().toString(36).substring(2, 6); // Ajouter un suffixe de 4 caractères alphanumériques
+        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase(); // Ajouter un suffixe de 4 caractères alphanumériques
 
         // Insérer le nouvel utilisateur
         await db.run(
@@ -141,7 +141,7 @@ router.post('/google', async (req, res) => {
         const email = googleUser.email;
         const name = googleUser.name || googleUser.email.split('@')[0];
         const cleanDisplayName = name.replace(/\s+/g, '_').substring(0, 24); // Limiter à 24 caractères et remplacer les espaces
-        const randomSuffix = Math.random().toString(36).substring(2, 6); // Ajouter un suffixe de 4 caractères alphanumériques
+        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase(); // Ajouter un suffixe de 4 caractères alphanumériques
         const googleId = googleUser.sub;
 
         // Vérifier si l'utilisateur existe déjà
