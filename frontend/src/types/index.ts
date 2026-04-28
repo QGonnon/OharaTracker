@@ -27,7 +27,6 @@ export interface Manga {
 export interface User {
   username?: string;
   email?: string;
-  displayName?: string;
   name?: string;
   role?: 'user' | 'moderator' | 'admin';
   accessToken?: string;

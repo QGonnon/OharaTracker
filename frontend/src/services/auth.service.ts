@@ -6,7 +6,7 @@ class AuthService {
   login(user: any) {
     return axios
       .post(API_URL + 'signin', {
-        username: user.username,
+        email: user.email,
         password: user.password
       })
       .then(response => {
@@ -36,7 +36,7 @@ class AuthService {
     return axios.get(API_URL + 'me', { headers }).then(r => r.data);
   }
 
-  updateProfile(data: { username?: string; email?: string; displayName?: string }) {
+  updateProfile(data: { username?: string; email?: string; }) {
     const user = JSON.parse(localStorage.getItem('user') || 'null');
     const headers = user?.accessToken ? { Authorization: `Bearer ${user.accessToken}` } : {};
     return axios.put(API_URL + 'profile', data, { headers }).then(response => {

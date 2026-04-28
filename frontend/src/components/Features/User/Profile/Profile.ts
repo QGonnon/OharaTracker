@@ -12,10 +12,10 @@ export default defineComponent({
     const user = authStore.currentUser;
     return {
       isGoogleUser: false,
+      hasPassword: true,
       profileForm: {
         username: user?.username || '',
-        email: user?.email || '',
-        displayName: (user as any)?.displayName || '',
+        email: user?.email || ''
       },
       passwordForm: {
         currentPassword: '',
@@ -77,12 +77,11 @@ export default defineComponent({
       if (authStore.user) {
         authStore.user.username = fresh.username;
         authStore.user.email = fresh.email;
-        authStore.user.displayName = fresh.displayName;
       }
       this.isGoogleUser = fresh.isGoogleUser || false;
+      this.hasPassword = fresh.hasPassword || false;
       this.profileForm.username = fresh.username;
       this.profileForm.email = fresh.email;
-      this.profileForm.displayName = fresh.displayName || '';
     } catch (err: any) {
       // Token invalide ou utilisateur introuvable → déconnexion forcée
       const authStore = useAuthStore();
@@ -103,13 +102,11 @@ export default defineComponent({
         if (authStore.user) {
           authStore.user.username = updated.username;
           authStore.user.email = updated.email;
-          authStore.user.displayName = updated.displayName;
           authStore.user.accessToken = updated.accessToken;
         }
         // Synchroniser le formulaire avec les valeurs confirmées par le backend
         this.profileForm.username = updated.username;
         this.profileForm.email = updated.email;
-        this.profileForm.displayName = updated.displayName || '';
         this.profileSuccess = 'Profil mis à jour avec succès.';
       } catch (err: any) {
         this.profileError = err?.response?.data?.message || 'Erreur lors de la mise à jour du profil.';
@@ -137,6 +134,7 @@ export default defineComponent({
         });
         this.passwordSuccess = 'Mot de passe modifié avec succès.';
         this.passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+        this.hasPassword = true;
       } catch (err: any) {
         this.passwordError = err?.response?.data?.message || 'Mot de passe actuel incorrect.';
       } finally {
