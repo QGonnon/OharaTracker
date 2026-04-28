@@ -69,11 +69,11 @@ router.post('/signup', async (req, res) => {
 
 // Route de connexion
 router.post('/signin', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Validation basique
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis' });
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email et mot de passe requis' });
     }
 
     const db = await openDb();
@@ -81,19 +81,19 @@ router.post('/signin', async (req, res) => {
     try {
         // Récupérer l'utilisateur
         const user = await db.get(
-            'SELECT name, code, email, password FROM Client WHERE name = ?',
-            [username]
+            'SELECT name, code, email, password FROM Client WHERE email = ?',
+            [email]
         );
 
         if (!user) {
-            return res.status(401).json({ message: 'Nom d\'utilisateur ou mot de passe incorrect' });
+            return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
         }
 
         // Vérifier le mot de passe
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Nom d\'utilisateur ou mot de passe incorrect' });
+            return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
         }
 
         // Générer un token JWT
@@ -140,7 +140,7 @@ router.post('/google', async (req, res) => {
         const googleUser = JSON.parse(jsonPayload);
         const email = googleUser.email;
         const name = googleUser.name || googleUser.email.split('@')[0];
-        const cleanDisplayName = name.replace(/\s+/g, '_').substring(0, 24); // Limiter à 24 caractères et remplacer les espaces
+        const cleanName = name.replace(/\s+/g, '_').substring(0, 24); // Limiter à 24 caractères et remplacer les espaces
         const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase(); // Ajouter un suffixe de 4 caractères alphanumériques
         const googleId = googleUser.sub;
 
@@ -158,7 +158,7 @@ router.post('/google', async (req, res) => {
             await db.run(
                 `INSERT INTO Client (name, code, email, password, google_id, id_subscription) 
                  VALUES (?, ?, ?, ?, ?, 1)`,
-                [cleanDisplayName, randomSuffix, email, '', googleId]
+                [cleanName, randomSuffix, email, '', googleId]
             );
 
             user = await db.get('SELECT name, code, email, google_id FROM Client WHERE email = ?', [email]);
@@ -211,7 +211,7 @@ router.get('/me', authenticate, async (req, res) => {
     const username = req.user.username;
     const db = await openDb();
     try {
-        const user = await db.get('SELECT name, code, email, google_id FROM Client WHERE name = ?', [username]);
+        const user = await db.get('SELECT name, code, email, password, google_id FROM Client WHERE name = ?', [username]);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
@@ -220,6 +220,7 @@ router.get('/me', authenticate, async (req, res) => {
             code: user.code,
             email: user.email,
             isGoogleUser: !!user.google_id,
+            hasPassword: !!user.password
         });
     } catch (error) {
         console.error('❌ Erreur lors de la récupération du profil:', error);
@@ -231,15 +232,15 @@ router.get('/me', authenticate, async (req, res) => {
 
 // Mise à jour du profil
 router.put('/profile', authenticate, async (req, res) => {
-    const { username, email, displayName } = req.body;
+    const { username, email } = req.body;
     const currentUsername = req.user.username;
-
-    if (!username && !email && !displayName) {
+    
+    if (!username && !email) {
         return res.status(400).json({ message: 'Aucun champ à mettre à jour' });
     }
-
+    
     const db = await openDb();
-
+    
     try {
         const user = await db.get('SELECT name, code, email FROM Client WHERE name = ?', [currentUsername]);
 
@@ -263,17 +264,17 @@ router.put('/profile', authenticate, async (req, res) => {
                 return res.status(400).json({ message: 'Cette adresse email est déjà utilisée' });
             }
         }
-
+        
         // Mettre à jour les FK si le username change
         if (newUsername !== currentUsername) {
             await db.run('UPDATE ClientCategoryAssignment SET name_client = ? WHERE name_client = ?', [newUsername, currentUsername]);
         }
-
+        
         await db.run(
             'UPDATE Client SET name = ?, email = ? WHERE name = ?',
-            [newUsername, newEmail,, currentUsername]
+            [newUsername, newEmail, currentUsername]
         );
-
+        
         // Générer un nouveau token avec le username mis à jour
         const newToken = jwt.sign(
             { username: newUsername, email: newEmail },
@@ -284,10 +285,8 @@ router.put('/profile', authenticate, async (req, res) => {
         res.json({
             username: newUsername,
             email: newEmail,
-            displayName: newDisplayName,
             accessToken: newToken,
         });
-
     } catch (error) {
         console.error('❌ Erreur lors de la mise à jour du profil:', error);
         res.status(500).json({ message: 'Erreur serveur lors de la mise à jour du profil' });
@@ -300,8 +299,11 @@ router.put('/profile', authenticate, async (req, res) => {
 router.post('/change-password', authenticate, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const username = req.user.username;
+    const db = await openDb();
+    const user = await db.get('SELECT google_id, password FROM Client WHERE name = ?', [username]);
+    const firstPasswordChange = !user.password && user.google_id;
 
-    if (!currentPassword || !newPassword) {
+    if ((!currentPassword || !newPassword) && !firstPasswordChange) {
         return res.status(400).json({ message: 'Les deux mots de passe sont requis' });
     }
 
@@ -309,7 +311,6 @@ router.post('/change-password', authenticate, async (req, res) => {
         return res.status(400).json({ message: 'Le nouveau mot de passe doit contenir au moins 6 caractères' });
     }
 
-    const db = await openDb();
 
     try {
         const user = await db.get('SELECT name, password FROM Client WHERE name = ?', [username]);
@@ -319,7 +320,7 @@ router.post('/change-password', authenticate, async (req, res) => {
         }
 
         const isValid = await bcrypt.compare(currentPassword, user.password);
-        if (!isValid) {
+        if (!isValid && !firstPasswordChange) {
             return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
         }
 

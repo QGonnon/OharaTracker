@@ -48,10 +48,10 @@
             @click="toggleUserMenu"
           >
             <div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold select-none">
-              {{ displayName[0]?.toUpperCase() || '?' }}
+              {{ name[0]?.toUpperCase() }}
             </div>
             <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200 max-w-[8rem] truncate">
-              {{ displayName }}
+              {{ name }}
             </span>
             <i class="pi pi-chevron-down text-[10px] text-gray-400" />
           </button>
@@ -107,9 +107,9 @@
           <!-- User info -->
           <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 mb-1">
             <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm select-none">
-              {{ displayName[0]?.toUpperCase() || '?' }}
+              {{ name[0]?.toUpperCase() || '?' }}
             </div>
-            <span class="font-semibold text-gray-800 dark:text-white truncate">{{ displayName }}</span>
+            <span class="font-semibold text-gray-800 dark:text-white truncate">{{ name }}</span>
           </div>
           <RouterLink to="/profile" @click="mobileOpen = false"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium">

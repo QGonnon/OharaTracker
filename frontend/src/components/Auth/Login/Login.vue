@@ -18,14 +18,14 @@
           <div class="px-8 py-8">
             <Form @submit="handleLogin" :validation-schema="schema" class="space-y-6">
               <div class="space-y-2">
-                <label for="username" class="block text-sm font-semibold text-slate-700">Nom d'utilisateur</label>
+                <label for="email" class="block text-sm font-semibold text-slate-700">Email</label>
                 <Field
-                  name="username"
+                  name="email"
                   type="text"
                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                  placeholder="Votre pseudo"
+                  placeholder="Votre email"
                 />
-                <ErrorMessage name="username" class="text-sm text-red-600" />
+                <ErrorMessage name="email" class="text-sm text-red-600" />
               </div>
 
               <div class="space-y-2">

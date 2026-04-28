@@ -22,7 +22,7 @@ export default defineComponent({
     onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const displayName = computed(() =>
+    const name = computed(() =>
       authStore.currentUser?.name || ''
     )
 
@@ -69,7 +69,7 @@ export default defineComponent({
       mobileOpen,
       userMenuRef,
       isLoggedIn,
-      displayName,
+      name,
       goLogin,
       handleLogout,
       theme,
