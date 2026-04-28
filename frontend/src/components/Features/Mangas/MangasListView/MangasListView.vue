@@ -111,14 +111,7 @@
                                 </template>
                             </Column>
 
-                            <!-- Author Column -->
-                            <Column field="author" header="Auteur" sortable style="min-width: 150px;">
-                                <template #body="{ data }">
-                                    <span class="text-slate-700 dark:text-slate-300">
-                                        {{ data.author || '-' }}
-                                    </span>
-                                </template>
-                            </Column>
+                            
 
                             <!-- Status Column -->
                             <Column field="status" header="Statut" sortable style="min-width: 120px;">
@@ -144,6 +137,19 @@
                                 </template>
                             </Column>
 
+                            
+                            
+                            <!-- Type Column -->
+                            <Column field="type" header="Type" sortable style="min-width: 120px;">
+                                <template #body="{ data }">
+                                    <Tag
+                                        :value="data.type || 'Manga'"
+                                        :severity="(data.type === 'Anime' ? 'success' : 'info')"
+                                        class="text-xs"
+                                    />
+                                </template>
+                            </Column>
+
                             <!-- Actions Column -->
                             <Column header="Actions" style="min-width: 120px;">
                                 <template #body="{ data }">
@@ -152,27 +158,6 @@
                                         icon="pi pi-pencil"
                                         class="p-button-text p-button-plain"
                                         @click.prevent="openEdit(data)"
-                                    />
-                                </template>
-                            </Column>
-
-                            <!-- Site Column -->
-                            <Column field="site" header="Source" sortable style="min-width: 120px;">
-                                <template #body="{ data }">
-                                    <Tag 
-                                        :value="data.site"
-                                        severity="secondary"
-                                    />
-                                </template>
-                            </Column>
-
-                            <!-- Type Column -->
-                            <Column field="type" header="Type" sortable style="min-width: 120px;">
-                                <template #body="{ data }">
-                                    <Tag
-                                        :value="data.type || 'Manga'"
-                                        :severity="(data.type === 'Anime' ? 'success' : 'info')"
-                                        class="text-xs"
                                     />
                                 </template>
                             </Column>
