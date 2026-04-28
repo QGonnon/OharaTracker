@@ -14,6 +14,11 @@ import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDial
 import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
 import type { Manga } from '../../../../types/index'
 
+const parseTags = (theme: string | undefined): string[] => {
+  if (!theme) return []
+  return theme.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+}
+
 export default defineComponent({
   name: 'MangaInfo',
   components: {
@@ -33,6 +38,7 @@ export default defineComponent({
   const router = useRouter()
     const authStore = useAuthStore()
     const manga = ref<Manga>({} as Manga)
+    const allMangas = ref<Manga[]>([])
     const loading = ref<boolean>(true)
     const error = ref<string | null>(null)
     const adding = ref<boolean>(false)
@@ -42,6 +48,27 @@ export default defineComponent({
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const animeSources = new Set(['moviedb', 'asura'])
     const isAnime = computed(() => animeSources.has((manga.value.site || '').toLowerCase()))
+
+    const getItemCover = (item: Manga): string => {
+      const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+      if (item.coverPath) return `${apiBase}/cdn/${item.coverPath}`
+      if (item.coverUrl) return item.coverUrl
+      return `https://picsum.photos/seed/${item.id}/200/300`
+    }
+
+    const similarWorks = computed(() => {
+      const currentTags = parseTags(manga.value.theme)
+      if (currentTags.length === 0) return []
+      return allMangas.value
+        .filter(m => m.title !== manga.value.title)
+        .map(m => ({
+          ...m,
+          commonTagCount: parseTags(m.theme).filter(t => currentTags.includes(t)).length
+        }))
+        .filter(m => m.commonTagCount >= 3)
+        .sort((a, b) => b.commonTagCount - a.commonTagCount)
+        .slice(0, 6)
+    })
 
     const coverSrc = computed(() => {
       const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
@@ -84,6 +111,8 @@ export default defineComponent({
         const found = mangaList.find(
           (m) => slugify(m.title) === route.params.name
         )
+
+        allMangas.value = mangaList
 
         if (found) {
           manga.value = found
@@ -255,6 +284,10 @@ export default defineComponent({
       addSuccess,
       isInLibrary,
       goEditLibrary,
+      similarWorks,
+      parseTags,
+      slugify,
+      getItemCover,
       // edit dialog bindings
       editDialog,
       openEdit,
