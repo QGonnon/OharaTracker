@@ -124,10 +124,24 @@
                             </Column>
 
                             <!-- Last Chapter Column -->
+                            <Column field="lastChapter" header="Dernier Chapitre Lu" sortable style="min-width: 150px;">
+                                <template #body="{ data }">
+                                    <Button 
+                                        :label="`Ch. ${data.userLastChapter || '-'}`"
+                                        @click="openChapter(data.chapterUrl)"
+                                        icon="pi pi-arrow-up-right"
+                                        iconPos="right"
+                                        text
+                                        class="text-indigo-600 dark:text-indigo-400"
+                                    />
+                                </template>
+                                
+                            </Column>
+                            <!-- Last Chapter Column -->
                             <Column field="lastChapter" header="Dernier Chapitre" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button 
-                                        :label="`Ch. ${data.userLastChapter || data.lastChapter || '-'}`"
+                                        :label="`Ch. ${data.lastChapter || '-'}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
