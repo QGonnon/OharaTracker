@@ -27,18 +27,27 @@
       <!-- Right side actions -->
       <div class="flex items-center gap-2">
 
+        <!-- Locale toggle -->
+        <button
+          class="nav-theme-toggle"
+          @click="toggleLocale"
+          :title="$t('nav.lang')"
+        >
+          <span class="text-xs font-bold">{{ $t('nav.lang') }}</span>
+        </button>
+
         <!-- Theme toggle -->
         <button
           class="nav-theme-toggle"
           @click="toggleTheme"
-          :title="theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'"
+          :title="theme === 'dark' ? $t('nav.theme_light') : $t('nav.theme_dark')"
         >
           <font-awesome-icon :icon="theme === 'dark' ? ['fas', 'sun'] : ['fas', 'moon']" class="text-sm" />
         </button>
 
         <!-- Login button (desktop only) -->
         <RouterLink v-if="!isLoggedIn" to="/auth/login" class="hidden md:block">
-          <Button label="Se connecter" outlined size="small" class="font-semibold" @click="goLogin" />
+          <Button :label="$t('nav.login')" outlined size="small" class="font-semibold" @click="goLogin" />
         </RouterLink>
 
         <!-- User avatar + popup (desktop only) -->
@@ -73,7 +82,7 @@
   <!-- Mobile Drawer -->
   <Drawer v-model:visible="mobileOpen" position="right" class="mobile-drawer">
     <template #header>
-      <span class="text-base font-bold text-gray-900 dark:text-white">Navigation</span>
+      <span class="text-base font-bold text-gray-900 dark:text-white">{{ $t('nav.navigation') }}</span>
     </template>
 
     <div class="flex flex-col h-full">
@@ -113,22 +122,22 @@
           </div>
           <RouterLink to="/profile" @click="mobileOpen = false"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium">
-            <i class="pi pi-user text-gray-400" /> Mon profil
+            <i class="pi pi-user text-gray-400" /> {{ $t('nav.profile') }}
           </RouterLink>
           <RouterLink to="/list" @click="mobileOpen = false"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium">
-            <i class="pi pi-bookmark text-gray-400" /> Mes suivis
+            <i class="pi pi-bookmark text-gray-400" /> {{ $t('nav.following') }}
           </RouterLink>
           <button
             @click="handleLogout(); mobileOpen = false"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-medium w-full text-left"
           >
-            <i class="pi pi-sign-out" /> Se déconnecter
+            <i class="pi pi-sign-out" /> {{ $t('nav.logout') }}
           </button>
         </template>
 
         <template v-else>
-          <Button label="Se connecter" class="w-full font-semibold" @click="goLogin(); mobileOpen = false" />
+          <Button :label="$t('nav.login')" class="w-full font-semibold" @click="goLogin(); mobileOpen = false" />
         </template>
 
       </div>

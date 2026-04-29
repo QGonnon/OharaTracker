@@ -13,34 +13,33 @@
       <div class="flex-1 max-w-xl">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 text-violet-600 dark:text-violet-400 text-xs font-semibold tracking-wide mb-6">
           <span class="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-          Tracker manga multi-sources
+          {{ $t('home.badge') }}
         </div>
 
         <h1 class="text-5xl lg:text-[3.4rem] font-extrabold leading-[1.1] text-gray-900 dark:text-white tracking-tight mb-5">
-          Suivez vos mangas<br>
-          <span class="text-violet-600 dark:text-violet-400">depuis n'importe où</span>
+          {{ $t('home.heading_1') }}<br>
+          <span class="text-violet-600 dark:text-violet-400">{{ $t('home.heading_2') }}</span>
         </h1>
 
         <p class="text-gray-500 dark:text-zinc-400 text-lg leading-relaxed mb-9">
-          OharaTracker centralise vos lectures depuis plusieurs sites en une seule interface.
-          Gérez vos chapitres, vos listes et ne ratez plus aucune sortie.
+          {{ $t('home.description') }}
         </p>
 
         <div class="flex flex-wrap gap-3 mb-9">
           <RouterLink to="/discovery">
-            <Button label="Commencer gratuitement" class="font-semibold" />
+            <Button :label="$t('home.start_free')" class="font-semibold" />
           </RouterLink>
           <RouterLink to="/discovery">
-            <Button label="Voir la démo →" severity="secondary" outlined class="font-medium" />
+            <Button :label="$t('home.see_demo')" severity="secondary" outlined class="font-medium" />
           </RouterLink>
         </div>
 
         <div class="flex flex-wrap items-center gap-5 text-sm">
           <span class="flex items-center gap-1.5 text-gray-500 dark:text-zinc-400">
-            <i class="pi pi-check-circle text-emerald-500 text-sm" /> Gratuit
+            <i class="pi pi-check-circle text-emerald-500 text-sm" /> {{ $t('home.free') }}
           </span>
           <span class="flex items-center gap-1.5 text-gray-500 dark:text-zinc-400">
-            <i class="pi pi-check-circle text-emerald-500 text-sm" /> Sans publicité
+            <i class="pi pi-check-circle text-emerald-500 text-sm" /> {{ $t('home.no_ads') }}
           </span>
         </div>
       </div>
@@ -55,15 +54,15 @@
             <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
             <div class="w-2.5 h-2.5 rounded-full bg-green-400/80" />
             <div class="ml-3 flex-1 h-5 rounded bg-gray-200 dark:bg-zinc-700 flex items-center px-2.5">
-              <span class="text-[11px] text-gray-400 dark:text-zinc-500">oharatracker.app / bibliothèque</span>
+              <span class="text-[11px] text-gray-400 dark:text-zinc-500">{{ $t('home.mock_url') }}</span>
             </div>
           </div>
 
           <!-- Library -->
           <div class="p-4">
             <div class="flex items-center justify-between mb-3 px-1">
-              <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">Ma bibliothèque</span>
-              <span class="text-xs text-violet-600 dark:text-violet-400 font-medium">{{ mockItems.length }} titres</span>
+              <span class="text-sm font-semibold text-gray-700 dark:text-zinc-200">{{ $t('home.my_library') }}</span>
+              <span class="text-xs text-violet-600 dark:text-violet-400 font-medium">{{ mockItems.length }} {{ $t('home.titles') }}</span>
             </div>
 
             <div class="space-y-0.5">
@@ -75,7 +74,7 @@
                     {{ item.title }}
                   </div>
                   <div class="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">
-                    Chapitre {{ item.chapter }}
+                    {{ $t('home.chapter') }} {{ item.chapter }}
                   </div>
                 </div>
                 <Tag :value="item.status" :severity="item.severity" class="text-xs" />
@@ -103,13 +102,13 @@
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16">
         <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
-          Fonctionnalités
+          {{ $t('home.features_label') }}
         </span>
         <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Tout ce dont vous avez besoin
+          {{ $t('home.features_heading') }}
         </h2>
         <p class="text-gray-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
-          Un outil complet pour gérer votre collection, suivre vos lectures et découvrir de nouveaux titres.
+          {{ $t('home.features_desc') }}
         </p>
       </div>
 
@@ -119,8 +118,8 @@
           <div class="w-11 h-11 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform duration-200">
             {{ feat.icon }}
           </div>
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{{ feat.title }}</h3>
-          <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ feat.desc }}</p>
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{{ $t(feat.title) }}</h3>
+          <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ $t(feat.desc) }}</p>
         </div>
       </div>
     </div>
@@ -131,9 +130,9 @@
     <div class="max-w-3xl mx-auto px-6">
       <div class="text-center mb-14">
         <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
-          Démarrage rapide
+          {{ $t('home.quickstart_label') }}
         </span>
-        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">Comment ça marche</h2>
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">{{ $t('home.quickstart_heading') }}</h2>
       </div>
 
       <div class="space-y-4">
@@ -143,8 +142,8 @@
             {{ i + 1 }}
           </div>
           <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">{{ step.title }}</h4>
-            <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ step.text }}</p>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">{{ $t(step.title) }}</h4>
+            <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ $t(step.text) }}</p>
           </div>
         </div>
       </div>
@@ -155,15 +154,15 @@
   <section class="py-28 bg-white dark:bg-zinc-950 border-t border-gray-100 dark:border-white/5">
     <div class="max-w-2xl mx-auto px-6 text-center">
       <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-5 tracking-tight">
-        Prêt à commencer ?
+        {{ $t('home.cta_heading') }}
       </h2>
       <p class="text-gray-500 dark:text-zinc-400 text-lg leading-relaxed mb-8">
-        Rejoignez des milliers de lecteurs qui gèrent déjà leur collection avec OharaTracker.
+        {{ $t('home.cta_desc') }}
       </p>
       <RouterLink to="/discovery">
-        <Button label="Commencer gratuitement" size="large" class="px-10 font-semibold" />
+        <Button :label="$t('home.start_free')" size="large" class="px-10 font-semibold" />
       </RouterLink>
-      <p class="text-gray-400 dark:text-zinc-600 text-sm mt-4">Gratuit · Sans publicité · Open source</p>
+      <p class="text-gray-400 dark:text-zinc-600 text-sm mt-4">{{ $t('home.footer') }}</p>
     </div>
   </section>
 </template>
