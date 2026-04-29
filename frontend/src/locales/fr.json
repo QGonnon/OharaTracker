@@ -65,7 +65,11 @@
     "steps2_title": "Suivez vos lectures",
     "steps2_desc": "Ajoutez vos mangas favoris, marquez les chapitres lus et restez informé des nouvelles sorties.",
     "steps3_title": "Explorez et découvrez",
-    "steps3_desc": "Parcourez notre catalogue et obtenez des recommandations personnalisées."
+    "steps3_desc": "Parcourez notre catalogue et obtenez des recommandations personnalisées.",
+    "number_manga": "Mangas disponibles",
+    "number_anime": "Animes référencés",
+    "number_users": "Utilisateurs actifs",
+    "number_chapter": "Chapitres suivis"
   },
   "library": {
     "title": "Mes Suivis",

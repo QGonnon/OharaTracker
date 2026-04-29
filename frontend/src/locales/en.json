@@ -65,7 +65,11 @@
     "steps2_title": "Track your readings",
     "steps2_desc": "Add your favorite mangas, mark chapters as read, and stay informed about new releases.",
     "steps3_title": "Explore and discover",
-    "steps3_desc": "Browse our catalog and get personalized recommendations."
+    "steps3_desc": "Browse our catalog and get personalized recommendations.",
+    "number_manga": "Mangas available",
+    "number_anime": "Animes referenced",
+    "number_users": "Active users",
+    "number_chapter": "Chapters tracked"
   },
   "library": {
     "title": "My Watchlist",

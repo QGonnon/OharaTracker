@@ -45,10 +45,10 @@ export default defineComponent({
     ];
 
     const stats = [
-      { value: "12 400+", label: "Mangas disponibles" },
-      { value: "3 200+", label: "Animes référencés" },
-      { value: "48 000+", label: "Utilisateurs actifs" },
-      { value: "980K+", label: "Chapitres suivis" },
+      { value: "12 400+", label: "home.number_manga" },
+      { value: "3 200+", label: "home.number_anime" },
+      { value: "48 000+", label: "home.number_users" },
+      { value: "980K+", label: "home.number_chapter" },
     ];
 
     const features = [

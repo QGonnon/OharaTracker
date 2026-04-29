@@ -29,9 +29,6 @@
           <RouterLink to="/discovery">
             <Button :label="$t('home.start_free')" class="font-semibold" />
           </RouterLink>
-          <RouterLink to="/discovery">
-            <Button :label="$t('home.see_demo')" severity="secondary" outlined class="font-medium" />
-          </RouterLink>
         </div>
 
         <div class="flex flex-wrap items-center gap-5 text-sm">
@@ -91,8 +88,8 @@
   <div class="border-y border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900">
     <div class="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
       <div v-for="stat in stats" :key="stat.label">
-        <div class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{{ stat.value }}</div>
-        <div class="text-sm text-gray-400 dark:text-zinc-500 mt-1">{{ stat.label }}</div>
+        <div class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{{ $t(stat.value) }}</div>
+        <div class="text-sm text-gray-400 dark:text-zinc-500 mt-1">{{ $t(stat.label) }}</div>
       </div>
     </div>
   </div>
