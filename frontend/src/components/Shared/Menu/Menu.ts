@@ -3,6 +3,7 @@ import { Button, Drawer } from 'primevue'
 import PopupMenu from 'primevue/menu'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
+import { useI18n } from 'vue-i18n'
 import type { MenuItem } from 'primevue/menuitem'
 
 export default defineComponent({
@@ -12,6 +13,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const authStore = useAuthStore()
+    const { t, locale } = useI18n()
 
     const isShrunk = ref(false)
     const mobileOpen = ref(false)
@@ -46,22 +48,27 @@ export default defineComponent({
       }
     }
 
+    const toggleLocale = () => {
+      locale.value = locale.value === 'fr' ? 'en' : 'fr'
+      try { localStorage.setItem('lang', locale.value) } catch (e) {}
+    }
+
     const isActive = (name: string) => route.name === name
 
-    const navLinks = [
-      { label: 'Découverte', name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
-      { label: 'Bibliothèque', name: 'Search', to: '/search', icon: 'pi pi-book' },
-      { label: 'Mes Suivis', name: 'Mes Suivis', to: '/list', icon: 'pi pi-star'},
-    ]
+    const navLinks = computed(() => [
+      { label: t('nav.discovery'), name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
+      { label: t('nav.library'), name: 'Search', to: '/search', icon: 'pi pi-book' },
+      { label: t('nav.following'), name: 'Mes Suivis', to: '/list', icon: 'pi pi-star'},
+    ])
 
     const toggleUserMenu = (event: Event) => {
       userMenuRef.value?.toggle(event)
     }
 
     const userMenuItems = computed<MenuItem[]>(() => [
-      { label: 'Mon profil', icon: 'pi pi-user', command: () => router.push({ name: 'Profile' }) },
+      { label: t('nav.profile'), icon: 'pi pi-user', command: () => router.push({ name: 'Profile' }) },
       { separator: true },
-      { label: 'Se déconnecter', icon: 'pi pi-sign-out', command: handleLogout },
+      { label: t('nav.logout'), icon: 'pi pi-sign-out', command: handleLogout },
     ])
 
     return {
@@ -74,6 +81,8 @@ export default defineComponent({
       handleLogout,
       theme,
       toggleTheme,
+      locale,
+      toggleLocale,
       isActive,
       navLinks,
       toggleUserMenu,

@@ -5,8 +5,8 @@
     <div class="max-w-5xl mx-auto px-4 py-12">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Mon Profil</h1>
-        <p class="text-slate-500 dark:text-slate-400 mt-1">Gérez vos informations personnelles et votre sécurité</p>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $t('profile.title') }}</h1>
+        <p class="text-slate-500 dark:text-slate-400 mt-1">{{ $t('profile.subtitle') }}</p>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-6">
@@ -25,7 +25,7 @@
               class="mt-6 w-full py-2.5 rounded-xl border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-900/30 transition"
               @click="handleLogout"
             >
-              Se déconnecter
+              {{ $t('profile.logout') }}
             </button>
           </div>
         </aside>
@@ -36,28 +36,28 @@
           <!-- Informations personnelles -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Informations personnelles</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Modifiez vos informations de compte</p>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.personal_info') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.personal_info_sub') }}</p>
             </div>
             <form class="px-6 py-6 space-y-5" @submit.prevent="submitProfile">
               <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom d'utilisateur</label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.username') }}</label>
                 <input
                   v-model="profileForm.username"
                   type="text"
                   autocomplete="username"
                   class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
-                  placeholder="votre_pseudo"
+                  :placeholder="$t('profile.username_placeholder')"
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Adresse email</label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.email') }}</label>
                 <input
                   v-model="profileForm.email"
                   type="email"
                   autocomplete="email"
                   class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
-                  placeholder="vous@exemple.com"
+                  :placeholder="$t('profile.email_placeholder')"
                 />
               </div>
 
@@ -74,22 +74,22 @@
                   :disabled="profileLoading"
                   class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
-                  {{ profileLoading ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+                  {{ profileLoading ? $t('profile.saving') : $t('profile.save') }}
                 </button>
               </div>
             </form>
           </section>
 
-          <!-- Sécurité / Mot de passe -->
+          <!-- Sécurité -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Sécurité</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Modifiez votre mot de passe</p>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.security') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.security_sub') }}</p>
             </div>
             <form class="px-6 py-6 space-y-5" @submit.prevent="submitPassword">
               <template v-if="hasPassword">
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Mot de passe actuel</label>
+                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.current_password') }}</label>
                   <input
                     v-model="passwordForm.currentPassword"
                     type="password"
@@ -101,7 +101,7 @@
               </template>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nouveau mot de passe</label>
+                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.new_password') }}</label>
                   <input
                     v-model="passwordForm.newPassword"
                     type="password"
@@ -111,7 +111,7 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Confirmer le mot de passe</label>
+                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.confirm_password') }}</label>
                   <input
                     v-model="passwordForm.confirmPassword"
                     type="password"
@@ -150,7 +150,7 @@
                   :disabled="passwordLoading"
                   class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-60 transition"
                 >
-                  {{ passwordLoading ? 'Modification...' : 'Changer le mot de passe' }}
+                  {{ passwordLoading ? $t('profile.changing') : $t('profile.change_password') }}
                 </button>
               </div>
             </form>
@@ -159,19 +159,19 @@
           <!-- Zone de danger -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-red-100 dark:border-red-900/50 overflow-hidden">
             <div class="px-6 py-5 border-b border-red-100 dark:border-red-900/50">
-              <h3 class="text-lg font-bold text-red-600 dark:text-red-400">Zone de danger</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Actions sur votre session</p>
+              <h3 class="text-lg font-bold text-red-600 dark:text-red-400">{{ $t('profile.danger_zone') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.danger_sub') }}</p>
             </div>
             <div class="px-6 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <p class="font-semibold text-slate-800 dark:text-slate-100">Se déconnecter</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Terminer votre session en cours sur cet appareil</p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100">{{ $t('profile.logout_title') }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.logout_description') }}</p>
               </div>
               <button
                 class="px-6 py-2.5 rounded-xl border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-900/30 transition flex-shrink-0"
                 @click="handleLogout"
               >
-                Se déconnecter
+                {{ $t('profile.logout') }}
               </button>
             </div>
           </section>

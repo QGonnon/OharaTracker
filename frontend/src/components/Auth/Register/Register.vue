@@ -10,8 +10,8 @@
               ✨
             </div>
             <div>
-              <p class="text-sm text-slate-500 dark:text-zinc-400 uppercase tracking-wide">Inscription</p>
-              <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Rejoins-nous</h1>
+              <p class="text-sm text-slate-500 dark:text-zinc-400 uppercase tracking-wide">{{ $t('auth.register_subtitle') }}</p>
+              <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $t('auth.register_heading') }}</h1>
             </div>
           </div>
 
@@ -19,18 +19,18 @@
             <Form @submit="handleRegister" :validation-schema="schema" class="space-y-8">
               <div v-if="!successful" class="space-y-8">
                 <div class="space-y-2">
-                  <label for="username" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">Nom d'utilisateur</label>
+                  <label for="username" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.username') }}</label>
                   <Field
                     name="username"
                     type="text"
                     class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                    placeholder="Votre pseudo"
+                    :placeholder="$t('auth.username_placeholder')"
                   />
                   <ErrorMessage name="username" class="text-sm text-red-600 dark:text-red-400" />
                 </div>
 
                 <div class="space-y-2">
-                  <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">Email</label>
+                  <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
                   <Field
                     name="email"
                     type="email"
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="space-y-2">
-                  <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">Mot de passe</label>
+                  <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
                   <Field
                     name="password"
                     type="password"
@@ -57,7 +57,7 @@
                     :disabled="loading"
                   >
                     <span v-show="loading" class="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"></span>
-                    <span>S'inscrire</span>
+                    <span>{{ $t('auth.register_btn') }}</span>
                   </button>
                 </div>
 
@@ -67,7 +67,7 @@
                     @click="$router.push({ name: 'Login' })"
                     class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-semibold py-3 hover:bg-slate-300 dark:hover:bg-zinc-600 transition"
                   >
-                    <span>Déjà inscrit ? Se connecter</span>
+                    <span>{{ $t('auth.already_registered') }}</span>
                   </button>
                 </div>
               </div>

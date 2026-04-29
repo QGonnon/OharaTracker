@@ -5,7 +5,7 @@
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20">
       <i class="pi pi-spin pi-spinner text-4xl text-primary mb-4"></i>
-      <p class="text-lg text-surface-500">Chargement du manga...</p>
+      <p class="text-lg text-surface-500">{{ $t('manga.loading') }}</p>
     </div>
 
     <!-- Error State -->
@@ -50,7 +50,7 @@
         <Card>
           <template #title>
             <h2 class="text-xl font-semibold text-surface-800 dark:text-surface-100">
-              Informations
+              {{ $t('manga.information') }}
             </h2>
           </template>
           <template #content>
@@ -58,9 +58,9 @@
               <div class="flex items-start gap-3">
                 <i class="pi pi-user text-primary mt-1"></i>
                 <div>
-                  <p class="text-sm text-surface-500 dark:text-surface-400">Auteur</p>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.author') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{ manga.author || 'Inconnu' }}
+                    {{ manga.author || $t('manga.unknown') }}
                   </p>
                 </div>
               </div>
@@ -70,9 +70,9 @@
               <div class="flex items-start gap-3">
                 <i class="pi pi-bookmark text-primary mt-1"></i>
                 <div>
-                  <p class="text-sm text-surface-500 dark:text-surface-400">Dernier chapitre</p>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.last_chapter') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    Chapitre {{ manga.lastChapter }}
+                    {{ $t('manga.chapter') }} {{ manga.lastChapter }}
                   </p>
                 </div>
               </div>
@@ -84,21 +84,18 @@
         <Card>
           <template #title>
             <h2 class="text-xl font-semibold text-surface-800 dark:text-surface-100">
-              Synopsis
+              {{ $t('manga.synopsis') }}
             </h2>
           </template>
           <template #content>
             <p class="text-surface-700 dark:text-surface-300 leading-relaxed">
-              {{ manga.description || 'Aucune description disponible.' }}
+              {{ manga.description || $t('manga.no_description') }}
             </p>
           </template>
         </Card>
 
         <!-- Action Buttons -->
         <div class="space-y-3">
-          <!-- <Message v-if="addSuccess || isInLibrary" severity="success" :closable="false" icon="pi pi-check">
-            {{ addSuccess ? 'Manga ajouté à votre bibliothèque.' : 'Déjà dans votre bibliothèque.' }}
-          </Message> -->
           <Message v-if="addError && !isInLibrary" severity="error" :closable="false">
             {{ addError }}
           </Message>
@@ -106,7 +103,7 @@
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
             v-if="manga.chapterUrl"
-            :label="`Lire le chapitre ${manga.lastChapter}`"
+            :label="$t('manga.read_chapter', { n: manga.lastChapter })"
             icon="pi pi-book"
             iconPos="left"
             severity="primary"
@@ -117,7 +114,7 @@
 
           <Button
             v-if="isLoggedIn"
-            :label="isInLibrary ? '' : 'Ajouter à ma bibliothèque'"
+            :label="isInLibrary ? '' : $t('manga.add_to_library')"
             :icon="isInLibrary ? '' : 'pi pi-bookmark'"
             iconPos="left"
             severity="secondary"
@@ -130,7 +127,7 @@
           />
           <Button
             v-if="isLoggedIn && isInLibrary"
-            label="Éditer"
+            :label="$t('manga.edit')"
             icon="pi pi-pencil"
             iconPos="left"
             severity="warning"
@@ -143,12 +140,12 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Oeuvres similaires -->
   <div v-if="similarWorks.length > 0" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="flex items-center gap-3 mb-6">
       <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
-      <h2 class="text-xl font-bold text-surface-900 dark:text-surface-0">Oeuvres similaires</h2>
+      <h2 class="text-xl font-bold text-surface-900 dark:text-surface-0">{{ $t('manga.similar') }}</h2>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
       <RouterLink

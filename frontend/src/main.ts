@@ -9,6 +9,7 @@ import Aura from '@primeuix/themes/aura';
 import App from './App.vue'
 import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
+import i18n from './i18n'
 
 const pinia = createPinia()
 
@@ -28,6 +29,7 @@ app.use(PrimeVue, {
 
 app.use(router)
     .use(pinia)
+    .use(i18n)
     .component('font-awesome-icon', FontAwesomeIcon)
 
 // Initialise theme from localStorage (persist user preference)

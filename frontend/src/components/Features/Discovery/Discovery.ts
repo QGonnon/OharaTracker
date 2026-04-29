@@ -74,7 +74,7 @@ export default defineComponent({
     const sectionTitle = computed(() => {
       if (activeType.value === 'manga') return 'Mangas';
       if (activeType.value === 'anime') return 'Animés';
-      return 'Catalogue';
+      return 'discovery.catalog';
     });
 
     const setType = (val: string) => {

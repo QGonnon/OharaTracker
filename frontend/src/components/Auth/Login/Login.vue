@@ -10,26 +10,26 @@
               🔐
             </div>
             <div>
-              <p class="text-sm text-slate-500 dark:text-zinc-400 uppercase tracking-wide">Connexion</p>
-              <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Reviens à bord</h1>
+              <p class="text-sm text-slate-500 dark:text-zinc-400 uppercase tracking-wide">{{ $t('auth.login_subtitle') }}</p>
+              <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $t('auth.login_heading') }}</h1>
             </div>
           </div>
 
           <div class="px-8 py-8">
             <Form @submit="handleLogin" :validation-schema="schema" class="space-y-6">
               <div class="space-y-2">
-                <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">Email</label>
+                <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
                 <Field
                   name="email"
                   type="text"
                   class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                  placeholder="Votre email"
+                  :placeholder="$t('auth.email_placeholder')"
                 />
                 <ErrorMessage name="email" class="text-sm text-red-600 dark:text-red-400" />
               </div>
 
               <div class="space-y-2">
-                <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">Mot de passe</label>
+                <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
                 <Field
                   name="password"
                   type="password"
@@ -45,7 +45,7 @@
                   :disabled="loading"
                 >
                   <span v-show="loading" class="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"></span>
-                  <span>Se connecter</span>
+                  <span>{{ $t('auth.sign_in') }}</span>
                 </button>
               </div>
 
@@ -55,7 +55,7 @@
                   @click="$router.push({ name: 'Register' })"
                   class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-semibold py-3 hover:bg-slate-300 dark:hover:bg-zinc-600 transition"
                 >
-                  <span>Créer un compte</span>
+                  <span>{{ $t('auth.create_account') }}</span>
                 </button>
               </div>
 
@@ -70,7 +70,7 @@
                   <div class="w-full border-t border-slate-200 dark:border-white/10"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                  <span class="px-2 bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400">Ou continuer avec</span>
+                  <span class="px-2 bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400">{{ $t('auth.or_continue') }}</span>
                 </div>
               </div>
 

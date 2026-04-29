@@ -54,52 +54,52 @@ export default defineComponent({
     const features = [
       {
         icon: "🔍",
-        title: "Recherche avancée",
-        desc: "Trouvez n'importe quel manga en quelques secondes grâce à notre moteur de recherche intelligent.",
+        title: 'home.advanced_reaserch',
+        desc: 'home.advanced_reaserch_text',
       },
       {
         icon: "📌",
-        title: "Suivi personnalisé",
-        desc: "Gardez une trace de vos lectures avec des listes personnalisables, notes et statuts.",
+        title: 'home.personalized_tracking',
+        desc: 'home.personalized_tracking_text',
       },
       {
         icon: "🔔",
-        title: "Notifications",
-        desc: "Soyez alerté dès qu'un nouveau chapitre est disponible pour vos séries favorites.",
+        title: 'home.notification',
+        desc: 'home.notification_text',
       },
       {
         icon: "🌐",
-        title: "Multi-sources",
-        desc: "Agrégez le contenu de plusieurs plateformes dans une interface unifiée.",
+        title: 'home.multi_source',
+        desc: 'home.multi_source_text',
       },
       {
         icon: "📊",
-        title: "Statistiques",
-        desc: "Visualisez vos habitudes de lecture avec des graphiques et rapports détaillés.",
+        title: 'home.statistics',
+        desc: 'home.statistics_text',
       },
       {
         icon: "🤝",
-        title: "Communauté",
-        desc: "Échangez avec d'autres passionnés, partagez vos avis et découvrez de nouvelles séries.",
+        title: 'home.community',
+        desc: 'home.community_text',
       },
     ];
 
     const steps = [
       {
-        title: "Créez votre compte",
-        text: "Inscrivez-vous gratuitement en quelques secondes. Aucune carte de crédit requise.",
+        title: 'home.steps1_title',
+        text: 'home.steps1_desc',
       },
       /* {
         title: "Importez vos listes",
         text: "Importez vos listes depuis MangaDex, AniList ou d'autres plateformes supportées.",
       }, */
       {
-        title: "Suivez vos lectures",
-        text: "Ajoutez vos mangas favoris, marquez les chapitres lus et restez informé des nouvelles sorties.",
+        title: 'home.steps2_title',
+        text: 'home.steps2_desc',
       },
       {
-        title: "Explorez et découvrez",
-        text: "Parcourez notre catalogue et obtenez des recommandations personnalisées.",
+        title: 'home.steps3_title',
+        text: 'home.steps3_desc',
       },
     ];
 

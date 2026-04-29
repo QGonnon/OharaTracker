@@ -5,9 +5,9 @@
   <div v-if="spotlightItem && !loading" class="w-full flex justify-center items-center min-h-[480px] relative overflow-hidden bg-gradient-to-br from-violet-600/60 to-indigo-900/80">
     <!-- Backdrop (en dessous) -->
     <div class="absolute inset-0" :style="{ backgroundImage: `url(${spotlightItem.coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(28px) brightness(0.35) saturate(1.4)' }"></div>
-    <!-- Overlay (au-dessus du backdrop) -->
+    <!-- Overlay -->
     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-black/80"></div>
-    <!-- Contenu principal (au-dessus de tout) -->
+    <!-- Contenu principal -->
     <div class="flex flex-col md:flex-row items-center gap-8 p-8 max-w-5xl w-full relative">
       <div class="flex-shrink-0">
         <img :src="spotlightItem.coverUrl" :alt="spotlightItem.title" class="rounded-xl shadow-2xl w-44 md:w-56 aspect-[3/4] object-cover" />
@@ -31,10 +31,10 @@
         <div class="flex gap-3 mt-2">
           <RouterLink :to="isAnime(spotlightItem) ? `/anime/${slugify(spotlightItem.title)}` : `/manga/${slugify(spotlightItem.title)}`" class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-bold shadow-lg hover:scale-105 transition">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            {{ isAnime(spotlightItem) ? 'Regarder' : 'Lire maintenant' }}
+            {{ isAnime(spotlightItem) ? $t('discovery.watch') : $t('discovery.read_now') }}
           </RouterLink>
           <RouterLink :to="isAnime(spotlightItem) ? `/anime/${slugify(spotlightItem.title)}` : `/manga/${slugify(spotlightItem.title)}`" class="inline-flex items-center px-6 py-2 rounded-full border border-white/30 text-white font-bold hover:bg-white/10 transition">
-            Détails
+            {{ $t('discovery.details') }}
           </RouterLink>
         </div>
       </div>
@@ -59,7 +59,7 @@
     <section v-if="trending.length && activeGenre === '' && activeType === 'all'" class="px-8 pt-10">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Tendances</h2>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $t('discovery.trending') }}</h2>
       </div>
       <div class="flex gap-3 overflow-x-auto pb-2">
         <RouterLink v-for="(item, i) in trending" :key="item.title" :to="isAnime(item) ? `/anime/${slugify(item.title)}` : `/manga/${slugify(item.title)}`" class="flex items-center gap-3 min-w-[180px] max-w-[220px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 hover:shadow-lg transition">
@@ -69,7 +69,6 @@
           </div>
           <div class="flex-1 min-w-0">
             <p class="truncate font-semibold text-sm text-gray-900 dark:text-white">{{ item.title }}</p>
-            
           </div>
         </RouterLink>
       </div>
@@ -80,12 +79,12 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div class="flex items-center gap-3">
           <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ sectionTitle }}</h2>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $t(sectionTitle) }}</h2>
           <span v-if="!loading" class="ml-2 text-xs bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-300 px-2 py-0.5 rounded-full">{{ filteredItems.length }}</span>
         </div>
         <div class="flex gap-2">
-          <button @click="sortBy = 'latest'" :class="['px-3 py-1 rounded-full text-xs font-semibold transition', sortBy === 'latest' ? 'bg-violet-500 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900']">Récent</button>
-          <button @click="sortBy = 'alpha'" :class="['px-3 py-1 rounded-full text-xs font-semibold transition', sortBy === 'alpha' ? 'bg-violet-500 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900']">A → Z</button>
+          <button @click="sortBy = 'latest'" :class="['px-3 py-1 rounded-full text-xs font-semibold transition', sortBy === 'latest' ? 'bg-violet-500 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900']">{{ $t('discovery.recent') }}</button>
+          <button @click="sortBy = 'alpha'" :class="['px-3 py-1 rounded-full text-xs font-semibold transition', sortBy === 'alpha' ? 'bg-violet-500 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900']">{{ $t('discovery.a_to_z') }}</button>
         </div>
       </div>
       <!-- Skeleton loader -->
@@ -99,8 +98,8 @@
       <!-- Empty state -->
       <div v-else-if="filteredItems.length === 0" class="flex flex-col items-center justify-center gap-3 py-16 text-center">
         <span class="text-4xl">🔍</span>
-        <p class="text-gray-500 dark:text-gray-300">Aucun résultat pour ces filtres</p>
-        <button @click="resetFilters" class="px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900 transition">Réinitialiser les filtres</button>
+        <p class="text-gray-500 dark:text-gray-300">{{ $t('discovery.empty') }}</p>
+        <button @click="resetFilters" class="px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900 transition">{{ $t('discovery.reset_filters') }}</button>
       </div>
       <!-- Grid -->
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">

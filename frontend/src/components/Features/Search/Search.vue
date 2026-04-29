@@ -5,10 +5,10 @@
       <!-- Header Section -->
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Bibliothèque
+          {{ $t('search.title') }}
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
-          Trouvez vos mangas et animes préférés parmi notre collection
+          {{ $t('search.subtitle') }}
         </p>
       </div>
 
@@ -18,13 +18,13 @@
           <span class="p-input-icon-left flex-1">
             <InputText
               v-model="searchQuery"
-              placeholder="Rechercher un manga ou anime par titre, auteur ou genre..."
+              :placeholder="$t('search.placeholder')"
               class="w-full"
               @keyup.enter="performSearch"
             />
           </span>
           <Button
-            label="Rechercher"
+            :label="$t('search.search_btn')"
             icon="pi pi-search"
             @click="performSearch"
             :loading="isLoading"
@@ -37,24 +37,24 @@
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            <i class="pi pi-filter mr-2"></i>Filtres
+            <i class="pi pi-filter mr-2"></i>{{ $t('search.filters') }}
           </h2>
           <Button
-            label="Réinitialiser"
+            :label="$t('search.reset')"
             icon="pi pi-refresh"
             text
             @click="resetFilters"
           />
         </div>
 
-        <!-- Type Filter (Anime/Lecture) -->
+        <!-- Type Filter -->
         <div class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
           <label class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 block">
-            Filtrer par type
+            {{ $t('search.filter_type') }}
           </label>
           <div class="flex gap-2">
             <Button
-              label="Tous"
+              :label="$t('search.all')"
               :severity="filterType === 'all' ? 'info' : 'secondary'"
               class="!px-3"
               text
@@ -62,7 +62,7 @@
               @click="filterType = filterType === 'all' ? 'all' : 'all'"
             />
             <Button
-              label="Série"
+              :label="$t('search.series')"
               :severity="filterType === 'anime' ? 'info' : 'secondary'"
               class="!px-3"
               text
@@ -70,7 +70,7 @@
               @click="filterType = filterType === 'anime' ? 'all' : 'anime'"
             />
             <Button
-              label="Lecture"
+              :label="$t('search.reading')"
               :severity="filterType === 'lecture' ? 'info' : 'secondary'"
               class="!px-3"
               text
@@ -84,13 +84,13 @@
           <!-- Genre Filter -->
           <div class="flex flex-col">
             <label for="genre" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Genre
+              {{ $t('search.genre') }}
             </label>
             <MultiSelect
               id="genre"
               v-model="selectedGenres"
               :options="genres"
-              placeholder="Sélectionner des genres"
+              :placeholder="$t('search.select_genres')"
               :maxSelectedLabels="2"
               class="w-full"
               display="chip"
@@ -100,13 +100,13 @@
           <!-- Status Filter -->
           <div class="flex flex-col">
             <label for="status" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Statut
+              {{ $t('search.status') }}
             </label>
             <Select
               id="status"
               v-model="selectedStatus"
               :options="statusOptions"
-              placeholder="Tous les statuts"
+              :placeholder="$t('search.all_statuses')"
               class="w-full"
             />
           </div>
@@ -114,7 +114,7 @@
           <!-- Sort By -->
           <div class="flex flex-col">
             <label for="sortBy" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Trier par
+              {{ $t('search.sort_by') }}
             </label>
             <Select
               id="sortBy"
@@ -122,7 +122,7 @@
               :options="sortOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Popularité"
+              :placeholder="$t('search.popularity')"
               class="w-full"
             />
           </div>
@@ -130,12 +130,12 @@
           <!-- Year Filter -->
           <div class="flex flex-col">
             <label for="year" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Année
+              {{ $t('search.year') }}
             </label>
             <InputNumber
               id="year"
               v-model="selectedYear"
-              placeholder="Toutes les années"
+              :placeholder="$t('search.all_years')"
               :useGrouping="false"
               :min="1950"
               :max="2025"
@@ -148,20 +148,20 @@
       <!-- View Toggle -->
       <div class="flex items-center justify-between mb-6">
         <div class="text-gray-700 dark:text-gray-300">
-          <span class="font-semibold">{{ totalResults }}</span> résultat(s) trouvé(s)
+          <span class="font-semibold">{{ totalResults }}</span> {{ $t('search.results', { n: '' }).replace('{n} ', '') }}
         </div>
         <div class="flex gap-2">
           <Button
             icon="pi pi-th-large"
             :outlined="viewMode !== 'grid'"
             @click="viewMode = 'grid'"
-            title="Vue grille"
+            :title="$t('search.grid_view')"
           />
           <Button
             icon="pi pi-list"
             :outlined="viewMode !== 'list'"
             @click="viewMode = 'list'"
-            title="Vue liste"
+            :title="$t('search.list_view')"
           />
         </div>
       </div>
@@ -175,10 +175,10 @@
       <div v-else-if="!isLoading && searchResults.length === 0 && hasSearched" class="text-center py-20">
         <i class="pi pi-search text-6xl text-gray-400 mb-4"></i>
         <h3 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Aucun résultat trouvé
+          {{ $t('search.no_results') }}
         </h3>
         <p class="text-gray-500 dark:text-gray-400">
-          Essayez de modifier vos critères de recherche
+          {{ $t('search.modify_criteria') }}
         </p>
       </div>
 
