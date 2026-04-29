@@ -111,14 +111,7 @@
                                 </template>
                             </Column>
 
-                            <!-- Author Column -->
-                            <Column field="author" header="Auteur" sortable style="min-width: 150px;">
-                                <template #body="{ data }">
-                                    <span class="text-slate-700 dark:text-slate-300">
-                                        {{ data.author || '-' }}
-                                    </span>
-                                </template>
-                            </Column>
+                            
 
                             <!-- Status Column -->
                             <Column field="status" header="Statut" sortable style="min-width: 120px;">
@@ -131,15 +124,42 @@
                             </Column>
 
                             <!-- Last Chapter Column -->
-                            <Column field="lastChapter" header="Dernier Chapitre" sortable style="min-width: 150px;">
+                            <Column field="lastChapter" header="Dernier Chapitre Lu" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button 
-                                        :label="`Ch. ${data.userLastChapter || data.lastChapter || '-'}`"
+                                        :label="`Ch. ${data.userLastChapter || '-'}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
                                         text
                                         class="text-indigo-600 dark:text-indigo-400"
+                                    />
+                                </template>
+                                
+                            </Column>
+                            <!-- Last Chapter Column -->
+                            <Column field="lastChapter" header="Dernier Chapitre" sortable style="min-width: 150px;">
+                                <template #body="{ data }">
+                                    <Button 
+                                        :label="`Ch. ${data.lastChapter || '-'}`"
+                                        @click="openChapter(data.chapterUrl)"
+                                        icon="pi pi-arrow-up-right"
+                                        iconPos="right"
+                                        text
+                                        class="text-indigo-600 dark:text-indigo-400"
+                                    />
+                                </template>
+                            </Column>
+
+                            
+                            
+                            <!-- Type Column -->
+                            <Column field="type" header="Type" sortable style="min-width: 120px;">
+                                <template #body="{ data }">
+                                    <Tag
+                                        :value="data.type || 'Manga'"
+                                        :severity="(data.type === 'Anime' ? 'success' : 'info')"
+                                        class="text-xs"
                                     />
                                 </template>
                             </Column>
@@ -152,27 +172,6 @@
                                         icon="pi pi-pencil"
                                         class="p-button-text p-button-plain"
                                         @click.prevent="openEdit(data)"
-                                    />
-                                </template>
-                            </Column>
-
-                            <!-- Site Column -->
-                            <Column field="site" header="Source" sortable style="min-width: 120px;">
-                                <template #body="{ data }">
-                                    <Tag 
-                                        :value="data.site"
-                                        severity="secondary"
-                                    />
-                                </template>
-                            </Column>
-
-                            <!-- Type Column -->
-                            <Column field="type" header="Type" sortable style="min-width: 120px;">
-                                <template #body="{ data }">
-                                    <Tag
-                                        :value="data.type || 'Manga'"
-                                        :severity="(data.type === 'Anime' ? 'success' : 'info')"
-                                        class="text-xs"
                                     />
                                 </template>
                             </Column>

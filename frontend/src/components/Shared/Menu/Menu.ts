@@ -51,6 +51,7 @@ export default defineComponent({
     const navLinks = [
       { label: 'Découverte', name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
       { label: 'Bibliothèque', name: 'Search', to: '/search', icon: 'pi pi-book' },
+      { label: 'Mes Suivis', name: 'Mes Suivis', to: '/list', icon: 'pi pi-star'},
     ]
 
     const toggleUserMenu = (event: Event) => {
@@ -59,7 +60,6 @@ export default defineComponent({
 
     const userMenuItems = computed<MenuItem[]>(() => [
       { label: 'Mon profil', icon: 'pi pi-user', command: () => router.push({ name: 'Profile' }) },
-      { label: 'Mes Suivis', icon: 'pi pi-bookmark', command: () => router.push({ name: 'Library' }) },
       { separator: true },
       { label: 'Se déconnecter', icon: 'pi pi-sign-out', command: handleLogout },
     ])

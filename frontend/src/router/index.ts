@@ -28,11 +28,11 @@ const routes: RouteRecordRaw[] = [
     name: 'Home',
     component: Home,
   },
-  {
+  /* {
     path: '/new',
     name: 'Nouveautés',
     component: MangasCoverView,
-  },
+  }, */
   {
     path: '/search',
     name: 'Search',
