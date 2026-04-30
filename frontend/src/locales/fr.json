@@ -190,7 +190,7 @@
     "username": "Nom d'utilisateur",
     "email": "Adresse email",
     "username_placeholder": "votre_pseudo",
-    "email_placeholder": "vous@exemple.com",
+    "email_placeholder": "vous\\@exemple.com",
     "save": "Enregistrer les modifications",
     "saving": "Enregistrement...",
     "security": "Sécurité",

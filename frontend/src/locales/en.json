@@ -190,7 +190,7 @@
     "username": "Username",
     "email": "Email address",
     "username_placeholder": "your_username",
-    "email_placeholder": "you@example.com",
+    "email_placeholder": "you\\@example.com",
     "save": "Save changes",
     "saving": "Saving...",
     "security": "Security",
