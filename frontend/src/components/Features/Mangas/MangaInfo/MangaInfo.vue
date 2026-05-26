@@ -70,9 +70,9 @@
               <div class="flex items-start gap-3">
                 <i class="pi pi-bookmark text-primary mt-1"></i>
                 <div>
-                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.last_chapter') }}</p>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{ $t('manga.chapter') }} {{ manga.lastChapter }}
+                    {{ isAnime ? $t('manga.episode') : $t('manga.chapter') }} {{ manga.lastChapter }}
                   </p>
                 </div>
               </div>
@@ -103,8 +103,8 @@
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
             v-if="manga.chapterUrl"
-            :label="$t('manga.read_chapter', { n: manga.lastChapter })"
-            icon="pi pi-book"
+            :label="isAnime ? $t('manga.watch_episode', { n: manga.lastChapter }) : $t('manga.read_chapter', { n: manga.lastChapter })"
+            :icon="isAnime ? 'pi pi-play' : 'pi pi-book'"
             iconPos="left"
             severity="primary"
             size="large"

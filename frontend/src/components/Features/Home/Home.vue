@@ -29,6 +29,9 @@
           <RouterLink to="/discovery">
             <Button :label="$t('home.start_free')" class="font-semibold" />
           </RouterLink>
+          <RouterLink to="/discovery">
+            <Button :label="$t('home.see_demo')" severity="secondary" outlined class="font-medium" />
+          </RouterLink>
         </div>
 
         <div class="flex flex-wrap items-center gap-5 text-sm">
