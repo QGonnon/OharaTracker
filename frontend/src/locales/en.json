@@ -65,7 +65,11 @@
     "steps2_title": "Track your readings",
     "steps2_desc": "Add your favorite mangas, mark chapters as read, and stay informed about new releases.",
     "steps3_title": "Explore and discover",
-    "steps3_desc": "Browse our catalog and get personalized recommendations."
+    "steps3_desc": "Browse our catalog and get personalized recommendations.",
+    "number_manga": "Mangas available",
+    "number_anime": "Animes referenced",
+    "number_users": "Active users",
+    "number_chapter": "Chapters tracked"
   },
   "library": {
     "title": "My Watchlist",
@@ -127,7 +131,7 @@
   },
   "manga": {
     "loading": "Loading manga...",
-    "information": "Information",
+    "information": "Informations",
     "last_chapter": "Last chapter",
     "chapter": "Chapter",
     "last_episode": "Last episode",
@@ -189,7 +193,7 @@
     "username": "Username",
     "email": "Email address",
     "username_placeholder": "your_username",
-    "email_placeholder": "you@example.com",
+    "email_placeholder": "you\\@example.com",
     "save": "Save changes",
     "saving": "Saving...",
     "security": "Security",
