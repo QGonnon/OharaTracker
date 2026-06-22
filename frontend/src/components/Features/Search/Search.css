@@ -1,0 +1,79 @@
+.search-page {
+  font-family: var(--font-family);
+}
+
+.manga-card {
+  transition: all 0.3s ease;
+}
+
+.manga-card:hover {
+  transform: translateY(-4px);
+}
+
+.manga-card img {
+  transition: transform 0.3s ease;
+}
+
+.manga-card-list {
+  transition: all 0.3s ease;
+}
+
+.manga-card-list:hover {
+  transform: translateX(4px);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .search-page {
+    background-color: var(--surface-ground);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-page .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .search-page h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Custom scrollbar for multiselect */
+.p-multiselect-panel .p-multiselect-items-wrapper {
+  max-height: 200px;
+}
+
+/* Animation for results */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.manga-card,
+.manga-card-list {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Stagger animation for grid items */
+.manga-card:nth-child(1) { animation-delay: 0.05s; }
+.manga-card:nth-child(2) { animation-delay: 0.1s; }
+.manga-card:nth-child(3) { animation-delay: 0.15s; }
+.manga-card:nth-child(4) { animation-delay: 0.2s; }
+.manga-card:nth-child(5) { animation-delay: 0.25s; }

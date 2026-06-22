@@ -1,5 +1,47 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import './assets/tailwind.css'
+import './assets/styles.scss'
 
-createApp(App).mount('#app')
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config';
+import Aura from '@primeuix/themes/aura';
+
+import App from './App.vue'
+import router from './router'
+import { FontAwesomeIcon } from './plugins/font-awesome.ts'
+import i18n from './i18n'
+
+const pinia = createPinia()
+
+const app = createApp(App)
+app.use(PrimeVue, {
+    theme: {
+        preset: Aura,
+        options:{
+            darkModeSelector: '.dark-theme',
+            cssLayer: {
+                name: 'primevue',
+                order: 'theme, base, primevue'
+            }
+        }
+    }
+})
+
+app.use(router)
+    .use(pinia)
+    .use(i18n)
+    .component('font-awesome-icon', FontAwesomeIcon)
+
+// Initialise theme from localStorage (persist user preference)
+try {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme')
+    } else {
+        document.documentElement.classList.remove('dark-theme')
+    }
+} catch (e) {
+    // ignore (e.g., during SSR or strict environments)
+}
+
+app.mount('#app')

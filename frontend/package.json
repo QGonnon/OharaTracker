@@ -9,15 +9,39 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.8.1",
-    "vue": "^3.5.13"
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "@primeuix/themes": "^1.2.5",
+    "@tailwindcss/vite": "^4.1.14",
+    "axios": "^1.13.2",
+    "bootstrap": "^4.6.2",
+    "jquery": "^3.7.1",
+    "pinia": "^3.0.4",
+    "popper.js": "^1.16.1",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.4.1",
+    "tailwindcss": "^4.1.14",
+    "tailwindcss-primeui": "^0.6.1",
+    "vee-validate": "^4.15.1",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^4.6.3",
+    "vue3-google-login": "^2.0.34",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "sass": "^1.93.2",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vue-tsc": "^2.2.4"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "@tailwindcss/oxide@4.1.14": true,
+    "esbuild@0.25.0": true
   }
 }

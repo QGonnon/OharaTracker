@@ -1,0 +1,49 @@
+/**
+ * Types et interfaces centralisés pour l'application
+ */
+
+export interface Manga {
+  id?: number | string;
+  title: string;
+  /** "Manga" or "Anime" when known */
+  type?: 'Lecture' | 'Anime';
+  author?: string;
+  artist?: string;
+  theme?: string;
+  status?: string;
+  description?: string;
+  coverPath?: string;
+  coverUrl?: string;
+  lastChapter?: string;
+  userLastChapter?: string;
+  lastEpisode?: string;
+  userLastEpisode?: string;
+  readingStatus?: string;
+  chapterUrl: string;
+  mangaUrl: string;
+  site: string;
+}
+
+export interface User {
+  username?: string;
+  email?: string;
+  name?: string;
+  role?: 'user' | 'moderator' | 'admin';
+  accessToken?: string;
+  [key: string]: any;
+}
+
+export interface AuthState {
+  status: {
+    loggedIn: boolean;
+  };
+  user: User | null;
+}
+
+export interface ChapterInfo {
+  id?: string;
+  title?: string;
+  number?: string;
+  url?: string;
+  date?: string;
+}
