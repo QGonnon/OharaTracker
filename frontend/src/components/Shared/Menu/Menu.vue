@@ -1,9 +1,9 @@
 <template>
-  <header :class="['layout-topbar', isShrunk ? 'shadow-md py-2' : 'py-3']">
+  <header class="layout-topbar">
     <nav class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
 
       <!-- Logo -->
-      <h1 :class="['font-bold transition-all duration-300', isShrunk ? 'text-xl' : 'text-2xl']">
+      <h1 class="text-2xl font-bold">
         <RouterLink to="/" class="hover:opacity-80 transition-opacity">Ohara Tracker</RouterLink>
       </h1>
 
@@ -27,14 +27,31 @@
       <!-- Right side actions -->
       <div class="flex items-center gap-2">
 
-        <!-- Locale toggle -->
-        <button
-          class="nav-theme-toggle"
-          @click="toggleLocale"
-          :title="$t('nav.lang')"
-        >
-          <span class="text-xs font-bold">{{ $t('nav.lang') }}</span>
-        </button>
+        <!-- Language dropdown -->
+        <div class="nav-lang-wrapper" ref="langDropdownRef">
+          <button
+            class="nav-lang-trigger"
+            :title="$t('nav.language')"
+            @click="langDropdownOpen = !langDropdownOpen"
+          >
+            <span class="nav-lang-code">{{ currentCode }}</span>
+            <i :class="['pi pi-chevron-down nav-lang-chevron', { 'nav-lang-chevron--open': langDropdownOpen }]" />
+          </button>
+
+          <Transition name="lang-drop">
+            <ul v-if="langDropdownOpen" class="nav-lang-dropdown">
+              <li
+                v-for="lang in languages"
+                :key="lang.code"
+                :class="['nav-lang-option', { 'nav-lang-option--active': lang.code === currentLocale }]"
+                @click="selectLang(lang.code)"
+              >
+                <span class="nav-lang-option-label">{{ lang.label }}</span>
+                <i v-if="lang.code === currentLocale" class="pi pi-check nav-lang-option-check" />
+              </li>
+            </ul>
+          </Transition>
+        </div>
 
         <!-- Theme toggle -->
         <button
@@ -112,8 +129,24 @@
       <!-- User section at bottom -->
       <div class="p-4 border-t border-gray-100 dark:border-white/5 flex flex-col gap-2">
 
+        <!-- Language (mobile) -->
+        <div class="nav-lang-mobile">
+          <span class="nav-lang-mobile-label">
+            <i class="pi pi-globe" /> {{ $t('nav.language') }}
+          </span>
+          <div class="nav-lang-mobile-options">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              :class="['nav-lang-mobile-btn', { 'nav-lang-mobile-btn--active': lang.code === currentLocale }]"
+              @click="selectLang(lang.code)"
+            >
+              {{ lang.code.toUpperCase() }}
+            </button>
+          </div>
+        </div>
+
         <template v-if="isLoggedIn">
-          <!-- User info -->
           <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 mb-1">
             <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm select-none">
               {{ name[0]?.toUpperCase() || '?' }}
