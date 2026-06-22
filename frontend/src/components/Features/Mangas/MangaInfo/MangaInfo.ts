@@ -46,7 +46,7 @@ export default defineComponent({
     const addSuccess = ref<boolean>(false)
     const isInLibrary = ref<boolean>(false)
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const animeSources = new Set(['moviedb', 'asura'])
+    const animeSources = new Set(['moviedb', 'anime-sama'])
     const isAnime = computed(() => animeSources.has((manga.value.site || '').toLowerCase()))
 
     const getItemCover = (item: Manga): string => {
@@ -270,6 +270,15 @@ export default defineComponent({
       }
     }
 
+    const formatAnimeNumber = (num: string): string => {
+      //{{ isAnime ? $t('manga.season') + " " + manga.lastChapter.split('.')[0]:"" }} {{ $t('manga.episode') + " " + manga.lastChapter.split('.')[1] || $t('manga.unknown') }}
+      const numArray = num.split('.') || []
+      const season = numArray[0] ? `manga.season${numArray[0]}` : ''
+      const episode = numArray[1] ? `manga.episode${numArray[1]}` : ''
+      return `${season}${season && episode ? ' ' : ''}${episode}`
+      
+    }
+
     return {
       manga,
       loading,
@@ -291,7 +300,8 @@ export default defineComponent({
       // edit dialog bindings
       editDialog,
       openEdit,
-      onUpdated
+      onUpdated,
+      formatAnimeNumber
     }
   }
 })
