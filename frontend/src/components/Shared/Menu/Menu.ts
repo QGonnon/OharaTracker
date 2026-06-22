@@ -6,6 +6,16 @@ import { useAuthStore } from '../../../store/auth.module'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from 'primevue/menuitem'
 
+type SupportedLocale = 'fr' | 'en' | 'de' | 'it' | 'es'
+
+const LANGUAGES: { code: SupportedLocale; label: string }[] = [
+  { code: 'fr', label: 'Français' },
+  { code: 'en', label: 'English'  },
+  { code: 'de', label: 'Deutsch'  },
+  { code: 'it', label: 'Italiano' },
+  { code: 'es', label: 'Español'  },
+]
+
 export default defineComponent({
   name: 'AppMenu',
   components: { Button, Drawer, PopupMenu },
@@ -15,18 +25,22 @@ export default defineComponent({
     const authStore = useAuthStore()
     const { t, locale } = useI18n()
 
-    const isShrunk = ref(false)
     const mobileOpen = ref(false)
     const userMenuRef = ref()
+    const langDropdownOpen = ref(false)
+    const langDropdownRef = ref<HTMLElement | null>(null)
 
-    const handleScroll = () => { isShrunk.value = window.scrollY > 50 }
-    onMounted(() => window.addEventListener('scroll', handleScroll))
-    onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langDropdownRef.value && !langDropdownRef.value.contains(e.target as Node)) {
+        langDropdownOpen.value = false
+      }
+    }
+
+    onMounted(() => document.addEventListener('mousedown', handleClickOutside))
+    onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutside))
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const name = computed(() =>
-      authStore.currentUser?.name || ''
-    )
+    const name = computed(() => authStore.currentUser?.name || '')
 
     const goLogin = () => router.push({ name: 'Login' })
 
@@ -35,6 +49,7 @@ export default defineComponent({
       router.push({ name: 'Login' })
     }
 
+    // Theme
     const theme = ref(document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light')
     const toggleTheme = () => {
       if (theme.value === 'dark') {
@@ -48,17 +63,32 @@ export default defineComponent({
       }
     }
 
-    const toggleLocale = () => {
-      locale.value = locale.value === 'fr' ? 'en' : 'fr'
-      try { localStorage.setItem('lang', locale.value) } catch (e) {}
+    // Language
+    const currentLocale = computed({
+      get: () => locale.value as SupportedLocale,
+      set: (val: SupportedLocale) => {
+        locale.value = val
+        try { localStorage.setItem('lang', val) } catch (e) {}
+      },
+    })
+
+    const currentLang = computed(
+      () => LANGUAGES.find(l => l.code === currentLocale.value) ?? LANGUAGES[0]
+    )
+
+    const currentCode = computed(() => currentLang.value.code.toUpperCase())
+
+    const selectLang = (code: SupportedLocale) => {
+      currentLocale.value = code
+      langDropdownOpen.value = false
     }
 
     const isActive = (name: string) => route.name === name
 
     const navLinks = computed(() => [
       { label: t('nav.discovery'), name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
-      { label: t('nav.library'), name: 'Search', to: '/search', icon: 'pi pi-book' },
-      { label: t('nav.following'), name: 'Mes Suivis', to: '/list', icon: 'pi pi-star'},
+      { label: t('nav.library'),   name: 'Search',     to: '/search',    icon: 'pi pi-book' },
+      { label: t('nav.following'), name: 'Mes Suivis', to: '/list',      icon: 'pi pi-star' },
     ])
 
     const toggleUserMenu = (event: Event) => {
@@ -66,23 +96,27 @@ export default defineComponent({
     }
 
     const userMenuItems = computed<MenuItem[]>(() => [
-      { label: t('nav.profile'), icon: 'pi pi-user', command: () => router.push({ name: 'Profile' }) },
+      { label: t('nav.profile'), icon: 'pi pi-user',     command: () => router.push({ name: 'Profile' }) },
       { separator: true },
-      { label: t('nav.logout'), icon: 'pi pi-sign-out', command: handleLogout },
+      { label: t('nav.logout'),  icon: 'pi pi-sign-out', command: handleLogout },
     ])
 
     return {
-      isShrunk,
       mobileOpen,
       userMenuRef,
+      langDropdownOpen,
+      langDropdownRef,
       isLoggedIn,
       name,
       goLogin,
       handleLogout,
       theme,
       toggleTheme,
-      locale,
-      toggleLocale,
+      currentLocale,
+      currentLang,
+      currentCode,
+      languages: LANGUAGES,
+      selectLang,
       isActive,
       navLinks,
       toggleUserMenu,
