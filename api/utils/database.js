@@ -114,6 +114,32 @@ async function getOrCreateLibrary(mangaInfo) {
             type: QueryTypes.INSERT,
         }
     );
+    await sequelize.query(
+        `INSERT INTO "Library" (
+            name, description, type, demographic, published, status,
+            artist, author, theme, publishers, cover_path, cover_url
+        ) VALUES (
+            :title, :description, :type, :demographic, :published, :status,
+            :artist, :author, :theme, :publishers, :coverPath, :coverUrl
+        )`,
+        {
+            replacements: {
+                title: mangaInfo.title,
+                description: mangaInfo.description || null,
+                type: mangaInfo.type || null,
+                demographic: mangaInfo.demographic || null,
+                published: mangaInfo.published || null,
+                status: mangaInfo.status || null,
+                artist: mangaInfo.artist || null,
+                author: mangaInfo.author || null,
+                theme: mangaInfo.theme || null,
+                publishers: mangaInfo.publishers || null,
+                coverPath: mangaInfo.coverPath || null,
+                coverUrl: mangaInfo.coverUrl || null,
+            },
+            type: QueryTypes.INSERT,
+        }
+    );
 
     const createdLibraries = await sequelize.query(
         'SELECT id, cover_path, cover_url FROM "Library" WHERE name = :title LIMIT 1',
@@ -164,7 +190,7 @@ async function insertTags(libraryId, tags) {
             })
             .filter(Boolean)
         : [];
-
+    
     for (const tag of normalizedTags) {
         const exists = await sequelize.query(
             'SELECT id FROM "Tag" WHERE name = :name AND id_library = :libraryId LIMIT 1',
@@ -199,6 +225,7 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
         {
             replacements: {
                 libraryId,
+                libraryId,
                 sourceId,
             },
             type: QueryTypes.SELECT,
@@ -211,6 +238,7 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
             {
                 replacements: {
                     libraryId,
+                    libraryId,
                     sourceId,
                     mangaUrl: mangaUrl || null,
                 },
@@ -222,12 +250,13 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
 
 async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
     await sequelize.query(
-        `INSERT INTO "LastChapters" (id_library, id_source, chapter, url)
+        `INSERT INTO "Chapters" (id_library, id_source, chapter, url)
          VALUES (:libraryId, :sourceId, :chapter, :url)
-         ON CONFLICT (id_library, id_source)
-         DO UPDATE SET chapter = EXCLUDED.chapter, url = EXCLUDED.url`,
+         ON CONFLICT (id_library, id_source, chapter)
+         DO UPDATE SET url = EXCLUDED.url`,
         {
             replacements: {
+                libraryId,
                 libraryId,
                 sourceId,
                 chapter: lastChapter || null,
@@ -269,11 +298,11 @@ function getChapters(callback, limit = null) {
             lc.url AS "chapterUrl",
             ls.url AS "mangaUrl",
             s.name AS site
-         FROM "LastChapters" lc
+         FROM "Chapters" lc
          JOIN "Library" l ON lc.id_library = l.id
          JOIN "Source" s ON lc.id_source = s.id_source
          JOIN "LibrarySource" ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
-         ORDER BY lc.id_library DESC, lc.id_source DESC${limit ? ' LIMIT :limit' : ''}`;
+         ORDER BY lc.id_library DESC, lc.id_source DESC, lc.chapter DESC${limit ? ' LIMIT :limit' : ''}`;
 
     sequelize.query(query, {
         replacements: limit ? { limit } : {},
@@ -285,11 +314,11 @@ function getChapters(callback, limit = null) {
 
 function getChaptersByLibrary(id_library, callback) {
     sequelize.query(
-        `SELECT lc.chapter, lc.url, s.name AS site
-         FROM "LastChapters" lc
-         JOIN "Source" s ON lc.id_source = s.id_source
-         WHERE lc.id_library = :idLibrary
-         ORDER BY CAST(lc.chapter AS REAL) ASC`,
+        `SELECT c.chapter, c.url, s.name AS site
+         FROM "Chapters" c
+         JOIN "Source" s ON c.id_source = s.id_source
+         WHERE c.id_library = :idLibrary
+         ORDER BY CAST(c.chapter AS REAL) ASC`,
         {
             replacements: { idLibrary: id_library },
             type: QueryTypes.SELECT,
@@ -323,4 +352,4 @@ function getAllMangas(callback) {
         .catch(err => callback(err));
 }
 
-export { initDb, initSource, saveChapter, getChapters, getChaptersByLibrary, getAllMangas, isLibraryExist };
+export { sequelize, initDb, initSource, saveChapter, getChapters, getChaptersByLibrary, getAllMangas, isLibraryExist };

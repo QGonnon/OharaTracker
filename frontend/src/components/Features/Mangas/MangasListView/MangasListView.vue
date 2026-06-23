@@ -125,7 +125,7 @@
                             <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`Ch. ${data.userLastChapter || '-'}`"
+                                        :label="`${data.type === 'Anime' ? 'Ép.' : 'Ch.'} ${data.userLastChapter || '-'}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
@@ -139,7 +139,7 @@
                             <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode') : (filterType === 'all' ? $t('library.col_last_chapter') : $t('library.col_last_chapter'))" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`Ch. ${data.lastChapter || '-'}`"
+                                        :label="`${data.type === 'Anime' ? 'Ép.' : 'Ch.'} ${data.lastChapter || '-'}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"

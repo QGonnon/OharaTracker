@@ -13,13 +13,15 @@ export default (sequelize, DataTypes) => {
       primaryKey: true
     },
     chapter: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      primaryKey: true
     },
     url: {
       type: DataTypes.STRING(200)
     }
   }, {
-    tableName: 'LastChapters',
+    tableName: 'Chapters',
     freezeTableName: true,
     timestamps: false
   });
