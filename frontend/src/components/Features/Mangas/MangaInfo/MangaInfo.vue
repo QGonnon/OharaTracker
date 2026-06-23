@@ -72,7 +72,7 @@
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1] || $t('manga.unknown') })}}
+                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1]|| $t('manga.unknown') })}}
                   </p>
                   <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
                     {{ manga.lastChapter || $t('manga.unknown') }}
