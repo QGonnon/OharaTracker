@@ -27,40 +27,46 @@ export default defineComponent({
     ])
     const saving = ref(false)
     const deleting = ref(false)
+    const loadingEpisodes = ref(false)
+
+    const fetchEpisodeOptions = async (idLibrary: number) => {
+      episodeOptions.value = []
+      loadingEpisodes.value = true
+      try {
+        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+        const resp = await fetch(`${apiBase}/chapters/${idLibrary}`)
+        if (!resp.ok) return
+        const rows: { chapter: string; url: string; site: string }[] = await resp.json()
+        const key = (ch: string) => ch.split('.').map(Number).reduce((a, b) => a * 1000 + b, 0)
+        episodeOptions.value = rows
+          .sort((a, b) => key(a.chapter) - key(b.chapter))
+          .map(r => ({ label: `S${r.chapter.split('.')[0]} E${r.chapter.split('.')[1]}`, value: r.chapter }))
+        episodeOptions.value.push({ label: 'Manuel', value: 'manual' })
+      } catch (err) {
+        console.error('Erreur chargement épisodes:', err)
+      } finally {
+        loadingEpisodes.value = false
+      }
+    }
 
     watch(() => props.visible, (v) => {
       visibleLocal.value = v
-      // When dialog opens, refresh the form fields with current anime data
       if (v && props.anime) {
-        // Try both lastEpisode and lastChapter (API might return lastChapter for anime too)
         editEpisode.value = props.anime.userLastEpisode || props.anime.userLastChapter || props.anime.lastEpisode || props.anime.lastChapter || ''
         editEpisodeCustom.value = ''
         editStatus.value = props.anime.readingStatus || ''
-        buildEpisodeOptions()
+        if (props.anime.id) fetchEpisodeOptions(props.anime.id)
       }
     })
 
     watch(visibleLocal, (v) => emit('update:visible', v))
 
-    const buildEpisodeOptions = () => {
-      episodeOptions.value = []
-      // Try both lastEpisode and lastChapter fields
-      const episodeField = props.anime?.lastEpisode || props.anime?.lastChapter
-      const last = Number(episodeField)
-      if (!Number.isFinite(last) || last <= 0) return
-      for (let i = 1; i <= last; i++) {
-        episodeOptions.value.push({ label: `Ép. ${i}`, value: String(i) })
-      }
-      episodeOptions.value.push({ label: 'Manuel', value: 'manual' })
-    }
-
     watch(() => props.anime, (m) => {
       if (!m) return
-      // Try both lastEpisode and lastChapter (API might return lastChapter for anime too)
       editEpisode.value = m.userLastEpisode || m.userLastChapter || m.lastEpisode || m.lastChapter || ''
       editEpisodeCustom.value = ''
       editStatus.value = m.readingStatus || ''
-      buildEpisodeOptions()
+      if (m.id) fetchEpisodeOptions(m.id)
     }, { immediate: true, deep: true })
 
     const close = () => {
@@ -140,6 +146,6 @@ export default defineComponent({
       }
     }
 
-    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting }
+    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes }
   }
 })

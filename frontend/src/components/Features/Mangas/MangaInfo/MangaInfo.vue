@@ -71,8 +71,11 @@
                 <i class="pi pi-bookmark text-primary mt-1"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
-                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{ isAnime ? $t('manga.episode') : $t('manga.chapter') }} {{ manga.lastChapter }}
+                  <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1] || $t('manga.unknown') })}}
+                  </p>
+                  <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{ manga.lastChapter || $t('manga.unknown') }}
                   </p>
                 </div>
               </div>
@@ -103,7 +106,7 @@
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
             v-if="manga.chapterUrl"
-            :label="isAnime ? $t('manga.watch_episode', { n: manga.lastChapter }) : $t('manga.read_chapter', { n: manga.lastChapter })"
+            :label="isAnime ? $t('manga.watch_episode', { ep: manga.lastChapter.split('.')[1], season: manga.lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: manga.lastChapter })"
             :icon="isAnime ? 'pi pi-play' : 'pi pi-book'"
             iconPos="left"
             severity="primary"
@@ -151,7 +154,7 @@
       <RouterLink
         v-for="item in similarWorks"
         :key="item.title"
-        :to="`/${item.site?.toLowerCase() === 'moviedb' ? 'anime' : 'manga'}/${slugify(item.title)}`"
+        :to="`/${ isAnime ? 'anime' : 'manga'}/${slugify(item.title)}`"
         class="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-800 group block"
       >
         <img

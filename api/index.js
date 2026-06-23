@@ -11,6 +11,6 @@ initDb()
 
 // Lancer le scraping en arrière-plan toutes les 30 secondes
 scrapeAll()
-setInterval(scrapeAll, 30000);
+// setInterval(scrapeAll, 30000);
 
 startApp()
