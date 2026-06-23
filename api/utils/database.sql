@@ -105,12 +105,12 @@ CREATE TABLE IF NOT EXISTS Source(
     name VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS LastChapters(
+CREATE TABLE IF NOT EXISTS Chapters(
     id_library INTEGER,
     id_source INTEGER,
     chapter VARCHAR(50),
     url VARCHAR(200),
-    PRIMARY KEY(id_library, id_source),
+    PRIMARY KEY(id_library, id_source, chapter),
     FOREIGN KEY(id_library) REFERENCES Library(id),
     FOREIGN KEY(id_source) REFERENCES Source(id_source)
 );

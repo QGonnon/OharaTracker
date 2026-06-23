@@ -501,14 +501,7 @@ async function anime_sama() {
                     publishers: null,
                     tags: [],
                 };
-
-                const episodeLinks = await getAllSeasonEpisodes(anime.title);
-                const lastEpisode = episodeLinks.length > 0 ? episodeLinks[episodeLinks.length - 1] : null;
-                const lastChapter = lastEpisode ? `${lastEpisode.seasonNumber}.${lastEpisode.episode}` : '0.0';
-                const chapterUrl = lastEpisode ? lastEpisode.url : anime.link;
                 
-                await saveChapter('anime-sama', lastChapter, chapterUrl, anime.link, animeInfo);
-
                 const coverUrl = await searchAniListCover(anime.title);
                 const isExist = await isLibraryExist(anime.title);
                 if (coverUrl && !isExist) {
@@ -519,6 +512,18 @@ async function anime_sama() {
                         animeInfo.coverUrl = coverUrl;
                     }
                 }
+
+                const episodeLinks = await getAllSeasonEpisodes(anime.title);
+                for (const ep of episodeLinks) {
+                    await saveChapter('anime-sama', `${ep.seasonNumber}.${ep.episode + 1}`, ep.url, anime.link, animeInfo);
+                }
+                // const lastEpisode = episodeLinks.length > 0 ? episodeLinks[episodeLinks.length - 1] : null;
+                // const lastChapter = lastEpisode ? `${lastEpisode.seasonNumber}.${lastEpisode.episode}` : '0.0';
+                // const chapterUrl = lastEpisode ? lastEpisode.url : anime.link;
+                
+                //await saveChapter('anime-sama', lastChapter, chapterUrl, anime.link, animeInfo);
+
+                
             } catch (e) {
                 console.warn(`⚠️ Erreur avec ${anime.title}:`, e.message);
                 continue;

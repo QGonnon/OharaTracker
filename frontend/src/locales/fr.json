@@ -180,6 +180,7 @@
     "stopped_episode": "Épisode arrêté",
     "viewing_status": "Statut de visionnage",
     "select_episode": "Sélectionner l'épisode",
+    "loading_episodes": "Chargement des épisodes...",
     "enter_episode": "Saisir épisode",
     "delete": "Supprimer",
     "cancel": "Annuler",

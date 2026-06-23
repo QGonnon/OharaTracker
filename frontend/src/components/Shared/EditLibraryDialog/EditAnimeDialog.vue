@@ -3,7 +3,7 @@
     <div class="grid gap-4">
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.stopped_episode') }}</label>
-        <Dropdown v-model="editEpisode" :options="episodeOptions" optionLabel="label" optionValue="value" :placeholder="$t('edit_anime.select_episode')" class="w-full mt-2" />
+        <Dropdown v-model="editEpisode" :options="episodeOptions" optionLabel="label" optionValue="value" :placeholder="loadingEpisodes ? $t('edit_anime.loading_episodes') : $t('edit_anime.select_episode')" :disabled="loadingEpisodes" class="w-full mt-2" />
         <div v-if="editEpisode === 'manual'" class="mt-2">
           <InputText v-model="editEpisodeCustom" :placeholder="$t('edit_anime.enter_episode')" class="w-full" />
         </div>

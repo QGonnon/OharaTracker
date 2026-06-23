@@ -1,1 +1,1 @@
-export { initDb, initSource, saveChapter, getLastChapters, getAllMangas, isLibraryExist } from "./database.js";
+export { initDb, initSource, saveChapter, getChapters, getChaptersByLibrary, getAllMangas, isLibraryExist } from "./database.js";

@@ -211,6 +211,7 @@ export default defineComponent({
         if (isInLibrary.value && found) {
           addSuccess.value = false
           addError.value = null
+          manga.value.id = found.id
           ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter ?? manga.value.lastChapter
           ;(manga.value as any).readingStatus = found.readingStatus ?? (manga.value as any).readingStatus
         }

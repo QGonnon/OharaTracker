@@ -172,7 +172,7 @@ async function linkLibrarySource(db, libraryId, sourceId, mangaUrl) {
 async function saveLastChapter(db, libraryId, sourceId, lastChapter, chapterUrl) {
     await dbRun(
         db,
-        'INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)',
+        'INSERT OR REPLACE INTO Chapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)',
         [libraryId, sourceId, lastChapter, chapterUrl]
     );
 }
@@ -207,10 +207,10 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
     }
 }
 
-function getLastChapters(callback, limit = null) {
+function getChapters(callback, limit = null) {
     const db = new sqlite3.Database(DB_NAME);
     let query = `SELECT 
-            lc.rowid AS chapterId,
+            c.rowid AS chapterId,
             l.name AS title,
             l.type AS type,
             l.author AS author,
@@ -220,15 +220,15 @@ function getLastChapters(callback, limit = null) {
             l.description AS description,
             l.cover_path AS coverPath,
             l.cover_url AS coverUrl,
-            lc.chapter AS lastChapter,
-            lc.url AS chapterUrl,
+            c.chapter AS chapter,
+            c.url AS chapterUrl,
             ls.url AS mangaUrl,
             s.name AS site
-         FROM LastChapters lc
-         JOIN Library l ON lc.id_library = l.id
-         JOIN Source s ON lc.id_source = s.id_source
-         JOIN LibrarySource ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
-         ORDER BY lc.rowid DESC`;
+         FROM Chapters c
+         JOIN Library l ON c.id_library = l.id
+         JOIN Source s ON c.id_source = s.id_source
+         JOIN LibrarySource ls ON c.id_library = ls.id_library AND c.id_source = ls.id_source
+         ORDER BY c.rowid DESC`;
     
     if (limit) {
         query += ` LIMIT ?`;
@@ -283,7 +283,7 @@ function getAllMangas(callback) {
             END AS lastReleaseDate
          FROM Library l
          LEFT JOIN UserReading ur ON l.id = ur.id_library
-         LEFT JOIN LastChapters lc ON l.id = lc.id_library
+         LEFT JOIN Chapters lc ON l.id = lc.id_library
          GROUP BY l.id, l.name, l.status, ur.rating, ur.last_read_chapter, ur.last_read_date
          ORDER BY l.name`,
         [],
@@ -294,4 +294,20 @@ function getAllMangas(callback) {
     );
 }
 
-export {initDb, initSource, saveChapter, getLastChapters, getAllMangas, isLibraryExist};
+function getChaptersByLibrary(id_library, callback) {
+    const db = new sqlite3.Database(DB_NAME);
+    db.all(
+        `SELECT c.chapter, c.url, s.name AS site
+         FROM Chapters c
+         JOIN Source s ON c.id_source = s.id_source
+         WHERE c.id_library = ?
+         ORDER BY CAST(c.chapter AS REAL) ASC`,
+        [id_library],
+        (err, rows) => {
+            callback(err, rows);
+            db.close();
+        }
+    );
+}
+
+export {initDb, initSource, saveChapter, getChapters, getChaptersByLibrary, getAllMangas, isLibraryExist};
