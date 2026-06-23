@@ -204,7 +204,7 @@
             <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
               <span class="flex items-center" v-if="manga.lastChapter">
                 <i class="pi pi-book mr-1"></i>
-                Ch. {{ manga.lastChapter }}
+                {{ (manga.type && manga.type.toString().toLowerCase() === 'anime') ? 'Ep.' : 'Ch.' }} {{ manga.lastChapter }}
               </span>
               <Tag v-if="manga.status" :value="manga.status" :severity="getStatusSeverity(manga.status)" />
             </div>
@@ -247,7 +247,7 @@
               <div class="flex items-center gap-4">
                 <span v-if="manga.lastChapter" class="flex items-center text-sm">
                   <i class="pi pi-book mr-1"></i>
-                  Ch. {{ manga.lastChapter }}
+                  {{ (manga.type && manga.type.toString().toLowerCase() === 'anime') ? 'Ep.' : 'Ch.' }} {{ manga.lastChapter }}
                 </span>
                 <Tag v-if="manga.status" :value="manga.status" :severity="getStatusSeverity(manga.status)" />
               </div>
