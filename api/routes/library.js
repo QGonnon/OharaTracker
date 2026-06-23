@@ -92,7 +92,7 @@ router.post('/', authenticate, async (req, res) => {
         // Save last known chapter if provided
         if (lastChapter || chapterUrl) {
             await db.run(
-                `INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)` ,
+                `INSERT OR REPLACE INTO Chapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)` ,
                 [id_library, id_source, lastChapter || null, chapterUrl || null]
             );
         }
@@ -175,7 +175,7 @@ router.get('/user', authenticate, async (req, res) => {
              JOIN Library l ON lu.id_library = l.id
              LEFT JOIN LibrarySource ls ON l.id = ls.id_library
              LEFT JOIN Source s ON ls.id_source = s.id_source
-             LEFT JOIN LastChapters lc ON lc.id_library = l.id AND lc.id_source = ls.id_source
+             LEFT JOIN Chapters lc ON lc.id_library = l.id AND lc.id_source = ls.id_source
              WHERE lu.name_client = ?
              GROUP BY l.id`,
             [req.user.username]
