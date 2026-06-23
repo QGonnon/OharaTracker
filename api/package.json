@@ -20,7 +20,10 @@
     "node-fetch": "^3.3.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.22.0",
+    "pg-hstore": "^2.3.4",
     "puppeteer": "^24.43.1",
+    "sequelize": "^6.37.8",
     "sqlite": "^5.1.1",
     "sqlite3": "^6.0.1"
   },
@@ -28,5 +31,8 @@
     "puppeteer@24.43.1": true,
     "bcrypt@6.0.0": true,
     "sqlite3@6.0.1": true
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.5"
   }
 }
