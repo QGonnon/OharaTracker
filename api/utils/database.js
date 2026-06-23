@@ -1,244 +1,235 @@
-import sqlite3 from 'sqlite3';
-import fs from 'fs';
+import dotenv from 'dotenv';
+import { QueryTypes, Sequelize } from 'sequelize';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const DB_NAME = 'manga.db';
-const DB_INIT = fs.readFileSync('./utils/database.sql').toString();
-var db_source = {};
+dotenv.config();
 
-function initDb() {
-    const db = new sqlite3.Database(DB_NAME);
-    const db_req = DB_INIT.toString().split(');');
-    db.serialize(() => {
-        db.run('PRAGMA foreign_keys = OFF;');
-        db.run('BEGIN TRANSACTION;');
-        db_req.forEach(req => {
-            if (req){
-                req += ');';
-                db.run(req);
-            }
-        });
-        db.run('COMMIT;', [], (err) => {
-            db.close();
-            // Now run initSource after schema setup
-            initSource('MangaDex');
-            initSource('scan-manga');
-            initSource('AsuraComic');
-        });
-    });
+const configPath = path.resolve('sequelize', 'config', 'config.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf8')).development;
+
+const DB_NAME = process.env.DB_NAME || config.database;
+const DB_USER = process.env.DB_USER || config.username;
+const DB_PASSWORD = process.env.DB_PASSWORD || config.password;
+const rawDbHost = process.env.DB_HOST || config.host;
+const [DB_HOST, embeddedPort] = String(rawDbHost).split(':');
+const DB_PORT = process.env.DB_PORT || embeddedPort || config.port;
+
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+    dialect: 'postgres',
+    host: DB_HOST,
+    port: DB_PORT,
+    logging: false,
+});
+
+async function initDb() {
+    await sequelize.authenticate();
+    await Promise.all([
+        initSource('MangaDex'),
+        initSource('scan-manga'),
+        initSource('AsuraComic'),
+    ]);
 }
 
-function initSource(name){
-    const db = new sqlite3.Database(DB_NAME);
-    db.get('SELECT id_source FROM Source WHERE name = ?', [name], (err, row) => {
-        if (err) {
-            console.error(`🛑 Erreur lors de la vérification de la source: ${err.message}`);
-            db.close();
-            return;
+async function initSource(name) {
+    const sources = await sequelize.query(
+        'SELECT id_source FROM "Source" WHERE name = :name LIMIT 1',
+        {
+            replacements: { name },
+            type: QueryTypes.SELECT,
         }
-        if (row) {
-            db_source[name] = row.id_source;
-            db.close();
-            return;
+    );
+
+    if (sources.length > 0) {
+        return sources[0].id_source;
+    }
+
+    await sequelize.query(
+        'INSERT INTO "Source" (name) VALUES (:name)',
+        {
+            replacements: { name },
+            type: QueryTypes.INSERT,
         }
-        db.run(
-            'INSERT INTO Source (name) VALUES (?)',
-            [name],
-            function(err) {
-                if (err && err.code !== 'SQLITE_CONSTRAINT') {
-                    console.error(`🛑 Erreur lors de l'insertion dans la base de données: ${err.message}`);
-                } else {
-                    db_source[name] = this.lastID;
-                }
-                db.close();
-            }
-        );
-    });
+    );
+
+    const created = await sequelize.query(
+        'SELECT id_source FROM "Source" WHERE name = :name LIMIT 1',
+        {
+            replacements: { name },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    return created[0]?.id_source;
 }
 
 async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
-    const db = new sqlite3.Database(DB_NAME);
+    await sequelize.authenticate();
 
-    return new Promise((resolve, reject) => {
-        // 1️⃣ Vérifie ou crée la source
-        db.get('SELECT id_source FROM Source WHERE name = ?', [sourceName], (err, source) => {
-            if (err) {
-                console.error('❌ Erreur lors de la récupération de la source:', err);
-                db.close();
-                reject(err);
-                return;
+    const sourceId = await initSource(sourceName);
+
+    const libraries = await sequelize.query(
+        'SELECT id, cover_path, cover_url FROM "Library" WHERE name = :title LIMIT 1',
+        {
+            replacements: { title: mangaInfo.title },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    let library = libraries[0] || null;
+
+    if (!library) {
+        await sequelize.query(
+            `INSERT INTO "Library" (
+                name, description, type, demographic, published, status,
+                artist, author, theme, publishers, cover_path, cover_url
+            ) VALUES (
+                :title, :description, :type, :demographic, :published, :status,
+                :artist, :author, :theme, :publishers, :coverPath, :coverUrl
+            )`,
+            {
+                replacements: {
+                    title: mangaInfo.title,
+                    description: mangaInfo.description || null,
+                    type: mangaInfo.type || null,
+                    demographic: mangaInfo.demographic || null,
+                    published: mangaInfo.published || null,
+                    status: mangaInfo.status || null,
+                    artist: mangaInfo.artist || null,
+                    author: mangaInfo.author || null,
+                    theme: mangaInfo.theme || null,
+                    publishers: mangaInfo.publishers || null,
+                    coverPath: mangaInfo.coverPath || null,
+                    coverUrl: mangaInfo.coverUrl || null,
+                },
+                type: QueryTypes.INSERT,
             }
+        );
 
-            function processWithSource(sourceId) {
-                // 2️⃣ Vérifie si le manga existe déjà
-                db.get('SELECT id, cover_path, cover_url FROM Library WHERE name = ?', [mangaInfo.title], (err, library) => {
-                    if (err) {
-                        console.error('❌ Erreur lors de la récupération du manga:', err);
-                        db.close();
-                        reject(err);
-                        return;
-                    }
-
-                    function processWithLibrary(libraryId, existingCoverPath, existingCoverUrl) {
-                        // 3️⃣ Met à jour la cover si non présente
-                        const shouldUpdateCover = !existingCoverPath && (mangaInfo.coverPath || mangaInfo.coverUrl);
-                        
-                        function insertTags() {
-                            // 4️⃣ Insertion des tags
-                            if (!mangaInfo.tags || mangaInfo.tags.length === 0) {
-                                linkLibrarySource();
-                                return;
-                            }
-
-                            let tagIndex = 0;
-                            function insertNextTag() {
-                                if (tagIndex >= mangaInfo.tags.length) {
-                                    linkLibrarySource();
-                                    return;
-                                }
-
-                                const tag = mangaInfo.tags[tagIndex];
-                                db.get(
-                                    'SELECT id FROM Tag WHERE name = ? AND id_library = ?',
-                                    [tag.name, libraryId],
-                                    (err, exists) => {
-                                        if (!exists) {
-                                            db.run(
-                                                'INSERT INTO Tag (name, type, id_library) VALUES (?, ?, ?)',
-                                                [tag.name, tag.type, libraryId],
-                                                (err) => {
-                                                    if (err) console.error('❌ Erreur insertion tag:', err);
-                                                    tagIndex++;
-                                                    insertNextTag();
-                                                }
-                                            );
-                                        } else {
-                                            tagIndex++;
-                                            insertNextTag();
-                                        }
-                                    }
-                                );
-                            }
-                            insertNextTag();
-                        }
-
-                        function linkLibrarySource() {
-                            // 5️⃣ Liaison Library ↔ Source
-                            db.get(
-                                'SELECT url FROM LibrarySource WHERE id_library = ? AND id_source = ?',
-                                [libraryId, sourceId],
-                                (err, existingLink) => {
-                                    if (err) {
-                                        console.error('❌ Erreur vérification LibrarySource:', err);
-                                        db.close();
-                                        reject(err);
-                                        return;
-                                    }
-
-                                    function insertLastChapter() {
-                                        // 6️⃣ Enregistrement du dernier chapitre
-                                        db.run(
-                                            'INSERT OR REPLACE INTO LastChapters (id_library, id_source, chapter, url) VALUES (?, ?, ?, ?)',
-                                            [libraryId, sourceId, lastChapter, chapterUrl],
-                                            (err) => {
-                                                if (err) {
-                                                    console.error('❌ Erreur insertion LastChapters:', err);
-                                                    db.close();
-                                                    reject(err);
-                                                } else {
-                                                    db.close();
-                                                    resolve();
-                                                }
-                                            }
-                                        );
-                                    }
-
-                                    if (!existingLink) {
-                                        db.run(
-                                            'INSERT INTO LibrarySource (id_library, id_source, url) VALUES (?, ?, ?)',
-                                            [libraryId, sourceId, mangaUrl],
-                                            (err) => {
-                                                if (err) console.error('❌ Erreur insertion LibrarySource:', err);
-                                                insertLastChapter();
-                                            }
-                                        );
-                                    } else {
-                                        insertLastChapter();
-                                    }
-                                }
-                            );
-                        }
-
-                        if (shouldUpdateCover) {
-                            db.run(
-                                'UPDATE Library SET cover_path = COALESCE(?, cover_path), cover_url = COALESCE(?, cover_url) WHERE id = ?',
-                                [mangaInfo.coverPath || null, mangaInfo.coverUrl || null, libraryId],
-                                (err) => {
-                                    if (err) console.error('❌ Erreur mise à jour cover:', err);
-                                    insertTags();
-                                }
-                            );
-                        } else {
-                            insertTags();
-                        }
-                    }
-
-                    if (!library) {
-                        // Créer le manga
-                        db.run(
-                            `INSERT INTO Library (name, description, type, demographic, published, status, artist, author, theme, publishers, cover_path, cover_url)
-                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                            [
-                                mangaInfo.title,
-                                mangaInfo.description || null,
-                                mangaInfo.type || null,
-                                mangaInfo.demographic || null,
-                                mangaInfo.published || null,
-                                mangaInfo.status || null,
-                                mangaInfo.artist || null,
-                                mangaInfo.author || null,
-                                mangaInfo.theme || null,
-                                mangaInfo.publishers || null,
-                                mangaInfo.coverPath || null,
-                                mangaInfo.coverUrl || null
-                            ],
-                            function(err) {
-                                if (err) {
-                                    console.error('❌ Erreur insertion Library:', err);
-                                    db.close();
-                                    reject(err);
-                                    return;
-                                }
-                                processWithLibrary(this.lastID, mangaInfo.coverPath, mangaInfo.coverUrl);
-                            }
-                        );
-                    } else {
-                        processWithLibrary(library.id, library.cover_path, library.cover_url);
-                    }
-                });
+        const createdLibraries = await sequelize.query(
+            'SELECT id, cover_path, cover_url FROM "Library" WHERE name = :title LIMIT 1',
+            {
+                replacements: { title: mangaInfo.title },
+                type: QueryTypes.SELECT,
             }
+        );
 
-            if (!source) {
-                // Créer la source
-                db.run('INSERT INTO Source (name) VALUES (?)', [sourceName], function(err) {
-                    if (err) {
-                        console.error('❌ Erreur insertion Source:', err);
-                        db.close();
-                        reject(err);
-                        return;
-                    }
-                    processWithSource(this.lastID);
-                });
-            } else {
-                processWithSource(source.id_source);
+        library = createdLibraries[0] || null;
+    } else if (!library.cover_path && (mangaInfo.coverPath || mangaInfo.coverUrl)) {
+        await sequelize.query(
+            `UPDATE "Library"
+             SET cover_path = COALESCE(:coverPath, cover_path),
+                 cover_url = COALESCE(:coverUrl, cover_url)
+             WHERE id = :libraryId`,
+            {
+                replacements: {
+                    coverPath: mangaInfo.coverPath || null,
+                    coverUrl: mangaInfo.coverUrl || null,
+                    libraryId: library.id,
+                },
+                type: QueryTypes.UPDATE,
             }
-        });
-    });
+        );
+
+        library.cover_path = mangaInfo.coverPath || library.cover_path;
+        library.cover_url = mangaInfo.coverUrl || library.cover_url;
+    }
+
+    if (!library) {
+        throw new Error('Impossible de récupérer ou créer la bibliothèque du manga');
+    }
+
+    const normalizedTags = Array.isArray(mangaInfo.tags)
+        ? mangaInfo.tags
+            .map(tag => {
+                if (typeof tag === 'string') {
+                    return { name: tag, type: null };
+                }
+
+                if (tag && typeof tag === 'object') {
+                    const tagName = tag.name || tag.title || tag.slug || null;
+                    return tagName ? { name: tagName, type: tag.type || tag.category || null } : null;
+                }
+
+                return null;
+            })
+            .filter(Boolean)
+        : [];
+
+    if (normalizedTags.length > 0) {
+        for (const tag of normalizedTags) {
+            const existingTag = await sequelize.query(
+                'SELECT id FROM "Tag" WHERE name = :name AND id_library = :libraryId LIMIT 1',
+                {
+                    replacements: {
+                        name: tag.name,
+                        libraryId: library.id,
+                    },
+                    type: QueryTypes.SELECT,
+                }
+            );
+
+            if (existingTag.length === 0) {
+                await sequelize.query(
+                    'INSERT INTO "Tag" (name, type, id_library) VALUES (:name, :type, :libraryId)',
+                    {
+                        replacements: {
+                            name: tag.name,
+                            type: tag.type || null,
+                            libraryId: library.id,
+                        },
+                        type: QueryTypes.INSERT,
+                    }
+                );
+            }
+        }
+    }
+
+    const librarySource = await sequelize.query(
+        'SELECT url FROM "LibrarySource" WHERE id_library = :libraryId AND id_source = :sourceId LIMIT 1',
+        {
+            replacements: {
+                libraryId: library.id,
+                sourceId,
+            },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    if (librarySource.length === 0) {
+        await sequelize.query(
+            'INSERT INTO "LibrarySource" (id_library, id_source, url) VALUES (:libraryId, :sourceId, :mangaUrl)',
+            {
+                replacements: {
+                    libraryId: library.id,
+                    sourceId,
+                    mangaUrl: mangaUrl || null,
+                },
+                type: QueryTypes.INSERT,
+            }
+        );
+    }
+
+    await sequelize.query(
+        `INSERT INTO "LastChapters" (id_library, id_source, chapter, url)
+         VALUES (:libraryId, :sourceId, :chapter, :url)
+         ON CONFLICT (id_library, id_source)
+         DO UPDATE SET chapter = EXCLUDED.chapter, url = EXCLUDED.url`,
+        {
+            replacements: {
+                libraryId: library.id,
+                sourceId,
+                chapter: lastChapter || null,
+                url: chapterUrl || null,
+            },
+            type: QueryTypes.INSERT,
+        }
+    );
 }
 
 function getLastChapters(callback, limit = null) {
-    const db = new sqlite3.Database(DB_NAME);
-    let query = `SELECT 
-            lc.rowid AS chapterId,
+    const query = `SELECT
+            lc.id_library AS "chapterId",
             l.name AS title,
             l.type AS type,
             l.author AS author,
@@ -246,80 +237,48 @@ function getLastChapters(callback, limit = null) {
             l.theme AS theme,
             l.status AS status,
             l.description AS description,
-            l.cover_path AS coverPath,
-            l.cover_url AS coverUrl,
-            lc.chapter AS lastChapter,
-            lc.url AS chapterUrl,
-            ls.url AS mangaUrl,
+            l.cover_path AS "coverPath",
+            l.cover_url AS "coverUrl",
+            lc.chapter AS "lastChapter",
+            lc.url AS "chapterUrl",
+            ls.url AS "mangaUrl",
             s.name AS site
-         FROM LastChapters lc
-         JOIN Library l ON lc.id_library = l.id
-         JOIN Source s ON lc.id_source = s.id_source
-         JOIN LibrarySource ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
-         ORDER BY lc.rowid DESC`;
-    
-    if (limit) {
-        query += ` LIMIT ?`;
-        db.all(query, [limit], (err, rows) => {
-            callback(err, rows);
-            db.close();
-        });
-    } else {
-        db.all(query, (err, rows) => {
-            callback(err, rows);
-            db.close();
-        });
-    }
+         FROM "LastChapters" lc
+         JOIN "Library" l ON lc.id_library = l.id
+         JOIN "Source" s ON lc.id_source = s.id_source
+         JOIN "LibrarySource" ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
+         ORDER BY lc.id_library DESC, lc.id_source DESC${limit ? ' LIMIT :limit' : ''}`;
+
+    sequelize.query(query, {
+        replacements: limit ? { limit } : {},
+        type: QueryTypes.SELECT,
+    })
+        .then(rows => callback(null, rows))
+        .catch(err => callback(err));
 }
 
 function getAllMangas(callback) {
-    const db = new sqlite3.Database(DB_NAME);
-    db.all(
+    sequelize.query(
         `SELECT DISTINCT
             l.id,
             l.name AS title,
             l.status,
-            'Reading' AS readingStatus,
-            COALESCE(ur.rating, NULL) AS rating,
-            COALESCE(ur.last_read_chapter, 0) AS lastReadChapter,
-            COALESCE(MAX(lc.chapter), 0) AS latestChapter,
-            CASE 
-                WHEN ur.last_read_date IS NOT NULL THEN 
-                    CASE 
-                        WHEN DATE(ur.last_read_date) = DATE('now') THEN 'Read today'
-                        WHEN DATE(ur.last_read_date) = DATE('now', '-1 day') THEN 'Read a day ago'
-                        WHEN DATE(ur.last_read_date) >= DATE('now', '-7 days') THEN 
-                            'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) AS INTEGER) || ' days ago'
-                        WHEN DATE(ur.last_read_date) >= DATE('now', '-30 days') THEN 
-                            'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) / 7 AS INTEGER) || ' weeks ago'
-                        ELSE 'Read ' || CAST((julianday('now') - julianday(ur.last_read_date)) / 30 AS INTEGER) || ' months ago'
-                    END
-                ELSE 'Haven''t read yet'
-            END AS lastReadDate,
-            CASE 
-                WHEN MAX(lc.date_added) IS NOT NULL THEN 
-                    CASE 
-                        WHEN DATE(MAX(lc.date_added)) = DATE('now') THEN 'Released today'
-                        WHEN DATE(MAX(lc.date_added)) = DATE('now', '-1 day') THEN 'Released a day ago'
-                        WHEN DATE(MAX(lc.date_added)) >= DATE('now', '-7 days') THEN 
-                            'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) AS INTEGER) || ' days ago'
-                        WHEN DATE(MAX(lc.date_added)) >= DATE('now', '-30 days') THEN 
-                            'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) / 7 AS INTEGER) || ' weeks ago'
-                        ELSE 'Released ' || CAST((julianday('now') - julianday(MAX(lc.date_added))) / 30 AS INTEGER) || ' months ago'
-                    END
-                ELSE 'No release info'
-            END AS lastReleaseDate
-         FROM Library l
-         LEFT JOIN UserReading ur ON l.id = ur.id_library
-         LEFT JOIN LastChapters lc ON l.id = lc.id_library
-         GROUP BY l.id, l.name, l.status, ur.rating, ur.last_read_chapter, ur.last_read_date
+            COALESCE(lu.reading_status, 'Reading') AS "readingStatus",
+            lu.score AS rating,
+            lu.last_chapter AS "lastReadChapter",
+            lc.chapter AS "latestChapter",
+            NULL AS "lastReadDate",
+            NULL AS "lastReleaseDate"
+         FROM "Library" l
+         LEFT JOIN libraryusage lu ON l.id = lu.id_library
+         LEFT JOIN "LastChapters" lc ON l.id = lc.id_library
          ORDER BY l.name`,
-        [],
-        (err, rows) => {
-            callback(err, rows);
-            db.close();
+        {
+            type: QueryTypes.SELECT,
         }
-    );
+    )
+        .then(rows => callback(null, rows))
+        .catch(err => callback(err));
 }
 
-export {initDb, initSource, saveChapter, getLastChapters, getAllMangas};
+export { initDb, initSource, saveChapter, getLastChapters, getAllMangas };
