@@ -63,6 +63,17 @@ async function initSource(name) {
     return created[0]?.id_source;
 }
 
+    const created = await sequelize.query(
+        'SELECT id_source FROM "Source" WHERE name = :name LIMIT 1',
+        {
+            replacements: { name },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    return created[0]?.id_source;
+}
+
 async function isLibraryExist(title) {
     const library = await sequelize.query(
         'SELECT id FROM "Library" WHERE name = :title LIMIT 1',
