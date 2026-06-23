@@ -1,1 +1,3 @@
 cdn/*
+api/manga.db-wal
+api/manga.db-shm

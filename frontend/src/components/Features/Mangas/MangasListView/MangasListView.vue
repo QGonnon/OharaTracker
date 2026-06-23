@@ -122,7 +122,7 @@
                             </Column>
 
                             <!-- Last Chapter Read Column -->
-                            <Column field="lastChapter" :header="$t('library.col_last_read')" sortable style="min-width: 150px;">
+                            <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
                                         :label="`Ch. ${data.userLastChapter || '-'}`"
@@ -136,7 +136,7 @@
                             </Column>
 
                             <!-- Last Chapter Column -->
-                            <Column field="lastChapter" :header="$t('library.col_last_chapter')" sortable style="min-width: 150px;">
+                            <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode') : (filterType === 'all' ? $t('library.col_last_chapter') : $t('library.col_last_chapter'))" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
                                         :label="`Ch. ${data.lastChapter || '-'}`"
