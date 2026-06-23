@@ -118,8 +118,14 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
+  // Ne plus bloquer ici - laisser Login.ts gérer la redirection post-login
   if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
-    next('/profile');
+    const redirect = to.query.redirect as string;
+    if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
+      next(redirect);
+    } else {
+      next({ name: 'Profile' });
+    }
     return;
   }
 
