@@ -525,7 +525,6 @@ async function anime_sama() {
 
                 const episodeLinks = await getAllSeasonEpisodes(anime.title);
                 for (const ep of episodeLinks) {
-                    console.log(`💾 Sauvegarde: ${anime.title} - Saison ${ep.seasonNumber}, Épisode ${ep.episode + 1} Url ${ep.url}`);
                     await saveChapter('anime-sama', `${ep.seasonNumber}.${ep.episode + 1}`, ep.url, anime.link, animeInfo);
                 }
                 // const lastEpisode = episodeLinks.length > 0 ? episodeLinks[episodeLinks.length - 1] : null;
