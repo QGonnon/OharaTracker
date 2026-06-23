@@ -85,7 +85,7 @@ export default defineComponent({
                 
                 const data = await response.json();
                 // Detect type (Manga/Anime) based on known source names
-                const animeSources = new Set(['moviedb', 'asura']);
+                const animeSources = new Set(['anime-sama', 'moviedb']);
                 mangas.value = (data || []).map((item: any) => {
                     const site = (item.site || '').toLowerCase();
                     const type = animeSources.has(site) ? 'Anime' : 'Manga';
