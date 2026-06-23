@@ -52,7 +52,7 @@ export default defineComponent({
       authStore.login(user).then(
         () => {
           const redirect = this.$route.query.redirect as string;
-          this.$router.push(redirect || { name: 'Library' });
+          this.$router.push(redirect || '/home');
         },
         (error: any) => {
           this.loading = false;
@@ -100,7 +100,7 @@ export default defineComponent({
           const authStore = useAuthStore();
           await authStore.googleLogin(response.credential);
           const redirect = this.$route.query.redirect as string;
-          this.$router.push(redirect || { name: 'Library' });
+          this.$router.push(redirect || '/home');
         }
       } catch (error: any) {
         this.loading = false;
