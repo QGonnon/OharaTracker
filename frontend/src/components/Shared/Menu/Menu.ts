@@ -42,8 +42,11 @@ export default defineComponent({
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const name = computed(() => authStore.currentUser?.name || '')
 
-    const goLogin = () => router.push({ name: 'Login' })
-
+    const goLogin = () => router.push({ 
+      name: 'Login', 
+      query: { redirect: route.fullPath } 
+    })
+    
     const handleLogout = () => {
       authStore.logout()
       router.push({ name: 'Login' })
