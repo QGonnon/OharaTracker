@@ -2,6 +2,7 @@
 
 ## Lancer l'api :
 Créer un fichier `.env` à la racine du dossier `api` à partir du fichier `.env.example` et remplir les champs.
+Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir du fichier `config.json.example`.
 ```
 cd api
 npm i

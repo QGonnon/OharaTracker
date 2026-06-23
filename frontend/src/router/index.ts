@@ -107,28 +107,23 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, _from, next) => {
-  // Only protect restricted pages; keep the rest public
-  const protectedPages = [
-    'Profile', 
-    'Admin', 
-    'Moderator', 
-    'User', 
-    'Library'
-  ];
-  const requiresAuth = protectedPages.includes(to.name?.toString() || '');
+// frontend/src/router/index.ts
 
+router.beforeEach((to, from, next) => {
+  const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library'];
+  const requiresAuth = protectedPages.includes(to.name?.toString() || '');
   const authStore = useAuthStore();
   const loggedIn = authStore.isLoggedIn;
 
   if (requiresAuth && !loggedIn) {
-    next('/auth/login');
+    // Sauvegarder la destination voulue avant de rediriger vers login
+    next({ name: 'Login', query: { redirect: to.fullPath } });
     return;
   }
 
-  // If already logged, avoid showing login/register again
+  // Si déjà connecté, ne pas afficher login/register
   if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
-    next('/auth/profile');
+    next('/user/profile');
     return;
   }
 

@@ -9,7 +9,8 @@
     "navigation": "Navigation",
     "theme_light": "Switch to light theme",
     "theme_dark": "Switch to dark theme",
-    "lang": "EN"
+    "lang": "EN",
+    "language": "Language"
   },
   "auth": {
     "login_subtitle": "Login",
@@ -83,8 +84,10 @@
     "grid_view": "Grid view",
     "col_title": "Title",
     "col_status": "Status",
-    "col_last_read": "Last Chapter Read",
-    "col_last_chapter": "Last Chapter",
+    "col_last_read": "Last Viewed",
+    "col_last_chapter": "Latest Release",
+    "col_last_episode_seen": "Last Episode Seen",
+    "col_last_episode": "Latest Episode",
     "col_type": "Type",
     "col_actions": "Actions",
     "edit": "Edit",
@@ -195,7 +198,7 @@
     "username": "Username",
     "email": "Email address",
     "username_placeholder": "your_username",
-    "email_placeholder": "you\\@example.com",
+    "email_placeholder": "you{'@'}example.com",
     "save": "Save changes",
     "saving": "Saving...",
     "security": "Security",
