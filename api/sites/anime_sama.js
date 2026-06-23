@@ -315,6 +315,16 @@ const RESOLVER_MAP = {
     'sendvid.com': resolveSendvid,
 };
 
+function hasEmptyQueryParams(url) {
+    try {
+        const parsed = new URL(url);
+        for (const value of parsed.searchParams.values()) {
+            if (value === '') return true;
+        }
+    } catch (_) { /* ignore */ }
+    return false;
+}
+
 async function resolveVideoUrl(url) {
     try {
         const domain = new URL(url).hostname.replace(/^www\./, '');
@@ -407,7 +417,7 @@ async function getAnimeLink(nom, saison = 'saison1', version = 'vostfr') {
         if (!url) { errors.push({ lecteur: 'eps1', episode: ep, url: '' }); continue; }
 
         const allowed = ALLOWED_SITES.some(s => url.includes(s));
-        if (allowed) {
+        if (allowed && !hasEmptyQueryParams(url)) {
             const resolved = await resolveVideoUrl(url);
             if (resolved?.url) {
                 goodLinks.push({ episode: ep, url: resolved.url });
@@ -426,7 +436,7 @@ async function getAnimeLink(nom, saison = 'saison1', version = 'vostfr') {
                 if (!url) continue;
 
                 const allowed = ALLOWED_SITES.some(s => url.includes(s));
-                if (!allowed) continue;
+                if (!allowed || hasEmptyQueryParams(url)) continue;
 
                 const resolved = await resolveVideoUrl(url);
                 if (resolved?.url) {
@@ -515,6 +525,7 @@ async function anime_sama() {
 
                 const episodeLinks = await getAllSeasonEpisodes(anime.title);
                 for (const ep of episodeLinks) {
+                    console.log(`💾 Sauvegarde: ${anime.title} - Saison ${ep.seasonNumber}, Épisode ${ep.episode + 1} Url ${ep.url}`);
                     await saveChapter('anime-sama', `${ep.seasonNumber}.${ep.episode + 1}`, ep.url, anime.link, animeInfo);
                 }
                 // const lastEpisode = episodeLinks.length > 0 ? episodeLinks[episodeLinks.length - 1] : null;
