@@ -45,20 +45,19 @@ export default defineComponent({
     this.initGoogleSignIn();
   },
   methods: {
-    handleLogin(user:any) {
+    handleLogin(user: any) {
       this.loading = true;
       const authStore = useAuthStore();
 
       authStore.login(user).then(
         () => {
-          this.$router.push({ name: 'Profile' });
+          const redirect = this.$route.query.redirect as string;
+          this.$router.push(redirect || { name: 'Library' });
         },
-        (error:any) => {
+        (error: any) => {
           this.loading = false;
           this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
+            (error.response?.data?.message) ||
             error.message ||
             error.toString();
         }
@@ -96,16 +95,16 @@ export default defineComponent({
     async handleGoogleLogin(response: any) {
       try {
         this.loading = true;
-        this.message = "";
-        
-        if (response && response.credential) {
+        this.message = '';
+        if (response?.credential) {
           const authStore = useAuthStore();
           await authStore.googleLogin(response.credential);
-          this.$router.push({ name: 'Profile' });
+          const redirect = this.$route.query.redirect as string;
+          this.$router.push(redirect || { name: 'Library' });
         }
       } catch (error: any) {
         this.loading = false;
-        this.message = error.message || "Erreur lors de la connexion avec Google";
+        this.message = error.message || 'Erreur lors de la connexion avec Google';
       }
     },
   },

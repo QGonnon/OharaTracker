@@ -194,7 +194,7 @@
     "username": "Benutzername",
     "email": "E-Mail-Adresse",
     "username_placeholder": "dein_benutzername",
-    "email_placeholder": "du@beispiel.de",
+    "email_placeholder": "du{'@'}beispiel.de",
     "save": "Änderungen speichern",
     "saving": "Speichern...",
     "security": "Sicherheit",
