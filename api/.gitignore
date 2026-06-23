@@ -1,5 +1,4 @@
 node_modules/
-manga.db
 .env
 sequelize/config/config.json
 data/
