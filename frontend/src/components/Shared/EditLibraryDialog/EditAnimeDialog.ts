@@ -37,7 +37,10 @@ export default defineComponent({
         const resp = await fetch(`${apiBase}/chapters/${idLibrary}`)
         if (!resp.ok) return
         const rows: { chapter: string; url: string; site: string }[] = await resp.json()
-        episodeOptions.value = rows.map(r => ({ label: `S${r.chapter.split('.')[0]} E${r.chapter.split('.')[1]}`, value: r.chapter }))
+        const key = (ch: string) => ch.split('.').map(Number).reduce((a, b) => a * 1000 + b, 0)
+        episodeOptions.value = rows
+          .sort((a, b) => key(a.chapter) - key(b.chapter))
+          .map(r => ({ label: `S${r.chapter.split('.')[0]} E${r.chapter.split('.')[1]}`, value: r.chapter }))
         episodeOptions.value.push({ label: 'Manuel', value: 'manual' })
       } catch (err) {
         console.error('Erreur chargement épisodes:', err)
