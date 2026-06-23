@@ -38,7 +38,12 @@ export default defineComponent({
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push({ name: 'Profile' });
+      const redirect = this.$route.query.redirect as string;
+      if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
+        this.$router.push(redirect);
+      } else {
+        this.$router.push({ name: 'Profile' });
+      }
     }
   },
   mounted() {
@@ -48,16 +53,21 @@ export default defineComponent({
     handleLogin(user: any) {
       this.loading = true;
       const authStore = useAuthStore();
+      // Capturer MAINTENANT avant que la route puisse changer
+      const redirect = (this.$route.query.redirect as string) || null;
 
       authStore.login(user).then(
         () => {
-          const redirect = this.$route.query.redirect as string;
-          this.$router.push(redirect || { name: 'Library' });
+          if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
+            this.$router.push(redirect);
+          } else {
+            this.$router.push({ name: 'Profile' });
+          }
         },
         (error: any) => {
           this.loading = false;
           this.message =
-            (error.response?.data?.message) ||
+            error.response?.data?.message ||
             error.message ||
             error.toString();
         }
@@ -96,11 +106,16 @@ export default defineComponent({
       try {
         this.loading = true;
         this.message = '';
+        const redirect = (this.$route.query.redirect as string) || null;
+
         if (response?.credential) {
           const authStore = useAuthStore();
           await authStore.googleLogin(response.credential);
-          const redirect = this.$route.query.redirect as string;
-          this.$router.push(redirect || { name: 'Library' });
+          if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
+            this.$router.push(redirect);
+          } else {
+            this.$router.push({ name: 'Profile' });
+          }
         }
       } catch (error: any) {
         this.loading = false;

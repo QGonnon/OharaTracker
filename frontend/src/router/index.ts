@@ -107,8 +107,6 @@ const router = createRouter({
   routes,
 })
 
-// frontend/src/router/index.ts
-
 router.beforeEach((to, from, next) => {
   const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library'];
   const requiresAuth = protectedPages.includes(to.name?.toString() || '');
@@ -116,14 +114,18 @@ router.beforeEach((to, from, next) => {
   const loggedIn = authStore.isLoggedIn;
 
   if (requiresAuth && !loggedIn) {
-    // Sauvegarder la destination voulue avant de rediriger vers login
     next({ name: 'Login', query: { redirect: to.fullPath } });
     return;
   }
 
-  // Si déjà connecté, ne pas afficher login/register
+  // Ne plus bloquer ici - laisser Login.ts gérer la redirection post-login
   if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
-    next('/user/profile');
+    const redirect = to.query.redirect as string;
+    if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
+      next(redirect);
+    } else {
+      next({ name: 'Profile' });
+    }
     return;
   }
 

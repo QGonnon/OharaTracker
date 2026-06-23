@@ -46,7 +46,7 @@ export default defineComponent({
   },
   mounted() {
     if (this.loggedIn) {
-      this.$router.push("/profile");
+      this.$router.push('/profile');
     }
   },
   methods: {
@@ -60,24 +60,21 @@ export default defineComponent({
         async (data) => {
           this.message = data.message;
           this.successful = true;
-          
-          // Connecter automatiquement l'utilisateur après l'inscription
+
           try {
-            await authStore.login({ username: user.username, password: user.password });
-            this.$router.push("/profile");
+            // Utiliser email (pas username) - cohérent avec auth.service.ts
+            await authStore.login({ email: user.email, password: user.password });
+            this.$router.push('/profile');
           } catch (loginError) {
             this.loading = false;
-            // Si la connexion automatique échoue, rediriger vers la page de login
             setTimeout(() => {
-              this.$router.push("/login");
+              this.$router.push({ name: 'Login' });
             }, 2000);
           }
         },
         (error) => {
           this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
+            (error.response?.data?.message) ||
             error.message ||
             error.toString();
           this.successful = false;

@@ -76,6 +76,19 @@ async function isLibraryExist(title) {
 }
 
 async function getOrCreateLibrary(mangaInfo) {
+async function isLibraryExist(title) {
+    const library = await sequelize.query(
+        'SELECT id FROM "Library" WHERE name = :title LIMIT 1',
+        {
+            replacements: { title },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    return library.length > 0;
+}
+
+async function getOrCreateLibrary(mangaInfo) {
     const libraries = await sequelize.query(
         'SELECT id, cover_path, cover_url FROM "Library" WHERE name = :title LIMIT 1',
         {
@@ -87,7 +100,36 @@ async function getOrCreateLibrary(mangaInfo) {
     if (libraries.length > 0) {
         return libraries[0];
     }
+    if (libraries.length > 0) {
+        return libraries[0];
+    }
 
+    await sequelize.query(
+        `INSERT INTO "Library" (
+            name, description, type, demographic, published, status,
+            artist, author, theme, publishers, cover_path, cover_url
+        ) VALUES (
+            :title, :description, :type, :demographic, :published, :status,
+            :artist, :author, :theme, :publishers, :coverPath, :coverUrl
+        )`,
+        {
+            replacements: {
+                title: mangaInfo.title,
+                description: mangaInfo.description || null,
+                type: mangaInfo.type || null,
+                demographic: mangaInfo.demographic || null,
+                published: mangaInfo.published || null,
+                status: mangaInfo.status || null,
+                artist: mangaInfo.artist || null,
+                author: mangaInfo.author || null,
+                theme: mangaInfo.theme || null,
+                publishers: mangaInfo.publishers || null,
+                coverPath: mangaInfo.coverPath || null,
+                coverUrl: mangaInfo.coverUrl || null,
+            },
+            type: QueryTypes.INSERT,
+        }
+    );
     await sequelize.query(
         `INSERT INTO "Library" (
             name, description, type, demographic, published, status,
@@ -176,7 +218,33 @@ async function insertTags(libraryId, tags) {
                 type: QueryTypes.SELECT,
             }
         );
+    for (const tag of normalizedTags) {
+        const exists = await sequelize.query(
+            'SELECT id FROM "Tag" WHERE name = :name AND id_library = :libraryId LIMIT 1',
+            {
+                replacements: {
+                    name: tag.name,
+                    libraryId,
+                },
+                type: QueryTypes.SELECT,
+            }
+        );
 
+        if (exists.length === 0) {
+            await sequelize.query(
+                'INSERT INTO "Tag" (name, type, id_library) VALUES (:name, :type, :libraryId)',
+                {
+                    replacements: {
+                        name: tag.name,
+                        type: tag.type || null,
+                        libraryId,
+                    },
+                    type: QueryTypes.INSERT,
+                }
+            );
+        }
+    }
+}
         if (exists.length === 0) {
             await sequelize.query(
                 'INSERT INTO "Tag" (name, type, id_library) VALUES (:name, :type, :libraryId)',
@@ -195,9 +263,12 @@ async function insertTags(libraryId, tags) {
 
 async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
     const existingLink = await sequelize.query(
+async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
+    const existingLink = await sequelize.query(
         'SELECT url FROM "LibrarySource" WHERE id_library = :libraryId AND id_source = :sourceId LIMIT 1',
         {
             replacements: {
+                libraryId,
                 libraryId,
                 sourceId,
             },
@@ -206,10 +277,12 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
     );
 
     if (existingLink.length === 0) {
+    if (existingLink.length === 0) {
         await sequelize.query(
             'INSERT INTO "LibrarySource" (id_library, id_source, url) VALUES (:libraryId, :sourceId, :mangaUrl)',
             {
                 replacements: {
+                    libraryId,
                     libraryId,
                     sourceId,
                     mangaUrl: mangaUrl || null,
@@ -219,7 +292,10 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl) {
         );
     }
 }
+    }
+}
 
+async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
 async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
     await sequelize.query(
         `INSERT INTO "Chapters" (id_library, id_source, chapter, url)
@@ -228,6 +304,7 @@ async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
          DO UPDATE SET url = EXCLUDED.url`,
         {
             replacements: {
+                libraryId,
                 libraryId,
                 sourceId,
                 chapter: lastChapter || null,
@@ -238,6 +315,22 @@ async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
     );
 }
 
+async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
+    try {
+        const sourceId = await initSource(sourceName);
+        const library = await getOrCreateLibrary(mangaInfo);
+
+        await updateCoverIfNeeded(library.id, mangaInfo, library.cover_path);
+        await insertTags(library.id, mangaInfo.tags);
+        await linkLibrarySource(library.id, sourceId, mangaUrl);
+        await saveLastChapter(library.id, sourceId, lastChapter, chapterUrl);
+    } catch (err) {
+        console.error('❌ Erreur lors de la sauvegarde du chapitre:', err);
+        throw err;
+    }
+}
+
+function getChapters(callback, limit = null) {
 async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
     try {
         const sourceId = await initSource(sourceName);

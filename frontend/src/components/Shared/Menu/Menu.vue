@@ -63,9 +63,14 @@
         </button>
 
         <!-- Login button (desktop only) -->
-        <RouterLink v-if="!isLoggedIn" to="/auth/login" class="hidden md:block">
-          <Button :label="$t('nav.login')" outlined size="small" class="font-semibold" @click="goLogin" />
-        </RouterLink>
+        <Button
+          v-if="!isLoggedIn"
+          :label="$t('nav.login')"
+          outlined
+          size="small"
+          class="hidden md:block font-semibold"
+          @click="goLogin"
+        />
 
         <!-- User avatar + popup (desktop only) -->
         <div v-if="isLoggedIn" class="hidden md:block">
