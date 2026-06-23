@@ -3,7 +3,8 @@
     "username": "postgres",
     "password": "postgres",
     "database": "postgres",
-    "host": "localhost:5432",
+    "host": "localhost",
+    "port": 5432,
     "dialect": "postgres"
   }
 }
