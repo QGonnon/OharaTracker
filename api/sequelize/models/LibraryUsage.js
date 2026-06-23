@@ -16,7 +16,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(15, 1)
     },
     note: {
-      type: DataTypes.STRING(500)
+      type: DataTypes.TEXT
     },
     last_chapter: {
       type: DataTypes.STRING(50)

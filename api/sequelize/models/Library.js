@@ -13,31 +13,31 @@ export default (sequelize, DataTypes) => {
       allowNull: false
     },
     description: {
-      type: DataTypes.STRING(500)
+      type: DataTypes.TEXT
     },
     type: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     demographic: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     published: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     status: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     artist: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     author: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     theme: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     publishers: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     cover_path: {
       type: DataTypes.STRING(255)

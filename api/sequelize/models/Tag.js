@@ -9,10 +9,10 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true
     },
     name: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     type: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.TEXT
     },
     id_library: {
       type: DataTypes.INTEGER,
