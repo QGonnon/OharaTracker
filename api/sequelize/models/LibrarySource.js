@@ -12,6 +12,9 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
+    id_library_type: {
+      type: DataTypes.INTEGER
+    },
     url: {
       type: DataTypes.STRING(200)
     }
@@ -24,6 +27,7 @@ export default (sequelize, DataTypes) => {
   LibrarySource.associate = models => {
     LibrarySource.belongsTo(models.Library, { foreignKey: 'id_library', as: 'library' });
     LibrarySource.belongsTo(models.Source, { foreignKey: 'id_source', targetKey: 'id_source', as: 'source' });
+    LibrarySource.belongsTo(models.LibraryType, { foreignKey: 'id_library_type', as: 'libraryType' });
   };
 
   return LibrarySource;
