@@ -16,7 +16,18 @@ async function getMangaInfo(mangaId) {
 
         const title = attributes.title.fr || attributes.title.en || attributes.title[Object.keys(attributes.title)[0]];
         const description = attributes.description.fr || attributes.description.en || '';
-        const type = attributes.originalLanguage || 'N/A';
+        let type = null;
+        switch (attributes.originalLanguage) {
+            case "ja":
+                type = "MANGA"
+                break;
+            case "ko":
+                type = "MANHWA"
+                break;
+            case "zh":
+                type = "MANHUA"
+                break;
+        }
         const demographic = attributes.publicationDemographic || 'N/A';
         const published = attributes.year || 'N/A';
         const status = attributes.status || 'N/A';

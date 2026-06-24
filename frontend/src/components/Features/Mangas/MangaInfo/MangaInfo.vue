@@ -91,8 +91,11 @@
               <div v-if="isLecture" class="flex items-start gap-3">
                 <i class="pi pi-book text-primary mt-1"></i>
                 <div>
-                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.last_chapter') }}</p>
-                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
+                  <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1]|| $t('manga.unknown') })}}
+                  </p>
+                  <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
                     {{ manga.lastChapter || $t('manga.unknown') }}
                   </p>
                 </div>

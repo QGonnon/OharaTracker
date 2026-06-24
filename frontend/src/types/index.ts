@@ -2,13 +2,13 @@
  * Types et interfaces centralisés pour l'application
  */
 
-export type MediaKind = 'lecture' | 'serie' | 'film'
+export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
 
 export interface Manga {
   id?: number | string;
   title: string;
   /** Type de média - remplace l'ancien 'Manga' | 'Anime' */
-  type?: MediaKind | 'Manga' | 'Anime'; // union large pour compatibilité pendant la migration
+  type?: MediaKind; // union large pour compatibilité pendant la migration
   author?: string;
   artist?: string;
   /** Utilisé pour lecture : nom des sources */

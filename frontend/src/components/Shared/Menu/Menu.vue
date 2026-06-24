@@ -1,6 +1,6 @@
 <template>
   <header class="layout-topbar">
-    <nav class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
+    <nav class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2 sm:px-6">
 
       <!-- Logo -->
       <h1 class="text-2xl font-bold">
@@ -75,7 +75,7 @@
         <!-- User avatar + popup (desktop only) -->
         <div v-if="isLoggedIn" class="hidden md:block">
           <button
-            class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-200"
+            class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-200 nav-user-trigger"
             @click="toggleUserMenu"
           >
             <div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold select-none">
