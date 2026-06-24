@@ -15,9 +15,6 @@ export default (sequelize, DataTypes) => {
     description: {
       type: DataTypes.TEXT
     },
-    type: {
-      type: DataTypes.TEXT
-    },
     demographic: {
       type: DataTypes.TEXT
     },
