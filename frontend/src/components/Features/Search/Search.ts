@@ -208,17 +208,13 @@ export default defineComponent({
         // Filter by type (Anime/Lecture)
         if (this.filterType === "anime") {
           results = results.filter(manga => {
-            const site = (manga.site || '').toString().toLowerCase();
             const type = (manga.type || '').toString().toUpperCase();
-            const theme = (manga.theme || '').toString().toLowerCase();
-            return site === 'moviedb' || type === 'ANIME' || theme.includes('anime');
+            return type === 'ANIME';
           });
         } else if (this.filterType === "lecture") {
           results = results.filter(manga => {
-            const site = (manga.site || '').toString().toLowerCase();
             const type = (manga.type || '').toString().toUpperCase();
-            const theme = (manga.theme || '').toString().toLowerCase();
-            return !(site === 'moviedb' || type === 'ANIME' || theme.includes('anime'));
+            return type == 'MANGA' || type == 'MANHWA' || type == 'MANHUA';
           });
         }
         

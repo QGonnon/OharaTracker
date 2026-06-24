@@ -12,6 +12,11 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
+    id_source: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
     score: {
       type: DataTypes.DECIMAL(15, 1)
     },
@@ -33,6 +38,7 @@ export default (sequelize, DataTypes) => {
   LibraryUsage.associate = models => {
     LibraryUsage.belongsTo(models.Library, { foreignKey: 'id_library', as: 'library' });
     LibraryUsage.belongsTo(models.Client, { foreignKey: 'name_client', targetKey: 'name', as: 'client' });
+    LibraryUsage.belongsTo(models.Source, { foreignKey: 'id_source', targetKey: 'id_source', as: 'source' });
   };
 
   return LibraryUsage;

@@ -116,7 +116,7 @@ async function scan_manga(page) {
                     }
                 }
             }
-
+            mangaInfo.type = "MANGA";
             await saveChapter('scan-manga', m.chapter, m.chapterLink, m.mangaLink, mangaInfo);
         }
         console.log('✅ Scraping Scan-manga terminé.');

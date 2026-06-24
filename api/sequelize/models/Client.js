@@ -21,7 +21,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING(50)
     },
     password: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.STRING(60)
     },
     date_of_birth: {
       type: DataTypes.DATEONLY
