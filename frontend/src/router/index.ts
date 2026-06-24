@@ -39,11 +39,28 @@ const routes: RouteRecordRaw[] = [
     component: Search,
   },
   {
+    path: '/lecture/:name',
+    name: 'LectureInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
+    path: '/serie/:name',
+    name: 'SerieInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
+    path: '/film/:name',
+    name: 'FilmInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
     path: '/manga/:name',
     name: 'MangaInfo',
     component: MangaInfo,
     props: true,
-    
   },
   {
     path: '/anime/:name',

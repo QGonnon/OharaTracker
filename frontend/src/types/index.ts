@@ -2,26 +2,39 @@
  * Types et interfaces centralisés pour l'application
  */
 
+export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
+
 export interface Manga {
   id?: number | string;
   title: string;
-  /** "Manga" or "Anime" when known */
-  type?: 'Manga' | 'Anime';
+  /** Type de média - remplace l'ancien 'Manga' | 'Anime' */
+  type?: MediaKind; // union large pour compatibilité pendant la migration
   author?: string;
   artist?: string;
+  /** Utilisé pour lecture : nom des sources */
+  site: string;
   theme?: string;
   status?: string;
   description?: string;
-  coverPath?: string;
-  coverUrl?: string;
+  releaseDate?: string;       // date de parution
+  averageScore?: number;      // score moyen des sources
+  userScore?: number;         // score utilisateur Ohara
+  // lecture
   lastChapter?: string;
   userLastChapter?: string;
-  lastEpisode?: string;
-  userLastEpisode?: string;
-  readingStatus?: string;
   chapterUrl: string;
   mangaUrl: string;
-  site: string;
+  // serie
+  totalEpisodes?: number;
+  totalSeasons?: number;
+  lastEpisode?: string;
+  userLastEpisode?: string;
+  // film & serie
+  studio?: string;
+  // legacy
+  coverPath?: string;
+  coverUrl?: string;
+  readingStatus?: string;
 }
 
 export interface User {
