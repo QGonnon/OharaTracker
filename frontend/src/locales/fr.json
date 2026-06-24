@@ -148,7 +148,14 @@
     "add_to_library": "Ajouter à ma bibliothèque",
     "edit": "Éditer",
     "similar": "Oeuvres similaires",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "studio": "Studio",
+    "total_episodes": "Épisodes totaux",
+    "total_seasons": "Saisons",
+    "release_date": "Date de parution",
+    "average_score": "Score moyen",
+    "user_score": "Mon score",
+    "watch_film": "Regarder le film"
   },
   "latest": {
     "title": "Derniers Sorties",
