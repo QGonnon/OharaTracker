@@ -9,6 +9,18 @@
         </div>
       </div>
       <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.source') }}</label>
+        <Dropdown
+          v-model="editSource"
+          :options="animeSources"
+          optionLabel="site"
+          optionValue="site"
+          :placeholder="loadingEpisodes ? $t('edit_anime.loading_sources') : $t('edit_anime.select_source')"
+          :disabled="loadingEpisodes"
+          class="w-full mt-2"
+        />
+      </div>
+      <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.viewing_status') }}</label>
         <Dropdown v-model="editStatus" :options="statusOptions" optionLabel="label" optionValue="value" class="w-full mt-2" />
       </div>

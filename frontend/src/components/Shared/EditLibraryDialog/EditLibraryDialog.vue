@@ -3,10 +3,22 @@
     <div class="grid gap-4">
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.stopped_chapter') }}</label>
-        <Dropdown v-model="editChapter" :options="chapterOptions" optionLabel="label" optionValue="value" :placeholder="$t('edit_library.select_chapter')" class="w-full mt-2" />
+        <Dropdown v-model="editChapter" :options="chapterOptions" optionLabel="label" optionValue="value" :placeholder="loadingChapters ? $t('edit_library.loading_chapters') : $t('edit_library.select_chapter')" :disabled="loadingChapters" class="w-full mt-2" />
         <div v-if="editChapter === 'manual'" class="mt-2">
           <InputText v-model="editChapterCustom" :placeholder="$t('edit_library.enter_chapter')" class="w-full" />
         </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.source') }}</label>
+        <Dropdown
+          v-model="editSource"
+          :options="mangaSources"
+          optionLabel="site"
+          optionValue="site"
+          :placeholder="loadingChapters ? $t('edit_library.loading_sources') : $t('edit_library.select_source')"
+          :disabled="loadingChapters"
+          class="w-full mt-2"
+        />
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.reading_status') }}</label>

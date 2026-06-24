@@ -19,7 +19,9 @@ export default defineComponent({
     const editChapter = ref<string>('')
     const editChapterCustom = ref<string>('')
     const editStatus = ref<string>('')
+    const editSource = ref<string>('')
     const chapterOptions = ref<{ label: string; value: string }[]>([])
+    const chapterRows = ref<{ chapter: string; url: string; site: string }[]>([])
     const statusOptions = ref([
       { label: 'Entrain de lire', value: 'Entrain de lire' },
       { label: 'Abandonner', value: 'Abandonner' },
@@ -27,38 +29,61 @@ export default defineComponent({
     ])
     const saving = ref(false)
     const deleting = ref(false)
+    const loadingChapters = ref(false)
+
+    const mangaTitle = computed(() => props.manga?.title || '')
+
+    const mangaSources = computed(() => {
+      const seen = new Set<string>()
+      return chapterRows.value.filter(r => {
+        if (seen.has(r.site)) return false
+        seen.add(r.site)
+        return true
+      })
+    })
+
+    const fetchChapterOptions = async (idLibrary: number) => {
+      chapterOptions.value = []
+      chapterRows.value = []
+      loadingChapters.value = true
+      try {
+        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+        const resp = await fetch(`${apiBase}/chapters/${idLibrary}`)
+        if (!resp.ok) return
+        const rows: { chapter: string; url: string; site: string }[] = await resp.json()
+        chapterRows.value = rows
+        const key = (ch: string) => Number(ch)
+        chapterOptions.value = [...new Map(rows.map(r => [r.chapter, r])).values()]
+          .sort((a, b) => key(a.chapter) - key(b.chapter))
+          .map(r => ({ label: `Ch. ${r.chapter}`, value: r.chapter }))
+        chapterOptions.value.push({ label: 'Manuel', value: 'manual' })
+      } catch (err) {
+        console.error('Erreur chargement chapitres:', err)
+      } finally {
+        loadingChapters.value = false
+      }
+    }
 
     const mangaTitle = computed(() => props.manga?.title || '')
 
     watch(() => props.visible, (v) => {
       visibleLocal.value = v
-      // When dialog opens, refresh the form fields with current manga data
       if (v && props.manga) {
         editChapter.value = props.manga.userLastChapter || props.manga.lastChapter || ''
         editChapterCustom.value = ''
         editStatus.value = props.manga.readingStatus || ''
-        buildChapterOptions()
+        if (props.manga.id) fetchChapterOptions(props.manga.id)
       }
     })
 
     watch(visibleLocal, (v) => emit('update:visible', v))
-
-    const buildChapterOptions = () => {
-      chapterOptions.value = []
-      const last = Number(props.manga?.lastChapter)
-      if (!Number.isFinite(last) || last <= 0) return
-      for (let i = 1; i <= last; i++) {
-        chapterOptions.value.push({ label: `Ch. ${i}`, value: String(i) })
-      }
-      chapterOptions.value.push({ label: 'Manuel', value: 'manual' })
-    }
 
     watch(() => props.manga, (m) => {
       if (!m) return
       editChapter.value = m.userLastChapter || m.lastChapter || ''
       editChapterCustom.value = ''
       editStatus.value = m.readingStatus || ''
-      buildChapterOptions()
+      if (m.id) fetchChapterOptions(m.id)
     }, { immediate: true, deep: true })
 
     const close = () => {
@@ -140,6 +165,10 @@ export default defineComponent({
 
     
 
+<<<<<<< HEAD
+    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle, mangaSources }
+=======
     return { visibleLocal, editChapter, editChapterCustom, editStatus, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, mangaTitle }
+>>>>>>> 959616e (feat: add computed properties for anime and manga titles in edit dialogs)
   }
 })
