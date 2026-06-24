@@ -1,4 +1,4 @@
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -28,6 +28,8 @@ export default defineComponent({
     const saving = ref(false)
     const deleting = ref(false)
     const loadingEpisodes = ref(false)
+
+    const animeTitle = computed(() => props.anime?.title || '')
 
     const fetchEpisodeOptions = async (idLibrary: number) => {
       episodeOptions.value = []
@@ -146,6 +148,6 @@ export default defineComponent({
       }
     }
 
-    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes }
+    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle }
   }
 })

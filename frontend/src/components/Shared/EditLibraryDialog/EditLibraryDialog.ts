@@ -1,4 +1,4 @@
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -27,6 +27,8 @@ export default defineComponent({
     ])
     const saving = ref(false)
     const deleting = ref(false)
+
+    const mangaTitle = computed(() => props.manga?.title || '')
 
     watch(() => props.visible, (v) => {
       visibleLocal.value = v
@@ -136,6 +138,8 @@ export default defineComponent({
       }
     }
 
-    return { visibleLocal, editChapter, editChapterCustom, editStatus, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting }
+    
+
+    return { visibleLocal, editChapter, editChapterCustom, editStatus, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, mangaTitle }
   }
 })

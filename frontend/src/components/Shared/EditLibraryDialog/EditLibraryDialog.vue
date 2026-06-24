@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visibleLocal" :header="$t('edit_library.title')" :closable="true" :modal="true" :style="{ width: '420px' }">
+  <Dialog v-model:visible="visibleLocal" :header="mangaTitle" :closable="true" :modal="true" :style="{ width: '420px' }">
     <div class="grid gap-4">
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.stopped_chapter') }}</label>
