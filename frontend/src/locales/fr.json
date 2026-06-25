@@ -170,9 +170,13 @@
   },
   "edit_library": {
     "title": "Éditer la lecture",
+    "source": "Source",
+    "select_source": "Sélectionner la source",
+    "loading_sources": "Chargement des sources...",
     "stopped_chapter": "Chapitre arrêté",
     "reading_status": "Statut de lecture",
     "select_chapter": "Sélectionner le chapitre",
+    "loading_chapters": "Chargement des chapitres...",
     "enter_chapter": "Saisir chapitre",
     "delete": "Supprimer",
     "cancel": "Annuler",

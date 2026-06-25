@@ -170,9 +170,13 @@
   },
   "edit_library": {
     "title": "Edit reading",
+    "source": "Source",
+    "select_source": "Select source",
+    "loading_sources": "Loading sources...",
     "stopped_chapter": "Stopped chapter",
     "reading_status": "Reading status",
     "select_chapter": "Select chapter",
+    "loading_chapters": "Loading chapters...",
     "enter_chapter": "Enter chapter",
     "delete": "Delete",
     "cancel": "Cancel",

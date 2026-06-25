@@ -33,7 +33,21 @@ export default defineComponent({
 
     const mangaTitle = computed(() => props.manga?.title || '')
 
-    
+    const mangaSources = computed((): { site: string; mangaUrl: string; chapters: any[] }[] => {
+      const sites = props.manga?.sites
+      if (!sites) return []
+      return Object.values(sites) as { site: string; mangaUrl: string; chapters: any[] }[]
+    })
+
+    const buildChapterOptions = (rows: { chapter: string; url: string; site: string }[], source: string) => {
+      const filtered = source ? rows.filter(r => r.site === source) : rows
+      const key = (ch: string) => Number(ch)
+      const options = [...new Map(filtered.map(r => [r.chapter, r])).values()]
+        .sort((a, b) => key(a.chapter) - key(b.chapter))
+        .map(r => ({ label: `Ch. ${r.chapter}`, value: r.chapter }))
+      options.push({ label: 'Manuel', value: 'manual' })
+      return options
+    }
 
     const fetchChapterOptions = async (idLibrary: number) => {
       chapterOptions.value = []
@@ -45,12 +59,7 @@ export default defineComponent({
         if (!resp.ok) return
         const rows: { chapter: string; url: string; site: string }[] = await resp.json()
         chapterRows.value = rows
-        console.log('Fetched chapters:', rows)
-        const key = (ch: string) => Number(ch)
-        chapterOptions.value = [...new Map(rows.map(r => [r.chapter, r])).values()]
-          .sort((a, b) => key(a.chapter) - key(b.chapter))
-          .map(r => ({ label: `Ch. ${r.chapter}`, value: r.chapter }))
-        chapterOptions.value.push({ label: 'Manuel', value: 'manual' })
+        chapterOptions.value = buildChapterOptions(rows, editSource.value)
       } catch (err) {
         console.error('Erreur chargement chapitres:', err)
       } finally {
@@ -58,12 +67,23 @@ export default defineComponent({
       }
     }
 
+    watch(editSource, (source) => {
+      if (chapterRows.value.length > 0) {
+        chapterOptions.value = buildChapterOptions(chapterRows.value, source)
+        const validValues = chapterOptions.value.map(o => o.value)
+        if (editChapter.value && !validValues.includes(editChapter.value)) {
+          editChapter.value = ''
+        }
+      }
+    })
+
     watch(() => props.visible, (v) => {
       visibleLocal.value = v
       if (v && props.manga) {
         editChapter.value = props.manga.userLastChapter || props.manga.lastChapter || ''
         editChapterCustom.value = ''
         editStatus.value = props.manga.readingStatus || ''
+        editSource.value = props.manga.site || ''
         if (props.manga.id) fetchChapterOptions(props.manga.id)
       }
     })
@@ -75,6 +95,7 @@ export default defineComponent({
       editChapter.value = m.userLastChapter || m.lastChapter || ''
       editChapterCustom.value = ''
       editStatus.value = m.readingStatus || ''
+      editSource.value = m.site || ''
       if (m.id) fetchChapterOptions(m.id)
     }, { immediate: true, deep: true })
 
@@ -89,7 +110,7 @@ export default defineComponent({
         const chosenChapter = editChapter.value === 'manual' ? editChapterCustom.value : editChapter.value
         const body = {
           title: props.manga.title,
-          site: props.manga.site || null,
+          site: editSource.value || props.manga.site || null,
           lastChapter: chosenChapter || null,
           readingStatus: editStatus.value || null
         }
@@ -108,8 +129,7 @@ export default defineComponent({
         }
 
         const resJson = await resp.json().catch(() => ({}))
-        // emit updated with new values so parent can update local state
-        emit('updated', { idLibrary: resJson.idLibrary, lastChapter: body.lastChapter, readingStatus: body.readingStatus })
+        emit('updated', { idLibrary: resJson.idLibrary, lastChapter: body.lastChapter, readingStatus: body.readingStatus, site: body.site })
         visibleLocal.value = false
       } catch (err) {
         console.error('Erreur sauvegarde édition (shared):', err)
@@ -122,12 +142,12 @@ export default defineComponent({
     const deleteManga = async () => {
       if (!props.manga || !authStore.user?.accessToken) return
       if (!confirm('Êtes-vous sûr de vouloir supprimer ce manga de votre bibliothèque ?')) return
-      
+
       deleting.value = true
       try {
         const body = {
           title: props.manga.title,
-          site: props.manga.site || null
+          site: editSource.value || props.manga.site || null
         }
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const resp = await fetch(`${apiBase}/library/user`, {
@@ -143,8 +163,7 @@ export default defineComponent({
           throw new Error(err.message || 'Erreur lors de la suppression')
         }
 
-        // emit deleted event so parent can update state
-        emit('deleted', { title: props.manga.title, site: props.manga.site })
+        emit('deleted', { title: props.manga.title, site: editSource.value || props.manga.site })
         visibleLocal.value = false
       } catch (err) {
         console.error('Erreur suppression manga:', err)
@@ -155,8 +174,6 @@ export default defineComponent({
       }
     }
 
-    
-
-    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle }
+    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle, mangaSources }
   }
 })

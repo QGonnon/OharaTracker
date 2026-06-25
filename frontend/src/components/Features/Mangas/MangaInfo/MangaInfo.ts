@@ -46,14 +46,26 @@ export default defineComponent({
     const addSuccess = ref<boolean>(false)
     const isInLibrary = ref<boolean>(false)
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const animeSources = new Set(['moviedb', 'anime-sama'])
-    const isAnime = computed(() => animeSources.has((manga.value.site || '').toLowerCase()))
+    const animeSources = ['moviedb', 'anime-sama']
+    const isAnime = computed(() => !!manga.value.sites && animeSources.some(source => manga.value.sites[source]))
+
+    const getBestSiteKey = (m: Manga): string => {
+      let bestKey = ''
+      let maxChapters = 0
+      for (const key in m.sites) {
+        if (m.sites[key].chapters.length > maxChapters) {
+          maxChapters = m.sites[key].chapters.length
+          bestKey = key
+        }
+      }
+      return bestKey
+    }
 
     const getItemCover = (item: Manga): string => {
       const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
       if (item.coverPath) return `${apiBase}/cdn/${item.coverPath}`
       if (item.coverUrl) return item.coverUrl
-      return `https://picsum.photos/seed/${item.id}/200/300`
+      return `https://picsum.photos/seed/${item.title}/200/300`
     }
 
     const similarWorks = computed(() => {
@@ -77,7 +89,7 @@ export default defineComponent({
         return `${apiBase}/cdn/${manga.value.coverPath}`
       }
       if (manga.value.coverUrl) return manga.value.coverUrl
-      return `https://picsum.photos/seed/${manga.value.id}/400/300`
+      return `https://picsum.photos/seed/${manga.value.title}/400/300`
     })
 
     // 🚀 Récupération du manga depuis ton API
@@ -89,27 +101,11 @@ export default defineComponent({
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const apiUrl = `${apiBase}/chapters`
         const response = await fetch(apiUrl)
-        const chapters = (await response.json()) || []
-
-        const mangaList: Manga[] = chapters.map((chapter: any) => ({
-          id: chapter.chapterId || chapter.id,
-          title: chapter.title || chapter.name,
-          type: chapter.type,
-          author: chapter.author,
-          theme: chapter.theme,
-          status: chapter.status,
-          description: chapter.description,
-          coverPath: chapter.coverPath,
-          coverUrl: chapter.coverUrl,
-          lastChapter: chapter.lastChapter || chapter.chapter,
-          chapterUrl: chapter.chapterUrl || chapter.url,
-          mangaUrl: chapter.mangaUrl,
-          site: chapter.site,
-        }))
+        const mangaList = (await response.json()) || []
 
         // Trouver le manga correspondant à l'URL
         const found = mangaList.find(
-          (m) => slugify(m.title) === route.params.name
+          (m: Manga) => slugify(m.title) === route.params.name
         )
 
         allMangas.value = mangaList
@@ -157,17 +153,39 @@ export default defineComponent({
       }
     )
 
-    // 📖 Ouvrir le chapitre
+    const siteKeys = computed(() => manga.value.sites ? Object.keys(manga.value.sites) : [])
+
+    const lastChapter = computed((): string => {
+      if (!manga.value.sites) return ''
+      const bestKey = getBestSiteKey(manga.value)
+      return bestKey ? manga.value.sites[bestKey].chapters?.[0]?.chapter ?? '' : ''
+    })
+
+    const chapterUrl = computed((): string => {
+      if (!manga.value.sites) return ''
+      const bestKey = getBestSiteKey(manga.value)
+      const site = bestKey ? manga.value.sites[bestKey] : null
+      return site?.chapters?.[0]?.chapterUrl ?? site?.chapterUrl ?? ''
+    })
+
     const openChapter = () => {
-      if (manga.value.chapterUrl) {
-        window.open(manga.value.chapterUrl, '_blank')
-      }
+      if (chapterUrl.value) window.open(chapterUrl.value, '_blank')
     }
 
-    const goEditLibrary = () => {
-      // deprecated: navigation to list edit. kept for compatibility
-      if (!manga.value?.id) return
-      router.push({ path: '/list', query: { editId: String(manga.value.id) } })
+    // 📖 Ouvrir la page du manga sur la source avec le plus de chapitres
+    const openSource = () => {
+      let bestSource = ''
+      let maxChapters = 0
+      for (const site in manga.value.sites) {
+        const chapters = manga.value.sites[site].chapters.length
+        if (chapters > maxChapters) {
+          maxChapters = chapters
+          bestSource = site
+        }
+      }
+      if (manga.value.sites[bestSource]?.mangaUrl) {
+        window.open(manga.value.sites[bestSource].mangaUrl, '_blank')
+      }
     }
 
     const editDialog = ref(false)
@@ -181,11 +199,10 @@ export default defineComponent({
 
     const onUpdated = (payload: any) => {
       if (payload?.lastChapter !== undefined) {
-        manga.value.lastChapter = payload.lastChapter
-        ;(manga.value as any).userLastChapter = payload.lastChapter
+        (manga.value as any).userLastChapter = payload.lastChapter
       }
       if (payload?.readingStatus !== undefined) {
-        ;(manga.value as any).readingStatus = payload.readingStatus
+        (manga.value as any).readingStatus = payload.readingStatus
       }
     }
 
@@ -202,17 +219,15 @@ export default defineComponent({
         const rows = await response.json()
         const found = (rows || []).find((r: any) => {
           if (!r || !r.title) return false
-          const sameTitle = r.title === manga.value.title
-          const sameSite = !manga.value.site || !r.site ? true : r.site === manga.value.site
-          return sameTitle && sameSite
+          return r.title === manga.value.title
         })
 
         isInLibrary.value = Boolean(found)
         if (isInLibrary.value && found) {
           addSuccess.value = false
           addError.value = null
-          manga.value.id = found.id
-          ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter ?? manga.value.lastChapter
+          ;(manga.value as any).id = found.id
+          ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter
           ;(manga.value as any).readingStatus = found.readingStatus ?? (manga.value as any).readingStatus
         }
       } catch (err) {
@@ -221,7 +236,7 @@ export default defineComponent({
     }
 
     const addToLibrary = async () => {
-      if (!manga.value.id || !authStore.user?.accessToken) return
+      if (!manga.value.title || !authStore.user?.accessToken) return
       addError.value = null
       addSuccess.value = false
       adding.value = true
@@ -229,6 +244,9 @@ export default defineComponent({
       try {
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const apiUrl = `${apiBase}/library`
+        const bestKey = getBestSiteKey(manga.value)
+        const bestSite = bestKey ? manga.value.sites[bestKey] : null
+        const lastChapterEntry = bestSite?.chapters?.[0]
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -243,10 +261,10 @@ export default defineComponent({
             description: manga.value.description,
             coverPath: manga.value.coverPath,
             coverUrl: manga.value.coverUrl,
-            lastChapter: manga.value.lastChapter,
-            chapterUrl: manga.value.chapterUrl,
-            mangaUrl: manga.value.mangaUrl,
-            site: manga.value.site || 'Unknown'
+            lastChapter: lastChapterEntry?.chapter,
+            chapterUrl: lastChapterEntry?.chapterUrl ?? bestSite?.chapterUrl,
+            mangaUrl: bestSite?.mangaUrl,
+            site: bestKey || 'Unknown'
           })
         })
 
@@ -284,7 +302,7 @@ export default defineComponent({
       manga,
       loading,
       error,
-      openChapter,
+      openSource,
       coverSrc,
       isLoggedIn,
       isAnime,
@@ -293,7 +311,6 @@ export default defineComponent({
       addError,
       addSuccess,
       isInLibrary,
-      goEditLibrary,
       similarWorks,
       parseTags,
       slugify,
@@ -302,7 +319,11 @@ export default defineComponent({
       editDialog,
       openEdit,
       onUpdated,
-      formatAnimeNumber
+      formatAnimeNumber,
+      siteKeys,
+      lastChapter,
+      chapterUrl,
+      openChapter
     }
   }
 })

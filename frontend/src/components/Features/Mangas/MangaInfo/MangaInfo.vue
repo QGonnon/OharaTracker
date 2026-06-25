@@ -41,7 +41,7 @@
             <div class="flex flex-wrap gap-2 mt-2">
               <Tag v-if="manga.status" :value="manga.status" severity="info" />
               <Tag v-if="manga.theme" :value="manga.theme" />
-              <Chip v-if="manga.site" :label="manga.site" icon="pi pi-globe" />
+              <Chip v-for="site in siteKeys" :key="site" :label="site" icon="pi pi-globe" />
             </div>
           </template>
         </Card>
@@ -72,10 +72,10 @@
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1]|| $t('manga.unknown') })}}
+                    {{$t('manga.season', { n: lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: lastChapter.split('.')[1] || $t('manga.unknown') })}}
                   </p>
                   <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{ manga.lastChapter || $t('manga.unknown') }}
+                    {{ lastChapter || $t('manga.unknown') }}
                   </p>
                 </div>
               </div>
@@ -105,8 +105,8 @@
 
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
-            v-if="manga.chapterUrl"
-            :label="isAnime ? $t('manga.watch_episode', { ep: manga.lastChapter.split('.')[1], season: manga.lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: manga.lastChapter })"
+            v-if="chapterUrl"
+            :label="isAnime ? $t('manga.watch_episode', { ep: lastChapter.split('.')[1], season: lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: lastChapter })"
             :icon="isAnime ? 'pi pi-play' : 'pi pi-book'"
             iconPos="left"
             severity="primary"

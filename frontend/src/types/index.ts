@@ -3,25 +3,23 @@
  */
 
 export interface Manga {
-  id?: number | string;
-  title: string;
-  /** "Manga" or "Anime" when known */
-  type?: 'Manga' | 'Anime';
-  author?: string;
-  artist?: string;
-  theme?: string;
-  status?: string;
-  description?: string;
-  coverPath?: string;
-  coverUrl?: string;
-  lastChapter?: string;
-  userLastChapter?: string;
-  lastEpisode?: string;
-  userLastEpisode?: string;
-  readingStatus?: string;
-  chapterUrl: string;
-  mangaUrl: string;
-  site: string;
+  title: string,
+  type: string,
+  theme: string,
+  status: string,
+  description: string,
+  author: string,
+  artist: string,
+  coverPath: string,
+  coverUrl: string,
+  sites: { 
+    [key: string]: {
+      site: string,
+      mangaUrl: string,
+      chapterUrl: string,
+      chapters: { chapter: string, url: string, chapterUrl: string, site: string }[]
+    } 
+  }
 }
 
 export interface User {
