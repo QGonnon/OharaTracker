@@ -5,7 +5,7 @@ import { downloadCover } from '../utils/cover.js';
 // --- Récupération complète des infos du manga ---
 async function getMangaInfo(mangaId) {
     const apiUrl = `https://api.mangadex.org/manga/${mangaId}?includes[]=author&includes[]=artist&includes[]=cover_art`;
-
+    // data.attributes.tags[].
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -35,6 +35,8 @@ async function getMangaInfo(mangaId) {
         const author = relationships.find(r => r.type === 'author')?.attributes?.name || 'Inconnu';
         const artist = relationships.find(r => r.type === 'artist')?.attributes?.name || 'Inconnu';
 
+        const isOneshot = attributes.tags.some(tag => tag.attributes.name.en.toLowerCase() === 'oneshot') || false;
+
         const theme = attributes.tags.map(tag => tag.attributes.name.en).join(', ') || '';
         const tags = attributes.tags.map(tag => ({
             name: tag.attributes.name.en || tag.attributes.name.fr || 'N/A',
@@ -58,7 +60,8 @@ async function getMangaInfo(mangaId) {
             publishers: 'N/A',
             tags,
             coverUrl,
-            coverFileName
+            coverFileName,
+            isOneshot
         };
 
     } catch (error) {
@@ -80,17 +83,20 @@ async function mangadex() {
         const chapters = data.data || [];
 
         for (const chapter of chapters) {
-            const lastChapter = chapter.attributes.chapter || 'N/A';
             const chapterId = chapter.id;
             const chapterUrlFull = `https://mangadex.org/chapter/${chapterId}`;
-
+            
             const mangaId = chapter.relationships.find(rel => rel.type === 'manga')?.id;
             if (!mangaId) continue;
-
+            
             const mangaUrl = `https://mangadex.org/title/${mangaId}`;
-
+            
             const mangaInfo = await getMangaInfo(mangaId);
             if (!mangaInfo) continue;
+            let lastChapter = chapter.attributes.chapter;
+            if (mangaInfo.isOneshot) {
+                lastChapter = 1;
+            }
 
             // Téléchargement et stockage local de la cover
             const coverPath = await downloadCover(mangaInfo.coverUrl, mangaInfo.coverFileName);

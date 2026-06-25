@@ -33,14 +33,7 @@ export default defineComponent({
 
     const mangaTitle = computed(() => props.manga?.title || '')
 
-    const mangaSources = computed(() => {
-      const seen = new Set<string>()
-      return chapterRows.value.filter(r => {
-        if (seen.has(r.site)) return false
-        seen.add(r.site)
-        return true
-      })
-    })
+    
 
     const fetchChapterOptions = async (idLibrary: number) => {
       chapterOptions.value = []
@@ -52,6 +45,7 @@ export default defineComponent({
         if (!resp.ok) return
         const rows: { chapter: string; url: string; site: string }[] = await resp.json()
         chapterRows.value = rows
+        console.log('Fetched chapters:', rows)
         const key = (ch: string) => Number(ch)
         chapterOptions.value = [...new Map(rows.map(r => [r.chapter, r])).values()]
           .sort((a, b) => key(a.chapter) - key(b.chapter))
@@ -63,8 +57,6 @@ export default defineComponent({
         loadingChapters.value = false
       }
     }
-
-    const mangaTitle = computed(() => props.manga?.title || '')
 
     watch(() => props.visible, (v) => {
       visibleLocal.value = v
@@ -165,10 +157,6 @@ export default defineComponent({
 
     
 
-<<<<<<< HEAD
-    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle, mangaSources }
-=======
-    return { visibleLocal, editChapter, editChapterCustom, editStatus, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, mangaTitle }
->>>>>>> 959616e (feat: add computed properties for anime and manga titles in edit dialogs)
+    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle }
   }
 })

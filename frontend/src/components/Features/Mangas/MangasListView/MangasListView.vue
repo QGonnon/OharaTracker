@@ -125,7 +125,7 @@
                             <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`${data.type === 'Anime' ? 'Ép.' : 'Ch.'} ${data.userLastChapter || '-'}`"
+                                        :label="`${data.type === 'Anime' ? 'S' + data.lastChapter.split('.')[0] + 'E' + data.lastChapter.split('.')[1] : 'Ch.' + data.lastChapter.split('.')[0]}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"

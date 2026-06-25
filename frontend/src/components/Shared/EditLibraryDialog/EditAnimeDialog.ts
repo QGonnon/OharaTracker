@@ -160,12 +160,8 @@ export default defineComponent({
       }
     }
 
-<<<<<<< HEAD
     
 
     return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, editSource, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle, animeSources }
-=======
-    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle }
->>>>>>> 959616e (feat: add computed properties for anime and manga titles in edit dialogs)
   }
 })
