@@ -29,48 +29,88 @@
     "already_registered": "Déjà inscrit ? Se connecter"
   },
   "home": {
-    "badge": "Tracker manga multi-sources",
-    "heading_1": "Suivez vos mangas",
-    "heading_2": "depuis n'importe où",
-    "description": "OharaTracker centralise vos lectures depuis plusieurs sites en une seule interface. Gérez vos chapitres, vos listes et ne ratez plus aucune sortie.",
+    "badge": "Tracker multi-média",
+
+    "heading_1": "Suivez vos médias,",
+    "heading_2": "en un seul endroit.",
+
+    "description": "Gérez votre bibliothèque personnalisée, activez vos notifications et ne ratez plus aucune sortie.",
+
     "start_free": "Commencer gratuitement",
-    "see_demo": "Voir la démo →",
+    "see_demo": "Voir l'aperçu",
     "free": "Gratuit",
     "no_ads": "Sans publicité",
-    "mock_url": "oharatracker.app / bibliothèque",
+
+    "mock_url": "oharatracker.com/list",
     "my_library": "Ma bibliothèque",
     "titles": "titres",
-    "chapter": "Chapitre",
-    "features_label": "Fonctionnalités",
+    "chapter": "Ch.",
+
+    "number_manga":   "Mangas & Manhwas",
+    "number_anime":   "Animés & Séries",
+    "number_users":   "Utilisateurs actifs",
+    "number_chapter": "Chapitres enregistrés",
+
+    "features_label":   "Fonctionnalités",
     "features_heading": "Tout ce dont vous avez besoin",
-    "features_desc": "Un outil complet pour gérer votre collection, suivre vos lectures et découvrir de nouveaux titres.",
-    "quickstart_label": "Démarrage rapide",
-    "quickstart_heading": "Comment ça marche",
-    "cta_heading": "Prêt à commencer ?",
-    "cta_desc": "Rejoignez des milliers de lecteurs qui gèrent déjà leur collection avec OharaTracker.",
-    "footer": "Gratuit · Sans publicité · Open source",
-    "advanced_reaserch": "Recherche avancée",
-    "advanced_reaserch_text": "Trouvez n'importe quel manga en quelques secondes grâce à notre moteur de recherche intelligent.",
-    "personalized_tracking": "Suivi personnalisé",
-    "personalized_tracking_text": "Gardez une trace de vos lectures avec des listes personnalisables, notes et statuts.",
-    "notification": "Notifications",
-    "notification_text": "Soyez alerté dès qu'un nouveau chapitre est disponible pour vos séries favorites.",
-    "multi_source": "Multi-sources",
-    "multi_source_text": "Agrégez le contenu de plusieurs plateformes dans une interface unifiée.",
-    "statistics": "Statistiques",
-    "statistics_text": "Visualisez vos habitudes de lecture avec des statistiques détaillées et des graphiques interactifs.",
-    "community": "Communauté",
-    "community_text": "Échangez avec d'autres passionnés, partagez vos avis et découvrez de nouvelles séries.",
+    "features_desc":    "Un outil complet pour centraliser, organiser et profiter.",
+
+    "advanced_search":      "Recherche avancée",
+    "advanced_search_text": "Trouvez n'importe quel titre parmi des milliers de mangas, manhwas, animés et séries grâce à des filtres précis : genre, statut, plateforme de lecture et plus encore.",
+
+    "personalized_tracking":      "Suivi personnalisé",
+    "personalized_tracking_text": "Marquez vos titres comme En cours, Terminé, Planifié ou En pause. Notez-les, ajoutez des tags et retrouvez-les en un clic dans votre bibliothèque.",
+
+    "notification":      "Notifications de sorties",
+    "notification_text": "Soyez alerté dès qu'un nouveau chapitre ou épisode est disponible, pour ne jamais rater une sortie de vos séries suivies.",
+
+    "multi_source":      "Multi-sources",
+    "multi_source_text": "OharaTracker agrège les informations depuis plusieurs plateformes (MangaDex, Anilist, Asura Scans…) pour vous offrir une vue unifiée de tout votre contenu.",
+
+    "statistics":      "Statistiques & historique",
+    "statistics_text": "Visualisez votre activité : chapitres lus, temps estimé de lecture, répartition par genre et évolution de votre bibliothèque au fil du temps.",
+
+    "community":      "Communauté",
+    "community_text": "Partagez votre profil, comparez vos bibliothèques avec vos amis et découvrez ce que la communauté suit en ce moment.",
+
+    "screenshots_label":   "Aperçu",
+    "screenshots_heading": "Découvrez Ohara Tracker",
+    "screenshots_desc":    "Des interfaces claires, adaptées à tous les types d'appareils et pensées pour votre confort.",
+
+    "screenshot_library_title": "Bibliothèque & Découverte",
+    "screenshot_library_desc":  "Retrouvez vos contenus favoris et découvrez vos prochains coups de cœur.",
+
+    "screenshot_tracking_title": "Mes suivis",
+    "screenshot_tracking_desc":  "Conservez votre progression sur l'intégralité de vos titres et gérez vos abonnements pour être notifié des dernières sorties.",
+    "screenshot_tracking_badge": "Coeur de l'application",
+
+    "screenshot_profile_title": "Mon Profil",
+    "screenshot_profile_desc":  "Customisez votre profil, modifiez vos préférences, consultez vos statistiques et gérez vos amis.",
+
+    "quickstart_label":   "Démarrage rapide",
+    "quickstart_heading": "Prêt en moins d'une minute",
+
     "steps1_title": "Créez votre compte",
-    "steps1_desc": "Inscrivez-vous gratuitement en quelques secondes. Aucune carte de crédit requise.",
-    "steps2_title": "Suivez vos lectures",
-    "steps2_desc": "Ajoutez vos mangas favoris, marquez les chapitres lus et restez informé des nouvelles sorties.",
-    "steps3_title": "Explorez et découvrez",
-    "steps3_desc": "Parcourez notre catalogue et obtenez des recommandations personnalisées.",
-    "number_manga": "Mangas disponibles",
-    "number_anime": "Animes référencés",
-    "number_users": "Utilisateurs actifs",
-    "number_chapter": "Chapitres suivis"
+    "steps1_desc":  "Gratuit, sans publicité, en quelques secondes.",
+
+    "steps2_title": "Gérez votre bibliothèque personnelle",
+    "steps2_desc":  "Séletionnez uniquement les contenus qui vous intéressent.",
+
+    "steps3_title": "Profitez de toutes les fonctionnalités",
+    "steps3_desc":  "Conservez votre progression, gérez vos notifications, consultez vos statistiques, évaluez des contenus et gérez vos amis.",
+
+    "cta_heading": "Partir à l'aventure",
+    "footer":      "Inscription gratuite · Sans engagement · Sans publicité",
+
+    "premium_badge":        "OharaTracker Premium",
+    "premium_heading":      "Passez au niveau supérieur.",
+    "premium_desc":         "Débloquez des fonctionnalités avancées : customisation améliorée du profil, notifications illimitées, recommandations intelligentes, statistiques détaillées ainsi que des fonctionnalités sociales supplémentaires.",
+    "premium_plan_personal": "Offre aux Particuliers",
+    "premium_plan_personal_label": "Utilisateurs",
+    "premium_plan_pro":      "Offre aux Professionnels",
+    "premium_plan_pro_label": "Partenaires",
+    "premium_cta":           "Explorer le Premium",
+    "premium_sub":           "Choisissez l'offre ce qui vous correspond."
   },
   "library": {
     "title": "Mes Suivis",
