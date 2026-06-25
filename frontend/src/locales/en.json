@@ -29,48 +29,83 @@
     "already_registered": "Already registered? Sign in"
   },
   "home": {
-    "badge": "Multi-source manga tracker",
-    "heading_1": "Track your manga",
-    "heading_2": "from anywhere",
-    "description": "OharaTracker centralizes your readings from multiple sites in one interface. Manage your chapters, your lists and never miss a release.",
-    "start_free": "Start for free",
-    "see_demo": "See demo →",
+    "badge": "Multi-media tracker",
+ 
+    "heading_1": "Track your media,",
+    "heading_2": "all in one place.",
+ 
+    "description": "Manage your personal library, enable notifications, and never miss a new release again.",
+ 
+    "start_free": "Get started for free",
+    "see_demo": "See the demo",
     "free": "Free",
-    "no_ads": "Ad-free",
-    "mock_url": "oharatracker.app / library",
+    "no_ads": "No ads",
+ 
+    "mock_url": "oharatracker.com/list",
     "my_library": "My library",
     "titles": "titles",
-    "chapter": "Chapter",
-    "features_label": "Features",
-    "features_heading": "Everything you need",
-    "features_desc": "A complete tool to manage your collection, track your readings and discover new titles.",
-    "quickstart_label": "Quick start",
-    "quickstart_heading": "How it works",
-    "cta_heading": "Ready to start?",
-    "cta_desc": "Join thousands of readers already managing their collection with OharaTracker.",
-    "footer": "Free · Ad-free · Open source",
-    "advanced_reaserch": "Advanced search",
-    "advanced_reaserch_text": "Find any manga in seconds with our smart search engine.",
-    "personalized_tracking": "Personalized tracking",
-    "personalized_tracking_text": "Keep track of your reading with customizable lists, notes, and statuses.",
-    "notification": "Notifications",
-    "notification_text": "Get notified as soon as a new chapter is available for your favorite series.",
-    "multi_source": "Multi-source",
-    "multi_source_text": "Aggregate content from multiple platforms into a unified interface.",
-    "statistics": "Statistics",
-    "statistics_text": "Visualize your reading habits with detailed graphs and reports.",
-    "community": "Community",
-    "community_text": "Connect with other enthusiasts, share your opinions and discover new series.",
+    "chapter": "Ch.",
+ 
+    "number_manga":   "Mangas & Manhwas",
+    "number_anime":   "Anime & Series",
+    "number_users":   "Active users",
+    "number_chapter": "Chapters tracked",
+ 
+
+    "features_label":   "Features",
+    "features_heading": "Everything you need to track your media",
+    "features_desc":    "A complete tool to centralize, organize, and never miss anything from your favorite series.",
+ 
+    "advanced_search":      "Advanced search",
+    "advanced_search_text": "Find any title among thousands of manga, manhwa, anime and series with precise filters: genre, status, reading platform and more.",
+ 
+    "personalized_tracking":      "Personalized tracking",
+    "personalized_tracking_text": "Mark titles as Reading, Completed, Planned or On Hold. Rate them, add tags and find them instantly in your library.",
+ 
+    "notification":      "Release notifications",
+    "notification_text": "Get alerted as soon as a new chapter or episode drops, so you never miss an update from the series you follow.",
+ 
+    "multi_source":      "Multi-source",
+    "multi_source_text": "OharaTracker aggregates data from multiple platforms (MangaDex, AniList, Asura Scans…) to give you a unified view of all your content.",
+ 
+    "statistics":      "Stats & history",
+    "statistics_text": "Track your activity: chapters read, estimated reading time, genre breakdown and your library's growth over time.",
+ 
+    "community":      "Community",
+    "community_text": "Share your profile, compare libraries with friends and see what the community is following right now.",
+ 
+
+    "screenshots_label":   "Preview",
+    "screenshots_heading": "See OharaTracker in action",
+    "screenshots_desc":    "A clean interface built for media enthusiasts — manga, anime, series.",
+ 
+    "screenshot_library_title": "Library",
+    "screenshot_library_desc":  "List or cover view, filters, tags, notes and statuses: your collection organized the way you want.",
+ 
+    "screenshot_tracking_title": "Free & Premium tracking",
+    "screenshot_tracking_desc":  "Compare features across tiers and upgrade in one click when you're ready.",
+    "screenshot_tracking_badge": "Popular",
+ 
+    "screenshot_profile_title": "User profile",
+    "screenshot_profile_desc":  "Your reading history, statistics and recent activity — visible to friends if you choose.",
+ 
+
+    "quickstart_label":   "Quick start",
+    "quickstart_heading": "Up and running in under a minute",
+ 
     "steps1_title": "Create your account",
-    "steps1_desc": "Sign up for free in seconds. No credit card required.",
-    "steps2_title": "Track your readings",
-    "steps2_desc": "Add your favorite mangas, mark chapters as read, and stay informed about new releases.",
-    "steps3_title": "Explore and discover",
-    "steps3_desc": "Browse our catalog and get personalized recommendations.",
-    "number_manga": "Mangas available",
-    "number_anime": "Animes referenced",
-    "number_users": "Active users",
-    "number_chapter": "Chapters tracked"
+    "steps1_desc":  "Free sign-up in seconds. No credit card required.",
+ 
+    "steps2_title": "Add your first titles",
+    "steps2_desc":  "Search for your favorite manga, manhwa, anime or series and add them to your library in one click.",
+ 
+    "steps3_title": "Track and never miss a release",
+    "steps3_desc":  "Enable notifications, update your progress, and let OharaTracker alert you whenever something new drops.",
+ 
+
+    "cta_heading": "Ready to centralize your media?",
+    "cta_desc":    "Join thousands of users already tracking their manga, anime and series on OharaTracker.",
+    "footer":      "Free sign-up · No commitment · No ads"
   },
   "library": {
     "title": "My Watchlist",
