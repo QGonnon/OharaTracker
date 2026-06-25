@@ -3,8 +3,9 @@ import './assets/styles.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import PrimeVue from 'primevue/config';
-import Aura from '@primeuix/themes/aura';
+import PrimeVue from 'primevue/config'
+import Aura from '@primeuix/themes/aura'
+import { definePreset } from '@primeuix/themes'  // même package
 
 import App from './App.vue'
 import router from './router'
@@ -13,11 +14,29 @@ import i18n from './i18n'
 
 const pinia = createPinia()
 
+const OharaPreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50:  '{violet.50}',
+      100: '{violet.100}',
+      200: '{violet.200}',
+      300: '{violet.300}',
+      400: '{violet.400}',
+      500: '{violet.500}',
+      600: '{violet.600}',
+      700: '{violet.700}',
+      800: '{violet.800}',
+      900: '{violet.900}',
+      950: '{violet.950}',
+    }
+  }
+})
+
 const app = createApp(App)
 app.use(PrimeVue, {
     theme: {
-        preset: Aura,
-        options:{
+        preset: OharaPreset,
+        options: {
             darkModeSelector: '.dark-theme',
             cssLayer: {
                 name: 'primevue',
@@ -32,7 +51,6 @@ app.use(router)
     .use(i18n)
     .component('font-awesome-icon', FontAwesomeIcon)
 
-// Initialise theme from localStorage (persist user preference)
 try {
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme === 'dark') {
@@ -40,8 +58,6 @@ try {
     } else {
         document.documentElement.classList.remove('dark-theme')
     }
-} catch (e) {
-    // ignore (e.g., during SSR or strict environments)
-}
+} catch (e) {}
 
 app.mount('#app')

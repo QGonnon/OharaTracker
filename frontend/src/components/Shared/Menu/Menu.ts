@@ -89,8 +89,8 @@ export default defineComponent({
     const isActive = (name: string) => route.name === name
 
     const navLinks = computed(() => [
-      { label: t('nav.discovery'), name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
       { label: t('nav.library'),   name: 'Search',     to: '/search',    icon: 'pi pi-book' },
+      { label: t('nav.discovery'), name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
       { label: t('nav.following'), name: 'Mes Suivis', to: '/list',      icon: 'pi pi-star' },
     ])
 
