@@ -605,6 +605,7 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
 function getChapters(callback, limit = null) {
     const query = `SELECT
             lc.id_library AS "chapterId",
+            l.id AS "libraryId",
             l.name AS title,
             lt.type AS type,
             l.author AS author,
@@ -629,7 +630,45 @@ function getChapters(callback, limit = null) {
         replacements: limit ? { limit } : {},
         type: QueryTypes.SELECT,
     })
-        .then(rows => callback(null, rows))
+        .then(rows => {
+            const groupedChapters = rows.reduce((acc, row) => {
+                const libraryId = row.libraryId;
+                if (!acc[libraryId]) {
+                    acc[libraryId] = {
+                        title: row.title,
+                        type: row.type,
+                        theme: row.theme,
+                        status: row.status,
+                        description: row.description,
+                        author: row.author,
+                        artist: row.artist,
+                        coverPath: row.coverPath,
+                        coverUrl: row.coverUrl,
+                        sites: {},
+                        
+                    };
+                }
+                if (!acc[libraryId].sites[row.site]) {
+                    acc[libraryId].sites[row.site] = {
+                        site: row.site,
+                        site: row.site,
+                        mangaUrl: row.mangaUrl,
+                        chapters: [],
+                    };
+                }
+                const chapter = {
+                    chapter: row.lastChapter,
+                    url: row.chapterUrl,
+                    chapterUrl: row.chapterUrl,
+                    site: row.site,
+                };
+                acc[libraryId].sites[row.site].chapters.push(chapter);
+                return acc;
+            }, []);
+
+            
+            return callback(null, groupedChapters);
+        })
         .catch(err => callback(err));
 }
 
