@@ -105,31 +105,52 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12 items-start">
 
-        <!-- Zone 1 : Bibliothèque -->
-        <!-- TODO: <img src="@/assets/screenshots/library.png" alt="Bibliothèque" class="w-full h-full object-cover" /> -->
+        <!-- Zone 1 : Bibliothèque & Découverte — côte à côte, chaque image cliquable -->
         <div class="flex flex-col gap-3">
-          <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg bg-white dark:bg-zinc-800 aspect-[4/3] flex items-center justify-center">
-            <div class="flex flex-col items-center gap-2 text-gray-300 dark:text-zinc-600 select-none">
-              <i class="pi pi-images text-4xl" />
-              <span class="text-xs font-medium">Capture : Vue Bibliothèque</span>
-            </div>
+          <div class="flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg relative">
+          <!-- Barre browser fictive -->
+          <div class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 dark:bg-zinc-700 border-b border-gray-100 dark:border-white/5 flex-shrink-0">
+            <div class="w-2 h-2 rounded-full bg-red-400/70" />
+            <div class="w-2 h-2 rounded-full bg-yellow-400/70" />
+            <div class="w-2 h-2 rounded-full bg-green-400/70" />
           </div>
+          <!-- Images côte à côte -->
+          <div class="flex relative">
+            <img
+              :src="libraryImg"
+              alt="Bibliothèque"
+              class="w-1/2 object-cover object-top cursor-zoom-in hover:brightness-105 transition-all duration-200"
+              @click="openLightbox(libraryImg)"
+            />
+            <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-white/25 dark:bg-white/10 z-10 pointer-events-none" />
+            <img
+              :src="discoveryImg"
+              alt="Découverte"
+              class="w-1/2 object-cover object-top cursor-zoom-in hover:brightness-105 transition-all duration-200"
+              @click="openLightbox(discoveryImg)"
+            />
+          </div>
+        </div>
           <div>
             <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $t('home.screenshot_library_title') }}</h3>
             <p class="text-gray-400 dark:text-zinc-500 text-xs leading-relaxed">{{ $t('home.screenshot_library_desc') }}</p>
           </div>
         </div>
 
-        <!-- Zone 2 : Mes suivis -->
-        <!-- TODO: <img src="@/assets/screenshots/tracking.png" alt="Mes suivis" class="w-full h-full object-cover" /> -->
+        <!-- Zone 2 : Mes Suivis — mockup navigateur -->
         <div class="flex flex-col gap-3">
-          <div class="rounded-xl overflow-hidden border border-violet-200 dark:border-violet-500/30 shadow-lg bg-white dark:bg-zinc-800 aspect-[4/3] flex items-center justify-center ring-1 ring-violet-200/50 dark:ring-violet-500/20">
-            <div class="flex flex-col items-center gap-2 text-gray-300 dark:text-zinc-600 select-none">
-              <i class="pi pi-images text-4xl" />
-              <span class="text-xs font-medium">Capture : Mes Suivis</span>
+          <div
+            class="rounded-xl overflow-hidden border border-violet-200 dark:border-violet-500/30 shadow-lg ring-1 ring-violet-200/50 dark:ring-violet-500/20 cursor-zoom-in"
+            @click="openLightbox(trackingImg)"
+          >
+            <div class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 dark:bg-zinc-700 border-b border-gray-100 dark:border-white/5">
+              <div class="w-2 h-2 rounded-full bg-red-400/70" />
+              <div class="w-2 h-2 rounded-full bg-yellow-400/70" />
+              <div class="w-2 h-2 rounded-full bg-green-400/70" />
             </div>
+            <img :src="trackingImg" alt="Mes Suivis" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
           </div>
           <div class="flex items-center gap-2">
             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 text-[10px] font-semibold">
@@ -142,14 +163,18 @@
           </div>
         </div>
 
-        <!-- Zone 3 : Profil -->
-        <!-- TODO: <img src="@/assets/screenshots/profile.png" alt="Profil" class="w-full h-full object-cover" /> -->
+        <!-- Zone 3 : Profil — mockup navigateur -->
         <div class="flex flex-col gap-3">
-          <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg bg-white dark:bg-zinc-800 aspect-[4/3] flex items-center justify-center">
-            <div class="flex flex-col items-center gap-2 text-gray-300 dark:text-zinc-600 select-none">
-              <i class="pi pi-images text-4xl" />
-              <span class="text-xs font-medium">Capture : Profil Utilisateur</span>
+          <div
+            class="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg cursor-zoom-in"
+            @click="openLightbox(profileImg)"
+          >
+            <div class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 dark:bg-zinc-700 border-b border-gray-100 dark:border-white/5">
+              <div class="w-2 h-2 rounded-full bg-red-400/70" />
+              <div class="w-2 h-2 rounded-full bg-yellow-400/70" />
+              <div class="w-2 h-2 rounded-full bg-green-400/70" />
             </div>
+            <img :src="profileImg" alt="Mon Profil" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
           </div>
           <div>
             <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $t('home.screenshot_profile_title') }}</h3>
@@ -160,6 +185,29 @@
       </div>
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <Teleport to="body">
+    <Transition name="lb">
+      <div
+        v-if="lightboxSrc"
+        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-zoom-out p-6"
+        @click="closeLightbox"
+      >
+        <img
+          :src="lightboxSrc"
+          class="max-w-full max-h-full rounded-xl shadow-2xl object-contain"
+          @click.stop
+        />
+        <button
+          class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+          @click="closeLightbox"
+        >
+          <i class="pi pi-times text-sm" />
+        </button>
+      </div>
+    </Transition>
+  </Teleport>
 
   <!-- ═══════════════════════════════════════════════
        FONCTIONNALITÉS  (fond blanc)

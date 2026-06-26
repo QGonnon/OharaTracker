@@ -21,9 +21,9 @@ export default defineComponent({
     const editStatus = ref<string>('')
     const chapterOptions = ref<{ label: string; value: string }[]>([])
     const statusOptions = ref([
-      { label: 'Entrain de lire', value: 'Entrain de lire' },
-      { label: 'Abandonner', value: 'Abandonner' },
-      { label: 'Prévois de lire', value: 'Prévois de lire' }
+      { label: 'En cours', value: 'En cours' },
+      { label: 'Abandonné', value: 'Abandonné' },
+      { label: 'Prévus', value: 'Prévus' }
     ])
     const saving = ref(false)
     const deleting = ref(false)

@@ -21,9 +21,9 @@ export default defineComponent({
     const editStatus = ref<string>('')
     const episodeOptions = ref<{ label: string; value: string }[]>([])
     const statusOptions = ref([
-      { label: 'Entrain de regarder', value: 'Entrain de regarder' },
-      { label: 'Abandonner', value: 'Abandonner' },
-      { label: 'Prévois de regarder', value: 'Prévois de regarder' }
+      { label: 'En cours', value: 'En cours' },
+      { label: 'Abandonné', value: 'Abandonné' },
+      { label: 'Prévus', value: 'Prévus' }
     ])
     const saving = ref(false)
     const deleting = ref(false)
