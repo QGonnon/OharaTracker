@@ -91,28 +91,24 @@ export default defineComponent({
       return `https://picsum.photos/seed/${manga.value.title}/400/300`
     })
 
-    // 🚀 Récupération du manga depuis ton API
     const fetchMangas = async () => {
       loading.value = true
       error.value = null
 
       try {
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-        const apiUrl = `${apiBase}/chapters`
-        const response = await fetch(apiUrl)
-        const mangaList = (await response.json()) || []
+        const response = await fetch(`${apiBase}/chapters`)
+        const chaptersMap: Record<string, any> = (await response.json()) || {}
 
-        // Trouver le manga correspondant à l'URL
-        const found = mangaList.find(
-          // (m: Manga) => slugify(m.id) === route.params.name
-          (m: Manga) => slugify(m.title) === route.params.name
-          
-        )
+        // Object.entries pour garder le libraryId (clé) et éviter les trous du tableau sparse
+        const entries = Object.entries(chaptersMap).filter(([, m]) => m?.title)
+        const foundEntry = entries.find(([, m]) => slugify(m.title) === route.params.name)
 
-        allMangas.value = mangaList
+        allMangas.value = entries.map(([id, m]) => ({ ...m, id: Number(id) } as Manga))
 
-        if (found) {
-          manga.value = found
+        if (foundEntry) {
+          const [id, data] = foundEntry
+          manga.value = { ...data, id: Number(id) } as Manga
           if (isLoggedIn.value) {
             await checkLibraryStatus()
           }
@@ -199,37 +195,33 @@ export default defineComponent({
     }
 
     const onUpdated = (payload: any) => {
-      if (payload?.lastChapter !== undefined) {
-        (manga.value as any).userLastChapter = payload.lastChapter
-      }
-      if (payload?.readingStatus !== undefined) {
-        (manga.value as any).readingStatus = payload.readingStatus
-      }
+      if (payload?.lastChapter !== undefined) manga.value.userLastChapter = payload.lastChapter
+      if (payload?.readingStatus !== undefined) manga.value.readingStatus = payload.readingStatus
+      if (payload?.score !== undefined) manga.value.score = payload.score ?? null
+      if (payload?.note !== undefined) manga.value.note = payload.note ?? null
     }
 
     const checkLibraryStatus = async () => {
-      if (!authStore.user?.accessToken || !manga.value?.title) return
+      if (!authStore.user?.accessToken || !manga.value?.id) return
       try {
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-        const apiUrl = `${apiBase}/library/user`
-        const response = await fetch(apiUrl, {
+        const response = await fetch(`${apiBase}/client`, {
           headers: { Authorization: `Bearer ${authStore.user.accessToken}` }
         })
 
         if (!response.ok) return
-        const rows = await response.json()
-        const found = (rows || []).find((r: any) => {
-          if (!r || !r.title) return false
-          return r.title === manga.value.title
-        })
+        const client = await response.json()
+
+        const found = (client.libraryUsage ?? []).find((u: any) => u.libraryId === manga.value.id)
 
         isInLibrary.value = Boolean(found)
-        if (isInLibrary.value && found) {
+        if (found) {
           addSuccess.value = false
           addError.value = null
-          ;(manga.value as any).id = found.id
-          ;(manga.value as any).userLastChapter = found.userLastChapter ?? found.lastChapter
-          ;(manga.value as any).readingStatus = found.readingStatus ?? (manga.value as any).readingStatus
+          manga.value.userLastChapter = found.lastReadChapter ?? undefined
+          manga.value.readingStatus = found.readingStatus ?? undefined
+          manga.value.score = found.clientScore ?? null
+          manga.value.note = found.clientNote ?? null
         }
       } catch (err) {
         console.error('Erreur vérification bibliothèque', err)
