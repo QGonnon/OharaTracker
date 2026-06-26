@@ -71,7 +71,7 @@ export default defineComponent({
       currentPage: 0,
     };
   },
-  mounted() {
+  async mounted() {
     // Load all mangas from database
     this.loadMangas();
     

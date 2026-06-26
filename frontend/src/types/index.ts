@@ -3,6 +3,7 @@
  */
 
 export interface Manga {
+  id?: number,
   title: string,
   type: string,
   theme: string,
@@ -12,14 +13,22 @@ export interface Manga {
   artist: string,
   coverPath: string,
   coverUrl: string,
-  sites: { 
+  sites: {
     [key: string]: {
       site: string,
       mangaUrl: string,
       chapterUrl: string,
       chapters: { chapter: string, url: string, chapterUrl: string, site: string }[]
-    } 
-  }
+    }
+  },
+  // User library fields
+  userLastChapter?: string,
+  readingStatus?: string,
+  score?: number | null,
+  note?: string | null,
+  // Derived flat fields for template convenience
+  lastChapter?: string,
+  chapterUrl?: string,
 }
 
 export interface User {

@@ -62,7 +62,7 @@ router.post('/signin', async (req, res) => {
 
     try {
         const users = await sequelize.query(
-            'SELECT name, code, email, password FROM "Client" WHERE email = :email LIMIT 1',
+            'SELECT id, name, code, email, password FROM "Client" WHERE email = :email LIMIT 1',
             { replacements: { email }, type: QueryTypes.SELECT }
         );
 
@@ -78,12 +78,13 @@ router.post('/signin', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { username: user.name, email: user.email },
+            { id: user.id, username: user.name, email: user.email },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
 
         res.json({
+            id: user.id,
             username: user.name,
             email: user.email,
             code: user.code,
@@ -118,7 +119,7 @@ router.post('/google', async (req, res) => {
         const googleId = googleUser.sub;
 
         let users = await sequelize.query(
-            'SELECT name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
+            'SELECT id, name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
             { replacements: { email }, type: QueryTypes.SELECT }
         );
 
@@ -137,7 +138,7 @@ router.post('/google', async (req, res) => {
             );
 
             users = await sequelize.query(
-                'SELECT name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
+                'SELECT id, name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
                 { replacements: { email }, type: QueryTypes.SELECT }
             );
         } else if (!users[0].google_id) {
@@ -149,12 +150,13 @@ router.post('/google', async (req, res) => {
 
         const user = users[0];
         const token = jwt.sign(
-            { username: user.name, email: user.email },
+            { id: user.id, username: user.name, email: user.email },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
 
         res.json({
+            id: user.id,
             username: user.name,
             email: user.email,
             code: user.code,
@@ -216,7 +218,7 @@ router.put('/profile', authenticate, async (req, res) => {
 
     try {
         const users = await sequelize.query(
-            'SELECT name, code, email FROM "Client" WHERE name = :currentUsername LIMIT 1',
+            'SELECT id, name, code, email FROM "Client" WHERE name = :currentUsername LIMIT 1',
             { replacements: { currentUsername }, type: QueryTypes.SELECT }
         );
 
@@ -261,7 +263,7 @@ router.put('/profile', authenticate, async (req, res) => {
         );
 
         const newToken = jwt.sign(
-            { username: newUsername, email: newEmail },
+            { id: user.id, username: newUsername, email: newEmail },
             JWT_SECRET,
             { expiresIn: '24h' }
         );

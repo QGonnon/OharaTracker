@@ -392,40 +392,46 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
 
     const idSource = sourceRow.id_source;
 
-    // Preserve existing progress if not provided (handles source change)
     const existing = await sequelize.query(
-        'SELECT last_chapter, reading_status FROM libraryusage WHERE id_library = :id_library AND name_client = :username LIMIT 1',
+        'SELECT 1 FROM libraryusage WHERE id_library = :id_library AND name_client = :username AND id_source = :id_source LIMIT 1',
         {
-            replacements: { id_library: idLibrary, username },
+            replacements: { id_library: idLibrary, id_source: idSource, username },
             type: QueryTypes.SELECT,
         }
     );
 
-    const currentLastChapter = existing[0]?.last_chapter;
-    const currentReadingStatus = existing[0]?.reading_status;
-
-    // Replace all entries for this user+library so there is always one source tracked
-    await sequelize.query(
-        'DELETE FROM libraryusage WHERE id_library = :id_library AND name_client = :username',
-        {
-            replacements: { id_library: idLibrary, username },
-            type: QueryTypes.DELETE,
-        }
-    );
-
-    await sequelize.query(
-        'INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status) VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus)',
-        {
-            replacements: {
-                id_library: idLibrary,
-                id_source: idSource,
-                username,
-                lastChapter: lastChapter || currentLastChapter || null,
-                readingStatus: readingStatus || currentReadingStatus || null,
-            },
-            type: QueryTypes.INSERT,
-        }
-    );
+    if (existing.length > 0) {
+        await sequelize.query(
+            `UPDATE libraryusage
+             SET last_chapter = COALESCE(:lastChapter, last_chapter),
+                 reading_status = COALESCE(:readingStatus, reading_status)
+             WHERE id_library = :id_library AND name_client = :username AND id_source = :id_source`,
+            {
+                replacements: {
+                    lastChapter: lastChapter || null,
+                    readingStatus: readingStatus || null,
+                    id_library: idLibrary,
+                    id_source: idSource,
+                    username,
+                },
+                type: QueryTypes.UPDATE,
+            }
+        );
+    } else {
+        await sequelize.query(
+            'INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status) VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus)',
+            {
+                replacements: {
+                    id_library: idLibrary,
+                    id_source: idSource,
+                    username,
+                    lastChapter: lastChapter || null,
+                    readingStatus: readingStatus || null,
+                },
+                type: QueryTypes.INSERT,
+            }
+        );
+    }
 
     return { idLibrary: idLibrary };
 }
@@ -625,10 +631,11 @@ function getChapters(callback, limit = null) {
         type: QueryTypes.SELECT,
     })
         .then(rows => {
-            let groupedChapters = rows.reduce((acc, row) => {
+            const groupedChapters = rows.reduce((acc, row) => {
                 const libraryId = row.libraryId;
                 if (!acc[libraryId]) {
                     acc[libraryId] = {
+                        id: row.mangaId,
                         title: row.title,
                         type: row.type,
                         theme: row.theme,
@@ -645,6 +652,7 @@ function getChapters(callback, limit = null) {
                 if (!acc[libraryId].sites[row.site]) {
                     acc[libraryId].sites[row.site] = {
                         site: row.site,
+                        site: row.site,
                         mangaUrl: row.mangaUrl,
                         chapters: [],
                     };
@@ -659,7 +667,7 @@ function getChapters(callback, limit = null) {
                 return acc;
             }, []);
 
-            groupedChapters = groupedChapters.filter(library => library);
+            
             return callback(null, groupedChapters);
         })
         .catch(err => callback(err));
@@ -703,6 +711,56 @@ function getAllMangas(callback) {
     )
         .then(rows => callback(null, rows))
         .catch(err => callback(err));
+        
+}
+
+
+function getClient(username, callback) {
+    sequelize.query(
+        `SELECT
+            c.id as "clientId",
+            c.name as "clientName", 
+            c.code as "clientCode", 
+            c.email as "clientEmail",
+            c.google_id as "clientGoogleId",
+            s.name as "clientSubscription",
+            lu.last_chapter as "lastReadChapter",
+            lu.reading_status as "readingStatus",
+            lu.score as "clientScore",
+            lu.id_library as "libraryId",
+            lu.note as "clientNote",
+            lu.id_source as "sourceId" 
+        FROM "Client" as c
+        INNER JOIN "libraryusage" as lu ON c.name = lu.name_client
+        INNER JOIN "Subscription" as s ON c.id_subscription = s.id
+        WHERE c.name = :username`,
+        {
+            replacements: { username },
+            type: QueryTypes.SELECT,
+        }
+    )
+        .then(rows => {
+            const row = rows[0];
+            const client = {
+                    clientId: row.clientId,
+                    clientName: row.clientName,
+                    clientCode: row.clientCode,
+                    clientEmail: row.clientEmail,
+                    clientGoogleId: row.clientGoogleId,
+                    clientSubscription: row.clientSubscription,
+                    libraryUsage: rows.map(row => ({
+                        libraryId: row.libraryId,
+                        lastReadChapter: row.lastReadChapter,
+                        readingStatus: row.readingStatus,
+                        clientScore: row.clientScore,
+                        clientNote: row.clientNote,
+                        sourceId: row.sourceId,
+                    })),
+                    
+                };
+            callback(null, client);
+        })
+        .catch(err => callback(err));
 }
 
 export {
@@ -719,4 +777,5 @@ export {
     getUserLibrary,
     updateUserLibrary,
     deleteUserLibrary,
+    getClient,
 };

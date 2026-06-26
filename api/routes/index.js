@@ -2,6 +2,8 @@ import express from 'express';
 import chapters from './chapitres.js';
 import auth from './auth.js';
 import library from './library.js';
+import client from './client.js';
+
 
 const router = express.Router();
 
@@ -11,6 +13,7 @@ router
     })
     .use('/chapters', chapters)
     .use('/auth', auth)
-    .use('/library', library);
+    .use('/library', library)
+    .use('/client', client);
 
 export default router;

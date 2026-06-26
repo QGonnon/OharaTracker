@@ -34,8 +34,7 @@ export default defineComponent({
   },
 
   setup() {
-  const route = useRoute()
-  const router = useRouter()
+    const route = useRoute()
     const authStore = useAuthStore()
     const manga = ref<Manga>({} as Manga)
     const allMangas = ref<Manga[]>([])
@@ -105,7 +104,9 @@ export default defineComponent({
 
         // Trouver le manga correspondant à l'URL
         const found = mangaList.find(
+          // (m: Manga) => slugify(m.id) === route.params.name
           (m: Manga) => slugify(m.title) === route.params.name
+          
         )
 
         allMangas.value = mangaList
