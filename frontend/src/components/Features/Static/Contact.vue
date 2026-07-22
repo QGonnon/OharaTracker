@@ -1,0 +1,37 @@
+<template>
+  <Menu />
+  <section class="min-h-[70vh] bg-white dark:bg-zinc-950 py-20">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
+        {{ $t('static.contact.label') }}
+      </span>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+        {{ $t('static.contact.title') }}
+      </h1>
+      <p class="text-gray-500 dark:text-zinc-400 leading-relaxed mb-10">
+        {{ $t('static.contact.desc') }}
+      </p>
+
+      <div class="inline-flex flex-col items-center gap-4 p-8 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900">
+        <img
+          :src="discordQr"
+          :alt="$t('static.contact.qr_alt')"
+          class="w-44 h-44 rounded-xl border border-gray-200 dark:border-white/10 bg-white p-2"
+        />
+        <p class="text-sm text-gray-500 dark:text-zinc-400">{{ $t('static.contact.scan_hint') }}</p>
+        <a :href="DISCORD_URL" target="_blank" rel="noopener noreferrer">
+          <Button :label="$t('static.contact.join_discord')" class="font-semibold" />
+        </a>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+import Menu from '../../Shared/Menu/Menu.vue'
+import { Button } from 'primevue'
+
+// Image fournie par l'utilisateur : à placer dans frontend/src/assets/images/ohara_logo_Discord.webp
+const discordQr = new URL('../../../assets/images/ohara_logo_Discord.webp', import.meta.url).href
+const DISCORD_URL = 'https://discord.gg/DfsFuSdDp'
+</script>
