@@ -247,5 +247,147 @@
     "danger_sub": "Actions on your session",
     "logout_title": "Sign out",
     "logout_description": "End your current session on this device"
+  },
+  "footer": {
+    "tagline": "Track manga, anime and series in one place — free, no ads.",
+    "product": "Product",
+    "resources": "Resources",
+    "legal": "Legal",
+    "about": "About",
+    "pricing": "Pricing",
+    "blog": "Blog",
+    "status": "Status",
+    "changelog": "Changelog",
+    "suggestions": "Suggestions",
+    "supported_sites": "Supported Sites",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "discord": "Join us on Discord",
+    "twitter": "Follow us on X",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "static": {
+    "about": {
+      "label": "About",
+      "title": "About OharaTracker",
+      "p1": "OharaTracker is a personal project built for people who read and watch a lot of manga, manhwa and anime, and got tired of juggling ten different sites to keep track of it all.",
+      "p2": "Our goal is simple: one clean, fast, ad-free place to organize your library, follow releases and never lose your progress again."
+    },
+    "pricing": {
+      "label": "Pricing",
+      "title": "Simple, transparent pricing",
+      "desc": "Start for free. Upgrade whenever you need more.",
+      "personal_desc": "Everything you need to track your personal library: tracking, notifications and basic statistics, at no cost.",
+      "pro_desc": "For partners and platforms: advanced integrations, extended limits and priority support.",
+      "contact_us": "Contact us"
+    },
+    "blog": {
+      "label": "Blog",
+      "title": "Blog",
+      "empty": "We don't have any articles published yet. Check back soon!"
+    },
+    "status": {
+      "label": "Status",
+      "title": "System status",
+      "operational": "Operational",
+      "service_api": "API",
+      "service_web": "Website",
+      "service_notifications": "Notifications",
+      "service_sources": "Source aggregation"
+    },
+    "changelog": {
+      "label": "Changelog",
+      "title": "Changelog",
+      "v1": "Initial release: library tracking, discovery, search and user profiles.",
+      "v2": "Added release notifications and multi-source aggregation.",
+      "v3": "New home page, dark theme improvements and performance fixes."
+    },
+    "suggestions": {
+      "label": "Suggestions",
+      "title": "Share your ideas",
+      "desc": "Have an idea to improve OharaTracker? We'd love to hear it. Join our Discord to share suggestions and vote on upcoming features.",
+      "cta": "Suggest a feature"
+    },
+    "supported_sites": {
+      "label": "Supported Sites",
+      "title": "Supported sources",
+      "desc": "OharaTracker aggregates data from the following platforms.",
+      "more_soon": "More sources are added regularly."
+    },
+    "contact": {
+      "label": "Contact",
+      "title": "Get in touch",
+      "desc": "The fastest way to reach us is through our Discord server. Scan the code below or click the button to join.",
+      "qr_alt": "QR code to join the OharaTracker Discord server",
+      "scan_hint": "Scan with your phone's camera",
+      "join_discord": "Join our Discord"
+    }
+  },
+  "legal": {
+    "last_updated": "Last updated: January 2026",
+    "terms": {
+      "title": "Terms of Service",
+      "s1_title": "Acceptance of terms",
+      "s1_text": "By creating an account or using OharaTracker, you agree to these terms. If you do not agree, please do not use the service.",
+      "s2_title": "Use of the service",
+      "s2_text": "OharaTracker is provided for personal, non-commercial use. You are responsible for the accuracy of the information you provide.",
+      "s3_title": "Content and third-party sources",
+      "s3_text": "OharaTracker aggregates publicly available information from third-party platforms and is not responsible for the accuracy or availability of that content.",
+      "s4_title": "Changes to the service",
+      "s4_text": "We may update or discontinue features at any time. We will do our best to notify users of significant changes."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "s1_title": "Data we collect",
+      "s1_text": "We collect the information you provide when creating an account (username, email) and data about your library and reading activity.",
+      "s2_title": "How we use your data",
+      "s2_text": "Your data is used solely to provide and improve the service, such as tracking your library and sending release notifications.",
+      "s3_title": "Your rights",
+      "s3_text": "You can access, correct or delete your personal data at any time from your profile settings."
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "s1_title": "What are cookies",
+      "s1_text": "Cookies are small files stored on your device that help us remember your preferences, such as your theme and language.",
+      "s2_title": "How we use cookies",
+      "s2_text": "We use essential cookies for authentication and preference storage. We do not use cookies for advertising purposes."
+    }
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Frequently asked questions",
+    "subtitle": "Everything you need to know about Premium and OharaTracker.",
+    "items": [
+      {
+        "q": "Can I trial Premium?",
+        "a": "Yes, you can try Premium without any risk. You have the flexibility to cancel at any time before the renewal date, and you won't lose access to the premium features. In fact, you can cancel as soon as you subscribe to try out Premium for a month."
+      },
+      {
+        "q": "What happens if I upgrade or downgrade?",
+        "a": "We pro-rate your subscription, making it seamless for you. If you upgrade, you'll only pay the difference. Conversely, if you downgrade, you'll receive credit towards your next payment cycle, so you'll pay less next time."
+      },
+      {
+        "q": "What happens to my customizations when I unsubscribe?",
+        "a": "We retain all your custom changes on our servers, but you lose access to them when you unsubscribe. If you subscribe again, they automatically reappear."
+      },
+      {
+        "q": "How can I cancel my subscription?",
+        "a": "Go to Settings → Pricing. Cancellation takes effect at the end of the current billing cycle."
+      },
+      {
+        "q": "When will Elite tier be introduced?",
+        "a": "No release date yet. Users will be able to upgrade when available."
+      },
+      {
+        "q": "Can I pay using crypto?",
+        "a": "Cryptocurrency payments are not planned."
+      },
+      {
+        "q": "How long do features remain in Early Access?",
+        "a": "There is no fixed duration. Features leave Early Access when ready."
+      }
+    ]
   }
 }

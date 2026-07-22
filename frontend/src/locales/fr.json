@@ -259,5 +259,147 @@
     "danger_sub": "Actions sur votre session",
     "logout_title": "Se déconnecter",
     "logout_description": "Terminer votre session en cours sur cet appareil"
+  },
+  "footer": {
+    "tagline": "Suivez vos mangas, animés et séries au même endroit — gratuit, sans publicité.",
+    "product": "Produit",
+    "resources": "Ressources",
+    "legal": "Légal",
+    "about": "À propos",
+    "pricing": "Tarifs",
+    "blog": "Blog",
+    "status": "Statut",
+    "changelog": "Nouveautés",
+    "suggestions": "Suggestions",
+    "supported_sites": "Sites supportés",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "discord": "Rejoignez-nous sur Discord",
+    "twitter": "Suivez-nous sur X",
+    "contact": "Contact",
+    "rights": "Tous droits réservés."
+  },
+  "static": {
+    "about": {
+      "label": "À propos",
+      "title": "À propos d'OharaTracker",
+      "p1": "OharaTracker est un projet personnel pensé pour celles et ceux qui lisent et regardent beaucoup de mangas, manhwas et animés, et qui en avaient assez de jongler entre dix sites différents pour tout suivre.",
+      "p2": "Notre objectif est simple : un seul endroit clair, rapide et sans publicité pour organiser sa bibliothèque, suivre les sorties et ne plus jamais perdre sa progression."
+    },
+    "pricing": {
+      "label": "Tarifs",
+      "title": "Des tarifs simples et transparents",
+      "desc": "Commencez gratuitement. Passez au niveau supérieur quand vous en avez besoin.",
+      "personal_desc": "Tout ce qu'il faut pour suivre votre bibliothèque personnelle : suivi, notifications et statistiques de base, sans frais.",
+      "pro_desc": "Pour les partenaires et plateformes : intégrations avancées, limites étendues et support prioritaire.",
+      "contact_us": "Nous contacter"
+    },
+    "blog": {
+      "label": "Blog",
+      "title": "Blog",
+      "empty": "Aucun article n'a encore été publié. Revenez bientôt !"
+    },
+    "status": {
+      "label": "Statut",
+      "title": "Statut des services",
+      "operational": "Opérationnel",
+      "service_api": "API",
+      "service_web": "Site web",
+      "service_notifications": "Notifications",
+      "service_sources": "Agrégation des sources"
+    },
+    "changelog": {
+      "label": "Nouveautés",
+      "title": "Journal des modifications",
+      "v1": "Version initiale : suivi de bibliothèque, découverte, recherche et profils utilisateurs.",
+      "v2": "Ajout des notifications de sorties et de l'agrégation multi-sources.",
+      "v3": "Nouvelle page d'accueil, améliorations du thème sombre et corrections de performance."
+    },
+    "suggestions": {
+      "label": "Suggestions",
+      "title": "Partagez vos idées",
+      "desc": "Une idée pour améliorer OharaTracker ? Nous serions ravis de l'entendre. Rejoignez notre Discord pour partager vos suggestions et voter pour les prochaines fonctionnalités.",
+      "cta": "Proposer une fonctionnalité"
+    },
+    "supported_sites": {
+      "label": "Sites supportés",
+      "title": "Sources supportées",
+      "desc": "OharaTracker agrège les données depuis les plateformes suivantes.",
+      "more_soon": "De nouvelles sources sont ajoutées régulièrement."
+    },
+    "contact": {
+      "label": "Contact",
+      "title": "Contactez-nous",
+      "desc": "Le moyen le plus rapide de nous joindre est notre serveur Discord. Scannez le code ci-dessous ou cliquez sur le bouton pour nous rejoindre.",
+      "qr_alt": "QR code pour rejoindre le serveur Discord d'OharaTracker",
+      "scan_hint": "Scannez avec l'appareil photo de votre téléphone",
+      "join_discord": "Rejoindre notre Discord"
+    }
+  },
+  "legal": {
+    "last_updated": "Dernière mise à jour : janvier 2026",
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "s1_title": "Acceptation des conditions",
+      "s1_text": "En créant un compte ou en utilisant OharaTracker, vous acceptez ces conditions. Si vous n'êtes pas d'accord, merci de ne pas utiliser le service.",
+      "s2_title": "Utilisation du service",
+      "s2_text": "OharaTracker est fourni pour un usage personnel et non commercial. Vous êtes responsable de l'exactitude des informations que vous fournissez.",
+      "s3_title": "Contenu et sources tierces",
+      "s3_text": "OharaTracker agrège des informations publiquement disponibles depuis des plateformes tierces et n'est pas responsable de l'exactitude ou de la disponibilité de ce contenu.",
+      "s4_title": "Évolution du service",
+      "s4_text": "Nous pouvons faire évoluer ou retirer des fonctionnalités à tout moment. Nous ferons notre possible pour informer les utilisateurs des changements importants."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "s1_title": "Données collectées",
+      "s1_text": "Nous collectons les informations que vous fournissez à la création de votre compte (nom d'utilisateur, email) ainsi que les données liées à votre bibliothèque et votre activité de lecture.",
+      "s2_title": "Utilisation de vos données",
+      "s2_text": "Vos données sont utilisées uniquement pour fournir et améliorer le service, comme le suivi de votre bibliothèque et l'envoi de notifications de sorties.",
+      "s3_title": "Vos droits",
+      "s3_text": "Vous pouvez accéder, corriger ou supprimer vos données personnelles à tout moment depuis les paramètres de votre profil."
+    },
+    "cookies": {
+      "title": "Politique relative aux cookies",
+      "s1_title": "Que sont les cookies",
+      "s1_text": "Les cookies sont de petits fichiers stockés sur votre appareil qui nous aident à mémoriser vos préférences, comme votre thème et votre langue.",
+      "s2_title": "Utilisation des cookies",
+      "s2_text": "Nous utilisons des cookies essentiels à l'authentification et à la mémorisation de vos préférences. Nous n'utilisons aucun cookie publicitaire."
+    }
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Foire aux questions",
+    "subtitle": "Tout ce qu'il faut savoir sur Premium et OharaTracker.",
+    "items": [
+      {
+        "q": "Puis-je essayer Premium ?",
+        "a": "Oui, vous pouvez essayer Premium sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités premium. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
+      },
+      {
+        "q": "Que se passe-t-il si je change d'offre ?",
+        "a": "Votre abonnement est ajusté au prorata, en toute transparence. En cas de passage à une offre supérieure, vous ne payez que la différence. En cas de passage à une offre inférieure, un crédit est appliqué sur votre prochain paiement."
+      },
+      {
+        "q": "Que deviennent mes personnalisations si je me désabonne ?",
+        "a": "Nous conservons toutes vos personnalisations sur nos serveurs, mais vous perdez l'accès si vous vous désabonnez. Si vous vous réabonnez, elles réapparaissent automatiquement."
+      },
+      {
+        "q": "Comment annuler mon abonnement ?",
+        "a": "Rendez-vous dans Paramètres → Tarifs. L'annulation prend effet à la fin du cycle de facturation en cours."
+      },
+      {
+        "q": "Quand l'offre Elite sera-t-elle disponible ?",
+        "a": "Aucune date de sortie n'est encore fixée. Les utilisateurs pourront passer à cette offre dès qu'elle sera disponible."
+      },
+      {
+        "q": "Puis-je payer en crypto-monnaie ?",
+        "a": "Le paiement en crypto-monnaie n'est pas prévu."
+      },
+      {
+        "q": "Combien de temps une fonctionnalité reste-t-elle en accès anticipé ?",
+        "a": "Il n'y a pas de durée fixe. Une fonctionnalité quitte l'accès anticipé lorsqu'elle est prête."
+      }
+    ]
   }
 }
