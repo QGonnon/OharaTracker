@@ -255,7 +255,6 @@
     "legal": "Legal",
     "about": "About",
     "pricing": "Pricing",
-    "blog": "Blog",
     "status": "Status",
     "changelog": "Changelog",
     "suggestions": "Suggestions",
@@ -280,31 +279,36 @@
     "pricing": {
       "label": "Pricing",
       "title": "Simple, transparent pricing",
-      "desc": "Free forever, Premium whenever you want, tailor-made for our partners.",
-      "free_badge": "Starter",
-      "free_title": "Starter",
-      "free_price": "Free",
-      "free_price_sub": "No card required",
-      "free_desc": "Everything you need to centralize and track all your content, with no artificial limits.",
-      "free_features": [
-        "Unlimited tracking of manga, manhwa, manhua and anime",
-        "Unified search and personal library",
-        "Real-time release notifications",
-        "Basic community features (reviews, ratings)",
-        "Dark mode included, like everything else"
+      "desc": "OharaTracker stays free at its core. Upgrade to a paid plan to help us build the best tracker and unlock extra features.",
+      "lite_badge": "Lite",
+      "lite_title": "Lite",
+      "lite_price": "€4.99",
+      "lite_price_sub": "Billed monthly",
+      "lite_features": [
+        "Smart Suggestions System",
+        "Advanced Reader Statistics & Insights",
+        "Early Access to new Features",
+        "Custom Profile Banner & Animated Avatar",
+        "Special Role on Discord",
+        "Feature Previews on Discord"
       ],
-      "premium_badge": "Premium",
-      "premium_title": "Premium",
-      "premium_price": "€4.99/month",
-      "premium_price_sub": "or €39.99/year (1 month free)",
-      "premium_desc": "For fans who want a richer experience, without ever locking away the essentials.",
-      "premium_features": [
-        "Advanced recommendations and detailed reading statistics",
-        "100% ad-free experience",
-        "Priority notifications and early access to new features",
-        "Animated avatars, banners and advanced profile customization"
+      "lite_cta": "Subscribe",
+      "pro_badge": "Most popular",
+      "pro_title": "Pro",
+      "pro_price": "€7.99",
+      "pro_price_sub": "Billed monthly",
+      "pro_features": [
+        "Personal Series Recommendations",
+        "Customisable Discovery",
+        "Smart Suggestions System",
+        "Advanced Reader Statistics & Insights",
+        "Statistics Filters",
+        "Early Access to new Features",
+        "Animated Profile Banner & Avatar",
+        "Special Role on Discord",
+        "Feature Previews on Discord"
       ],
-      "premium_cta": "Upgrade to Premium",
+      "pro_cta": "Subscribe",
       "partner_badge": "Partner",
       "partner_title": "B2B Partner",
       "partner_price": "Custom pricing",
@@ -314,7 +318,7 @@
         "Partner platforms: priority visibility to our audience, on a subscription basis",
         "Content creators (YouTube, Twitch...): affiliation or compensation depending on the collaboration"
       ],
-      "contact_us": "Contact us"
+      "partner_cta": "Contact us"
     },
     "blog": {
       "label": "Blog",
@@ -397,11 +401,11 @@
   "faq": {
     "label": "FAQ",
     "title": "Frequently asked questions",
-    "subtitle": "Everything you need to know about Premium and OharaTracker.",
+    "subtitle": "Everything you need to know about Pro and OharaTracker.",
     "items": [
       {
-        "q": "Can I trial Premium?",
-        "a": "Yes, you can try Premium without any risk. You have the flexibility to cancel at any time before the renewal date, and you won't lose access to the premium features. In fact, you can cancel as soon as you subscribe to try out Premium for a month."
+        "q": "Can I trial Pro?",
+        "a": "Yes, you can try Pro without any risk. You have the flexibility to cancel at any time before the renewal date, and you won't lose access to the Pro features. In fact, you can cancel as soon as you subscribe to try out Pro for a month."
       },
       {
         "q": "What happens if I upgrade or downgrade?",
@@ -417,7 +421,7 @@
       },
       {
         "q": "When will Elite tier be introduced?",
-        "a": "No release date yet. Users will be able to upgrade when available."
+        "a": "No release date yet. It will roll out as soon as the tier is ready. If you're subscribed to Lite or Pro, you'll be able to upgrade to it as soon as it's available."
       },
       {
         "q": "Can I pay using crypto?",

@@ -267,7 +267,6 @@
     "legal": "Légal",
     "about": "À propos",
     "pricing": "Tarifs",
-    "blog": "Blog",
     "status": "Statut",
     "changelog": "Nouveautés",
     "suggestions": "Suggestions",
@@ -286,31 +285,36 @@
     "pricing": {
       "label": "Tarifs",
       "title": "Des tarifs simples et transparents",
-      "desc": "Gratuit pour toujours, Premium quand vous le souhaitez, sur-mesure pour nos partenaires.",
-      "free_badge": "Starter",
-      "free_title": "Starter",
-      "free_price": "Gratuit",
-      "free_price_sub": "Sans carte bancaire",
-      "free_desc": "L'essentiel pour centraliser et suivre tous vos contenus, sans limite artificielle.",
-      "free_features": [
-        "Suivi illimité des mangas, manhwas, manhuas et animés",
-        "Recherche unifiée et bibliothèque personnelle",
-        "Notifications de sortie en temps réel",
-        "Fonctionnalités communautaires de base (avis, notes)",
-        "Thème sombre inclus, comme tout le reste"
+      "desc": "OharaTracker reste gratuit à la base. Passez à un forfait payant pour nous aider à construire le meilleur tracker et débloquer des fonctionnalités supplémentaires.",
+      "lite_badge": "Lite",
+      "lite_title": "Lite",
+      "lite_price": "4,99 €",
+      "lite_price_sub": "Facturé mensuellement",
+      "lite_features": [
+        "Système de suggestions intelligentes",
+        "Statistiques de lecture avancées",
+        "Accès anticipé aux nouvelles fonctionnalités",
+        "Bannière de profil personnalisée et avatar animé",
+        "Rôle spécial sur Discord",
+        "Aperçu des fonctionnalités en avant-première sur Discord"
       ],
-      "premium_badge": "Premium",
-      "premium_title": "Premium",
-      "premium_price": "4,99 €/mois",
-      "premium_price_sub": "ou 39,99 €/an (1 mois offert)",
-      "premium_desc": "Pour les passionnés qui veulent une expérience enrichie, sans jamais bloquer l'essentiel.",
-      "premium_features": [
-        "Recommandations avancées et statistiques détaillées de lecture",
-        "Expérience 100 % sans publicité",
-        "Priorité sur les notifications et accès anticipé aux nouveautés",
-        "Avatars animés, bannières et personnalisation poussée du profil"
+      "lite_cta": "S'abonner",
+      "pro_badge": "Le plus populaire",
+      "pro_title": "Pro",
+      "pro_price": "7,99 €",
+      "pro_price_sub": "Facturé mensuellement",
+      "pro_features": [
+        "Recommandations personnalisées de séries",
+        "Découverte personnalisable",
+        "Système de suggestions intelligentes",
+        "Statistiques de lecture avancées",
+        "Filtres de statistiques",
+        "Accès anticipé aux nouvelles fonctionnalités",
+        "Bannière de profil et avatar animés",
+        "Rôle spécial sur Discord",
+        "Aperçu des fonctionnalités en avant-première sur Discord"
       ],
-      "premium_cta": "Passer au Premium",
+      "pro_cta": "S'abonner",
       "partner_badge": "Partenaire",
       "partner_title": "Partenaire B2B",
       "partner_price": "Sur devis",
@@ -320,7 +324,7 @@
         "Plateformes partenaires : mise en avant prioritaire auprès de notre audience, sur abonnement",
         "Créateurs de contenu (YouTube, Twitch...) : affiliation ou rémunération selon la collaboration"
       ],
-      "contact_us": "Nous contacter"
+      "partner_cta": "Nous contacter"
     },
     "blog": {
       "label": "Blog",
@@ -403,11 +407,11 @@
   "faq": {
     "label": "FAQ",
     "title": "Foire aux questions",
-    "subtitle": "Tout ce qu'il faut savoir sur Premium et OharaTracker.",
+    "subtitle": "Tout ce qu'il faut savoir sur Pro et OharaTracker.",
     "items": [
       {
-        "q": "Puis-je essayer Premium ?",
-        "a": "Oui, vous pouvez essayer Premium sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités premium. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
+        "q": "Puis-je essayer Pro ?",
+        "a": "Oui, vous pouvez essayer Pro sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités Pro. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
       },
       {
         "q": "Que se passe-t-il si je change d'offre ?",
@@ -423,7 +427,7 @@
       },
       {
         "q": "Quand l'offre Elite sera-t-elle disponible ?",
-        "a": "Aucune date de sortie n'est encore fixée. Les utilisateurs pourront passer à cette offre dès qu'elle sera disponible."
+        "a": "Aucune date de sortie n'est encore fixée. Elle sera déployée dès que la fonctionnalité sera prête. Si vous êtes abonné Lite ou Pro, vous pourrez passer à cette nouvelle offre dès sa disponibilité."
       },
       {
         "q": "Puis-je payer en crypto-monnaie ?",

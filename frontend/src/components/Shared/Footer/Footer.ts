@@ -18,7 +18,8 @@ export default defineComponent({
         links: [
           { label: t('footer.about'),   to: '/home'    },
           { label: t('footer.pricing'), to: '/pricing'  },
-          { label: t('footer.blog'),    to: '/blog'     },
+          { label: t('footer.supported_sites'),    to: '/supported-sites'    },
+
           { label: t('footer.status'),  to: '/status'   },
         ],
       },
@@ -27,7 +28,6 @@ export default defineComponent({
         links: [
           { label: t('footer.changelog'),          to: '/changelog'          },
           { label: t('footer.suggestions'),        to: '/suggestions'        },
-          { label: t('footer.supported_sites'),    to: '/supported-sites'    },
           { label: t('footer.official_partners'),  to: '/official-partners'  },
         ],
       },

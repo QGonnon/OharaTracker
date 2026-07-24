@@ -208,5 +208,184 @@
     "danger_sub": "Aktionen für deine Sitzung",
     "logout_title": "Abmelden",
     "logout_description": "Beende deine aktuelle Sitzung auf diesem Gerät"
+  },
+  "footer": {
+    "tagline": "Deine eine Bibliothek für Manga, Manhwa, Manhua und Anime, ohne zehn verschiedene Plattformen jonglieren zu müssen.",
+    "product": "Produkt",
+    "resources": "Ressourcen",
+    "legal": "Rechtliches",
+    "about": "Über uns",
+    "pricing": "Preise",
+    "status": "Status",
+    "changelog": "Neuigkeiten",
+    "suggestions": "Vorschläge",
+    "supported_sites": "Unterstützte Seiten",
+    "official_partners": "Offizielle Partner",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "cookies": "Cookies",
+    "discord": "Tritt unserem Discord bei",
+    "twitter": "Folge uns auf X",
+    "contact": "Kontakt",
+    "social": "Soziales",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "static": {
+    "pricing": {
+      "label": "Preise",
+      "title": "Einfache, transparente Preise",
+      "desc": "OharaTracker bleibt im Kern kostenlos. Wechsle zu einem kostenpflichtigen Plan, um uns beim Aufbau des besten Trackers zu helfen und zusätzliche Funktionen freizuschalten.",
+      "lite_badge": "Lite",
+      "lite_title": "Lite",
+      "lite_price": "4,99 €",
+      "lite_price_sub": "Monatlich abgerechnet",
+      "lite_features": [
+        "Intelligentes Vorschlagssystem",
+        "Erweiterte Lesestatistiken & Einblicke",
+        "Früher Zugang zu neuen Funktionen",
+        "Individuelles Profilbanner & animierter Avatar",
+        "Besondere Rolle auf Discord",
+        "Funktionsvorschauen auf Discord"
+      ],
+      "lite_cta": "Abonnieren",
+      "pro_badge": "Am beliebtesten",
+      "pro_title": "Pro",
+      "pro_price": "7,99 €",
+      "pro_price_sub": "Monatlich abgerechnet",
+      "pro_features": [
+        "Persönliche Serienempfehlungen",
+        "Anpassbare Entdeckung",
+        "Intelligentes Vorschlagssystem",
+        "Erweiterte Lesestatistiken & Einblicke",
+        "Statistikfilter",
+        "Früher Zugang zu neuen Funktionen",
+        "Animiertes Profilbanner & Avatar",
+        "Besondere Rolle auf Discord",
+        "Funktionsvorschauen auf Discord"
+      ],
+      "pro_cta": "Abonnieren",
+      "partner_badge": "Partner",
+      "partner_title": "B2B-Partner",
+      "partner_price": "Auf Anfrage",
+      "partner_price_sub": "Wird von Fall zu Fall geprüft",
+      "partner_desc": "Bist du eine Lese-/Streaming-Plattform oder ein Content-Creator? Jede Zusammenarbeit wird individuell geprüft.",
+      "partner_features": [
+        "Partnerplattformen: prioritäre Sichtbarkeit bei unserem Publikum, auf Abo-Basis",
+        "Content-Creator (YouTube, Twitch...): Affiliate-Partnerschaft oder Vergütung je nach Zusammenarbeit"
+      ],
+      "partner_cta": "Kontaktiere uns"
+    },
+    "blog": {
+      "label": "Blog",
+      "title": "Blog",
+      "empty": "Es wurde noch kein Artikel veröffentlicht. Schau bald wieder vorbei!"
+    },
+    "status": {
+      "label": "Status",
+      "title": "Servicestatus",
+      "operational": "Betriebsbereit",
+      "service_api": "API",
+      "service_web": "Webseite",
+      "service_notifications": "Benachrichtigungen",
+      "service_sources": "Quellenaggregation"
+    },
+    "changelog": {
+      "label": "Neuigkeiten",
+      "title": "Änderungsprotokoll",
+      "v1": "Erste Version: Bibliotheks-Tracking, Entdeckung, Suche und Benutzerprofile.",
+      "v2": "Veröffentlichungsbenachrichtigungen und Multi-Quellen-Aggregation hinzugefügt.",
+      "v3": "Neue Startseite, Verbesserungen am Dark Mode und Performance-Korrekturen."
+    },
+    "suggestions": {
+      "label": "Vorschläge",
+      "title": "Teile deine Ideen",
+      "desc": "Eine Idee zur Verbesserung von OharaTracker? Wir würden sie gerne hören. Tritt unserem Discord bei, um deine Vorschläge zu teilen und über kommende Funktionen abzustimmen.",
+      "cta": "Eine Funktion vorschlagen"
+    },
+    "supported_sites": {
+      "label": "Unterstützte Seiten",
+      "title": "Unterstützte Quellen",
+      "desc": "OharaTracker aggregiert Daten von den folgenden Plattformen.",
+      "more_soon": "Regelmäßig kommen neue Quellen hinzu."
+    },
+    "official_partners": {
+      "label": "Offizielle Partner",
+      "title": "Unsere offiziellen Partner",
+      "desc": "Content-Creator (YouTube, Twitch...) und Partnerseiten, mit denen OharaTracker zusammenarbeitet.",
+      "empty": "Aktuell gibt es noch keine offizielle Partnerschaft. Schau bald wieder vorbei!"
+    },
+    "contact": {
+      "label": "Kontakt",
+      "title": "Kontaktiere uns",
+      "desc": "Der schnellste Weg, uns zu erreichen, ist unser Discord-Server. Scanne den Code unten oder klicke auf den Button, um beizutreten.",
+      "qr_alt": "QR-Code zum Beitreten des OharaTracker-Discord-Servers",
+      "scan_hint": "Scanne mit der Kamera deines Smartphones",
+      "join_discord": "Tritt unserem Discord bei"
+    }
+  },
+  "legal": {
+    "last_updated": "Letzte Aktualisierung: Januar 2026",
+    "terms": {
+      "title": "Nutzungsbedingungen",
+      "s1_title": "Annahme der Bedingungen",
+      "s1_text": "Mit der Erstellung eines Kontos oder der Nutzung von OharaTracker akzeptierst du diese Bedingungen. Falls du nicht einverstanden bist, nutze den Dienst bitte nicht.",
+      "s2_title": "Nutzung des Dienstes",
+      "s2_text": "OharaTracker wird für den persönlichen, nicht kommerziellen Gebrauch bereitgestellt. Du bist für die Richtigkeit der von dir angegebenen Informationen verantwortlich.",
+      "s3_title": "Inhalte und Quellen Dritter",
+      "s3_text": "OharaTracker aggregiert öffentlich verfügbare Informationen von Drittplattformen und übernimmt keine Verantwortung für die Richtigkeit oder Verfügbarkeit dieser Inhalte.",
+      "s4_title": "Weiterentwicklung des Dienstes",
+      "s4_text": "Wir können Funktionen jederzeit weiterentwickeln oder entfernen. Wir werden unser Bestes tun, um Nutzer über wichtige Änderungen zu informieren."
+    },
+    "privacy": {
+      "title": "Datenschutzrichtlinie",
+      "s1_title": "Erhobene Daten",
+      "s1_text": "Wir erheben die Informationen, die du bei der Kontoerstellung angibst (Benutzername, E-Mail), sowie Daten zu deiner Bibliothek und deiner Leseaktivität.",
+      "s2_title": "Nutzung deiner Daten",
+      "s2_text": "Deine Daten werden ausschließlich zur Bereitstellung und Verbesserung des Dienstes verwendet, etwa für das Tracking deiner Bibliothek und den Versand von Veröffentlichungsbenachrichtigungen.",
+      "s3_title": "Deine Rechte",
+      "s3_text": "Du kannst jederzeit über die Einstellungen deines Profils auf deine persönlichen Daten zugreifen, sie korrigieren oder löschen."
+    },
+    "cookies": {
+      "title": "Cookie-Richtlinie",
+      "s1_title": "Was sind Cookies",
+      "s1_text": "Cookies sind kleine Dateien, die auf deinem Gerät gespeichert werden und uns helfen, deine Einstellungen wie Design und Sprache zu merken.",
+      "s2_title": "Verwendung von Cookies",
+      "s2_text": "Wir verwenden nur essenzielle Cookies für die Authentifizierung und um deine Einstellungen zu speichern. Wir verwenden keine Werbe-Cookies."
+    }
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Alles, was du über Pro und OharaTracker wissen musst.",
+    "items": [
+      {
+        "q": "Kann ich Pro testen?",
+        "a": "Ja, du kannst Pro völlig risikofrei ausprobieren. Du kannst jederzeit vor dem Verlängerungsdatum kündigen, ohne den Zugang zu den Pro-Funktionen zu verlieren. Du kannst sogar direkt nach dem Abschluss kündigen, um einen Monat lang Pro zu testen."
+      },
+      {
+        "q": "Was passiert, wenn ich mein Abo wechsle?",
+        "a": "Dein Abo wird transparent anteilig angepasst. Beim Upgrade zahlst du nur die Differenz. Beim Downgrade wird dir eine Gutschrift für deine nächste Zahlung angerechnet."
+      },
+      {
+        "q": "Was passiert mit meinen Anpassungen, wenn ich kündige?",
+        "a": "Wir speichern alle deine Anpassungen weiterhin auf unseren Servern, du verlierst jedoch den Zugriff darauf, wenn du kündigst. Wenn du dich erneut anmeldest, erscheinen sie automatisch wieder."
+      },
+      {
+        "q": "Wie kann ich mein Abo kündigen?",
+        "a": "Gehe zu Einstellungen → Preise. Die Kündigung wird zum Ende des aktuellen Abrechnungszeitraums wirksam."
+      },
+      {
+        "q": "Wann wird die Elite-Stufe eingeführt?",
+        "a": "Es gibt noch kein Veröffentlichungsdatum. Sie wird eingeführt, sobald die Funktion bereit ist. Wenn du Lite oder Pro abonniert hast, kannst du sobald verfügbar auf diese neue Stufe upgraden."
+      },
+      {
+        "q": "Kann ich mit Kryptowährung bezahlen?",
+        "a": "Zahlungen mit Kryptowährung sind derzeit nicht geplant."
+      },
+      {
+        "q": "Wie lange bleiben Funktionen im Early Access?",
+        "a": "Es gibt keine feste Dauer. Eine Funktion verlässt den Early Access, sobald sie bereit ist."
+      }
+    ]
   }
 }
