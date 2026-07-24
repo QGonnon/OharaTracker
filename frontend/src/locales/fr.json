@@ -261,7 +261,7 @@
     "logout_description": "Terminer votre session en cours sur cet appareil"
   },
   "footer": {
-    "tagline": "Votre outil de suivi préféré pour découvrir et suivre de nouvelles séries.",
+    "tagline": "Votre bibliothèque unique pour suivre mangas, manhwas, manhuas et animés, en français, sans jongler entre dix plateformes.",
     "product": "Produit",
     "resources": "Ressources",
     "legal": "Légal",
@@ -286,9 +286,40 @@
     "pricing": {
       "label": "Tarifs",
       "title": "Des tarifs simples et transparents",
-      "desc": "Commencez gratuitement. Passez au niveau supérieur quand vous en avez besoin.",
-      "personal_desc": "Tout ce qu'il faut pour suivre votre bibliothèque personnelle : suivi, notifications et statistiques de base, sans frais.",
-      "pro_desc": "Pour les partenaires et plateformes : intégrations avancées, limites étendues et support prioritaire.",
+      "desc": "Gratuit pour toujours, Premium quand vous le souhaitez, sur-mesure pour nos partenaires.",
+      "free_badge": "Starter",
+      "free_title": "Starter",
+      "free_price": "Gratuit",
+      "free_price_sub": "Sans carte bancaire",
+      "free_desc": "L'essentiel pour centraliser et suivre tous vos contenus, sans limite artificielle.",
+      "free_features": [
+        "Suivi illimité des mangas, manhwas, manhuas et animés",
+        "Recherche unifiée et bibliothèque personnelle",
+        "Notifications de sortie en temps réel",
+        "Fonctionnalités communautaires de base (avis, notes)",
+        "Thème sombre inclus, comme tout le reste"
+      ],
+      "premium_badge": "Premium",
+      "premium_title": "Premium",
+      "premium_price": "4,99 €/mois",
+      "premium_price_sub": "ou 39,99 €/an (1 mois offert)",
+      "premium_desc": "Pour les passionnés qui veulent une expérience enrichie, sans jamais bloquer l'essentiel.",
+      "premium_features": [
+        "Recommandations avancées et statistiques détaillées de lecture",
+        "Expérience 100 % sans publicité",
+        "Priorité sur les notifications et accès anticipé aux nouveautés",
+        "Avatars animés, bannières et personnalisation poussée du profil"
+      ],
+      "premium_cta": "Passer au Premium",
+      "partner_badge": "Partenaire",
+      "partner_title": "Partenaire B2B",
+      "partner_price": "Sur devis",
+      "partner_price_sub": "Étudié au cas par cas",
+      "partner_desc": "Vous êtes une plateforme de lecture/visionnage ou un créateur de contenu ? Chaque collaboration est étudiée individuellement.",
+      "partner_features": [
+        "Plateformes partenaires : mise en avant prioritaire auprès de notre audience, sur abonnement",
+        "Créateurs de contenu (YouTube, Twitch...) : affiliation ou rémunération selon la collaboration"
+      ],
       "contact_us": "Nous contacter"
     },
     "blog": {

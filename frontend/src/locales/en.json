@@ -249,7 +249,7 @@
     "logout_description": "End your current session on this device"
   },
   "footer": {
-    "tagline": "Track manga, anime and series in one place — free, no ads.",
+    "tagline": "Your one library to track manga, manhwa, manhua and anime, without juggling ten different platforms.",
     "product": "Product",
     "resources": "Resources",
     "legal": "Legal",
@@ -280,9 +280,40 @@
     "pricing": {
       "label": "Pricing",
       "title": "Simple, transparent pricing",
-      "desc": "Start for free. Upgrade whenever you need more.",
-      "personal_desc": "Everything you need to track your personal library: tracking, notifications and basic statistics, at no cost.",
-      "pro_desc": "For partners and platforms: advanced integrations, extended limits and priority support.",
+      "desc": "Free forever, Premium whenever you want, tailor-made for our partners.",
+      "free_badge": "Starter",
+      "free_title": "Starter",
+      "free_price": "Free",
+      "free_price_sub": "No card required",
+      "free_desc": "Everything you need to centralize and track all your content, with no artificial limits.",
+      "free_features": [
+        "Unlimited tracking of manga, manhwa, manhua and anime",
+        "Unified search and personal library",
+        "Real-time release notifications",
+        "Basic community features (reviews, ratings)",
+        "Dark mode included, like everything else"
+      ],
+      "premium_badge": "Premium",
+      "premium_title": "Premium",
+      "premium_price": "€4.99/month",
+      "premium_price_sub": "or €39.99/year (1 month free)",
+      "premium_desc": "For fans who want a richer experience, without ever locking away the essentials.",
+      "premium_features": [
+        "Advanced recommendations and detailed reading statistics",
+        "100% ad-free experience",
+        "Priority notifications and early access to new features",
+        "Animated avatars, banners and advanced profile customization"
+      ],
+      "premium_cta": "Upgrade to Premium",
+      "partner_badge": "Partner",
+      "partner_title": "B2B Partner",
+      "partner_price": "Custom pricing",
+      "partner_price_sub": "Evaluated case by case",
+      "partner_desc": "Are you a reading/streaming platform or a content creator? Every collaboration is evaluated individually.",
+      "partner_features": [
+        "Partner platforms: priority visibility to our audience, on a subscription basis",
+        "Content creators (YouTube, Twitch...): affiliation or compensation depending on the collaboration"
+      ],
       "contact_us": "Contact us"
     },
     "blog": {
