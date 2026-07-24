@@ -261,39 +261,70 @@
     "logout_description": "Terminer votre session en cours sur cet appareil"
   },
   "footer": {
-    "tagline": "Suivez vos mangas, animés et séries au même endroit — gratuit, sans publicité.",
+    "tagline": "Votre bibliothèque unique pour suivre mangas, manhwas, manhuas et animés, en français, sans jongler entre dix plateformes.",
     "product": "Produit",
     "resources": "Ressources",
     "legal": "Légal",
     "about": "À propos",
     "pricing": "Tarifs",
-    "blog": "Blog",
     "status": "Statut",
     "changelog": "Nouveautés",
     "suggestions": "Suggestions",
     "supported_sites": "Sites supportés",
+    "official_partners": "Partenaires officiels",
     "terms": "Conditions d'utilisation",
     "privacy": "Confidentialité",
     "cookies": "Cookies",
     "discord": "Rejoignez-nous sur Discord",
     "twitter": "Suivez-nous sur X",
     "contact": "Contact",
+    "social": "Social",
     "rights": "Tous droits réservés."
   },
   "static": {
-    "about": {
-      "label": "À propos",
-      "title": "À propos d'OharaTracker",
-      "p1": "OharaTracker est un projet personnel pensé pour celles et ceux qui lisent et regardent beaucoup de mangas, manhwas et animés, et qui en avaient assez de jongler entre dix sites différents pour tout suivre.",
-      "p2": "Notre objectif est simple : un seul endroit clair, rapide et sans publicité pour organiser sa bibliothèque, suivre les sorties et ne plus jamais perdre sa progression."
-    },
     "pricing": {
       "label": "Tarifs",
       "title": "Des tarifs simples et transparents",
-      "desc": "Commencez gratuitement. Passez au niveau supérieur quand vous en avez besoin.",
-      "personal_desc": "Tout ce qu'il faut pour suivre votre bibliothèque personnelle : suivi, notifications et statistiques de base, sans frais.",
-      "pro_desc": "Pour les partenaires et plateformes : intégrations avancées, limites étendues et support prioritaire.",
-      "contact_us": "Nous contacter"
+      "desc": "OharaTracker reste gratuit à la base. Passez à un forfait payant pour nous aider à construire le meilleur tracker et débloquer des fonctionnalités supplémentaires.",
+      "lite_badge": "Lite",
+      "lite_title": "Lite",
+      "lite_price": "4,99 €",
+      "lite_price_sub": "Facturé mensuellement",
+      "lite_features": [
+        "Système de suggestions intelligentes",
+        "Statistiques de lecture avancées",
+        "Accès anticipé aux nouvelles fonctionnalités",
+        "Bannière de profil personnalisée et avatar animé",
+        "Rôle spécial sur Discord",
+        "Aperçu des fonctionnalités en avant-première sur Discord"
+      ],
+      "lite_cta": "S'abonner",
+      "pro_badge": "Le plus populaire",
+      "pro_title": "Pro",
+      "pro_price": "7,99 €",
+      "pro_price_sub": "Facturé mensuellement",
+      "pro_features": [
+        "Recommandations personnalisées de séries",
+        "Découverte personnalisable",
+        "Système de suggestions intelligentes",
+        "Statistiques de lecture avancées",
+        "Filtres de statistiques",
+        "Accès anticipé aux nouvelles fonctionnalités",
+        "Bannière de profil et avatar animés",
+        "Rôle spécial sur Discord",
+        "Aperçu des fonctionnalités en avant-première sur Discord"
+      ],
+      "pro_cta": "S'abonner",
+      "partner_badge": "Partenaire",
+      "partner_title": "Partenaire B2B",
+      "partner_price": "Sur devis",
+      "partner_price_sub": "Étudié au cas par cas",
+      "partner_desc": "Vous êtes une plateforme de lecture/visionnage ou un créateur de contenu ? Chaque collaboration est étudiée individuellement.",
+      "partner_features": [
+        "Plateformes partenaires : mise en avant prioritaire auprès de notre audience, sur abonnement",
+        "Créateurs de contenu (YouTube, Twitch...) : affiliation ou rémunération selon la collaboration"
+      ],
+      "partner_cta": "Nous contacter"
     },
     "blog": {
       "label": "Blog",
@@ -327,6 +358,12 @@
       "title": "Sources supportées",
       "desc": "OharaTracker agrège les données depuis les plateformes suivantes.",
       "more_soon": "De nouvelles sources sont ajoutées régulièrement."
+    },
+    "official_partners": {
+      "label": "Partenaires officiels",
+      "title": "Nos partenaires officiels",
+      "desc": "Créateurs de contenu (YouTube, Twitch...) et sites partenaires avec lesquels OharaTracker collabore.",
+      "empty": "Aucun partenariat officiel pour le moment. Revenez bientôt !"
     },
     "contact": {
       "label": "Contact",
@@ -370,11 +407,11 @@
   "faq": {
     "label": "FAQ",
     "title": "Foire aux questions",
-    "subtitle": "Tout ce qu'il faut savoir sur Premium et OharaTracker.",
+    "subtitle": "Tout ce qu'il faut savoir sur Pro et OharaTracker.",
     "items": [
       {
-        "q": "Puis-je essayer Premium ?",
-        "a": "Oui, vous pouvez essayer Premium sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités premium. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
+        "q": "Puis-je essayer Pro ?",
+        "a": "Oui, vous pouvez essayer Pro sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités Pro. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
       },
       {
         "q": "Que se passe-t-il si je change d'offre ?",
@@ -390,7 +427,7 @@
       },
       {
         "q": "Quand l'offre Elite sera-t-elle disponible ?",
-        "a": "Aucune date de sortie n'est encore fixée. Les utilisateurs pourront passer à cette offre dès qu'elle sera disponible."
+        "a": "Aucune date de sortie n'est encore fixée. Elle sera déployée dès que la fonctionnalité sera prête. Si vous êtes abonné Lite ou Pro, vous pourrez passer à cette nouvelle offre dès sa disponibilité."
       },
       {
         "q": "Puis-je payer en crypto-monnaie ?",

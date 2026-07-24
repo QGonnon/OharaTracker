@@ -15,12 +15,12 @@ import Profile from '../components/Features/User/Profile/Profile.vue'
 
 // Pages statiques / footer
 import Pricing from '../components/Features/Static/Pricing.vue'
-import Faq from '../components/Features/Static/Faq.vue'
 import Blog from '../components/Features/Static/Blog.vue'
 import Status from '../components/Features/Static/Status.vue'
 import Changelog from '../components/Features/Static/Changelog.vue'
 import Suggestions from '../components/Features/Static/Suggestions.vue'
 import SupportedSites from '../components/Features/Static/SupportedSites.vue'
+import OfficialPartners from '../components/Features/Static/OfficialPartners.vue'
 import Contact from '../components/Features/Static/Contact.vue'
 import Terms from '../components/Features/Static/Terms.vue'
 import Privacy from '../components/Features/Static/Privacy.vue'
@@ -132,11 +132,6 @@ const routes: RouteRecordRaw[] = [
     component: Pricing,
   },
   {
-    path: '/faq',
-    name: 'Faq',
-    component: Faq,
-  },
-  {
     path: '/blog',
     name: 'Blog',
     component: Blog,
@@ -160,6 +155,11 @@ const routes: RouteRecordRaw[] = [
     path: '/supported-sites',
     name: 'SupportedSites',
     component: SupportedSites,
+  },
+  {
+    path: '/official-partners',
+    name: 'OfficialPartners',
+    component: OfficialPartners,
   },
   {
     path: '/contact',
