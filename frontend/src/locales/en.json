@@ -260,12 +260,14 @@
     "changelog": "Changelog",
     "suggestions": "Suggestions",
     "supported_sites": "Supported Sites",
+    "official_partners": "Official Partners",
     "terms": "Terms",
     "privacy": "Privacy",
     "cookies": "Cookies",
     "discord": "Join us on Discord",
     "twitter": "Follow us on X",
     "contact": "Contact",
+    "social": "Social",
     "rights": "All rights reserved."
   },
   "static": {
@@ -315,6 +317,12 @@
       "title": "Supported sources",
       "desc": "OharaTracker aggregates data from the following platforms.",
       "more_soon": "More sources are added regularly."
+    },
+    "official_partners": {
+      "label": "Official Partners",
+      "title": "Our official partners",
+      "desc": "Content creators (YouTube, Twitch...) and partner sites OharaTracker collaborates with.",
+      "empty": "No official partnership yet. Check back soon!"
     },
     "contact": {
       "label": "Contact",

@@ -261,7 +261,7 @@
     "logout_description": "Terminer votre session en cours sur cet appareil"
   },
   "footer": {
-    "tagline": "Suivez vos mangas, animés et séries au même endroit — gratuit, sans publicité.",
+    "tagline": "Votre outil de suivi préféré pour découvrir et suivre de nouvelles séries.",
     "product": "Produit",
     "resources": "Ressources",
     "legal": "Légal",
@@ -272,21 +272,17 @@
     "changelog": "Nouveautés",
     "suggestions": "Suggestions",
     "supported_sites": "Sites supportés",
+    "official_partners": "Partenaires officiels",
     "terms": "Conditions d'utilisation",
     "privacy": "Confidentialité",
     "cookies": "Cookies",
     "discord": "Rejoignez-nous sur Discord",
     "twitter": "Suivez-nous sur X",
     "contact": "Contact",
+    "social": "Social",
     "rights": "Tous droits réservés."
   },
   "static": {
-    "about": {
-      "label": "À propos",
-      "title": "À propos d'OharaTracker",
-      "p1": "OharaTracker est un projet personnel pensé pour celles et ceux qui lisent et regardent beaucoup de mangas, manhwas et animés, et qui en avaient assez de jongler entre dix sites différents pour tout suivre.",
-      "p2": "Notre objectif est simple : un seul endroit clair, rapide et sans publicité pour organiser sa bibliothèque, suivre les sorties et ne plus jamais perdre sa progression."
-    },
     "pricing": {
       "label": "Tarifs",
       "title": "Des tarifs simples et transparents",
@@ -327,6 +323,12 @@
       "title": "Sources supportées",
       "desc": "OharaTracker agrège les données depuis les plateformes suivantes.",
       "more_soon": "De nouvelles sources sont ajoutées régulièrement."
+    },
+    "official_partners": {
+      "label": "Partenaires officiels",
+      "title": "Nos partenaires officiels",
+      "desc": "Créateurs de contenu (YouTube, Twitch...) et sites partenaires avec lesquels OharaTracker collabore.",
+      "empty": "Aucun partenariat officiel pour le moment. Revenez bientôt !"
     },
     "contact": {
       "label": "Contact",

@@ -25,9 +25,10 @@ export default defineComponent({
       {
         title: t('footer.resources'),
         links: [
-          { label: t('footer.changelog'),       to: '/changelog'        },
-          { label: t('footer.suggestions'),     to: '/suggestions'      },
-          { label: t('footer.supported_sites'), to: '/supported-sites'  },
+          { label: t('footer.changelog'),          to: '/changelog'          },
+          { label: t('footer.suggestions'),        to: '/suggestions'        },
+          { label: t('footer.supported_sites'),    to: '/supported-sites'    },
+          { label: t('footer.official_partners'),  to: '/official-partners'  },
         ],
       },
       {

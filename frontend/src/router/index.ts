@@ -21,6 +21,7 @@ import Status from '../components/Features/Static/Status.vue'
 import Changelog from '../components/Features/Static/Changelog.vue'
 import Suggestions from '../components/Features/Static/Suggestions.vue'
 import SupportedSites from '../components/Features/Static/SupportedSites.vue'
+import OfficialPartners from '../components/Features/Static/OfficialPartners.vue'
 import Contact from '../components/Features/Static/Contact.vue'
 import Terms from '../components/Features/Static/Terms.vue'
 import Privacy from '../components/Features/Static/Privacy.vue'
@@ -160,6 +161,11 @@ const routes: RouteRecordRaw[] = [
     path: '/supported-sites',
     name: 'SupportedSites',
     component: SupportedSites,
+  },
+  {
+    path: '/official-partners',
+    name: 'OfficialPartners',
+    component: OfficialPartners,
   },
   {
     path: '/contact',
