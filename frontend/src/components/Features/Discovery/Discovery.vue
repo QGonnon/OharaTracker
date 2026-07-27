@@ -4,13 +4,13 @@
   <!-- SPOTLIGHT avec PrimeVue Card -->
   <div v-if="spotlightItem && !loading" class="w-full flex justify-center items-center min-h-[480px] relative overflow-hidden bg-gradient-to-br from-violet-600/60 to-indigo-900/80">
     <!-- Backdrop (en dessous) -->
-    <div class="absolute inset-0" :style="{ backgroundImage: `url(${spotlightItem.coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(28px) brightness(0.35) saturate(1.4)' }"></div>
+    <div class="absolute inset-0" :style="{ backgroundImage: `url(${getCoverUrl(spotlightItem)})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(28px) brightness(0.35) saturate(1.4)' }"></div>
     <!-- Overlay -->
     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-black/80"></div>
     <!-- Contenu principal -->
     <div class="flex flex-col md:flex-row items-center gap-8 p-8 max-w-5xl w-full relative">
       <div class="flex-shrink-0">
-        <img :src="spotlightItem.coverUrl" :alt="spotlightItem.title" class="rounded-xl shadow-2xl w-44 md:w-56 aspect-[3/4] object-cover" />
+        <img :src="getCoverUrl(spotlightItem)" :alt="spotlightItem.title" class="rounded-xl shadow-2xl w-44 md:w-56 aspect-[3/4] object-cover" />
       </div>
       <div class="flex flex-col gap-3 text-white max-w-xl">
         <div class="flex flex-wrap gap-2">
@@ -65,7 +65,7 @@
         <RouterLink v-for="(item, i) in trending" :key="item.title" :to="isAnime(item) ? `/anime/${slugify(item.title)}` : `/manga/${slugify(item.title)}`" class="flex items-center gap-3 min-w-[180px] max-w-[220px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 hover:shadow-lg transition">
           <span :class="['font-extrabold text-xl', Number(i) < 3 ? 'bg-gradient-to-r from-violet-500 to-pink-400 bg-clip-text text-transparent' : 'text-gray-400']">{{ String(Number(i) + 1).padStart(2, '0') }}</span>
           <div class="w-9 h-12 rounded overflow-hidden flex-shrink-0">
-            <img :src="item.coverUrl" :alt="item.title" class="w-full h-full object-cover" loading="lazy" />
+            <img :src="getCoverUrl(item)" :alt="item.title" class="w-full h-full object-cover" loading="lazy" />
           </div>
           <div class="flex-1 min-w-0">
             <p class="truncate font-semibold text-sm text-gray-900 dark:text-white">{{ item.title }}</p>
@@ -105,7 +105,7 @@
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
         <div v-for="item in filteredItems" :key="item.title" class="flex flex-col gap-4 my-2">
           <RouterLink :to="isAnime(item) ? `/anime/${slugify(item.title)}` : `/manga/${slugify(item.title)}`" class="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group block">
-            <img :src="item.coverUrl" :alt="item.title" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+            <img :src="getCoverUrl(item)" :alt="item.title" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 transition-opacity duration-200">
               <p class="text-white font-semibold text-sm truncate mb-2">{{ item.title }}</p>
             </div>

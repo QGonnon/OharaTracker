@@ -29,6 +29,7 @@ export interface Manga {
   // Derived flat fields for template convenience
   lastChapter?: string,
   chapterUrl?: string,
+  site?: string,
 }
 
 export interface User {

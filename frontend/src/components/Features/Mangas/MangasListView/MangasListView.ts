@@ -15,6 +15,7 @@ import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.v
 import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
+import mangaService from '../../../../services/manga.service'
 
 export default defineComponent({
     name: 'MangasListView',
@@ -79,19 +80,18 @@ export default defineComponent({
                     return;
                 }
 
-                const [clientResponse, chaptersResponse] = await Promise.all([
+                const [clientResponse, mangaList] = await Promise.all([
                     fetch(`${import.meta.env.VITE_API_URL}/client`, { headers: authHeaders() }),
-                    fetch(`${import.meta.env.VITE_API_URL}/chapters`),
+                    mangaService.getAll(),
                 ]);
 
                 if (!clientResponse.ok) throw new Error(`Erreur client: ${clientResponse.status}`);
-                if (!chaptersResponse.ok) throw new Error(`Erreur chapters: ${chaptersResponse.status}`);
 
                 clientInfo.value = await clientResponse.json();
-                const chaptersMap: Record<number, any> = await chaptersResponse.json();
+                const mangaById = new Map(mangaList.map(m => [m.id, m]));
 
                 mangas.value = (clientInfo.value?.libraryUsage ?? []).map((u: any): Manga => {
-                    const lib = chaptersMap[u.libraryId] ?? {};
+                    const lib = mangaById.get(u.libraryId) ?? ({} as Manga);
 
                     // Récupère le dernier chapitre disponible depuis les sites
                     let lastChapter: string | undefined;
