@@ -16,6 +16,7 @@ import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
 import mangaService from '../../../../services/manga.service'
+import libraryService from '../../../../services/library.service'
 
 export default defineComponent({
     name: 'MangasListView',
@@ -58,16 +59,12 @@ export default defineComponent({
         const displayedMangas = computed(() => {
             const list = (filteredMangas.value || []).slice();
             if (filterType.value === 'anime') {
-                return list.filter((i: any) => (i.type || 'Manga') === 'Anime');
+                return list.filter(m => mangaService.isAnimeType(m));
             }
             if (filterType.value === 'lecture') {
-                return list.filter((i: any) => (i.type || 'Manga') !== 'Anime');
+                return list.filter(m => !mangaService.isAnimeType(m));
             }
             return list;
-        });
-
-        const authHeaders = () => ({
-            Authorization: `Bearer ${authStore.user!.accessToken}`
         });
 
         const fetchMangas = async () => {
@@ -80,31 +77,17 @@ export default defineComponent({
                     return;
                 }
 
-                const [clientResponse, mangaList] = await Promise.all([
-                    fetch(`${import.meta.env.VITE_API_URL}/client`, { headers: authHeaders() }),
+                const [client, mangaList] = await Promise.all([
+                    libraryService.getClientInfo(authStore.user.accessToken),
                     mangaService.getAll(),
                 ]);
 
-                if (!clientResponse.ok) throw new Error(`Erreur client: ${clientResponse.status}`);
-
-                clientInfo.value = await clientResponse.json();
+                clientInfo.value = client;
                 const mangaById = new Map(mangaList.map(m => [m.id, m]));
 
                 mangas.value = (clientInfo.value?.libraryUsage ?? []).map((u: any): Manga => {
                     const lib = mangaById.get(u.libraryId) ?? ({} as Manga);
-
-                    // Récupère le dernier chapitre disponible depuis les sites
-                    let lastChapter: string | undefined;
-                    let chapterUrl: string | undefined;
-                    for (const site of Object.values(lib.sites ?? {}) as any[]) {
-                        const chapters: any[] = site.chapters ?? [];
-                        if (chapters.length > 0) {
-                            const last = chapters[chapters.length - 1];
-                            lastChapter = last.chapter;
-                            chapterUrl = last.url ?? last.chapterUrl;
-                            break;
-                        }
-                    }
+                    const { chapter: lastChapter, chapterUrl } = mangaService.getLastChapterInfo(lib);
 
                     return {
                         id: u.libraryId,
@@ -170,14 +153,7 @@ export default defineComponent({
             router.push({ name: routeName, params: { name: slugify(manga.title) } });
         };
 
-        const getCoverUrl = (manga: Manga): string => {
-            const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-            if (manga.coverPath) {
-                return `${apiBase}/cdn/${manga.coverPath}`;
-            }
-            if (manga.coverUrl) return manga.coverUrl;
-            return `https://picsum.photos/seed/${manga.id ?? manga.title}/400/600`;
-        };
+        const getCoverUrl = (manga: Manga): string => mangaService.getCoverUrl(manga);
 
         onMounted(async () => {
             await fetchMangas();

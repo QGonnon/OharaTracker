@@ -32,6 +32,13 @@ export interface Manga {
   lastChapter?: string,
   chapterUrl?: string,
   site?: string,
+  // Métadonnées additionnelles (séries/films notamment)
+  studio?: string,
+  totalEpisodes?: number | string,
+  totalSeasons?: number | string,
+  releaseDate?: string,
+  averageScore?: number,
+  userScore?: number | null,
 }
 
 export interface User {

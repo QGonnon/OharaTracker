@@ -11,36 +11,13 @@ import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
-import type { Manga, MediaKind } from '../../../../types/index'
+import type { Manga } from '../../../../types/index'
+import mangaService from '../../../../services/manga.service'
+import libraryService from '../../../../services/library.service'
 
 const parseTags = (theme: string | undefined): string[] => {
   if (!theme) return []
   return theme.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
-}
-
-// Résout le MediaKind depuis le nom de route ou le champ type BDD
-const resolveMediaKind = (routeName: string | symbol | null | undefined, dbType?: string): MediaKind => {
-  const name = String(routeName || '').toLowerCase()
-
-  // Priorité : nom de route explicite (nouvelles routes)
-  if (name.includes('lecture')) return 'lecture'
-  if (name.includes('serie')) return 'serie'
-  if (name.includes('film')) return 'film'
-
-  // Fallback : champ type BDD (migration en cours par le collègue)
-  if (dbType) {
-    const t = dbType.toLowerCase()
-    if (t === 'lecture') return 'lecture'
-    if (t === 'serie') return 'serie'
-    if (t === 'film') return 'film'
-    // Anciens types
-    if (t === 'anime') return 'serie'
-    if (t === 'manga') return 'lecture'
-  }
-
-  // Fallback : anciennes routes
-  if (name.includes('anime')) return 'serie'
-  return 'lecture' // défaut
 }
 
 export default defineComponent({
@@ -63,25 +40,12 @@ export default defineComponent({
     const addSuccess = ref<boolean>(false)
     const isInLibrary = ref<boolean>(false)
     const isLoggedIn = computed(() => authStore.isLoggedIn)
-    const animeSources = ['moviedb', 'anime-sama']
-    const isAnime = computed(() => !!manga.value.sites && animeSources.some(source => manga.value.sites[source]))
-
-    const getBestSiteKey = (m: Manga): string => {
-      let bestKey = ''
-      let maxChapters = 0
-      for (const key in m.sites) {
-        if (m.sites[key].chapters.length > maxChapters) {
-          maxChapters = m.sites[key].chapters.length
-          bestKey = key
-        }
-      }
-      return bestKey
-    }
-    const userScore = computed(() => (manga.value as any).userScore ?? null)
+    const isAnime = computed(() => mangaService.isAnimeType(manga.value))
+    const userScore = computed(() => manga.value.userScore ?? null)
 
     // Source de vérité unique pour le type de média
-    const mediaKind = computed<MediaKind>(() =>
-      resolveMediaKind(route.name, manga.value.type)
+    const mediaKind = computed(() =>
+      mangaService.resolveMediaKind(route.name, manga.value.type)
     )
 
     // Aliases lisibles dans le template
@@ -89,12 +53,7 @@ export default defineComponent({
     const isSerie = computed(() => mediaKind.value === 'serie')
     const isFilm = computed(() => mediaKind.value === 'film')
 
-    const getItemCover = (item: Manga): string => {
-      const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-      if (item.coverPath) return `${apiBase}/cdn/${item.coverPath}`
-      if (item.coverUrl) return item.coverUrl
-      return `https://picsum.photos/seed/${item.title}/200/300`
-    }
+    const getItemCover = (item: Manga): string => mangaService.getCoverUrl(item)
 
     const similarWorks = computed(() => {
       const currentTags = parseTags(manga.value.theme)
@@ -110,16 +69,11 @@ export default defineComponent({
         .slice(0, 6)
     })
 
-    const coverSrc = computed(() => {
-      const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-      if (manga.value.coverPath) return `${apiBase}/cdn/${manga.value.coverPath}`
-      if (manga.value.coverUrl) return manga.value.coverUrl
-      return `https://picsum.photos/seed/${manga.value.title}/400/300`
-    })
+    const coverSrc = computed(() => mangaService.getCoverUrl(manga.value))
 
     // Génère le path de navigation vers une oeuvre similaire selon son type
     const similarWorkPath = (item: Manga): string => {
-      const kind = resolveMediaKind(null, item.type)
+      const kind = mangaService.resolveMediaKind(null, item.type)
       return `/${kind}/${slugify(item.title)}`
     }
 
@@ -127,19 +81,13 @@ export default defineComponent({
       loading.value = true
       error.value = null
       try {
-        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-        const response = await fetch(`${apiBase}/chapters`)
-        const chaptersMap: Record<string, any> = (await response.json()) || {}
+        const entries = await mangaService.getAll()
+        allMangas.value = entries
 
-        // Object.entries pour garder le libraryId (clé) et éviter les trous du tableau sparse
-        const entries = Object.entries(chaptersMap).filter(([, m]) => m?.title)
-        const foundEntry = entries.find(([, m]) => slugify(m.title) === route.params.name)
+        const found = mangaService.findBySlug(entries, route.params.name)
 
-        allMangas.value = entries.map(([id, m]) => ({ ...m, id: Number(id) } as Manga))
-
-        if (foundEntry) {
-          const [id, data] = foundEntry
-          manga.value = { ...data, id: Number(id) } as Manga
+        if (found) {
+          manga.value = found
           if (isLoggedIn.value) {
             await checkLibraryStatus()
           }
@@ -173,18 +121,9 @@ export default defineComponent({
 
     const siteKeys = computed(() => manga.value.sites ? Object.keys(manga.value.sites) : [])
 
-    const lastChapter = computed((): string => {
-      if (!manga.value.sites) return ''
-      const bestKey = getBestSiteKey(manga.value)
-      return bestKey ? manga.value.sites[bestKey].chapters?.[0]?.chapter ?? '' : ''
-    })
+    const lastChapter = computed((): string => mangaService.getLastChapterInfo(manga.value).chapter ?? '')
 
-    const chapterUrl = computed((): string => {
-      if (!manga.value.sites) return ''
-      const bestKey = getBestSiteKey(manga.value)
-      const site = bestKey ? manga.value.sites[bestKey] : null
-      return site?.chapters?.[0]?.chapterUrl ?? site?.chapterUrl ?? ''
-    })
+    const chapterUrl = computed((): string => mangaService.getLastChapterInfo(manga.value).chapterUrl ?? '')
 
     const openChapter = () => {
       if (chapterUrl.value) window.open(chapterUrl.value, '_blank')
@@ -192,18 +131,9 @@ export default defineComponent({
 
     // 📖 Ouvrir la page du manga sur la source avec le plus de chapitres
     const openSource = () => {
-      let bestSource = ''
-      let maxChapters = 0
-      for (const site in manga.value.sites) {
-        const chapters = manga.value.sites[site].chapters.length
-        if (chapters > maxChapters) {
-          maxChapters = chapters
-          bestSource = site
-        }
-      }
-      if (manga.value.sites[bestSource]?.mangaUrl) {
-        window.open(manga.value.sites[bestSource].mangaUrl, '_blank')
-      }
+      const bestKey = mangaService.getBestSiteKey(manga.value)
+      const mangaUrl = bestKey ? manga.value.sites[bestKey]?.mangaUrl : undefined
+      if (mangaUrl) window.open(mangaUrl, '_blank')
     }
 
     const editDialog = ref(false)
@@ -222,12 +152,7 @@ export default defineComponent({
     const checkLibraryStatus = async () => {
       if (!authStore.user?.accessToken || !manga.value?.id) return
       try {
-        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-        const response = await fetch(`${apiBase}/client`, {
-          headers: { Authorization: `Bearer ${authStore.user.accessToken}` }
-        })
-        if (!response.ok) return
-        const client = await response.json()
+        const client = await libraryService.getClientInfo(authStore.user.accessToken)
 
         const found = (client.libraryUsage ?? []).find((u: any) => u.libraryId === manga.value.id)
 
@@ -251,35 +176,25 @@ export default defineComponent({
       addSuccess.value = false
       adding.value = true
       try {
-        const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-        const apiUrl = `${apiBase}/library`
-        const bestKey = getBestSiteKey(manga.value)
+        const bestKey = mangaService.getBestSiteKey(manga.value)
         const bestSite = bestKey ? manga.value.sites[bestKey] : null
-        const lastChapterEntry = bestSite?.chapters?.[0]
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authStore.user.accessToken}`
-          },
-          body: JSON.stringify({
-            title: manga.value.title,
-            type: mediaKind.value, // envoie le nouveau type normalisé
-            author: manga.value.author,
-            theme: manga.value.theme,
-            status: manga.value.status,
-            description: manga.value.description,
-            coverPath: manga.value.coverPath,
-            coverUrl: manga.value.coverUrl,
-            lastChapter: lastChapterEntry?.chapter,
-            chapterUrl: lastChapterEntry?.chapterUrl ?? bestSite?.chapterUrl,
-            mangaUrl: bestSite?.mangaUrl,
-            site: bestKey || 'Unknown'
-          })
+        const { chapter, chapterUrl: bestChapterUrl } = mangaService.getLastChapterInfo(manga.value)
+        const { ok, status, data } = await libraryService.addToLibrary(authStore.user.accessToken, {
+          title: manga.value.title,
+          type: mediaKind.value, // envoie le nouveau type normalisé
+          author: manga.value.author,
+          theme: manga.value.theme,
+          status: manga.value.status,
+          description: manga.value.description,
+          coverPath: manga.value.coverPath,
+          coverUrl: manga.value.coverUrl,
+          lastChapter: chapter,
+          chapterUrl: bestChapterUrl ?? bestSite?.chapterUrl,
+          mangaUrl: bestSite?.mangaUrl,
+          site: bestKey || 'Unknown'
         })
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({ message: "Erreur lors de l'ajout." }))
-          if (response.status === 409) {
+        if (!ok) {
+          if (status === 409) {
             isInLibrary.value = true
             addError.value = data.message || 'Déjà dans votre bibliothèque.'
             return
@@ -304,6 +219,8 @@ export default defineComponent({
       openSource,
       coverSrc,
       isLoggedIn,
+      isAnime,
+      userScore,
       mediaKind,
       isLecture,
       isSerie,

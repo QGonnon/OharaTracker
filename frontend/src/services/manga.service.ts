@@ -1,8 +1,11 @@
 import { slugify } from '../utils'
-import type { Manga } from '../types/index'
+import type { Manga, MediaKind } from '../types/index'
 
 const getApiBase = (): string =>
   import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+
+// Sources dont la présence dans `sites` indique un anime plutôt qu'un manga/lecture
+const ANIME_SOURCES = ['moviedb', 'anime-sama']
 
 class MangaService {
   async getAll(): Promise<Manga[]> {
@@ -40,16 +43,58 @@ class MangaService {
     return bestKey
   }
 
-  // Ajoute les champs plats (site/lastChapter/chapterUrl) dérivés de la meilleure source, pour la commodité des templates
-  private withDisplayFields(manga: Manga): Manga {
+  // Dernier chapitre/épisode connu, dérivé de la meilleure source
+  getLastChapterInfo(manga: Manga): { chapter?: string; chapterUrl?: string } {
     const bestKey = this.getBestSiteKey(manga)
     const bestSite = bestKey ? manga.sites[bestKey] : null
     const lastChapterEntry = bestSite?.chapters?.[0]
     return {
+      chapter: lastChapterEntry?.chapter,
+      chapterUrl: lastChapterEntry?.chapterUrl ?? lastChapterEntry?.url ?? bestSite?.chapterUrl,
+    }
+  }
+
+  // Détecte si l'oeuvre est un anime : soit via le type BDD, soit via ses sources (moviedb, anime-sama, ...)
+  isAnimeType(manga: Pick<Manga, 'type' | 'sites'>): boolean {
+    const type = manga.type?.toLowerCase()
+    if (type === 'anime' || type === 'serie') return true
+    return Object.keys(manga.sites || {}).some(source => ANIME_SOURCES.includes(source))
+  }
+
+  // Résout le MediaKind depuis le nom de route ou le champ type BDD
+  resolveMediaKind(routeName: string | symbol | null | undefined, dbType?: string): MediaKind {
+    const name = String(routeName || '').toLowerCase()
+
+    // Priorité : nom de route explicite (nouvelles routes)
+    if (name.includes('lecture')) return 'lecture'
+    if (name.includes('serie')) return 'serie'
+    if (name.includes('film')) return 'film'
+
+    // Fallback : champ type BDD (migration en cours par le collègue)
+    if (dbType) {
+      const t = dbType.toLowerCase()
+      if (t === 'lecture') return 'lecture'
+      if (t === 'serie') return 'serie'
+      if (t === 'film') return 'film'
+      // Anciens types
+      if (t === 'anime') return 'serie'
+      if (t === 'manga') return 'lecture'
+    }
+
+    // Fallback : anciennes routes
+    if (name.includes('anime')) return 'serie'
+    return 'lecture' // défaut
+  }
+
+  // Ajoute les champs plats (site/lastChapter/chapterUrl) dérivés de la meilleure source, pour la commodité des templates
+  private withDisplayFields(manga: Manga): Manga {
+    const bestKey = this.getBestSiteKey(manga)
+    const { chapter, chapterUrl } = this.getLastChapterInfo(manga)
+    return {
       ...manga,
       site: bestKey || undefined,
-      lastChapter: lastChapterEntry?.chapter,
-      chapterUrl: lastChapterEntry?.chapterUrl ?? lastChapterEntry?.url ?? bestSite?.chapterUrl,
+      lastChapter: chapter,
+      chapterUrl,
     }
   }
 }

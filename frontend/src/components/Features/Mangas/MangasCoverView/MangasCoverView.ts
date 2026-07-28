@@ -16,9 +16,7 @@ export default defineComponent({
         const loading = ref<boolean>(true);
         const filterType = ref<'all' | 'anime' | 'lecture'>('all');
 
-        const isAnime = (manga: Manga): boolean => {
-            return (manga.type || 'Manga').toString().toLowerCase() === 'anime';
-        };
+        const isAnime = (manga: Manga): boolean => mangaService.isAnimeType(manga);
 
         const displayedMangas = computed(() => {
             if (filterType.value === 'all') {
