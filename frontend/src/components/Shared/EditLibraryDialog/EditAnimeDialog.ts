@@ -22,9 +22,9 @@ export default defineComponent({
     const episodeOptions = ref<{ label: string; value: string }[]>([])
     const episodeRows = ref<{ chapter: string; url: string; site: string }[]>([])
     const statusOptions = ref([
-      { label: 'Entrain de regarder', value: 'Entrain de regarder' },
-      { label: 'Abandonner', value: 'Abandonner' },
-      { label: 'Prévois de regarder', value: 'Prévois de regarder' }
+      { label: 'En cours', value: 'En cours' },
+      { label: 'Abandonné', value: 'Abandonné' },
+      { label: 'Prévus', value: 'Prévus' }
     ])
     const editSource = ref<string>('')
     const saving = ref(false)

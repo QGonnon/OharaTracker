@@ -13,6 +13,19 @@ import MangasListView from '../components/Features/Mangas/MangasListView/MangasL
 import Search from '../components/Features/Search/Search.vue'
 import Profile from '../components/Features/User/Profile/Profile.vue'
 
+// Pages statiques / footer
+import Pricing from '../components/Features/Static/Pricing.vue'
+import Blog from '../components/Features/Static/Blog.vue'
+import Status from '../components/Features/Static/Status.vue'
+import Changelog from '../components/Features/Static/Changelog.vue'
+import Suggestions from '../components/Features/Static/Suggestions.vue'
+import SupportedSites from '../components/Features/Static/SupportedSites.vue'
+import OfficialPartners from '../components/Features/Static/OfficialPartners.vue'
+import Contact from '../components/Features/Static/Contact.vue'
+import Terms from '../components/Features/Static/Terms.vue'
+import Privacy from '../components/Features/Static/Privacy.vue'
+import Cookies from '../components/Features/Static/Cookies.vue'
+
 // const BoardAdmin = () => import("../components/Features/User/BoardAdmin/BoardAdmin.vue")
 // const BoardModerator = () => import("../components/Features/User/BoardModerator/BoardModerator.vue")
 // const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.vue")
@@ -39,11 +52,28 @@ const routes: RouteRecordRaw[] = [
     component: Search,
   },
   {
+    path: '/lecture/:name',
+    name: 'LectureInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
+    path: '/serie/:name',
+    name: 'SerieInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
+    path: '/film/:name',
+    name: 'FilmInfo',
+    component: MangaInfo,
+    props: true,
+  },
+  {
     path: '/manga/:name',
     name: 'MangaInfo',
     component: MangaInfo,
     props: true,
-    
   },
   {
     path: '/anime/:name',
@@ -96,6 +126,61 @@ const routes: RouteRecordRaw[] = [
   //   name: "user",
   //   component: BoardUser,
   // },
+  {
+    path: '/pricing',
+    name: 'Pricing',
+    component: Pricing,
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    component: Blog,
+  },
+  {
+    path: '/status',
+    name: 'Status',
+    component: Status,
+  },
+  {
+    path: '/changelog',
+    name: 'Changelog',
+    component: Changelog,
+  },
+  {
+    path: '/suggestions',
+    name: 'Suggestions',
+    component: Suggestions,
+  },
+  {
+    path: '/supported-sites',
+    name: 'SupportedSites',
+    component: SupportedSites,
+  },
+  {
+    path: '/official-partners',
+    name: 'OfficialPartners',
+    component: OfficialPartners,
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: Contact,
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: Terms,
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: Privacy,
+  },
+  {
+    path: '/cookies',
+    name: 'Cookies',
+    component: Cookies,
+  },
   {
     path: '/:pathMatch(.*)',
     redirect: '/home',

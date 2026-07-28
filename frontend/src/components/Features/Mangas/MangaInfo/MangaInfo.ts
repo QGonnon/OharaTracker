@@ -1,6 +1,5 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { /*useRouter,*/ useRoute } from 'vue-router'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
 import { useAuthStore } from '../../../../store/auth.module'
@@ -12,29 +11,48 @@ import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
-import type { Manga } from '../../../../types/index'
+import type { Manga, MediaKind } from '../../../../types/index'
 
 const parseTags = (theme: string | undefined): string[] => {
   if (!theme) return []
   return theme.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
 }
 
+// Résout le MediaKind depuis le nom de route ou le champ type BDD
+const resolveMediaKind = (routeName: string | symbol | null | undefined, dbType?: string): MediaKind => {
+  const name = String(routeName || '').toLowerCase()
+
+  // Priorité : nom de route explicite (nouvelles routes)
+  if (name.includes('lecture')) return 'lecture'
+  if (name.includes('serie')) return 'serie'
+  if (name.includes('film')) return 'film'
+
+  // Fallback : champ type BDD (migration en cours par le collègue)
+  if (dbType) {
+    const t = dbType.toLowerCase()
+    if (t === 'lecture') return 'lecture'
+    if (t === 'serie') return 'serie'
+    if (t === 'film') return 'film'
+    // Anciens types
+    if (t === 'anime') return 'serie'
+    if (t === 'manga') return 'lecture'
+  }
+
+  // Fallback : anciennes routes
+  if (name.includes('anime')) return 'serie'
+  return 'lecture' // défaut
+}
+
 export default defineComponent({
   name: 'MangaInfo',
   components: {
-    Menu,
-    Card,
-    Button,
-    Message,
-    Tag,
-    Chip,
-    Divider,
-    EditLibraryDialog,
-    EditAnimeDialog
+    Menu, Card, Button, Message, Tag, Chip, Divider,
+    EditLibraryDialog, EditAnimeDialog
   },
 
   setup() {
     const route = useRoute()
+    //const router = useRouter()
     const authStore = useAuthStore()
     const manga = ref<Manga>({} as Manga)
     const allMangas = ref<Manga[]>([])
@@ -59,6 +77,17 @@ export default defineComponent({
       }
       return bestKey
     }
+    const userScore = computed(() => (manga.value as any).userScore ?? null)
+
+    // Source de vérité unique pour le type de média
+    const mediaKind = computed<MediaKind>(() =>
+      resolveMediaKind(route.name, manga.value.type)
+    )
+
+    // Aliases lisibles dans le template
+    const isLecture = computed(() => mediaKind.value === 'lecture')
+    const isSerie = computed(() => mediaKind.value === 'serie')
+    const isFilm = computed(() => mediaKind.value === 'film')
 
     const getItemCover = (item: Manga): string => {
       const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
@@ -83,18 +112,20 @@ export default defineComponent({
 
     const coverSrc = computed(() => {
       const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-      
-      if (manga.value.coverPath) {
-        return `${apiBase}/cdn/${manga.value.coverPath}`
-      }
+      if (manga.value.coverPath) return `${apiBase}/cdn/${manga.value.coverPath}`
       if (manga.value.coverUrl) return manga.value.coverUrl
       return `https://picsum.photos/seed/${manga.value.title}/400/300`
     })
 
+    // Génère le path de navigation vers une oeuvre similaire selon son type
+    const similarWorkPath = (item: Manga): string => {
+      const kind = resolveMediaKind(null, item.type)
+      return `/${kind}/${slugify(item.title)}`
+    }
+
     const fetchMangas = async () => {
       loading.value = true
       error.value = null
-
       try {
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const response = await fetch(`${apiBase}/chapters`)
@@ -114,41 +145,31 @@ export default defineComponent({
           }
         } else {
           manga.value = {} as Manga
-          error.value = 'Manga non trouvé.'
+          error.value = 'Oeuvre non trouvée.'
         }
       } catch (err) {
-        console.error('❌ Erreur lors de la récupération des mangas :', err)
+        console.error('Erreur lors de la récupération :', err)
         error.value = 'Erreur de connexion au serveur.'
       } finally {
         loading.value = false
       }
     }
 
-    // 🕓 Chargement initial
     onMounted(fetchMangas)
 
-    // 🔁 Mise à jour si l'URL change
-    watch(
-      () => route.params.name,
-      (newName, oldName) => {
-        if (newName !== oldName) fetchMangas()
-      }
-    )
+    watch(() => route.params.name, (newName, oldName) => {
+      if (newName !== oldName) fetchMangas()
+    })
 
-    watch(
-      () => isLoggedIn.value,
-      (loggedIn) => {
-        if (!loggedIn) {
-          isInLibrary.value = false
-          addSuccess.value = false
-          addError.value = null
-          return
-        }
-        if (manga.value?.title) {
-          checkLibraryStatus()
-        }
+    watch(() => isLoggedIn.value, (loggedIn) => {
+      if (!loggedIn) {
+        isInLibrary.value = false
+        addSuccess.value = false
+        addError.value = null
+        return
       }
-    )
+      if (manga.value?.title) checkLibraryStatus()
+    })
 
     const siteKeys = computed(() => manga.value.sites ? Object.keys(manga.value.sites) : [])
 
@@ -187,10 +208,7 @@ export default defineComponent({
 
     const editDialog = ref(false)
     const openEdit = async () => {
-      // Ensure library status is loaded before opening edit dialog
-      if (isLoggedIn.value && manga.value?.title) {
-        await checkLibraryStatus()
-      }
+      if (isLoggedIn.value && manga.value?.title) await checkLibraryStatus()
       editDialog.value = true
     }
 
@@ -208,7 +226,6 @@ export default defineComponent({
         const response = await fetch(`${apiBase}/client`, {
           headers: { Authorization: `Bearer ${authStore.user.accessToken}` }
         })
-
         if (!response.ok) return
         const client = await response.json()
 
@@ -233,7 +250,6 @@ export default defineComponent({
       addError.value = null
       addSuccess.value = false
       adding.value = true
-
       try {
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const apiUrl = `${apiBase}/library`
@@ -248,10 +264,13 @@ export default defineComponent({
           },
           body: JSON.stringify({
             title: manga.value.title,
+            type: mediaKind.value, // envoie le nouveau type normalisé
             author: manga.value.author,
+            studio: manga.value.studio,
             theme: manga.value.theme,
             status: manga.value.status,
             description: manga.value.description,
+            releaseDate: manga.value.releaseDate,
             coverPath: manga.value.coverPath,
             coverUrl: manga.value.coverUrl,
             lastChapter: lastChapterEntry?.chapter,
@@ -260,35 +279,24 @@ export default defineComponent({
             site: bestKey || 'Unknown'
           })
         })
-
         if (!response.ok) {
-          const data = await response.json().catch(() => ({ message: 'Erreur lors de l\'ajout.' }))
+          const data = await response.json().catch(() => ({ message: "Erreur lors de l'ajout." }))
           if (response.status === 409) {
             isInLibrary.value = true
             addError.value = data.message || 'Déjà dans votre bibliothèque.'
             return
           }
-          throw new Error(data.message || 'Impossible d\'ajouter ce manga.')
+          throw new Error(data.message || "Impossible d'ajouter cette oeuvre.")
         }
-
         addSuccess.value = true
         isInLibrary.value = true
         await checkLibraryStatus()
         editDialog.value = true
       } catch (err: any) {
-        addError.value = err?.message || 'Impossible d\'ajouter ce manga.'
+        addError.value = err?.message || "Impossible d'ajouter cette oeuvre."
       } finally {
         adding.value = false
       }
-    }
-
-    const formatAnimeNumber = (num: string): string => {
-      //{{ isAnime ? $t('manga.season') + " " + manga.lastChapter.split('.')[0]:"" }} {{ $t('manga.episode') + " " + manga.lastChapter.split('.')[1] || $t('manga.unknown') }}
-      const numArray = num.split('.') || []
-      const season = numArray[0] ? `manga.season${numArray[0]}` : ''
-      const episode = numArray[1] ? `manga.episode${numArray[1]}` : ''
-      return `${season}${season && episode ? ' ' : ''}${episode}`
-      
     }
 
     return {
@@ -298,17 +306,20 @@ export default defineComponent({
       openSource,
       coverSrc,
       isLoggedIn,
-      isAnime,
+      mediaKind,
+      isLecture,
+      isSerie,
+      isFilm,
       addToLibrary,
       adding,
       addError,
       addSuccess,
       isInLibrary,
       similarWorks,
+      similarWorkPath,
       parseTags,
       slugify,
       getItemCover,
-      // edit dialog bindings
       editDialog,
       openEdit,
       onUpdated,
@@ -317,6 +328,7 @@ export default defineComponent({
       lastChapter,
       chapterUrl,
       openChapter
+      userScore,
     }
   }
 })

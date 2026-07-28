@@ -2,6 +2,8 @@
  * Types et interfaces centralisés pour l'application
  */
 
+export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
+
 export interface Manga {
   id?: number,
   title: string,

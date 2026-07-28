@@ -1,1 +1,4 @@
-/* Home page — styles complémentaires à Tailwind */
+
+/* Lightbox transition */
+.lb-enter-active, .lb-leave-active { transition: opacity 0.2s ease; }
+.lb-enter-from, .lb-leave-to       { opacity: 0; }
