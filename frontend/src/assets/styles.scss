@@ -1,2 +1,16 @@
 @use 'primeicons/primeicons.css';
 @use 'layout/layout.scss';
+
+:root {
+  --p-primary-color: #4f46e5;
+  --p-primary-hover-color: #4338ca;
+  --p-primary-active-color: #3730a3;
+  --p-primary-contrast-color: #ffffff;
+}
+
+.dark-theme {
+  --p-primary-color: #818cf8;
+  --p-primary-hover-color: #6366f1;
+  --p-primary-active-color: #4f46e5;
+  --p-primary-contrast-color: #ffffff;
+}

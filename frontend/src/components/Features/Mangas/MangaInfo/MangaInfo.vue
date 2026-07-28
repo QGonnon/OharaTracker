@@ -13,9 +13,9 @@
       {{ error }}
     </Message>
 
-    <!-- Manga Content -->
+    <!-- Content -->
     <div v-else-if="manga && manga.title" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Image Column -->
+      <!-- Cover -->
       <div class="lg:col-span-1">
         <Card class="overflow-hidden">
           <template #content>
@@ -30,6 +30,7 @@
 
       <!-- Info Column -->
       <div class="lg:col-span-2 space-y-6">
+
         <!-- Title Card -->
         <Card>
           <template #title>
@@ -55,7 +56,9 @@
           </template>
           <template #content>
             <div class="space-y-4">
-              <div class="flex items-start gap-3">
+
+              <!-- Auteur (lecture uniquement) -->
+              <div v-if="isLecture" class="flex items-start gap-3">
                 <i class="pi pi-user text-primary mt-1"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.author') }}</p>
@@ -65,10 +68,22 @@
                 </div>
               </div>
 
+              <!-- Studio (série et film) -->
+              <div v-if="isSerie || isFilm" class="flex items-start gap-3">
+                <i class="pi pi-building text-primary mt-1"></i>
+                <div>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.studio') }}</p>
+                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{ manga.studio || manga.artist || $t('manga.unknown') }}
+                  </p>
+                </div>
+              </div>
+
               <Divider />
 
-              <div class="flex items-start gap-3">
-                <i class="pi pi-bookmark text-primary mt-1"></i>
+              <!-- Nb chapitres (lecture) -->
+              <div v-if="isLecture" class="flex items-start gap-3">
+                <i class="pi pi-book text-primary mt-1"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -79,6 +94,66 @@
                   </p>
                 </div>
               </div>
+
+              <!-- Nb épisodes + saisons (série) -->
+              <template v-if="isSerie">
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-video text-primary mt-1"></i>
+                  <div>
+                    <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_episodes') }}</p>
+                    <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                      {{ manga.totalEpisodes ?? manga.lastChapter ?? $t('manga.unknown') }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-list text-primary mt-1"></i>
+                  <div>
+                    <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_seasons') }}</p>
+                    <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                      {{ manga.totalSeasons ?? $t('manga.unknown') }}
+                    </p>
+                  </div>
+                </div>
+              </template>
+
+              <Divider />
+
+              <!-- Date de parution (tous les types) -->
+              <div class="flex items-start gap-3">
+                <i class="pi pi-calendar text-primary mt-1"></i>
+                <div>
+                  <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.release_date') }}</p>
+                  <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                    {{ manga.releaseDate || $t('manga.unknown') }}
+                  </p>
+                </div>
+              </div>
+
+              <Divider />
+
+              <!-- Scores (tous les types) -->
+              <div class="flex gap-6">
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-star text-primary mt-1"></i>
+                  <div>
+                    <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.average_score') }}</p>
+                    <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                      {{ manga.averageScore ?? $t('manga.unknown') }}
+                    </p>
+                  </div>
+                </div>
+                <div v-if="isLoggedIn && isInLibrary" class="flex items-start gap-3">
+                  <i class="pi pi-star-fill text-warning mt-1"></i>
+                  <div>
+                    <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.user_score') }}</p>
+                    <p class="text-base font-medium text-surface-900 dark:text-surface-0">
+                      {{ userScore ?? $t('manga.unknown') }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </template>
         </Card>
@@ -102,7 +177,6 @@
           <Message v-if="addError && !isInLibrary" severity="error" :closable="false">
             {{ addError }}
           </Message>
-
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
             v-if="chapterUrl"
@@ -140,6 +214,7 @@
           />
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -154,7 +229,7 @@
       <RouterLink
         v-for="item in similarWorks"
         :key="item.title"
-        :to="`/${ isAnime ? 'anime' : 'manga'}/${slugify(item.title)}`"
+        :to="similarWorkPath(item)"
         class="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-800 group block"
       >
         <img
@@ -165,15 +240,13 @@
         />
         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-3 transition-opacity duration-200">
           <p class="text-white font-semibold text-sm truncate mb-1">{{ item.title }}</p>
-          <div class="flex flex-wrap gap-1">
-          </div>
         </div>
       </RouterLink>
     </div>
   </div>
 
-  <!-- Edit Dialog (shared) -->
-  <EditAnimeDialog v-if="isAnime" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
+  <!-- Edit Dialogs -->
+  <EditAnimeDialog v-if="isSerie" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
   <EditLibraryDialog v-else v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
 </template>
 
