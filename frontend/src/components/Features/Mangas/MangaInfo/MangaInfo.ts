@@ -266,11 +266,9 @@ export default defineComponent({
             title: manga.value.title,
             type: mediaKind.value, // envoie le nouveau type normalisé
             author: manga.value.author,
-            studio: manga.value.studio,
             theme: manga.value.theme,
             status: manga.value.status,
             description: manga.value.description,
-            releaseDate: manga.value.releaseDate,
             coverPath: manga.value.coverPath,
             coverUrl: manga.value.coverUrl,
             lastChapter: lastChapterEntry?.chapter,
@@ -323,12 +321,10 @@ export default defineComponent({
       editDialog,
       openEdit,
       onUpdated,
-      formatAnimeNumber,
       siteKeys,
       lastChapter,
       chapterUrl,
       openChapter
-      userScore,
     }
   }
 })
