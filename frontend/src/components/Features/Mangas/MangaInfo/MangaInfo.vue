@@ -102,7 +102,7 @@
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_episodes') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                      {{ manga.totalEpisodes ?? manga.lastChapter ?? $t('manga.unknown') }}
+                      {{ totalEpisodes ?? $t('manga.unknown') }}
                     </p>
                   </div>
                 </div>
@@ -111,7 +111,7 @@
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_seasons') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                      {{ manga.totalSeasons ?? $t('manga.unknown') }}
+                      {{ totalSeasons ?? $t('manga.unknown') }}
                     </p>
                   </div>
                 </div>

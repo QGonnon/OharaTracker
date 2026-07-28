@@ -54,6 +54,21 @@ class MangaService {
     }
   }
 
+  // Nombre total d'épisodes/saisons connus, déduit des chapitres (format "saison.episode") de la meilleure source
+  getSeasonEpisodeStats(manga: Manga): { totalEpisodes?: number; totalSeasons?: number } {
+    const bestKey = this.getBestSiteKey(manga)
+    const chapters = bestKey ? manga.sites[bestKey]?.chapters : undefined
+    if (!chapters || chapters.length === 0) return {}
+
+    const seasons = new Set(
+      chapters.map(c => c.chapter?.split('.')[0]).filter((s): s is string => Boolean(s))
+    )
+    return {
+      totalEpisodes: chapters.length,
+      totalSeasons: seasons.size || undefined,
+    }
+  }
+
   // Détecte si l'oeuvre est un anime : soit via le type BDD, soit via ses sources (moviedb, anime-sama, ...)
   isAnimeType(manga: Pick<Manga, 'type' | 'sites'>): boolean {
     const type = manga.type?.toLowerCase()

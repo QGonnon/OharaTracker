@@ -43,6 +43,11 @@ export default defineComponent({
     const isAnime = computed(() => mangaService.isAnimeType(manga.value))
     const userScore = computed(() => manga.value.userScore ?? null)
 
+    // Totaux épisodes/saisons : valeur BDD si dispo, sinon déduits des chapitres connus
+    const seasonEpisodeStats = computed(() => mangaService.getSeasonEpisodeStats(manga.value))
+    const totalEpisodes = computed(() => manga.value.totalEpisodes ?? seasonEpisodeStats.value.totalEpisodes)
+    const totalSeasons = computed(() => manga.value.totalSeasons ?? seasonEpisodeStats.value.totalSeasons)
+
     // Source de vérité unique pour le type de média
     const mediaKind = computed(() =>
       mangaService.resolveMediaKind(route.name, manga.value.type)
@@ -221,6 +226,8 @@ export default defineComponent({
       isLoggedIn,
       isAnime,
       userScore,
+      totalEpisodes,
+      totalSeasons,
       mediaKind,
       isLecture,
       isSerie,
