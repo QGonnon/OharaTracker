@@ -61,23 +61,23 @@ async function scan_manga(page) {
                 const chapterElement = element.querySelector('a.lel_tchapt');
                 const coverElement = element.querySelector('img');
                 if (mangaElement && chapterElement) {
-                    let chapter = chapterElement.innerText.trim().split(' ').slice(-1)[0].replace(/-/g, '.').toLowerCase();
-                    console.log(typeof chapter, 'chapter:', chapter);
+                    const regex = /Chapitre-(\d+(?:-\d+)?)-FR/g;
+                    let chapterUrl = chapterElement.href.trim();
+                    let chapterMatch = chapterUrl.matchAll(regex);
+                    let chapter = [...chapterMatch][0];
                     
-                    if(typeof chapter === 'string') {
-                        let chapter = '';
-                        const chapterLinkParts = chapterElement.href.split('-').slice(-1).reverse();
-                        for (const part of chapterLinkParts) {
-                            if (!isNaN(part)) {
-                                break;
-                            }
-                            chapter = part + '.' + chapter;
-                        }
+                    
+                    if(chapter.length > 1 ) {
+                        chapter = chapter[1].replace(/-/g, '.');
+                        
+                    }
+                    else {
+                        chapter = null;
                     }
 
                     return {
                         chapter,
-                        chapterLink: chapterElement.href,
+                        chapterLink: chapterUrl,
                         mangaLink: mangaElement.href,
                         mangaName: mangaElement.innerText.trim(),
                         coverUrl: coverElement?.src || null,
@@ -89,6 +89,9 @@ async function scan_manga(page) {
             })
         })
         for (const m of mangas) {
+            // console.log('chapter:', m.chapter);
+            if (!m.chapter) continue;
+
             const mangaInfo = {
                 title: m.mangaName,
                 description: null,
