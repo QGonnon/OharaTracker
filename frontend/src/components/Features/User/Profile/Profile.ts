@@ -155,7 +155,7 @@ export default defineComponent({
       this.$router.push({ name: 'Login' });
     },
 
-    async manageSubscription() {
+    async toStripePortalManageSubscription() {
       this.subscriptionError = '';
       this.portalLoading = true;
       try {

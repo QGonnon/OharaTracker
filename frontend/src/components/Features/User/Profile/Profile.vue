@@ -179,7 +179,7 @@
                 <button
                   :disabled="portalLoading"
                   class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-60 transition flex-shrink-0"
-                  @click="manageSubscription"
+                  @click="toStripePortalManageSubscription"
                 >
                   {{ portalLoading ? $t('profile.opening_portal') : $t('profile.manage_subscription') }}
                 </button>
