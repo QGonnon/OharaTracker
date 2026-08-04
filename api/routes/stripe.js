@@ -66,6 +66,49 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
     }
 });
 
+// Bascule l'abonnement en cours vers un autre plan (upgrade ou downgrade) via le portail Stripe,
+// avec proration automatique. Ne crée pas un second abonnement, contrairement à create-checkout-session.
+router.post('/create-plan-change-session', authenticate, async (req, res) => {
+    try {
+        const plan = req.body?.plan;
+        const priceId = PLAN_PRICE_IDS[plan];
+
+        if (!priceId) {
+            return res.status(400).json({ message: 'Plan invalide' });
+        }
+
+        const clients = await sequelize.query(
+            'SELECT stripe_customer_id, stripe_subscription_id FROM "Client" WHERE id = :id LIMIT 1',
+            { replacements: { id: req.user.id }, type: QueryTypes.SELECT }
+        );
+
+        if (clients.length === 0 || !clients[0].stripe_customer_id || !clients[0].stripe_subscription_id) {
+            return res.status(400).json({ message: 'Aucun abonnement actif à modifier' });
+        }
+
+        const { stripe_customer_id: customerId, stripe_subscription_id: subscriptionId } = clients[0];
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const itemId = subscription.items.data[0].id;
+
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            return_url: `${FRONTEND_URL}/pricing?checkout=success`,
+            flow_data: {
+                type: 'subscription_update_confirm',
+                subscription_update_confirm: {
+                    subscription: subscriptionId,
+                    items: [{ id: itemId, price: priceId, quantity: 1 }],
+                },
+            },
+        });
+
+        res.json({ url: portalSession.url });
+    } catch (error) {
+        console.error('❌ Erreur lors de la création de la session de changement de plan Stripe:', error);
+        res.status(500).json({ message: 'Erreur serveur lors du changement de plan' });
+    }
+});
+
 router.post('/create-portal-session', authenticate, async (req, res) => {
     try {
         const clients = await sequelize.query(

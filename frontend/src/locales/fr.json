@@ -301,6 +301,7 @@
       "desc": "OharaTracker reste gratuit à la base. Passez à un forfait payant pour nous aider à construire le meilleur tracker et débloquer des fonctionnalités supplémentaires.",
       "current_plan_cta": "Offre actuelle",
       "upgrade_cta": "Mettre à niveau",
+      "downgrade_cta": "Rétrograder",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",

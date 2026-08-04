@@ -250,6 +250,7 @@
       "desc": "Gratis para siempre, Pro cuando quieras, a medida para nuestros socios.",
       "current_plan_cta": "Plan actual",
       "upgrade_cta": "Mejorar plan",
+      "downgrade_cta": "Bajar de plan",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",

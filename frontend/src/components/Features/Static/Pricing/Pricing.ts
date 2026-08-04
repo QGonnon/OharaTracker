@@ -38,25 +38,34 @@ export default defineComponent({
       return currentPlanName.value === targetName;
     }
 
-    // Grisé si le client a déjà ce plan ou un plan supérieur (pas de downgrade via ce bouton).
-    function isPlanDisabled(planKey: 'lite' | 'pro') {
+    // Le client a déjà un abonnement payant différent de celui-ci : upgrade ou downgrade.
+    function isPlanChange(planKey: 'lite' | 'pro') {
+      const currentLevel = PLAN_LEVEL[currentPlanName.value] ?? 0;
+      return currentLevel > 0 && !isCurrentPlan(planKey);
+    }
+
+    function isUpgrade(planKey: 'lite' | 'pro') {
       const targetLevel = PLAN_LEVEL[planKey === 'lite' ? 'Lite' : 'Pro'];
       const currentLevel = PLAN_LEVEL[currentPlanName.value] ?? 0;
-      return currentLevel > 0 && currentLevel >= targetLevel;
+      return currentLevel > 0 && currentLevel < targetLevel;
+    }
+
+    function isDowngrade(planKey: 'lite' | 'pro') {
+      const targetLevel = PLAN_LEVEL[planKey === 'lite' ? 'Lite' : 'Pro'];
+      const currentLevel = PLAN_LEVEL[currentPlanName.value] ?? 0;
+      return currentLevel > 0 && currentLevel > targetLevel;
     }
 
     function planLabel(planKey: 'lite' | 'pro', defaultLabel: string) {
       if (isCurrentPlan(planKey)) return t('static.pricing.current_plan_cta');
-
-      const targetLevel = PLAN_LEVEL[planKey === 'lite' ? 'Lite' : 'Pro'];
-      const currentLevel = PLAN_LEVEL[currentPlanName.value] ?? 0;
-      if (currentLevel > 0 && currentLevel < targetLevel) return t('static.pricing.upgrade_cta');
-
+      if (isUpgrade(planKey)) return t('static.pricing.upgrade_cta');
+      if (isDowngrade(planKey)) return t('static.pricing.downgrade_cta');
       return defaultLabel;
     }
 
-    const isLiteDisabled = computed(() => isPlanDisabled('lite'));
-    const isProDisabled = computed(() => isPlanDisabled('pro'));
+    // Seul le plan déjà actif est désactivé ; upgrade et downgrade restent cliquables.
+    const isLiteDisabled = computed(() => isCurrentPlan('lite'));
+    const isProDisabled = computed(() => isCurrentPlan('pro'));
     const liteCtaLabel = computed(() => planLabel('lite', t('static.pricing.lite_cta')));
     const proCtaLabel = computed(() => planLabel('pro', t('static.pricing.pro_cta')));
 
@@ -68,7 +77,9 @@ export default defineComponent({
 
       checkoutLoadingPlan.value = plan;
       try {
-        const { url } = await SubscriptionService.createCheckoutSession(plan);
+        const { url } = isPlanChange(plan)
+          ? await SubscriptionService.createPlanChangeSession(plan)
+          : await SubscriptionService.createCheckoutSession(plan);
         window.location.href = url;
       } catch (error) {
         console.error('Erreur lors de la création de la session de paiement:', error);

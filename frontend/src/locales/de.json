@@ -250,6 +250,7 @@
       "desc": "OharaTracker bleibt im Kern kostenlos. Wechsle zu einem kostenpflichtigen Plan, um uns beim Aufbau des besten Trackers zu helfen und zusätzliche Funktionen freizuschalten.",
       "current_plan_cta": "Aktueller Plan",
       "upgrade_cta": "Upgraden",
+      "downgrade_cta": "Herabstufen",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",

@@ -14,6 +14,15 @@ class SubscriptionService {
     return response.data;
   }
 
+  async createPlanChangeSession(plan: 'lite' | 'pro'): Promise<{ url: string }> {
+    const response = await axios.post(
+      `${getApiBase()}/stripe/create-plan-change-session`,
+      { plan },
+      { headers: authHeader() }
+    );
+    return response.data;
+  }
+
   async createPortalSession(): Promise<{ url: string }> {
     const response = await axios.post(
       `${getApiBase()}/stripe/create-portal-session`,

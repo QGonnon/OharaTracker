@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "sequelize-cli db:migrate",
+    "dev": "concurrently -n API,STRIPE -c blue,magenta --hide STRIPE --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\"",
+    "dev:stripe": "concurrently -n API,STRIPE -c blue,magenta --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\""
   },
   "keywords": [],
   "author": "",
@@ -33,6 +36,7 @@
     "bcrypt@6.0.0": true
   },
   "devDependencies": {
+    "concurrently": "^10.0.4",
     "sequelize-cli": "^6.6.5"
   }
 }
