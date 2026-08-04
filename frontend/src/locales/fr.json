@@ -225,6 +225,7 @@
     "select_chapter": "Sélectionner le chapitre",
     "loading_chapters": "Chargement des chapitres...",
     "enter_chapter": "Saisir chapitre",
+    "notify": "Recevoir les notifications",
     "delete": "Supprimer",
     "cancel": "Annuler",
     "save": "Sauvegarder"
@@ -236,9 +237,23 @@
     "select_episode": "Sélectionner l'épisode",
     "loading_episodes": "Chargement des épisodes...",
     "enter_episode": "Saisir épisode",
+    "notify": "Recevoir les notifications",
     "delete": "Supprimer",
     "cancel": "Annuler",
     "save": "Sauvegarder"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unread_count": "{n} non lue(s)",
+    "mark_all_read": "Tout marquer comme lu",
+    "empty": "Aucune notification pour le moment",
+    "see_all": "Voir tout",
+    "delete": "Supprimer",
+    "new_chapter": "Le chapitre {chapter} de {title} est disponible",
+    "new_episode": "L'épisode {chapter} de {title} est disponible",
+    "enable_push": "Activer les notifications push",
+    "push_denied": "La permission de notification a été refusée. Vous pouvez l'activer dans les paramètres de votre navigateur.",
+    "push_subscribe_failed": "Impossible d'activer les notifications push sur ce navigateur ({error}). Vérifiez qu'aucune extension ne bloque les notifications."
   },
   "profile": {
     "title": "Mon Profil",

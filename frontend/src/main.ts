@@ -11,6 +11,7 @@ import App from './App.vue'
 import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
 import i18n from './i18n'
+import { useNotificationStore } from './store/notification.module'
 
 const pinia = createPinia()
 
@@ -61,3 +62,10 @@ try {
 } catch (e) {}
 
 app.mount('#app')
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+        console.error('Erreur lors de l\'enregistrement du service worker:', err)
+    })
+    useNotificationStore(pinia).listenForServiceWorkerMessages()
+}

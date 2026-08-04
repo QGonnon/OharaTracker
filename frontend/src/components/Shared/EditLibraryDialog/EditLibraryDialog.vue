@@ -25,6 +25,10 @@
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.reading_status') }}</label>
         <Dropdown v-model="editStatus" :options="statusOptions" optionLabel="label" optionValue="value" class="w-full mt-2" />
       </div>
+      <div class="flex items-center justify-between">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.notify') }}</label>
+        <ToggleSwitch v-model="editNotify" />
+      </div>
       <div class="flex justify-end gap-2 mt-4">
         <Button :label="$t('edit_library.delete')" icon="pi pi-trash" severity="danger" text :loading="deleting" @click="deleteManga" />
         <div class="flex-grow"></div>

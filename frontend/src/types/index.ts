@@ -64,3 +64,19 @@ export interface ChapterInfo {
   url?: string;
   date?: string;
 }
+
+export interface AppNotification {
+  id: number;
+  type: string;
+  chapter: string;
+  isRead: boolean;
+  createdAt: string;
+  idLibrary: number;
+  title: string;
+  coverPath?: string | null;
+  coverUrl?: string | null;
+  mediaType?: string | null;
+  chapterUrl?: string | null;
+  mangaUrl?: string | null;
+  site?: string | null;
+}

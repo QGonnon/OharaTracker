@@ -175,6 +175,7 @@
     "select_chapter": "Seleziona capitolo",
     "loading_chapters": "Caricamento capitoli...",
     "enter_chapter": "Inserisci capitolo",
+    "notify": "Ricevi notifiche",
     "delete": "Elimina",
     "cancel": "Annulla",
     "save": "Salva"
@@ -185,9 +186,23 @@
     "viewing_status": "Stato visione",
     "select_episode": "Seleziona episodio",
     "enter_episode": "Inserisci episodio",
+    "notify": "Ricevi notifiche",
     "delete": "Elimina",
     "cancel": "Annulla",
     "save": "Salva"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "unread_count": "{n} non lette",
+    "mark_all_read": "Segna tutte come lette",
+    "empty": "Nessuna notifica per ora",
+    "see_all": "Vedi tutte",
+    "delete": "Elimina",
+    "new_chapter": "Il capitolo {chapter} di {title} è disponibile",
+    "new_episode": "L'episodio {chapter} di {title} è disponibile",
+    "enable_push": "Attiva le notifiche push",
+    "push_denied": "Il permesso per le notifiche è stato negato. Puoi attivarlo nelle impostazioni del browser.",
+    "push_subscribe_failed": "Impossibile attivare le notifiche push su questo browser ({error}). Controlla che nessuna estensione blocchi le notifiche."
   },
   "profile": {
     "title": "Il mio profilo",

@@ -346,7 +346,8 @@ async function getUserLibrary(username) {
             ls.url AS "mangaUrl",
             s.name AS site,
             lu.last_chapter AS "userLastChapter",
-            lu.reading_status AS "readingStatus"
+            lu.reading_status AS "readingStatus",
+            lu.notify_enabled AS "notifyEnabled"
          FROM libraryusage lu
          JOIN "Library" l ON lu.id_library = l.id
          LEFT JOIN "LibrarySource" ls ON l.id = ls.id_library
@@ -361,7 +362,7 @@ async function getUserLibrary(username) {
     );
 }
 
-async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, username }) {
+async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, notifyEnabled, username }) {
     let idLibrary = id;
 
     if (!idLibrary) {
@@ -404,12 +405,14 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
         await sequelize.query(
             `UPDATE libraryusage
              SET last_chapter = COALESCE(:lastChapter, last_chapter),
-                 reading_status = COALESCE(:readingStatus, reading_status)
+                 reading_status = COALESCE(:readingStatus, reading_status),
+                 notify_enabled = COALESCE(:notifyEnabled, notify_enabled)
              WHERE id_library = :id_library AND name_client = :username AND id_source = :id_source`,
             {
                 replacements: {
                     lastChapter: lastChapter || null,
                     readingStatus: readingStatus || null,
+                    notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
                     id_library: idLibrary,
                     id_source: idSource,
                     username,
@@ -419,7 +422,8 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
         );
     } else {
         await sequelize.query(
-            'INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status) VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus)',
+            `INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status, notify_enabled)
+             VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus, COALESCE(:notifyEnabled, false))`,
             {
                 replacements: {
                     id_library: idLibrary,
@@ -427,6 +431,7 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
                     username,
                     lastChapter: lastChapter || null,
                     readingStatus: readingStatus || null,
+                    notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
                 },
                 type: QueryTypes.INSERT,
             }
@@ -456,6 +461,132 @@ async function deleteUserLibrary({ title, site, username }) {
         {
             replacements: { id_library: manga.id, id_source: manga.id_source, username },
             type: QueryTypes.DELETE,
+        }
+    );
+}
+
+async function getUserNotifications(username, { unreadOnly = false, limit = 50 } = {}) {
+    return sequelize.query(
+        `SELECT
+            n.id,
+            n.type,
+            n.chapter,
+            n.is_read AS "isRead",
+            n.created_at AS "createdAt",
+            l.id AS "idLibrary",
+            l.name AS title,
+            l.cover_path AS "coverPath",
+            l.cover_url AS "coverUrl",
+            lt.type AS "mediaType",
+            c.url AS "chapterUrl",
+            ls.url AS "mangaUrl",
+            s.name AS site
+         FROM "Notification" n
+         JOIN "Library" l ON l.id = n.id_library
+         LEFT JOIN "Chapters" c ON c.id_library = n.id_library AND c.id_source = n.id_source AND c.chapter = n.chapter
+         LEFT JOIN "LibrarySource" ls ON ls.id_library = n.id_library AND ls.id_source = n.id_source
+         LEFT JOIN "LibraryType" lt ON lt.id = ls.id_library_type
+         LEFT JOIN "Source" s ON s.id_source = n.id_source
+         WHERE n.name_client = :username ${unreadOnly ? 'AND n.is_read = false' : ''}
+         ORDER BY n.created_at DESC
+         LIMIT :limit`,
+        {
+            replacements: { username, limit },
+            type: QueryTypes.SELECT,
+        }
+    );
+}
+
+async function getUnreadNotificationCount(username) {
+    const rows = await sequelize.query(
+        'SELECT COUNT(*)::int AS count FROM "Notification" WHERE name_client = :username AND is_read = false',
+        {
+            replacements: { username },
+            type: QueryTypes.SELECT,
+        }
+    );
+    return rows[0]?.count || 0;
+}
+
+async function markNotificationRead(id, username) {
+    const result = await sequelize.query(
+        'UPDATE "Notification" SET is_read = true WHERE id = :id AND name_client = :username',
+        {
+            replacements: { id, username },
+            type: QueryTypes.UPDATE,
+        }
+    );
+    if (result[1] === 0) {
+        const error = new Error('Notification introuvable');
+        error.statusCode = 404;
+        throw error;
+    }
+}
+
+async function markAllNotificationsRead(username) {
+    await sequelize.query(
+        'UPDATE "Notification" SET is_read = true WHERE name_client = :username AND is_read = false',
+        {
+            replacements: { username },
+            type: QueryTypes.UPDATE,
+        }
+    );
+}
+
+async function deleteNotification(id, username) {
+    const result = await sequelize.query(
+        'DELETE FROM "Notification" WHERE id = :id AND name_client = :username',
+        {
+            replacements: { id, username },
+            type: QueryTypes.DELETE,
+        }
+    );
+    if (result[1] === 0) {
+        const error = new Error('Notification introuvable');
+        error.statusCode = 404;
+        throw error;
+    }
+}
+
+async function savePushSubscription(username, { endpoint, keys }) {
+    if (!endpoint || !keys?.p256dh || !keys?.auth) {
+        const error = new Error('Abonnement push invalide');
+        error.statusCode = 400;
+        throw error;
+    }
+
+    await sequelize.query(
+        `INSERT INTO "PushSubscription" (name_client, endpoint, p256dh, auth, created_at)
+         VALUES (:username, :endpoint, :p256dh, :auth, NOW())
+         ON CONFLICT (endpoint)
+         DO UPDATE SET name_client = EXCLUDED.name_client, p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth`,
+        {
+            replacements: { username, endpoint, p256dh: keys.p256dh, auth: keys.auth },
+            type: QueryTypes.INSERT,
+        }
+    );
+}
+
+async function removePushSubscription(endpoint) {
+    await sequelize.query(
+        'DELETE FROM "PushSubscription" WHERE endpoint = :endpoint',
+        {
+            replacements: { endpoint },
+            type: QueryTypes.DELETE,
+        }
+    );
+}
+
+async function getPushSubscriptionsForUsers(usernames) {
+    if (!usernames?.length) {
+        return [];
+    }
+
+    return sequelize.query(
+        'SELECT endpoint, p256dh, auth FROM "PushSubscription" WHERE name_client IN (:usernames)',
+        {
+            replacements: { usernames },
+            type: QueryTypes.SELECT,
         }
     );
 }
@@ -569,6 +700,19 @@ async function linkLibrarySource(libraryId, sourceId, mangaUrl, libraryType = nu
 }
 
 async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
+    const existing = await sequelize.query(
+        'SELECT 1 FROM "Chapters" WHERE id_library = :libraryId AND id_source = :sourceId AND chapter = :chapter LIMIT 1',
+        {
+            replacements: {
+                libraryId,
+                sourceId,
+                chapter: lastChapter || null,
+            },
+            type: QueryTypes.SELECT,
+        }
+    );
+    const isNew = existing.length === 0;
+
     await sequelize.query(
         `INSERT INTO "Chapters" (id_library, id_source, chapter, url)
          VALUES (:libraryId, :sourceId, :chapter, :url)
@@ -584,6 +728,8 @@ async function saveLastChapter(libraryId, sourceId, lastChapter, chapterUrl) {
             type: QueryTypes.INSERT,
         }
     );
+
+    return isNew;
 }
 
 async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaInfo) {
@@ -595,10 +741,46 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
         await updateCoverIfNeeded(library.id, mangaInfo, library.cover_path);
         await insertTags(library.id, mangaInfo.tags);
         await linkLibrarySource(library.id, sourceId, mangaUrl, libraryType);
-        await saveLastChapter(library.id, sourceId, lastChapter, chapterUrl);
+        const isNew = await saveLastChapter(library.id, sourceId, lastChapter, chapterUrl);
+
+        if (isNew && lastChapter) {
+            await notifyFollowersOfNewChapter(library.id, sourceId, lastChapter, library.name || mangaInfo.title);
+        }
     } catch (err) {
         console.error('❌ Erreur lors de la sauvegarde du chapitre:', err);
         throw err;
+    }
+}
+
+// Crée une notification pour chaque utilisateur ayant activé les notifications (notify_enabled)
+// pour cette œuvre, puis les pousse en temps réel via Web Push.
+async function notifyFollowersOfNewChapter(idLibrary, idSource, chapter, title) {
+    const followers = await sequelize.query(
+        `INSERT INTO "Notification" (name_client, id_library, id_source, chapter, type, created_at)
+         SELECT DISTINCT name_client, :idLibrary, :idSource, :chapter::numeric, 'new_chapter', NOW()
+         FROM libraryusage
+         WHERE id_library = :idLibrary AND notify_enabled = true
+         RETURNING name_client`,
+        {
+            replacements: { idLibrary, idSource, chapter },
+            type: QueryTypes.INSERT,
+        }
+    );
+
+    const usernames = (followers[0] || []).map(row => row.name_client);
+    if (usernames.length === 0) {
+        return;
+    }
+
+    try {
+        const { sendPushToUsers } = await import('./push.js');
+        await sendPushToUsers(usernames, {
+            title: title || 'Nouveau chapitre disponible',
+            chapter,
+            idLibrary,
+        });
+    } catch (err) {
+        console.error('❌ Erreur lors de l\'envoi des notifications push:', err);
     }
 }
 
@@ -778,4 +960,12 @@ export {
     updateUserLibrary,
     deleteUserLibrary,
     getClient,
+    getUserNotifications,
+    getUnreadNotificationCount,
+    markNotificationRead,
+    markAllNotificationsRead,
+    deleteNotification,
+    savePushSubscription,
+    removePushSubscription,
+    getPushSubscriptionsForUsers,
 };

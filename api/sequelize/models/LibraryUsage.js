@@ -28,6 +28,11 @@ export default (sequelize, DataTypes) => {
     },
     reading_status: {
       type: DataTypes.STRING(50)
+    },
+    notify_enabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'libraryusage',
