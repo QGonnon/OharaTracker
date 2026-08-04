@@ -25,7 +25,8 @@
     "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",
     "puppeteer": "^24.43.1",
-    "sequelize": "^6.37.8"
+    "sequelize": "^6.37.8",
+    "stripe": "^22.4.0"
   },
   "allowScripts": {
     "puppeteer@24.43.1": true,

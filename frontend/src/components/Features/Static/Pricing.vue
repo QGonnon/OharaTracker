@@ -35,9 +35,12 @@
             </li>
           </ul>
 
-          <RouterLink to="/register">
-            <Button :label="$t('static.pricing.lite_cta')" class="w-full font-semibold" />
-          </RouterLink>
+          <Button
+            :label="$t('static.pricing.lite_cta')"
+            class="w-full font-semibold"
+            :loading="checkoutLoadingPlan === 'lite'"
+            @click="handleCheckout('lite')"
+          />
         </div>
 
         <!-- Pro -->
@@ -60,9 +63,12 @@
             </li>
           </ul>
 
-          <RouterLink to="/register">
-            <Button :label="$t('static.pricing.pro_cta')" class="w-full font-semibold" />
-          </RouterLink>
+          <Button
+            :label="$t('static.pricing.pro_cta')"
+            class="w-full font-semibold"
+            :loading="checkoutLoadingPlan === 'pro'"
+            @click="handleCheckout('pro')"
+          />
         </div>
 
         <!-- B2B Partner -->
@@ -125,16 +131,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import Menu from '../../Shared/Menu/Menu.vue'
 import { Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue'
+import { useAuthStore } from '../../../store/auth.module'
+import SubscriptionService from '../../../services/subscription.service'
 
 const { tm } = useI18n()
+const router = useRouter()
+const authStore = useAuthStore()
+const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null)
 
 // tm() renvoie les ressources brutes (tableaux/objets) sans interpolation,
 // adapté à une liste statique de questions/réponses traduites.
 const faqItems = computed(() => tm('faq.items') as { q: string; a: string }[])
+
+async function handleCheckout(plan: 'lite' | 'pro') {
+  if (!authStore.isLoggedIn) {
+    router.push({ name: 'Register', query: { redirect: '/pricing' } })
+    return
+  }
+
+  checkoutLoadingPlan.value = plan
+  try {
+    const { url } = await SubscriptionService.createCheckoutSession(plan)
+    window.location.href = url
+  } catch (error) {
+    console.error('Erreur lors de la création de la session de paiement:', error)
+    checkoutLoadingPlan.value = null
+  }
+}
 </script>
 
 <style scoped>

@@ -3,6 +3,7 @@ import chapters from './chapitres.js';
 import auth from './auth.js';
 import library from './library.js';
 import client from './client.js';
+import stripeRoutes from './stripe.js';
 
 
 const router = express.Router();
@@ -14,6 +15,7 @@ router
     .use('/chapters', chapters)
     .use('/auth', auth)
     .use('/library', library)
-    .use('/client', client);
+    .use('/client', client)
+    .use('/stripe', stripeRoutes);
 
 export default router;
