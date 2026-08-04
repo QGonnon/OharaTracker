@@ -12,6 +12,7 @@ import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
 import i18n from './i18n'
 import { useNotificationStore } from './store/notification.module'
+import { setupHttpInterceptors } from './services/http-interceptors'
 
 const pinia = createPinia()
 
@@ -51,6 +52,8 @@ app.use(router)
     .use(pinia)
     .use(i18n)
     .component('font-awesome-icon', FontAwesomeIcon)
+
+setupHttpInterceptors(pinia, router)
 
 try {
     const savedTheme = localStorage.getItem('theme')
