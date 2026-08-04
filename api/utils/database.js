@@ -605,6 +605,7 @@ async function saveChapter(sourceName, lastChapter, chapterUrl, mangaUrl, mangaI
 function getChapters(callback, limit = null) {
     const query = `SELECT
             lc.id_library AS "chapterId",
+            l.id AS "libraryId",
             l.name AS title,
             lt.type AS type,
             l.author AS author,
@@ -629,7 +630,46 @@ function getChapters(callback, limit = null) {
         replacements: limit ? { limit } : {},
         type: QueryTypes.SELECT,
     })
-        .then(rows => callback(null, rows))
+        .then(rows => {
+            const groupedChapters = rows.reduce((acc, row) => {
+                const libraryId = row.libraryId;
+                if (!acc[libraryId]) {
+                    acc[libraryId] = {
+                        id: row.mangaId,
+                        title: row.title,
+                        type: row.type,
+                        theme: row.theme,
+                        status: row.status,
+                        description: row.description,
+                        author: row.author,
+                        artist: row.artist,
+                        coverPath: row.coverPath,
+                        coverUrl: row.coverUrl,
+                        sites: {},
+                        
+                    };
+                }
+                if (!acc[libraryId].sites[row.site]) {
+                    acc[libraryId].sites[row.site] = {
+                        site: row.site,
+                        site: row.site,
+                        mangaUrl: row.mangaUrl,
+                        chapters: [],
+                    };
+                }
+                const chapter = {
+                    chapter: row.lastChapter,
+                    url: row.chapterUrl,
+                    chapterUrl: row.chapterUrl,
+                    site: row.site,
+                };
+                acc[libraryId].sites[row.site].chapters.push(chapter);
+                return acc;
+            }, []);
+
+            
+            return callback(null, groupedChapters);
+        })
         .catch(err => callback(err));
 }
 
@@ -671,6 +711,56 @@ function getAllMangas(callback) {
     )
         .then(rows => callback(null, rows))
         .catch(err => callback(err));
+        
+}
+
+
+function getClient(username, callback) {
+    sequelize.query(
+        `SELECT
+            c.id as "clientId",
+            c.name as "clientName", 
+            c.code as "clientCode", 
+            c.email as "clientEmail",
+            c.google_id as "clientGoogleId",
+            s.name as "clientSubscription",
+            lu.last_chapter as "lastReadChapter",
+            lu.reading_status as "readingStatus",
+            lu.score as "clientScore",
+            lu.id_library as "libraryId",
+            lu.note as "clientNote",
+            lu.id_source as "sourceId" 
+        FROM "Client" as c
+        INNER JOIN "libraryusage" as lu ON c.name = lu.name_client
+        INNER JOIN "Subscription" as s ON c.id_subscription = s.id
+        WHERE c.name = :username`,
+        {
+            replacements: { username },
+            type: QueryTypes.SELECT,
+        }
+    )
+        .then(rows => {
+            const row = rows[0];
+            const client = {
+                    clientId: row.clientId,
+                    clientName: row.clientName,
+                    clientCode: row.clientCode,
+                    clientEmail: row.clientEmail,
+                    clientGoogleId: row.clientGoogleId,
+                    clientSubscription: row.clientSubscription,
+                    libraryUsage: rows.map(row => ({
+                        libraryId: row.libraryId,
+                        lastReadChapter: row.lastReadChapter,
+                        readingStatus: row.readingStatus,
+                        clientScore: row.clientScore,
+                        clientNote: row.clientNote,
+                        sourceId: row.sourceId,
+                    })),
+                    
+                };
+            callback(null, client);
+        })
+        .catch(err => callback(err));
 }
 
 export {
@@ -687,4 +777,5 @@ export {
     getUserLibrary,
     updateUserLibrary,
     deleteUserLibrary,
+    getClient,
 };

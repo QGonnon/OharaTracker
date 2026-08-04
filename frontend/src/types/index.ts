@@ -5,36 +5,40 @@
 export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
 
 export interface Manga {
-  id?: number | string;
-  title: string;
-  /** Type de média - remplace l'ancien 'Manga' | 'Anime' */
-  type?: MediaKind; // union large pour compatibilité pendant la migration
-  author?: string;
-  artist?: string;
-  /** Utilisé pour lecture : nom des sources */
-  site: string;
-  theme?: string;
-  status?: string;
-  description?: string;
-  releaseDate?: string;       // date de parution
-  averageScore?: number;      // score moyen des sources
-  userScore?: number;         // score utilisateur Ohara
-  // lecture
-  lastChapter?: string;
-  userLastChapter?: string;
-  chapterUrl: string;
-  mangaUrl: string;
-  // serie
-  totalEpisodes?: number;
-  totalSeasons?: number;
-  lastEpisode?: string;
-  userLastEpisode?: string;
-  // film & serie
-  studio?: string;
-  // legacy
-  coverPath?: string;
-  coverUrl?: string;
-  readingStatus?: string;
+  id?: number,
+  title: string,
+  type: string,
+  theme: string,
+  status: string,
+  description: string,
+  author: string,
+  artist: string,
+  coverPath: string,
+  coverUrl: string,
+  sites: {
+    [key: string]: {
+      site: string,
+      mangaUrl: string,
+      chapterUrl: string,
+      chapters: { chapter: string, url: string, chapterUrl: string, site: string }[]
+    }
+  },
+  // User library fields
+  userLastChapter?: string,
+  readingStatus?: string,
+  score?: number | null,
+  note?: string | null,
+  // Derived flat fields for template convenience
+  lastChapter?: string,
+  chapterUrl?: string,
+  site?: string,
+  // Métadonnées additionnelles (séries/films notamment)
+  studio?: string,
+  totalEpisodes?: number | string,
+  totalSeasons?: number | string,
+  releaseDate?: string,
+  averageScore?: number,
+  userScore?: number | null,
 }
 
 export interface User {

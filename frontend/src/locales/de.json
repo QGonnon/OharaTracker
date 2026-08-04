@@ -167,9 +167,13 @@
   },
   "edit_library": {
     "title": "Lesung bearbeiten",
+    "source": "Quelle",
+    "select_source": "Quelle auswählen",
+    "loading_sources": "Quellen werden geladen...",
     "stopped_chapter": "Gestopptes Kapitel",
     "reading_status": "Lesestatus",
     "select_chapter": "Kapitel auswählen",
+    "loading_chapters": "Kapitel werden geladen...",
     "enter_chapter": "Kapitel eingeben",
     "delete": "Löschen",
     "cancel": "Abbrechen",

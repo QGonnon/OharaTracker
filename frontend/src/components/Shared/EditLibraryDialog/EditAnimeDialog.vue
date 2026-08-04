@@ -1,6 +1,18 @@
 <template>
-  <Dialog v-model:visible="visibleLocal" :header="$t('edit_anime.title')" :closable="true" :modal="true" :style="{ width: '420px' }">
+  <Dialog v-model:visible="visibleLocal" :header="animeTitle" :closable="true" :modal="true" :style="{ width: '420px' }">
     <div class="grid gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.source') }}</label>
+        <Dropdown
+          v-model="editSource"
+          :options="animeSources"
+          optionLabel="site"
+          optionValue="site"
+          :placeholder="loadingEpisodes ? $t('edit_anime.loading_sources') : $t('edit_anime.select_source')"
+          :disabled="loadingEpisodes"
+          class="w-full mt-2"
+        />
+      </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.stopped_episode') }}</label>
         <Dropdown v-model="editEpisode" :options="episodeOptions" optionLabel="label" optionValue="value" :placeholder="loadingEpisodes ? $t('edit_anime.loading_episodes') : $t('edit_anime.select_episode')" :disabled="loadingEpisodes" class="w-full mt-2" />
@@ -8,6 +20,7 @@
           <InputText v-model="editEpisodeCustom" :placeholder="$t('edit_anime.enter_episode')" class="w-full" />
         </div>
       </div>
+      
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_anime.viewing_status') }}</label>
         <Dropdown v-model="editStatus" :options="statusOptions" optionLabel="label" optionValue="value" class="w-full mt-2" />

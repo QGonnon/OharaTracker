@@ -41,14 +41,8 @@
           <template #content>
             <div class="flex flex-wrap gap-2 mt-2">
               <Tag v-if="manga.status" :value="manga.status" severity="info" />
-              <!-- Tags : affichage un par un -->
-              <Tag
-                v-for="tag in parseTags(manga.theme)"
-                :key="tag"
-                :value="tag"
-              />
-              <!-- Sources -->
-              <Chip v-if="manga.site" :label="manga.site" icon="pi pi-globe" />
+              <Tag v-if="manga.theme" :value="manga.theme" />
+              <Chip v-for="site in siteKeys" :key="site" :label="site" icon="pi pi-globe" />
             </div>
           </template>
         </Card>
@@ -93,10 +87,10 @@
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{$t('manga.season', { n: manga.lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: manga.lastChapter.split('.')[1]|| $t('manga.unknown') })}}
+                    {{$t('manga.season', { n: lastChapter.split('.')[0] })}} {{$t('manga.episode', { n: lastChapter.split('.')[1] || $t('manga.unknown') })}}
                   </p>
                   <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
-                    {{ manga.lastChapter || $t('manga.unknown') }}
+                    {{ lastChapter || $t('manga.unknown') }}
                   </p>
                 </div>
               </div>
@@ -108,7 +102,7 @@
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_episodes') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                      {{ manga.totalEpisodes ?? manga.lastChapter ?? $t('manga.unknown') }}
+                      {{ totalEpisodes ?? $t('manga.unknown') }}
                     </p>
                   </div>
                 </div>
@@ -117,7 +111,7 @@
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_seasons') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                      {{ manga.totalSeasons ?? $t('manga.unknown') }}
+                      {{ totalSeasons ?? $t('manga.unknown') }}
                     </p>
                   </div>
                 </div>
@@ -184,42 +178,40 @@
             {{ addError }}
           </Message>
           <div class="flex flex-col sm:flex-row gap-3">
-            <Button
-              v-if="manga.chapterUrl"
-              :label="isLecture
-                ? $t('manga.read_chapter', { n: manga.lastChapter })
-                : isSerie
-                  ? $t('manga.watch_episode', { ep: manga.lastChapter })
-                  : $t('manga.watch_film')"
-              :icon="isLecture ? 'pi pi-book' : 'pi pi-play'"
-              iconPos="left"
-              severity="primary"
-              size="large"
-              class="w-full sm:w-auto"
-              @click="openChapter"
-            />
-            <Button
-              v-if="isLoggedIn && !isInLibrary"
-              :label="$t('manga.add_to_library')"
-              icon="pi pi-bookmark"
-              iconPos="left"
-              severity="secondary"
-              size="large"
-              class="w-full sm:w-auto"
-              outlined
-              :loading="adding"
-              @click="addToLibrary"
-            />
-            <Button
-              v-if="isLoggedIn && isInLibrary"
-              :label="$t('manga.edit')"
-              icon="pi pi-pencil"
-              iconPos="left"
-              severity="warning"
-              size="large"
-              class="w-full sm:w-auto"
-              @click="openEdit"
-            />
+          <Button
+            v-if="chapterUrl"
+            :label="isAnime ? $t('manga.watch_episode', { ep: lastChapter.split('.')[1], season: lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: lastChapter })"
+            :icon="isAnime ? 'pi pi-play' : 'pi pi-book'"
+            iconPos="left"
+            severity="primary"
+            size="large"
+            class="w-full sm:w-auto"
+            @click="openChapter"
+          />
+
+          <Button
+            v-if="isLoggedIn"
+            :label="isInLibrary ? '' : $t('manga.add_to_library')"
+            :icon="isInLibrary ? '' : 'pi pi-bookmark'"
+            iconPos="left"
+            severity="secondary"
+            size="large"
+            class="w-full sm:w-auto"
+            outlined
+            :loading="adding"
+            :disabled="addSuccess || isInLibrary"
+            @click="addToLibrary"
+          />
+          <Button
+            v-if="isLoggedIn && isInLibrary"
+            :label="$t('manga.edit')"
+            icon="pi pi-pencil"
+            iconPos="left"
+            severity="warning"
+            size="large"
+            class="w-full sm:w-auto"
+            @click="openEdit"
+          />
           </div>
         </div>
 

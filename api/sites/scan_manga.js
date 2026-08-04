@@ -61,9 +61,23 @@ async function scan_manga(page) {
                 const chapterElement = element.querySelector('a.lel_tchapt');
                 const coverElement = element.querySelector('img');
                 if (mangaElement && chapterElement) {
+                    const regex = /Chapitre-(\d+(?:-\d+)?)-FR/g;
+                    let chapterUrl = chapterElement.href.trim();
+                    let chapterMatch = chapterUrl.matchAll(regex);
+                    let chapter = [...chapterMatch][0];
+                    
+                    
+                    if(chapter.length > 1 ) {
+                        chapter = chapter[1].replace(/-/g, '.');
+                        
+                    }
+                    else {
+                        chapter = null;
+                    }
+
                     return {
-                        chapter: chapterElement.innerText.trim().split(' ').slice(-1)[0],
-                        chapterLink: chapterElement.href,
+                        chapter,
+                        chapterLink: chapterUrl,
                         mangaLink: mangaElement.href,
                         mangaName: mangaElement.innerText.trim(),
                         coverUrl: coverElement?.src || null,
@@ -75,6 +89,9 @@ async function scan_manga(page) {
             })
         })
         for (const m of mangas) {
+            // console.log('chapter:', m.chapter);
+            if (!m.chapter) continue;
+
             const mangaInfo = {
                 title: m.mangaName,
                 description: null,
@@ -117,6 +134,8 @@ async function scan_manga(page) {
                 }
             }
             mangaInfo.type = "MANGA";
+            // console.log('Extracted chapter:', m.chapter, 'for manga:', m.mangaName);
+
             await saveChapter('scan-manga', m.chapter, m.chapterLink, m.mangaLink, mangaInfo);
         }
         console.log('✅ Scraping Scan-manga terminé.');

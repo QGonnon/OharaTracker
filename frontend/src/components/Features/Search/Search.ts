@@ -10,6 +10,7 @@ import Paginator from "primevue/paginator";
 import Menu from "../../Shared/Menu/Menu.vue";
 import type { Manga } from "../../../types/index";
 import { slugify } from "../../../utils";
+import mangaService from "../../../services/manga.service";
 
 interface SortOption {
   label: string;
@@ -71,7 +72,7 @@ export default defineComponent({
       currentPage: 0,
     };
   },
-  mounted() {
+  async mounted() {
     // Load all mangas from database
     this.loadMangas();
     
@@ -132,42 +133,8 @@ export default defineComponent({
   methods: {
     async loadMangas() {
       try {
-        const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
-        const response = await fetch(chapterUrl);
-        const chapters = await response.json() || [];
-        // Get both anime and manga entries
-        const allChapters = (chapters || []).filter((chapter: any) => {
-          if (!chapter) return false;
-          return true;
-        });
+        this.allMangas = await mangaService.getAll();
 
-        const allMangasWithDuplicates = allChapters.map((chapter: any) => ({
-          id: chapter.chapterId,
-          title: chapter.title,
-          author: chapter.author,
-          theme: chapter.theme,
-          status: chapter.status,
-          description: chapter.description,
-          coverPath: chapter.coverPath,
-          coverUrl: chapter.coverUrl,
-          lastChapter: chapter.lastChapter,
-          chapterUrl: chapter.chapterUrl,
-          mangaUrl: chapter.mangaUrl,
-          site: chapter.site,
-          type: chapter.type,
-        }));
-        
-        // Dédupliquer les mangas par titre
-        const mangaMap = new Map<string, Manga>();
-        allMangasWithDuplicates.forEach((manga: any) => {
-          const normalizedTitle = manga.title?.toLowerCase().trim();
-          if (normalizedTitle && !mangaMap.has(normalizedTitle)) {
-            mangaMap.set(normalizedTitle, manga);
-          }
-        });
-        
-        this.allMangas = Array.from(mangaMap.values());
-        
         // Extraire tous les genres uniques depuis les mangas
         this.extractGenres();
       } catch (error) {
@@ -285,12 +252,9 @@ export default defineComponent({
 
     goToManga(manga: Manga) {
       const cleanTitle = slugify(manga.title);
-      const site = (manga.site || '').toString().toLowerCase();
-      const type = (manga.type || '').toString().toUpperCase();
-      const theme = (manga.theme || '').toString().toLowerCase();
-      
-      // Determine if it's anime or manga
-      if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) {
+      const isAnime = (manga.type || '').toString().toUpperCase() === 'ANIME';
+
+      if (isAnime) {
         this.$router.push(`/anime/${cleanTitle}`);
       } else {
         this.$router.push(`/manga/${cleanTitle}`);

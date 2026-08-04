@@ -4,9 +4,24 @@
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">{{ $t('library.title') }}</h1>
-                <p class="text-slate-600 dark:text-slate-400">{{ $t('library.medias', { n: displayedMangas.length }) }}</p>
+            <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                    <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">{{ $t('library.title') }}</h1>
+                    <p class="text-slate-600 dark:text-slate-400">{{ $t('library.medias', { n: displayedMangas.length }) }}</p>
+                </div>
+
+                <div v-if="clientInfo" class="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                        <i class="pi pi-user text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-slate-900 dark:text-white text-sm">{{ clientInfo.clientName }}</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <Tag :value="clientInfo.clientSubscription" severity="info" class="text-xs" />
+                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ clientInfo.libraryUsage?.length ?? 0 }} suivis</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Loading State -->
@@ -125,7 +140,7 @@
                             <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`${data.type === 'Anime' ? 'Ép.' : 'Ch.'} ${data.userLastChapter || '-'}`"
+                                        :label="`${data.type === 'Anime' ? 'S' + data.lastChapter.split('.')[0] + 'E' + data.lastChapter.split('.')[1] : 'Ch.' + data.lastChapter.split('.')[0]}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
@@ -139,7 +154,7 @@
                             <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode') : (filterType === 'all' ? $t('library.col_last_chapter') : $t('library.col_last_chapter'))" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`${data.type === 'Anime' ? 'Ép.' : 'Ch.'} ${data.lastChapter || '-'}`"
+                                        :label="`${data.type === 'Anime' ? 'S' + data.lastChapter.split('.')[0] + 'E' + data.lastChapter.split('.')[1] : 'Ch.' + data.lastChapter.split('.')[0]}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
@@ -232,12 +247,20 @@
                             <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2">
                                 {{ manga.title }}
                             </h3>
-                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mt-1">
                                 <span class="flex items-center" v-if="manga.userLastChapter || manga.lastChapter">
                                     <i class="pi pi-book mr-1"></i>
                                     Ch. {{ manga.userLastChapter || manga.lastChapter }}
                                 </span>
+                                <span v-if="manga.score != null" class="flex items-center gap-1 text-amber-500 font-medium text-xs">
+                                    <i class="pi pi-star-fill"></i>{{ manga.score }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
                                 <Tag v-if="manga.readingStatus || manga.status" :value="manga.readingStatus || manga.status" :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))" />
+                                <span v-if="manga.note" class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 ml-2" v-tooltip.top="manga.note">
+                                    <i class="pi pi-comment mr-1"></i>{{ manga.note }}
+                                </span>
                             </div>
                         </div>
                     </div>

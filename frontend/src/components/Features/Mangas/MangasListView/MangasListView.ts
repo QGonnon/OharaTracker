@@ -15,6 +15,8 @@ import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.v
 import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
+import mangaService from '../../../../services/manga.service'
+import libraryService from '../../../../services/library.service'
 
 export default defineComponent({
     name: 'MangasListView',
@@ -37,6 +39,7 @@ export default defineComponent({
         const route = useRoute()
         const authStore = useAuthStore()
         const mangas = ref<Manga[]>([]);
+        const clientInfo = ref<Record<string, any> | null>(null);
         const loading = ref(true);
         const error = ref<string | null>(null);
         const searchQuery = ref('');
@@ -45,20 +48,21 @@ export default defineComponent({
 
         const filteredMangas = computed(() => {
             if (!searchQuery.value) return mangas.value;
+            const q = searchQuery.value.toLowerCase();
             return mangas.value.filter(manga =>
-                manga.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                manga.author?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                manga.site?.toLowerCase().includes(searchQuery.value.toLowerCase())
+                manga.title?.toLowerCase().includes(q) ||
+                manga.author?.toLowerCase().includes(q) ||
+                Object.keys(manga.sites || {}).some(s => s.toLowerCase().includes(q))
             );
         });
 
         const displayedMangas = computed(() => {
             const list = (filteredMangas.value || []).slice();
             if (filterType.value === 'anime') {
-                return list.filter((i: any) => (i.type || 'Manga') === 'Anime');
+                return list.filter(m => mangaService.isAnimeType(m));
             }
             if (filterType.value === 'lecture') {
-                return list.filter((i: any) => (i.type || 'Manga') !== 'Anime');
+                return list.filter(m => !mangaService.isAnimeType(m));
             }
             return list;
         });
@@ -67,29 +71,43 @@ export default defineComponent({
             try {
                 loading.value = true;
                 error.value = null;
-                
+
                 if (!authStore.isLoggedIn || !authStore.user?.accessToken) {
                     await router.push({ name: 'Login' });
-                    return
+                    return;
                 }
 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/library/user`, {
-                    headers: {
-                        Authorization: `Bearer ${authStore.user.accessToken}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                // Detect type (Manga/Anime) based on known source names
-                const animeSources = new Set(['anime-sama', 'moviedb']);
-                mangas.value = (data || []).map((item: any) => {
-                    const site = (item.site || '').toLowerCase();
-                    const type = animeSources.has(site) ? 'Anime' : 'Manga';
-                    return { ...item, type };
+                const [client, mangaList] = await Promise.all([
+                    libraryService.getClientInfo(authStore.user.accessToken),
+                    mangaService.getAll(),
+                ]);
+
+                clientInfo.value = client;
+                const mangaById = new Map(mangaList.map(m => [m.id, m]));
+
+                mangas.value = (clientInfo.value?.libraryUsage ?? []).map((u: any): Manga => {
+                    const lib = mangaById.get(u.libraryId) ?? ({} as Manga);
+                    const { chapter: lastChapter, chapterUrl } = mangaService.getLastChapterInfo(lib);
+
+                    return {
+                        id: u.libraryId,
+                        title: lib.title ?? '',
+                        type: lib.type ?? '',
+                        theme: lib.theme ?? '',
+                        status: lib.status ?? '',
+                        description: lib.description ?? '',
+                        author: lib.author ?? '',
+                        artist: lib.artist ?? '',
+                        coverPath: lib.coverPath ?? '',
+                        coverUrl: lib.coverUrl ?? '',
+                        sites: lib.sites ?? {},
+                        lastChapter,
+                        chapterUrl,
+                        userLastChapter: u.lastReadChapter ?? undefined,
+                        readingStatus: u.readingStatus ?? undefined,
+                        score: u.clientScore ?? null,
+                        note: u.clientNote ?? null,
+                    };
                 });
             } catch (err) {
                 error.value = err instanceof Error ? err.message : 'Une erreur est survenue';
@@ -116,17 +134,14 @@ export default defineComponent({
 
         const onDialogUpdated = (payload: any) => {
             if (!editingManga.value) return;
-            const idx = mangas.value.findIndex(m => String(m.id) === String(editingManga.value?.id));
+            const idx = mangas.value.findIndex(m => m.id === editingManga.value?.id);
             if (idx >= 0) {
-                // Handle both lastChapter (manga) and lastEpisode (anime)
-                if (payload?.lastChapter !== undefined) mangas.value[idx].userLastChapter = payload.lastChapter
-                if (payload?.lastEpisode !== undefined) mangas.value[idx].userLastEpisode = payload.lastEpisode
-                if (payload?.readingStatus !== undefined) mangas.value[idx].readingStatus = payload.readingStatus
-                // Synchronize editingManga with updated data for next edit
+                if (payload?.lastChapter !== undefined) mangas.value[idx].userLastChapter = payload.lastChapter;
+                if (payload?.readingStatus !== undefined) mangas.value[idx].readingStatus = payload.readingStatus;
                 editingManga.value = mangas.value[idx];
             }
-            editDialog.value = false
-            editAnimeDialog.value = false
+            editDialog.value = false;
+            editAnimeDialog.value = false;
         };
 
         const openChapter = (url: string) => {
@@ -138,15 +153,7 @@ export default defineComponent({
             router.push({ name: routeName, params: { name: slugify(manga.title) } });
         };
 
-        const getCoverUrl = (manga: Manga): string => {
-            const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-            if (manga.coverPath) {
-                return `${apiBase}/cdn/${manga.coverPath}`;
-            }
-            if (manga.coverUrl) return manga.coverUrl;
-            // fallback image similar to Search component
-            return `https://picsum.photos/seed/${manga.id}/400/600`;
-        };
+        const getCoverUrl = (manga: Manga): string => mangaService.getCoverUrl(manga);
 
         onMounted(async () => {
             await fetchMangas();
@@ -160,6 +167,7 @@ export default defineComponent({
 
         return {
             mangas,
+            clientInfo,
             filteredMangas,
             displayedMangas,
             filterType,

@@ -1,4 +1,4 @@
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -20,14 +20,18 @@ export default defineComponent({
     const editEpisodeCustom = ref<string>('')
     const editStatus = ref<string>('')
     const episodeOptions = ref<{ label: string; value: string }[]>([])
+    const episodeRows = ref<{ chapter: string; url: string; site: string }[]>([])
     const statusOptions = ref([
       { label: 'En cours', value: 'En cours' },
       { label: 'Abandonné', value: 'Abandonné' },
       { label: 'Prévus', value: 'Prévus' }
     ])
+    const editSource = ref<string>('')
     const saving = ref(false)
     const deleting = ref(false)
     const loadingEpisodes = ref(false)
+
+    const animeTitle = computed(() => props.anime?.title || '')
 
     const fetchEpisodeOptions = async (idLibrary: number) => {
       episodeOptions.value = []
@@ -38,6 +42,7 @@ export default defineComponent({
         if (!resp.ok) return
         const rows: { chapter: string; url: string; site: string }[] = await resp.json()
         const key = (ch: string) => ch.split('.').map(Number).reduce((a, b) => a * 1000 + b, 0)
+        episodeRows.value = rows
         episodeOptions.value = rows
           .sort((a, b) => key(a.chapter) - key(b.chapter))
           .map(r => ({ label: `S${r.chapter.split('.')[0]} E${r.chapter.split('.')[1]}`, value: r.chapter }))
@@ -110,6 +115,15 @@ export default defineComponent({
       }
     }
 
+    const animeSources = computed(() => {
+      const seen = new Set<string>()
+      return episodeRows.value.filter(r => {
+        if (seen.has(r.site)) return false
+        seen.add(r.site)
+        return true
+      })
+    })
+
     const deleteAnime = async () => {
       if (!props.anime || !authStore.user?.accessToken) return
       if (!confirm('Êtes-vous sûr de vouloir supprimer cet anime de votre bibliothèque ?')) return
@@ -146,6 +160,8 @@ export default defineComponent({
       }
     }
 
-    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes }
+    
+
+    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, editSource, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle, animeSources }
   }
 })

@@ -1,6 +1,8 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { slugify } from '../../../utils.js';
 import Menu from "../../Shared/Menu/Menu.js";
+import mangaService from '../../../services/manga.service';
+import type { Manga } from '../../../types/index';
 
 export default defineComponent({
   name: 'Discovery',
@@ -8,8 +10,8 @@ export default defineComponent({
     Menu
   },
   setup() {
-    const featuredMangas = ref<any[]>([]);
-    const featuredAnimes = ref<any[]>([]);
+    const featuredMangas = ref<Manga[]>([]);
+    const featuredAnimes = ref<Manga[]>([]);
     const loading = ref(true);
     const activeType = ref<'all' | 'manga' | 'anime'>('all');
     const activeGenre = ref('');
@@ -22,11 +24,8 @@ export default defineComponent({
       { label: 'Anime', value: 'anime' },
     ];
 
-    const isAnime = (item: any): boolean => {
-      const site = (item.site || '').toLowerCase();
-      const type = (item.type || '').toUpperCase();
-      const theme = (item.theme || '').toLowerCase();
-      return site === 'moviedb' || type === 'ANIME' || theme.includes('anime');
+    const isAnime = (item: Manga): boolean => {
+      return (item.type || 'Manga').toString().toLowerCase() === 'anime';
     };
 
     const getThemeTags = (item: any): string[] => {
@@ -43,10 +42,12 @@ export default defineComponent({
       return text.length > max ? text.slice(0, max).trimEnd() + '…' : text;
     };
 
+    const getCoverUrl = (item: Manga): string => mangaService.getCoverUrl(item);
+
     const allItems = computed(() => [...featuredMangas.value, ...featuredAnimes.value]);
 
     const spotlightItem = computed(() => {
-      const pool = allItems.value.filter(i => i.coverUrl);
+      const pool = allItems.value.filter(i => i.coverPath || i.coverUrl);
       if (!pool.length) return null;
       return pool[spotlightIndex.value % pool.length];
     });
@@ -93,57 +94,10 @@ export default defineComponent({
     };
 
     const fetchMangas = async () => {
-      const chapterUrl = `${import.meta.env.VITE_API_URL}/chapters`;
       try {
-        const res = await fetch(chapterUrl);
-        const chapters = (await res.json()) || [];
-
-        const animes: any[] = [];
-        const mangas: any[] = [];
-
-        chapters.forEach((ch: any) => {
-          const item = {
-            id: ch.chapterId,
-            title: ch.title,
-            author: ch.author,
-            theme: ch.theme,
-            status: ch.status,
-            description: ch.description,
-            coverPath: ch.coverPath,
-            coverUrl: ch.coverUrl,
-            lastChapter: ch.lastChapter,
-            lastEpisode: ch.lastEpisode,
-            chapterUrl: ch.chapterUrl,
-            mangaUrl: ch.mangaUrl,
-            site: ch.site,
-            type: ch.type,
-          };
-
-          const site = (ch.site || '').toLowerCase();
-          const type = (ch.type || '').toUpperCase();
-          const theme = (ch.theme || '').toLowerCase();
-
-          if (site === 'moviedb' || type === 'ANIME' || theme.includes('anime')) {
-            animes.push(item);
-          } else {
-            mangas.push(item);
-          }
-        });
-
-        const mangaMap = new Map<string, any>();
-        mangas.forEach((m: any) => {
-          const key = (m.title || '').toLowerCase().trim();
-          if (!mangaMap.has(key)) mangaMap.set(key, m);
-        });
-
-        const animeMap = new Map<string, any>();
-        animes.forEach((a: any) => {
-          const key = (a.title || '').toLowerCase().trim();
-          if (!animeMap.has(key)) animeMap.set(key, a);
-        });
-
-        featuredMangas.value = Array.from(mangaMap.values());
-        featuredAnimes.value = Array.from(animeMap.values());
+        const mangaList = await mangaService.getAll();
+        featuredMangas.value = mangaList.filter(m => !isAnime(m));
+        featuredAnimes.value = mangaList.filter(m => isAnime(m));
       } catch (err) {
         console.error('Erreur fetching découverte:', err);
       } finally {
@@ -164,6 +118,7 @@ export default defineComponent({
       isAnime,
       getThemeTags,
       truncate,
+      getCoverUrl,
       spotlightItem,
       trending,
       filteredItems,
