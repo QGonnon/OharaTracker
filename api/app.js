@@ -23,8 +23,6 @@ function startApp(){
     
     app.use(cors(corsOptions));
 
-    // Le webhook Stripe doit recevoir le body brut (non parsé) pour vérifier la signature,
-    // il doit donc être déclaré avant express.json().
     app.post('/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 
     // Middleware pour parser JSON
