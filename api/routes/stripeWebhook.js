@@ -2,17 +2,36 @@ import { QueryTypes } from 'sequelize';
 import { sequelize } from '../utils/database.js';
 import stripe from '../utils/stripe.js';
 
-const FREE_SUBSCRIPTION_ID = 1;
-
-const SUBSCRIPTION_ID_BY_PLAN = {
-    lite: 2,
-    pro: 3,
+const PLAN_SUBSCRIPTION_NAMES = {
+    lite: 'Lite',
+    pro: 'Pro',
 };
+const FREE_SUBSCRIPTION_NAME = 'Free';
 
 const PLAN_BY_PRICE_ID = {
     [process.env.STRIPE_PRICE_ID_LITE]: 'lite',
     [process.env.STRIPE_PRICE_ID_PRO]: 'pro',
 };
+
+const subscriptionIdCache = new Map();
+
+async function getSubscriptionIdByName(name) {
+    if (subscriptionIdCache.has(name)) {
+        return subscriptionIdCache.get(name);
+    }
+
+    const rows = await sequelize.query(
+        'SELECT id FROM "Subscription" WHERE name = :name LIMIT 1',
+        { replacements: { name }, type: QueryTypes.SELECT }
+    );
+
+    if (rows.length === 0) {
+        throw new Error(`Plan d'abonnement "${name}" introuvable en base`);
+    }
+
+    subscriptionIdCache.set(name, rows[0].id);
+    return rows[0].id;
+}
 
 async function setClientSubscription(clientId, { subscriptionId, customerId, idSubscription }) {
     await sequelize.query(
@@ -29,12 +48,14 @@ async function setClientSubscription(clientId, { subscriptionId, customerId, idS
 }
 
 async function downgradeBySubscriptionId(stripeSubscriptionId) {
+    const freeId = await getSubscriptionIdByName(FREE_SUBSCRIPTION_NAME);
+
     await sequelize.query(
         `UPDATE "Client"
          SET id_subscription = :freeId, stripe_subscription_id = NULL
          WHERE stripe_subscription_id = :stripeSubscriptionId`,
         {
-            replacements: { freeId: FREE_SUBSCRIPTION_ID, stripeSubscriptionId },
+            replacements: { freeId, stripeSubscriptionId },
             type: QueryTypes.UPDATE,
         }
     );
@@ -57,9 +78,10 @@ export default async function stripeWebhookHandler(req, res) {
                 const session = event.data.object;
                 const clientId = Number(session.client_reference_id);
                 const plan = session.metadata?.plan;
-                const idSubscription = SUBSCRIPTION_ID_BY_PLAN[plan];
+                const subscriptionName = PLAN_SUBSCRIPTION_NAMES[plan];
 
-                if (clientId && idSubscription) {
+                if (clientId && subscriptionName) {
+                    const idSubscription = await getSubscriptionIdByName(subscriptionName);
                     await setClientSubscription(clientId, {
                         subscriptionId: session.subscription,
                         customerId: session.customer,
@@ -76,9 +98,10 @@ export default async function stripeWebhookHandler(req, res) {
                 const isActive = ['active', 'trialing'].includes(subscription.status);
                 const priceId = subscription.items?.data?.[0]?.price?.id;
                 const plan = PLAN_BY_PRICE_ID[priceId];
-                const idSubscription = isActive
-                    ? (SUBSCRIPTION_ID_BY_PLAN[plan] || FREE_SUBSCRIPTION_ID)
-                    : FREE_SUBSCRIPTION_ID;
+                const subscriptionName = isActive
+                    ? (PLAN_SUBSCRIPTION_NAMES[plan] || FREE_SUBSCRIPTION_NAME)
+                    : FREE_SUBSCRIPTION_NAME;
+                const idSubscription = await getSubscriptionIdByName(subscriptionName);
 
                 await sequelize.query(
                     `UPDATE "Client"
