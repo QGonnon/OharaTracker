@@ -25,12 +25,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-
-const entries = [
-  { version: 'v1.2.0', date: '2026-06', key: 'static.changelog.v3' },
-  { version: 'v1.1.0', date: '2026-03', key: 'static.changelog.v2' },
-  { version: 'v1.0.0', date: '2026-01', key: 'static.changelog.v1' },
-]
-</script>
+<script src="./Changelog.ts"></script>

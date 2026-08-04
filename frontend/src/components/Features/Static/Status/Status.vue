@@ -28,13 +28,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-
-const services = [
-  { key: 'static.status.service_api' },
-  { key: 'static.status.service_web' },
-  { key: 'static.status.service_notifications' },
-  { key: 'static.status.service_sources' },
-]
-</script>
+<script src="./Status.ts"></script>

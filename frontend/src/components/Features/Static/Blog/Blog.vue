@@ -15,6 +15,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-</script>
+<script src="./Blog.ts"></script>

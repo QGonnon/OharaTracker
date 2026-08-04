@@ -36,9 +36,10 @@
           </ul>
 
           <Button
-            :label="$t('static.pricing.lite_cta')"
+            :label="liteCtaLabel"
             class="w-full font-semibold"
             :loading="checkoutLoadingPlan === 'lite'"
+            :disabled="isLiteDisabled"
             @click="handleCheckout('lite')"
           />
         </div>
@@ -64,9 +65,10 @@
           </ul>
 
           <Button
-            :label="$t('static.pricing.pro_cta')"
+            :label="proCtaLabel"
             class="w-full font-semibold"
             :loading="checkoutLoadingPlan === 'pro'"
+            :disabled="isProDisabled"
             @click="handleCheckout('pro')"
           />
         </div>
@@ -130,55 +132,8 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import Menu from '../../Shared/Menu/Menu.vue'
-import { Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue'
-import { useAuthStore } from '../../../store/auth.module'
-import SubscriptionService from '../../../services/subscription.service'
+<script src="./Pricing.ts"></script>
 
-const { tm } = useI18n()
-const router = useRouter()
-const authStore = useAuthStore()
-const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null)
-
-// tm() renvoie les ressources brutes (tableaux/objets) sans interpolation,
-// adapté à une liste statique de questions/réponses traduites.
-const faqItems = computed(() => tm('faq.items') as { q: string; a: string }[])
-
-async function handleCheckout(plan: 'lite' | 'pro') {
-  if (!authStore.isLoggedIn) {
-    router.push({ name: 'Register', query: { redirect: '/pricing' } })
-    return
-  }
-
-  checkoutLoadingPlan.value = plan
-  try {
-    const { url } = await SubscriptionService.createCheckoutSession(plan)
-    window.location.href = url
-  } catch (error) {
-    console.error('Erreur lors de la création de la session de paiement:', error)
-    checkoutLoadingPlan.value = null
-  }
-}
-</script>
-
-<style scoped>
-.faq-toggle-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1;
-  color: #7c7c85;
-}
-
-.faq-toggle-icon--active {
-  color: #4f46e5;
-}
+<style>
+@import './Pricing.css';
 </style>

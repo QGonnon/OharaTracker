@@ -27,11 +27,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-import { Button } from 'primevue'
-
-// Image fournie par l'utilisateur : à placer dans frontend/src/assets/images/ohara_logo_Discord.webp
-const discordQr = new URL('../../../assets/images/ohara_logo_Discord.webp', import.meta.url).href
-const DISCORD_URL = 'https://discord.gg/DfsFuSdDp'
-</script>
+<script src="./Contact.ts"></script>

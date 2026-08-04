@@ -248,6 +248,8 @@
       "label": "Precios",
       "title": "Precios simples y transparentes",
       "desc": "Gratis para siempre, Pro cuando quieras, a medida para nuestros socios.",
+      "current_plan_cta": "Plan actual",
+      "upgrade_cta": "Mejorar plan",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",
