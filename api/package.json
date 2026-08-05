@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "init": "sequelize-cli db:migrate",
+    "init": "npx sequelize-cli db:migrate",
     "dev": "concurrently -n API,STRIPE -c blue,magenta --hide STRIPE --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\"",
     "dev:stripe": "concurrently -n API,STRIPE -c blue,magenta --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\""
   },
