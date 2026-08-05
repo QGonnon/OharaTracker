@@ -38,16 +38,20 @@ export default defineComponent({
       schema,
     };
   },
+  mounted() {
+    if (this.loggedIn) {
+      this.$router.push(this.redirectTarget);
+    }
+  },
   computed: {
     loggedIn() {
       const authStore = useAuthStore();
       return authStore.isLoggedIn;
     },
-  },
-  mounted() {
-    if (this.loggedIn) {
-      this.$router.push('/profile');
-    }
+    redirectTarget() {
+      const redirect = this.$route.query.redirect as string;
+      return redirect && redirect !== '/auth/login' && redirect !== '/register' ? redirect : '/profile';
+    },
   },
   methods: {
     handleRegister(user: any) {
@@ -64,7 +68,7 @@ export default defineComponent({
           try {
             // Utiliser email (pas username) - cohérent avec auth.service.ts
             await authStore.login({ email: user.email, password: user.password });
-            this.$router.push('/profile');
+            this.$router.push(this.redirectTarget);
           } catch (loginError) {
             this.loading = false;
             setTimeout(() => {

@@ -156,6 +156,45 @@
             </form>
           </section>
 
+          <!-- Abonnement -->
+          <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.subscription') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.subscription_sub') }}</p>
+            </div>
+            <div class="px-6 py-6 space-y-5">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.current_plan') }}</span>
+                <span class="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold">
+                  {{ subscriptionName }}
+                </span>
+              </div>
+
+              <div v-if="subscriptionError" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                {{ subscriptionError }}
+              </div>
+
+              <div v-if="hasActiveStripeSubscription" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.manage_subscription_desc') }}</p>
+                <button
+                  :disabled="portalLoading"
+                  class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-60 transition flex-shrink-0"
+                  @click="toStripePortalManageSubscription"
+                >
+                  {{ portalLoading ? $t('profile.opening_portal') : $t('profile.manage_subscription') }}
+                </button>
+              </div>
+              <div v-else class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.no_subscription') }}</p>
+                <RouterLink to="/pricing">
+                  <button class="px-6 py-2.5 rounded-xl border border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 font-semibold text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex-shrink-0">
+                    {{ $t('profile.view_plans') }}
+                  </button>
+                </RouterLink>
+              </div>
+            </div>
+          </section>
+
           <!-- Zone de danger -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-red-100 dark:border-red-900/50 overflow-hidden">
             <div class="px-6 py-5 border-b border-red-100 dark:border-red-900/50">

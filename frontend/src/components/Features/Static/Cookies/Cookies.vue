@@ -3,7 +3,7 @@
   <section class="min-h-[70vh] bg-white dark:bg-zinc-950 py-20">
     <div class="max-w-3xl mx-auto px-6">
       <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">
-        {{ $t('legal.terms.title') }}
+        {{ $t('legal.cookies.title') }}
       </h1>
       <p class="text-sm text-gray-400 dark:text-zinc-500 mb-10">{{ $t('legal.last_updated') }}</p>
 
@@ -17,13 +17,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-
-const sections = [
-  { title: 'legal.terms.s1_title', text: 'legal.terms.s1_text' },
-  { title: 'legal.terms.s2_title', text: 'legal.terms.s2_text' },
-  { title: 'legal.terms.s3_title', text: 'legal.terms.s3_text' },
-  { title: 'legal.terms.s4_title', text: 'legal.terms.s4_text' },
-]
-</script>
+<script src="./Cookies.ts"></script>

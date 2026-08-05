@@ -17,12 +17,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-
-const sections = [
-  { title: 'legal.privacy.s1_title', text: 'legal.privacy.s1_text' },
-  { title: 'legal.privacy.s2_title', text: 'legal.privacy.s2_text' },
-  { title: 'legal.privacy.s3_title', text: 'legal.privacy.s3_text' },
-]
-</script>
+<script src="./Privacy.ts"></script>

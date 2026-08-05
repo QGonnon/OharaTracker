@@ -1,0 +1,15 @@
+.faq-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #7c7c85;
+}
+
+.faq-toggle-icon--active {
+  color: #4f46e5;
+}

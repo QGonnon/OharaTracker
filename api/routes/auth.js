@@ -188,7 +188,10 @@ router.get('/me', authenticate, async (req, res) => {
     const username = req.user.username;
     try {
         const users = await sequelize.query(
-            'SELECT name, code, email, password, google_id FROM "Client" WHERE name = :username LIMIT 1',
+            `SELECT c.name, c.code, c.email, c.password, c.google_id, c.stripe_subscription_id, s.name AS subscription_name
+             FROM "Client" c
+             INNER JOIN "Subscription" s ON s.id = c.id_subscription
+             WHERE c.name = :username LIMIT 1`,
             { replacements: { username }, type: QueryTypes.SELECT }
         );
         if (users.length === 0) {
@@ -200,7 +203,9 @@ router.get('/me', authenticate, async (req, res) => {
             code: user.code,
             email: user.email,
             isGoogleUser: !!user.google_id,
-            hasPassword: !!user.password
+            hasPassword: !!user.password,
+            subscription: user.subscription_name,
+            hasActiveStripeSubscription: !!user.stripe_subscription_id
         });
     } catch (error) {
         console.error('❌ Erreur lors de la récupération du profil:', error);

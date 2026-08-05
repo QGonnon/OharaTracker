@@ -18,9 +18,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-import { Button } from 'primevue'
-
-const DISCORD_URL = 'https://discord.gg/DfsFuSdDp'
-</script>
+<script src="./Suggestions.ts"></script>

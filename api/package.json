@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "sequelize-cli db:migrate",
+    "dev": "concurrently -n API,STRIPE -c blue,magenta --hide STRIPE --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\"",
+    "dev:stripe": "concurrently -n API,STRIPE -c blue,magenta --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\""
   },
   "keywords": [],
   "author": "",
@@ -25,13 +28,15 @@
     "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",
     "puppeteer": "^24.43.1",
-    "sequelize": "^6.37.8"
+    "sequelize": "^6.37.8",
+    "stripe": "^22.4.0"
   },
   "allowScripts": {
     "puppeteer@24.43.1": true,
     "bcrypt@6.0.0": true
   },
   "devDependencies": {
+    "concurrently": "^10.0.4",
     "sequelize-cli": "^6.6.5"
   }
 }
