@@ -8,8 +8,8 @@ export default (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    name_client: {
-      type: DataTypes.STRING(24),
+    id_client: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     endpoint: {
@@ -37,7 +37,7 @@ export default (sequelize, DataTypes) => {
   });
 
   PushSubscription.associate = models => {
-    PushSubscription.belongsTo(models.Client, { foreignKey: 'name_client', targetKey: 'name', as: 'client' });
+    PushSubscription.belongsTo(models.Client, { foreignKey: 'id_client', targetKey: 'id', as: 'client' });
   };
 
   return PushSubscription;

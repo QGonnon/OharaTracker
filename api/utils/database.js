@@ -555,13 +555,27 @@ async function savePushSubscription(username, { endpoint, keys }) {
         throw error;
     }
 
-    await sequelize.query(
-        `INSERT INTO "PushSubscription" (name_client, endpoint, p256dh, auth, created_at)
-         VALUES (:username, :endpoint, :p256dh, :auth, NOW())
-         ON CONFLICT (endpoint)
-         DO UPDATE SET name_client = EXCLUDED.name_client, p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth`,
+    const clients = await sequelize.query(
+        'SELECT id FROM "Client" WHERE name = :username LIMIT 1',
         {
-            replacements: { username, endpoint, p256dh: keys.p256dh, auth: keys.auth },
+            replacements: { username },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    if (clients.length === 0) {
+        const error = new Error('Client introuvable');
+        error.statusCode = 404;
+        throw error;
+    }
+
+    await sequelize.query(
+        `INSERT INTO "PushSubscription" (id_client, endpoint, p256dh, auth, created_at)
+         VALUES (:idClient, :endpoint, :p256dh, :auth, NOW())
+         ON CONFLICT (endpoint)
+         DO UPDATE SET id_client = EXCLUDED.id_client, p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth`,
+        {
+            replacements: { idClient: clients[0].id, endpoint, p256dh: keys.p256dh, auth: keys.auth },
             type: QueryTypes.INSERT,
         }
     );
@@ -583,7 +597,10 @@ async function getPushSubscriptionsForUsers(usernames) {
     }
 
     return sequelize.query(
-        'SELECT endpoint, p256dh, auth FROM "PushSubscription" WHERE name_client IN (:usernames)',
+        `SELECT ps.endpoint, ps.p256dh, ps.auth
+         FROM "PushSubscription" ps
+         INNER JOIN "Client" c ON c.id = ps.id_client
+         WHERE c.name IN (:usernames)`,
         {
             replacements: { usernames },
             type: QueryTypes.SELECT,
@@ -911,7 +928,10 @@ function getClient(username, callback) {
             lu.score as "clientScore",
             lu.id_library as "libraryId",
             lu.note as "clientNote",
-            lu.id_source as "sourceId" 
+            lu.id_source as "sourceId",
+            EXISTS (
+                SELECT 1 FROM "PushSubscription" ps WHERE ps.id_client = c.id
+            ) as "pushEnabled"
         FROM "Client" as c
         INNER JOIN "libraryusage" as lu ON c.name = lu.name_client
         INNER JOIN "Subscription" as s ON c.id_subscription = s.id
@@ -930,6 +950,7 @@ function getClient(username, callback) {
                     clientEmail: row.clientEmail,
                     clientGoogleId: row.clientGoogleId,
                     clientSubscription: row.clientSubscription,
+                    pushEnabled: row.pushEnabled,
                     libraryUsage: rows.map(row => ({
                         libraryId: row.libraryId,
                         lastReadChapter: row.lastReadChapter,

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import NotificationService from '../services/notification.service';
+import LibraryService from '../services/library.service';
 import { useAuthStore } from './auth.module';
 import type { AppNotification } from '../types/index';
 
@@ -110,6 +111,24 @@ export const useNotificationStore = defineStore('notification', {
       }
     },
 
+    // Vérifie côté backend si le client possède déjà un abonnement push enregistré
+    async checkPushSubscription() {
+      if (!this.pushSupported) return;
+
+      const authStore = useAuthStore();
+      const token = authStore.currentUser?.accessToken;
+      if (!token) return;
+
+      try {
+        const client = await LibraryService.getClientInfo(token);
+        if (client?.pushEnabled) {
+          this.pushEnabled = true;
+        }
+      } catch (err) {
+        console.error('Erreur lors de la vérification de l\'abonnement push:', err);
+      }
+    },
+
     // Écoute les messages envoyés par le Service Worker (push reçu pendant que l'onglet est ouvert)
     // pour rafraîchir le badge sans attendre un rechargement. Sans effet si le SW n'est pas supporté.
     listenForServiceWorkerMessages() {
@@ -123,9 +142,6 @@ export const useNotificationStore = defineStore('notification', {
 
     // Doit être appelé depuis un geste utilisateur (clic) : demande la permission navigateur,
     // s'abonne au Push Manager et enregistre l'abonnement côté backend.
-    // Distingue le refus explicite de permission (permission-denied) d'un échec technique de
-    // l'abonnement (subscribe-failed, ex. Push Manager du navigateur ou appel backend en échec) :
-    // les deux se traduisaient auparavant par le même message trompeur "permission refusée".
     async initPush(): Promise<'granted' | 'permission-denied' | 'subscribe-failed' | 'unsupported'> {
       this.pushError = '';
       const authStore = useAuthStore();

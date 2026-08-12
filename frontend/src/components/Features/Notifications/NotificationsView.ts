@@ -67,6 +67,7 @@ export default defineComponent({
 
     onMounted(() => {
       notificationStore.fetchNotifications()
+      notificationStore.checkPushSubscription()
     })
 
     return {
