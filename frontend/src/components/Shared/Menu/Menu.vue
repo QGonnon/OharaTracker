@@ -62,6 +62,9 @@
           <font-awesome-icon :icon="theme === 'dark' ? ['fas', 'sun'] : ['fas', 'moon']" class="text-sm" />
         </button>
 
+        <!-- Notifications -->
+        <NotificationBell v-if="isLoggedIn" />
+
         <!-- Login button (desktop only) -->
         <Button
           v-if="!isLoggedIn"
@@ -165,6 +168,10 @@
           <RouterLink to="/list" @click="mobileOpen = false"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium">
             <i class="pi pi-bookmark text-gray-400" /> {{ $t('nav.following') }}
+          </RouterLink>
+          <RouterLink to="/notifications" @click="mobileOpen = false"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium">
+            <i class="pi pi-bell text-gray-400" /> {{ $t('notifications.title') }}
           </RouterLink>
           <button
             @click="handleLogout(); mobileOpen = false"

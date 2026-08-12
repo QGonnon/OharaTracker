@@ -3,11 +3,12 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import ToggleSwitch from 'primevue/toggleswitch'
 import { useAuthStore } from '../../../store/auth.module'
 
 export default defineComponent({
   name: 'EditLibraryDialog',
-  components: { Dialog, Dropdown, InputText, Button },
+  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch },
   props: {
     visible: { type: Boolean, required: true },
     manga: { type: Object as () => any, required: false }
@@ -20,6 +21,7 @@ export default defineComponent({
     const editChapterCustom = ref<string>('')
     const editStatus = ref<string>('')
     const editSource = ref<string>('')
+    const editNotify = ref<boolean>(false)
     const chapterOptions = ref<{ label: string; value: string }[]>([])
     const chapterRows = ref<{ chapter: string; url: string; site: string }[]>([])
     const statusOptions = ref([
@@ -84,6 +86,7 @@ export default defineComponent({
         editChapterCustom.value = ''
         editStatus.value = props.manga.readingStatus || ''
         editSource.value = props.manga.site || ''
+        editNotify.value = !!props.manga.notifyEnabled
         if (props.manga.id) fetchChapterOptions(props.manga.id)
       }
     })
@@ -96,6 +99,7 @@ export default defineComponent({
       editChapterCustom.value = ''
       editStatus.value = m.readingStatus || ''
       editSource.value = m.site || ''
+      editNotify.value = !!m.notifyEnabled
       if (m.id) fetchChapterOptions(m.id)
     }, { immediate: true, deep: true })
 
@@ -112,7 +116,8 @@ export default defineComponent({
           title: props.manga.title,
           site: editSource.value || props.manga.site || null,
           lastChapter: chosenChapter || null,
-          readingStatus: editStatus.value || null
+          readingStatus: editStatus.value || null,
+          notifyEnabled: editNotify.value
         }
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const resp = await fetch(`${apiBase}/library/user`, {
@@ -129,7 +134,7 @@ export default defineComponent({
         }
 
         const resJson = await resp.json().catch(() => ({}))
-        emit('updated', { idLibrary: resJson.idLibrary, lastChapter: body.lastChapter, readingStatus: body.readingStatus, site: body.site })
+        emit('updated', { idLibrary: resJson.idLibrary, lastChapter: body.lastChapter, readingStatus: body.readingStatus, site: body.site, notifyEnabled: body.notifyEnabled })
         visibleLocal.value = false
       } catch (err) {
         console.error('Erreur sauvegarde édition (shared):', err)
@@ -174,6 +179,6 @@ export default defineComponent({
       }
     }
 
-    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle, mangaSources }
+    return { visibleLocal, editChapter, editChapterCustom, editStatus, editSource, editNotify, chapterOptions, statusOptions, save, close, saving, deleteManga, deleting, loadingChapters, mangaTitle, mangaSources }
   }
 })

@@ -3,11 +3,12 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import ToggleSwitch from 'primevue/toggleswitch'
 import { useAuthStore } from '../../../store/auth.module'
 
 export default defineComponent({
   name: 'EditAnimeDialog',
-  components: { Dialog, Dropdown, InputText, Button },
+  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch },
   props: {
     visible: { type: Boolean, required: true },
     anime: { type: Object as () => any, required: false }
@@ -19,6 +20,7 @@ export default defineComponent({
     const editEpisode = ref<string>('')
     const editEpisodeCustom = ref<string>('')
     const editStatus = ref<string>('')
+    const editNotify = ref<boolean>(false)
     const episodeOptions = ref<{ label: string; value: string }[]>([])
     const episodeRows = ref<{ chapter: string; url: string; site: string }[]>([])
     const statusOptions = ref([
@@ -60,6 +62,7 @@ export default defineComponent({
         editEpisode.value = props.anime.userLastEpisode || props.anime.userLastChapter || props.anime.lastEpisode || props.anime.lastChapter || ''
         editEpisodeCustom.value = ''
         editStatus.value = props.anime.readingStatus || ''
+        editNotify.value = !!props.anime.notifyEnabled
         if (props.anime.id) fetchEpisodeOptions(props.anime.id)
       }
     })
@@ -71,6 +74,7 @@ export default defineComponent({
       editEpisode.value = m.userLastEpisode || m.userLastChapter || m.lastEpisode || m.lastChapter || ''
       editEpisodeCustom.value = ''
       editStatus.value = m.readingStatus || ''
+      editNotify.value = !!m.notifyEnabled
       if (m.id) fetchEpisodeOptions(m.id)
     }, { immediate: true, deep: true })
 
@@ -87,7 +91,8 @@ export default defineComponent({
           title: props.anime.title,
           site: props.anime.site || null,
           lastChapter: chosenEpisode || null,
-          readingStatus: editStatus.value || null
+          readingStatus: editStatus.value || null,
+          notifyEnabled: editNotify.value
         }
         const apiBase = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
         const resp = await fetch(`${apiBase}/library/user`, {
@@ -105,7 +110,7 @@ export default defineComponent({
 
         const resJson = await resp.json().catch(() => ({}))
         // emit updated with new values so parent can update local state
-        emit('updated', { idLibrary: resJson.idLibrary, lastEpisode: body.lastChapter, readingStatus: body.readingStatus })
+        emit('updated', { idLibrary: resJson.idLibrary, lastEpisode: body.lastChapter, readingStatus: body.readingStatus, notifyEnabled: body.notifyEnabled })
         visibleLocal.value = false
       } catch (err) {
         console.error('Erreur sauvegarde édition anime:', err)
@@ -162,6 +167,6 @@ export default defineComponent({
 
     
 
-    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, editSource, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle, animeSources }
+    return { visibleLocal, editEpisode, editEpisodeCustom, editStatus, editSource, editNotify, episodeOptions, statusOptions, save, close, saving, deleteAnime, deleting, loadingEpisodes, animeTitle, animeSources }
   }
 })

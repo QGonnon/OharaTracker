@@ -5,6 +5,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from 'primevue/menuitem'
+import NotificationBell from '../NotificationBell/NotificationBell.vue'
 
 type SupportedLocale = 'fr' | 'en' | 'de' | 'it' | 'es'
 
@@ -18,7 +19,7 @@ const LANGUAGES: { code: SupportedLocale; label: string }[] = [
 
 export default defineComponent({
   name: 'AppMenu',
-  components: { Button, Drawer, PopupMenu },
+  components: { Button, Drawer, PopupMenu, NotificationBell },
   setup() {
     const router = useRouter()
     const route = useRoute()

@@ -12,6 +12,7 @@ import Discovery from '../components/Features/Discovery/Discovery.vue'
 import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
 import Search from '../components/Features/Search/Search.vue'
 import Profile from '../components/Features/User/Profile/Profile.vue'
+import NotificationsView from '../components/Features/Notifications/NotificationsView.vue'
 
 // Pages statiques / footer
 import Pricing from '../components/Features/Static/Pricing/Pricing.vue'
@@ -111,6 +112,11 @@ const routes: RouteRecordRaw[] = [
       },
     ]
   },
+  {
+    path: '/notifications',
+    name: 'Notifications',
+    component: NotificationsView,
+  },
   // {
   //   path: "/admin",
   //   name: "admin",
@@ -193,7 +199,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library'];
+  const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library', 'Notifications'];
   const requiresAuth = protectedPages.includes(to.name?.toString() || '');
   const authStore = useAuthStore();
   const loggedIn = authStore.isLoggedIn;

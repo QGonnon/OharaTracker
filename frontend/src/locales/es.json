@@ -175,6 +175,7 @@
     "select_chapter": "Seleccionar capítulo",
     "loading_chapters": "Cargando capítulos...",
     "enter_chapter": "Introducir capítulo",
+    "notify": "Recibir notificaciones",
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "save": "Guardar"
@@ -185,9 +186,23 @@
     "viewing_status": "Estado de visualización",
     "select_episode": "Seleccionar episodio",
     "enter_episode": "Introducir episodio",
+    "notify": "Recibir notificaciones",
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "save": "Guardar"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "unread_count": "{n} sin leer",
+    "mark_all_read": "Marcar todas como leídas",
+    "empty": "Aún no hay notificaciones",
+    "see_all": "Ver todo",
+    "delete": "Eliminar",
+    "new_chapter": "El capítulo {chapter} de {title} ya está disponible",
+    "new_episode": "El episodio {chapter} de {title} ya está disponible",
+    "enable_push": "Activar notificaciones push",
+    "push_denied": "Se denegó el permiso de notificación. Puedes activarlo en la configuración de tu navegador.",
+    "push_subscribe_failed": "No se pudieron activar las notificaciones push en este navegador ({error}). Comprueba que ninguna extensión las esté bloqueando."
   },
   "profile": {
     "title": "Mi perfil",

@@ -11,6 +11,8 @@ import App from './App.vue'
 import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
 import i18n from './i18n'
+import { useNotificationStore } from './store/notification.module'
+import { setupHttpInterceptors } from './services/http-interceptors'
 
 const pinia = createPinia()
 
@@ -51,6 +53,8 @@ app.use(router)
     .use(i18n)
     .component('font-awesome-icon', FontAwesomeIcon)
 
+setupHttpInterceptors(pinia, router)
+
 try {
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme === 'dark') {
@@ -61,3 +65,10 @@ try {
 } catch (e) {}
 
 app.mount('#app')
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+        console.error('Erreur lors de l\'enregistrement du service worker:', err)
+    })
+    useNotificationStore(pinia).listenForServiceWorkerMessages()
+}

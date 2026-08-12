@@ -175,6 +175,7 @@
     "select_chapter": "Kapitel auswählen",
     "loading_chapters": "Kapitel werden geladen...",
     "enter_chapter": "Kapitel eingeben",
+    "notify": "Benachrichtigungen erhalten",
     "delete": "Löschen",
     "cancel": "Abbrechen",
     "save": "Speichern"
@@ -185,9 +186,23 @@
     "viewing_status": "Sehstatus",
     "select_episode": "Episode auswählen",
     "enter_episode": "Episode eingeben",
+    "notify": "Benachrichtigungen erhalten",
     "delete": "Löschen",
     "cancel": "Abbrechen",
     "save": "Speichern"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "unread_count": "{n} ungelesen",
+    "mark_all_read": "Alle als gelesen markieren",
+    "empty": "Noch keine Benachrichtigungen",
+    "see_all": "Alle anzeigen",
+    "delete": "Löschen",
+    "new_chapter": "Kapitel {chapter} von {title} ist verfügbar",
+    "new_episode": "Episode {chapter} von {title} ist verfügbar",
+    "enable_push": "Push-Benachrichtigungen aktivieren",
+    "push_denied": "Die Benachrichtigungsberechtigung wurde verweigert. Du kannst sie in den Browsereinstellungen aktivieren.",
+    "push_subscribe_failed": "Push-Benachrichtigungen konnten in diesem Browser nicht aktiviert werden ({error}). Prüfe, ob eine Erweiterung Benachrichtigungen blockiert."
   },
   "profile": {
     "title": "Mein Profil",

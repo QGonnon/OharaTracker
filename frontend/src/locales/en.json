@@ -213,6 +213,7 @@
     "select_chapter": "Select chapter",
     "loading_chapters": "Loading chapters...",
     "enter_chapter": "Enter chapter",
+    "notify": "Receive notifications",
     "delete": "Delete",
     "cancel": "Cancel",
     "save": "Save"
@@ -224,9 +225,23 @@
     "select_episode": "Select episode",
     "loading_episodes": "Loading episodes...",
     "enter_episode": "Enter episode",
+    "notify": "Receive notifications",
     "delete": "Delete",
     "cancel": "Cancel",
     "save": "Save"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unread_count": "{n} unread",
+    "mark_all_read": "Mark all as read",
+    "empty": "No notifications yet",
+    "see_all": "See all",
+    "delete": "Delete",
+    "new_chapter": "Chapter {chapter} of {title} is available",
+    "new_episode": "Episode {chapter} of {title} is available",
+    "enable_push": "Enable push notifications",
+    "push_denied": "Notification permission was denied. You can enable it in your browser settings.",
+    "push_subscribe_failed": "Push notifications could not be enabled on this browser ({error}). Check that no extension is blocking notifications."
   },
   "profile": {
     "title": "My Profile",
