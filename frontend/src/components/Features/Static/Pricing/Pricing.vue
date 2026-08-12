@@ -35,9 +35,13 @@
             </li>
           </ul>
 
-          <RouterLink to="/register">
-            <Button :label="$t('static.pricing.lite_cta')" class="w-full font-semibold" />
-          </RouterLink>
+          <Button
+            :label="liteCtaLabel"
+            class="w-full font-semibold"
+            :loading="checkoutLoadingPlan === 'lite'"
+            :disabled="isLiteDisabled"
+            @click="handleCheckout('lite')"
+          />
         </div>
 
         <!-- Pro -->
@@ -60,9 +64,13 @@
             </li>
           </ul>
 
-          <RouterLink to="/register">
-            <Button :label="$t('static.pricing.pro_cta')" class="w-full font-semibold" />
-          </RouterLink>
+          <Button
+            :label="proCtaLabel"
+            class="w-full font-semibold"
+            :loading="checkoutLoadingPlan === 'pro'"
+            :disabled="isProDisabled"
+            @click="handleCheckout('pro')"
+          />
         </div>
 
         <!-- B2B Partner -->
@@ -124,33 +132,8 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import Menu from '../../Shared/Menu/Menu.vue'
-import { Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue'
+<script src="./Pricing.ts"></script>
 
-const { tm } = useI18n()
-
-// tm() renvoie les ressources brutes (tableaux/objets) sans interpolation,
-// adapté à une liste statique de questions/réponses traduites.
-const faqItems = computed(() => tm('faq.items') as { q: string; a: string }[])
-</script>
-
-<style scoped>
-.faq-toggle-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1;
-  color: #7c7c85;
-}
-
-.faq-toggle-icon--active {
-  color: #4f46e5;
-}
+<style>
+@import './Pricing.css';
 </style>

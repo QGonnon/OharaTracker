@@ -31,8 +31,4 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import Menu from '../../Shared/Menu/Menu.vue'
-
-const sites = ['MangaDex', 'AniList', 'Asura Scans']
-</script>
+<script src="./SupportedSites.ts"></script>

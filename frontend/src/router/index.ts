@@ -15,17 +15,17 @@ import Profile from '../components/Features/User/Profile/Profile.vue'
 import NotificationsView from '../components/Features/Notifications/NotificationsView.vue'
 
 // Pages statiques / footer
-import Pricing from '../components/Features/Static/Pricing.vue'
-import Blog from '../components/Features/Static/Blog.vue'
-import Status from '../components/Features/Static/Status.vue'
-import Changelog from '../components/Features/Static/Changelog.vue'
-import Suggestions from '../components/Features/Static/Suggestions.vue'
-import SupportedSites from '../components/Features/Static/SupportedSites.vue'
-import OfficialPartners from '../components/Features/Static/OfficialPartners.vue'
-import Contact from '../components/Features/Static/Contact.vue'
-import Terms from '../components/Features/Static/Terms.vue'
-import Privacy from '../components/Features/Static/Privacy.vue'
-import Cookies from '../components/Features/Static/Cookies.vue'
+import Pricing from '../components/Features/Static/Pricing/Pricing.vue'
+import Blog from '../components/Features/Static/Blog/Blog.vue'
+import Status from '../components/Features/Static/Status/Status.vue'
+import Changelog from '../components/Features/Static/Changelog/Changelog.vue'
+import Suggestions from '../components/Features/Static/Suggestions/Suggestions.vue'
+import SupportedSites from '../components/Features/Static/SupportedSites/SupportedSites.vue'
+import OfficialPartners from '../components/Features/Static/OfficialPartners/OfficialPartners.vue'
+import Contact from '../components/Features/Static/Contact/Contact.vue'
+import Terms from '../components/Features/Static/Terms/Terms.vue'
+import Privacy from '../components/Features/Static/Privacy/Privacy.vue'
+import Cookies from '../components/Features/Static/Cookies/Cookies.vue'
 
 // const BoardAdmin = () => import("../components/Features/User/BoardAdmin/BoardAdmin.vue")
 // const BoardModerator = () => import("../components/Features/User/BoardModerator/BoardModerator.vue")

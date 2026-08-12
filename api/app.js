@@ -1,5 +1,6 @@
 import express from 'express';
 import routes from './routes/index.js';
+import stripeWebhookHandler from './routes/stripeWebhook.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -21,6 +22,8 @@ function startApp(){
     };
     
     app.use(cors(corsOptions));
+
+    app.post('/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 
     // Middleware pour parser JSON
     app.use(express.json());

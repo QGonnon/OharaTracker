@@ -2,6 +2,7 @@ import { defineComponent } from 'vue';
 import { useAuthStore } from '../../../../store/auth.module';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
+import SubscriptionService from '../../../../services/subscription.service';
 
 export default defineComponent({
   name: 'Profile',
@@ -13,6 +14,10 @@ export default defineComponent({
     return {
       isGoogleUser: false,
       hasPassword: true,
+      subscriptionName: 'Free',
+      hasActiveStripeSubscription: false,
+      portalLoading: false,
+      subscriptionError: '',
       profileForm: {
         username: user?.username || '',
         email: user?.email || ''
@@ -80,6 +85,8 @@ export default defineComponent({
       }
       this.isGoogleUser = fresh.isGoogleUser || false;
       this.hasPassword = fresh.hasPassword || false;
+      this.subscriptionName = fresh.subscription || 'Free';
+      this.hasActiveStripeSubscription = fresh.hasActiveStripeSubscription || false;
       this.profileForm.username = fresh.username;
       this.profileForm.email = fresh.email;
     } catch (err: any) {
@@ -146,6 +153,18 @@ export default defineComponent({
       const authStore = useAuthStore();
       authStore.logout();
       this.$router.push({ name: 'Login' });
+    },
+
+    async toStripePortalManageSubscription() {
+      this.subscriptionError = '';
+      this.portalLoading = true;
+      try {
+        const { url } = await SubscriptionService.createPortalSession();
+        window.location.href = url;
+      } catch (err: any) {
+        this.subscriptionError = err?.response?.data?.message || 'Impossible d\'ouvrir le portail de facturation.';
+        this.portalLoading = false;
+      }
     },
   },
 });
