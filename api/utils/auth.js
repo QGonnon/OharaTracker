@@ -7,14 +7,14 @@ function authenticate(req, res, next) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Token manquant' });
     }
-
+    
     const token = authHeader.replace('Bearer ', '');
     try {
         const payload = jwt.verify(token, JWT_SECRET);
         req.user = payload;
         next();
     } catch (err) {
-        return res.status(401).json({ message: 'Token invalide' });
+        return res.status(401).json({ message: 'Token invalide ou expiré' });
     }
 }
 
