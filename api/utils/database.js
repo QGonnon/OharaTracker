@@ -933,7 +933,7 @@ function getClient(username, callback) {
                 SELECT 1 FROM "PushSubscription" ps WHERE ps.id_client = c.id
             ) as "pushEnabled"
         FROM "Client" as c
-        INNER JOIN "libraryusage" as lu ON c.name = lu.name_client
+        LEFT JOIN "libraryusage" as lu ON c.name = lu.name_client
         INNER JOIN "Subscription" as s ON c.id_subscription = s.id
         WHERE c.name = :username`,
         {
@@ -942,6 +942,12 @@ function getClient(username, callback) {
         }
     )
         .then(rows => {
+            if (rows.length === 0) {
+                const error = new Error('Client introuvable');
+                error.statusCode = 404;
+                throw error;
+            }
+
             const row = rows[0];
             const client = {
                     clientId: row.clientId,
@@ -951,14 +957,17 @@ function getClient(username, callback) {
                     clientGoogleId: row.clientGoogleId,
                     clientSubscription: row.clientSubscription,
                     pushEnabled: row.pushEnabled,
-                    libraryUsage: rows.map(row => ({
-                        libraryId: row.libraryId,
-                        lastReadChapter: row.lastReadChapter,
-                        readingStatus: row.readingStatus,
-                        clientScore: row.clientScore,
-                        clientNote: row.clientNote,
-                        sourceId: row.sourceId,
-                    })),
+                    // Le LEFT JOIN produit une ligne avec libraryId = null quand le client ne suit aucune œuvre
+                    libraryUsage: rows
+                        .filter(row => row.libraryId !== null)
+                        .map(row => ({
+                            libraryId: row.libraryId,
+                            lastReadChapter: row.lastReadChapter,
+                            readingStatus: row.readingStatus,
+                            clientScore: row.clientScore,
+                            clientNote: row.clientNote,
+                            sourceId: row.sourceId,
+                        })),
                     
                 };
             callback(null, client);

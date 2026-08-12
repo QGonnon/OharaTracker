@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', authenticate, (req, res) => {
     getClient(req.user.username, (err, client) => {
         if (err) {
-            res.status(500).json({ error: err.message });
+            res.status(err.statusCode || 500).json({ error: err.message });
             return;
         }
         res.json(client);
