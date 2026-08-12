@@ -6,7 +6,8 @@ Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir
 ```
 cd api
 npm i
-node index.js
+npm run init
+npm run dev
 ```
 
 ## Rajouter une route :
