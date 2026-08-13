@@ -17,7 +17,7 @@ router
     .use('/auth', auth)
     .use('/library', library)
     .use('/client', client)
-    .use('/notifications', notifications);
+    .use('/notifications', notifications)
     .use('/stripe', stripeRoutes);
 
 export default router;
