@@ -27,10 +27,6 @@ import Terms from '../components/Features/Static/Terms/Terms.vue'
 import Privacy from '../components/Features/Static/Privacy/Privacy.vue'
 import Cookies from '../components/Features/Static/Cookies/Cookies.vue'
 
-// const BoardAdmin = () => import("../components/Features/User/BoardAdmin/BoardAdmin.vue")
-// const BoardModerator = () => import("../components/Features/User/BoardModerator/BoardModerator.vue")
-// const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.vue")
-
 const routes: RouteRecordRaw[] = [
   {
     path: '/discovery',
@@ -117,21 +113,6 @@ const routes: RouteRecordRaw[] = [
     name: 'Notifications',
     component: NotificationsView,
   },
-  // {
-  //   path: "/admin",
-  //   name: "admin",
-  //   component: BoardAdmin,
-  // },
-  // {
-  //   path: "/mod",
-  //   name: "moderator",
-  //   component: BoardModerator,
-  // },
-  // {
-  //   path: "/user",
-  //   name: "user",
-  //   component: BoardUser,
-  // },
   {
     path: '/pricing',
     name: 'Pricing',
