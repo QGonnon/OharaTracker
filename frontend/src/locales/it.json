@@ -182,9 +182,13 @@
   },
   "edit_anime": {
     "title": "Modifica anime",
+    "source": "Fonte",
+    "select_source": "Seleziona fonte",
+    "loading_sources": "Caricamento fonti...",
     "stopped_episode": "Episodio interrotto",
     "viewing_status": "Stato visione",
     "select_episode": "Seleziona episodio",
+    "loading_episodes": "Caricamento episodi...",
     "enter_episode": "Inserisci episodio",
     "notify": "Ricevi notifiche",
     "delete": "Elimina",

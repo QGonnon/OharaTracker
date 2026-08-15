@@ -232,6 +232,9 @@
   },
   "edit_anime": {
     "title": "Éditer l'anime",
+    "source": "Source",
+    "select_source": "Sélectionner la source",
+    "loading_sources": "Chargement des sources...",
     "stopped_episode": "Épisode arrêté",
     "viewing_status": "Statut de visionnage",
     "select_episode": "Sélectionner l'épisode",
