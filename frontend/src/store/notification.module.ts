@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import NotificationService from '../services/notification.service';
-import LibraryService from '../services/library.service';
 import { useAuthStore } from './auth.module';
+import { useLibraryStore } from './library.module';
 import type { AppNotification } from '../types/index';
 
 interface NotificationState {
@@ -120,7 +120,8 @@ export const useNotificationStore = defineStore('notification', {
       if (!token) return;
 
       try {
-        const client = await LibraryService.getClientInfo(token);
+        const libraryStore = useLibraryStore();
+        const client = await libraryStore.fetchClientInfo();
         if (client?.pushEnabled) {
           this.pushEnabled = true;
         }

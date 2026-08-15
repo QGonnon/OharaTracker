@@ -220,6 +220,9 @@
   },
   "edit_anime": {
     "title": "Edit anime",
+    "source": "Source",
+    "select_source": "Select source",
+    "loading_sources": "Loading sources...",
     "stopped_episode": "Stopped episode",
     "viewing_status": "Viewing status",
     "select_episode": "Select episode",

@@ -1,12 +1,12 @@
 <template>
   <EditProgressDialog
-    type="manga"
+    type="anime"
     :visible="visible"
-    :item="manga"
+    :item="anime"
     @update:visible="$emit('update:visible', $event)"
     @updated="$emit('updated', $event)"
     @deleted="$emit('deleted', $event)"
   />
 </template>
 
-<script src="./EditLibraryDialog.ts"></script>
+<script src="./EditAnimeDialog.ts"></script>

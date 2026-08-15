@@ -23,6 +23,13 @@ class MangaService {
     return mangas.find(m => slugify(m.title) === slug)
   }
 
+  // Chapitres/épisodes connus pour une entrée de bibliothèque donnée, toutes sources confondues
+  async getChaptersForLibrary(idLibrary: number): Promise<{ chapter: string; url: string; site: string }[]> {
+    const response = await fetch(`${getApiBase()}/chapters/${idLibrary}`)
+    if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
+    return response.json()
+  }
+
   // Le cover est soit hébergé localement (coverPath, servi via /cdn), soit une URL externe (coverUrl)
   getCoverUrl(manga: Pick<Manga, 'coverPath' | 'coverUrl' | 'title'>): string {
     if (manga.coverPath) return `${getApiBase()}/cdn/${manga.coverPath}`

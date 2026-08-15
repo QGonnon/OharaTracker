@@ -3,7 +3,6 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '../store/auth.module'
 
 // Import de tes composants existants
-import MangasCoverView from '../components/Features/Mangas/MangasCoverView/MangasCoverView.vue'
 import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
 import Login from '../components/Auth/Login/Login.vue'
 import Register from '../components/Auth/Register/Register.vue'
@@ -26,10 +25,6 @@ import Contact from '../components/Features/Static/Contact/Contact.vue'
 import Terms from '../components/Features/Static/Terms/Terms.vue'
 import Privacy from '../components/Features/Static/Privacy/Privacy.vue'
 import Cookies from '../components/Features/Static/Cookies/Cookies.vue'
-
-// const BoardAdmin = () => import("../components/Features/User/BoardAdmin/BoardAdmin.vue")
-// const BoardModerator = () => import("../components/Features/User/BoardModerator/BoardModerator.vue")
-// const BoardUser = () => import("../components/Features/User/BoardUser/BoardUser.vue")
 
 const routes: RouteRecordRaw[] = [
   {
@@ -117,21 +112,6 @@ const routes: RouteRecordRaw[] = [
     name: 'Notifications',
     component: NotificationsView,
   },
-  // {
-  //   path: "/admin",
-  //   name: "admin",
-  //   component: BoardAdmin,
-  // },
-  // {
-  //   path: "/mod",
-  //   name: "moderator",
-  //   component: BoardModerator,
-  // },
-  // {
-  //   path: "/user",
-  //   name: "user",
-  //   component: BoardUser,
-  // },
   {
     path: '/pricing',
     name: 'Pricing',
@@ -198,7 +178,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library', 'Notifications'];
   const requiresAuth = protectedPages.includes(to.name?.toString() || '');
   const authStore = useAuthStore();

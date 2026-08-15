@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../../store/auth.module'
 import { useNotificationStore } from '../../../store/notification.module'
-import mangaService from '../../../services/manga.service'
+import { useMangaStore } from '../../../store/manga.module'
 import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
 
@@ -18,6 +18,7 @@ export default defineComponent({
     const { t } = useI18n()
     const authStore = useAuthStore()
     const notificationStore = useNotificationStore()
+    const mangaStore = useMangaStore()
     const panelRef = ref()
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -25,7 +26,7 @@ export default defineComponent({
     const badgeValue = computed(() => (unreadCount.value > 9 ? '9+' : String(unreadCount.value)))
     const recentNotifications = computed(() => notificationStore.items.slice(0, 6))
 
-    const isAnime = (n: AppNotification) => mangaService.isAnimeType({
+    const isAnime = (n: AppNotification) => mangaStore.isAnimeType({
       type: n.mediaType ?? '',
       sites: n.site ? { [n.site]: { site: n.site, mangaUrl: '', chapterUrl: '', chapters: [] } } : {}
     })

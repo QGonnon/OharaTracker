@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import AuthService from '../services/auth.service';
+import { useLibraryStore } from './library.module';
 import type { User, AuthState } from '../types/index'
 
 // Restore user only if it exists *and* has an accessToken; otherwise clear it.
@@ -45,6 +46,9 @@ export const useAuthStore = defineStore('auth', {
       AuthService.logout();
       this.status.loggedIn = false;
       this.user = null;
+      // clientInfo est spécifique à l'utilisateur : on vide le cache pour éviter
+      // qu'une prochaine connexion (autre compte) ne réutilise des données périmées.
+      useLibraryStore().$reset();
     },
     
     async register(user: any) {
