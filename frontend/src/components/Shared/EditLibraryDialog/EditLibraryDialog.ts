@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import EditProgressDialog from './EditProgressDialog.vue'
+import EditProgressDialog from '../EditProgressDialog/EditProgressDialog.vue'
 
 // Enveloppe fine autour du composant abstrait EditProgressDialog, configurée pour le manga.
 // Conserve l'API publique historique (prop `manga`) pour ne pas impacter les appelants.

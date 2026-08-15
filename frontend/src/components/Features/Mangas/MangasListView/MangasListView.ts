@@ -11,7 +11,7 @@ import IconField from 'primevue/iconfield'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
-import EditAnimeDialog from '../../../Shared/EditLibraryDialog/EditAnimeDialog.vue'
+import EditAnimeDialog from '../../../Shared/EditAnimeDialog/EditAnimeDialog.vue'
 import { useAuthStore } from '../../../../store/auth.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
@@ -124,8 +124,9 @@ export default defineComponent({
 
         const openEdit = (data: Manga) => {
             editingManga.value = data;
+            console.log('Ouverture édition manga:', data);
             // Ouvrir le bon dialog selon le type
-            if ((data.type || 'Manga') === 'Anime') {
+            if (mangaService.isAnimeType(data)) {
                 editAnimeDialog.value = true;
             } else {
                 editDialog.value = true;
@@ -149,7 +150,7 @@ export default defineComponent({
         };
 
         const navigateToInfo = (manga: Manga) => {
-            const routeName = (manga.type || 'Manga') === 'Anime' ? 'AnimeInfo' : 'MangaInfo';
+            const routeName = mangaService.isAnimeType(manga) ? 'AnimeInfo' : 'MangaInfo';
             router.push({ name: routeName, params: { name: slugify(manga.title) } });
         };
 
