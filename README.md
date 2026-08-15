@@ -1,16 +1,31 @@
-# API
+# Installation
 
-## Lancer l'api :
-Créer un fichier `.env` à la racine du dossier `api` à partir du fichier `.env.example` et remplir les champs.
-Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir du fichier `config.json.example`.
+### Logiciel requis :
+- Node.js (version 24.12)
+- PostgreSQL (version 18.4)
+- Dbeaver (optionnel, pour visualiser la base de données)
+- Stripe CLI (installer globalement avec la commande `npm install --global @stripe/cli`)
+
+### Initialiser le projet :
 ```
 cd api
 npm i
 npm run init
+cd ../frontend
+npm i
+```
+
+# API
+
+### Lancer l'api :
+Créer un fichier `.env` à la racine du dossier `api` à partir du fichier `.env.example` et remplir les champs.
+Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir du fichier `config.json.example`.
+```
+cd api
 npm run dev
 ```
 
-## Rajouter une route :
+### Rajouter une route :
 1. Créer un fichier dans le dossier `routes` avec pour nom le nom de la route (ex: `chapitres.js`)
 2. Ajouter le code suivant dans le fichier :
 ```javascript
@@ -30,15 +45,14 @@ export default router;
 
 # Frontend
 
-## Lancer le frontend :
+### Lancer le frontend :
 Créer un fichier `.env` à la racine du dossier `frontend` à partir du fichier `.env.example` et remplir les champs.
 ```
 cd frontend
-npm i
 npm run dev
 ```
 
-## Rajouter une page :
+### Rajouter une page :
 1. Créer un nouveau dossier dans le dossier `components` avec pour nom le nom de la page (ex: `NomComposant`)
 2. Créer un fichier `NomComposant.vue` dans le dossier créé
 3. Ajouter le code suivant dans le fichier :
