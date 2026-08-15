@@ -197,7 +197,7 @@
                             </p>
                             <Button
                                 v-if="!searchQuery"
-                                @click="fetchMangas"
+                                @click="fetchMangas(true)"
                                 :label="$t('library.reload')"
                                 icon="pi pi-refresh"
                                 class="mt-2"
@@ -269,8 +269,8 @@
         </div>
 
     <!-- Edit Dialogs (manga and anime) -->
-    <EditLibraryDialog v-model:visible="editDialog" :manga="editingManga" @updated="onDialogUpdated" />
-    <EditAnimeDialog v-model:visible="editAnimeDialog" :anime="editingManga" @updated="onDialogUpdated" />
+    <EditLibraryDialog v-model:visible="editDialog" :manga="editingManga" @updated="onDialogUpdated" @deleted="onDialogDeleted" />
+    <EditAnimeDialog v-model:visible="editAnimeDialog" :anime="editingManga" @updated="onDialogUpdated" @deleted="onDialogDeleted" />
 
     </div>
 </template>

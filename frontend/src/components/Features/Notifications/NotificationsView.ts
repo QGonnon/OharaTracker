@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Menu from '../../Shared/Menu/Menu.vue'
 import { useNotificationStore } from '../../../store/notification.module'
-import mangaService from '../../../services/manga.service'
+import { useMangaStore } from '../../../store/manga.module'
 import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
 
@@ -18,6 +18,7 @@ export default defineComponent({
     const router = useRouter()
     const { t } = useI18n()
     const notificationStore = useNotificationStore()
+    const mangaStore = useMangaStore()
 
     const loading = computed(() => notificationStore.loading)
     const error = computed(() => notificationStore.error)
@@ -26,7 +27,7 @@ export default defineComponent({
     const pushSupported = computed(() => notificationStore.pushSupported)
     const pushEnabled = computed(() => notificationStore.pushEnabled)
 
-    const isAnime = (n: AppNotification) => mangaService.isAnimeType({
+    const isAnime = (n: AppNotification) => mangaStore.isAnimeType({
       type: n.mediaType ?? '',
       sites: n.site ? { [n.site]: { site: n.site, mangaUrl: '', chapterUrl: '', chapters: [] } } : {}
     })
@@ -36,7 +37,7 @@ export default defineComponent({
       { chapter: n.chapter, title: n.title }
     )
 
-    const getCoverUrl = (n: AppNotification) => mangaService.getCoverUrl({
+    const getCoverUrl = (n: AppNotification) => mangaStore.getCoverUrl({
       coverPath: n.coverPath ?? '',
       coverUrl: n.coverUrl ?? '',
       title: n.title

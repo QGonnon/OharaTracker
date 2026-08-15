@@ -5,8 +5,8 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { useAuthStore } from '../../../store/auth.module'
-import libraryService from '../../../services/library.service'
-import mangaService from '../../../services/manga.service'
+import { useLibraryStore } from '../../../store/library.module'
+import { useMangaStore } from '../../../store/manga.module'
 import { editDialogConfigs } from './editDialogConfig'
 import type { EditDialogRow, EditDialogType } from './editDialogConfig'
 
@@ -24,6 +24,8 @@ export default defineComponent({
   emits: ['update:visible', 'updated', 'deleted'],
   setup(props, { emit }) {
     const authStore = useAuthStore()
+    const libraryStore = useLibraryStore()
+    const mangaStore = useMangaStore()
     const config = computed(() => editDialogConfigs[props.type])
 
     const visibleLocal = ref<boolean>(props.visible)
@@ -51,7 +53,7 @@ export default defineComponent({
       rows.value = []
       loadingValues.value = true
       try {
-        const data: EditDialogRow[] = await mangaService.getChaptersForLibrary(idLibrary)
+        const data: EditDialogRow[] = await mangaStore.getChaptersForLibrary(idLibrary)
         rows.value = data
         valueOptions.value = config.value.buildValueOptions(data, editSource.value)
       } catch (err) {
@@ -102,7 +104,7 @@ export default defineComponent({
       try {
         const chosenValue = editValue.value === 'manual' ? editValueCustom.value : editValue.value
         const body = config.value.buildSaveBody(props.item, editSource.value, chosenValue, editStatus.value, editNotify.value)
-        const resJson = await libraryService.updateLibraryEntry(authStore.user.accessToken, body)
+        const resJson = await libraryStore.updateLibraryEntry(body)
         emit('updated', config.value.buildUpdatedPayload(resJson, body))
         visibleLocal.value = false
       } catch (err) {
@@ -120,7 +122,7 @@ export default defineComponent({
       deleting.value = true
       try {
         const body = config.value.buildDeleteBody(props.item, editSource.value)
-        await libraryService.deleteFromLibrary(authStore.user.accessToken, body)
+        await libraryStore.deleteFromLibrary(body)
 
         emit('deleted', { title: props.item.title, site: body.site })
         visibleLocal.value = false

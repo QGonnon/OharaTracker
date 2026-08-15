@@ -1,7 +1,7 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { slugify } from '../../../utils.js';
 import Menu from "../../Shared/Menu/Menu.js";
-import mangaService from '../../../services/manga.service';
+import { useMangaStore } from '../../../store/manga.module';
 import type { Manga } from '../../../types/index';
 
 export default defineComponent({
@@ -10,6 +10,7 @@ export default defineComponent({
     Menu
   },
   setup() {
+    const mangaStore = useMangaStore();
     const featuredMangas = ref<Manga[]>([]);
     const featuredAnimes = ref<Manga[]>([]);
     const loading = ref(true);
@@ -42,7 +43,7 @@ export default defineComponent({
       return text.length > max ? text.slice(0, max).trimEnd() + '…' : text;
     };
 
-    const getCoverUrl = (item: Manga): string => mangaService.getCoverUrl(item);
+    const getCoverUrl = (item: Manga): string => mangaStore.getCoverUrl(item);
 
     const allItems = computed(() => [...featuredMangas.value, ...featuredAnimes.value]);
 
@@ -95,7 +96,7 @@ export default defineComponent({
 
     const fetchMangas = async () => {
       try {
-        const mangaList = await mangaService.getAll();
+        const mangaList = await mangaStore.fetchAll();
         featuredMangas.value = mangaList.filter(m => !isAnime(m));
         featuredAnimes.value = mangaList.filter(m => isAnime(m));
       } catch (err) {

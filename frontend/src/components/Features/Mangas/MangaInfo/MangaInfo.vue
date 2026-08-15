@@ -246,8 +246,8 @@
   </div>
 
   <!-- Edit Dialogs -->
-  <EditAnimeDialog v-if="isSerie" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" />
-  <EditLibraryDialog v-else v-model:visible="editDialog" :manga="manga" @updated="onUpdated" />
+  <EditAnimeDialog v-if="isSerie" v-model:visible="editDialog" :anime="manga" @updated="onUpdated" @deleted="onDeleted" />
+  <EditLibraryDialog v-else v-model:visible="editDialog" :manga="manga" @updated="onUpdated" @deleted="onDeleted" />
 </template>
 
 <script src="./MangaInfo.ts"></script>

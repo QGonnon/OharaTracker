@@ -10,7 +10,7 @@ import Paginator from "primevue/paginator";
 import Menu from "../../Shared/Menu/Menu.vue";
 import type { Manga } from "../../../types/index";
 import { slugify } from "../../../utils";
-import mangaService from "../../../services/manga.service";
+import { useMangaStore } from "../../../store/manga.module";
 
 interface SortOption {
   label: string;
@@ -133,7 +133,8 @@ export default defineComponent({
   methods: {
     async loadMangas() {
       try {
-        this.allMangas = await mangaService.getAll();
+        const mangaStore = useMangaStore();
+        this.allMangas = await mangaStore.fetchAll();
 
         // Extraire tous les genres uniques depuis les mangas
         this.extractGenres();

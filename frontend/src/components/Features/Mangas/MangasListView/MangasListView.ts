@@ -13,10 +13,10 @@ import Message from 'primevue/message'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import EditAnimeDialog from '../../../Shared/EditAnimeDialog/EditAnimeDialog.vue'
 import { useAuthStore } from '../../../../store/auth.module'
+import { useMangaStore } from '../../../../store/manga.module'
+import { useLibraryStore } from '../../../../store/library.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
-import mangaService from '../../../../services/manga.service'
-import libraryService from '../../../../services/library.service'
 
 export default defineComponent({
     name: 'MangasListView',
@@ -38,6 +38,8 @@ export default defineComponent({
         const router = useRouter()
         const route = useRoute()
         const authStore = useAuthStore()
+        const mangaStore = useMangaStore()
+        const libraryStore = useLibraryStore()
         const mangas = ref<Manga[]>([]);
         const clientInfo = ref<Record<string, any> | null>(null);
         const loading = ref(true);
@@ -59,15 +61,16 @@ export default defineComponent({
         const displayedMangas = computed(() => {
             const list = (filteredMangas.value || []).slice();
             if (filterType.value === 'anime') {
-                return list.filter(m => mangaService.isAnimeType(m));
+                return list.filter(m => mangaStore.isAnimeType(m));
             }
             if (filterType.value === 'lecture') {
-                return list.filter(m => !mangaService.isAnimeType(m));
+                return list.filter(m => !mangaStore.isAnimeType(m));
             }
             return list;
         });
 
-        const fetchMangas = async () => {
+        // force=true (bouton "recharger") bypasse le cache des stores pour un vrai refresh
+        const fetchMangas = async (force = false) => {
             try {
                 loading.value = true;
                 error.value = null;
@@ -78,8 +81,8 @@ export default defineComponent({
                 }
 
                 const [client, mangaList] = await Promise.all([
-                    libraryService.getClientInfo(authStore.user.accessToken),
-                    mangaService.getAll(),
+                    libraryStore.fetchClientInfo(force),
+                    mangaStore.fetchAll(force),
                 ]);
 
                 clientInfo.value = client;
@@ -87,7 +90,7 @@ export default defineComponent({
 
                 mangas.value = (clientInfo.value?.libraryUsage ?? []).map((u: any): Manga => {
                     const lib = mangaById.get(u.libraryId) ?? ({} as Manga);
-                    const { chapter: lastChapter, chapterUrl } = mangaService.getLastChapterInfo(lib);
+                    const { chapter: lastChapter, chapterUrl } = mangaStore.getLastChapterInfo(lib);
 
                     return {
                         id: u.libraryId,
@@ -126,7 +129,7 @@ export default defineComponent({
             editingManga.value = data;
             console.log('Ouverture édition manga:', data);
             // Ouvrir le bon dialog selon le type
-            if (mangaService.isAnimeType(data)) {
+            if (mangaStore.isAnimeType(data)) {
                 editAnimeDialog.value = true;
             } else {
                 editDialog.value = true;
@@ -145,16 +148,24 @@ export default defineComponent({
             editAnimeDialog.value = false;
         };
 
+        const onDialogDeleted = () => {
+            if (!editingManga.value) return;
+            mangas.value = mangas.value.filter(m => m.id !== editingManga.value?.id);
+            editingManga.value = null;
+            editDialog.value = false;
+            editAnimeDialog.value = false;
+        };
+
         const openChapter = (url: string) => {
             window.open(url, '_blank');
         };
 
         const navigateToInfo = (manga: Manga) => {
-            const routeName = mangaService.isAnimeType(manga) ? 'AnimeInfo' : 'MangaInfo';
+            const routeName = mangaStore.isAnimeType(manga) ? 'AnimeInfo' : 'MangaInfo';
             router.push({ name: routeName, params: { name: slugify(manga.title) } });
         };
 
-        const getCoverUrl = (manga: Manga): string => mangaService.getCoverUrl(manga);
+        const getCoverUrl = (manga: Manga): string => mangaStore.getCoverUrl(manga);
 
         onMounted(async () => {
             await fetchMangas();
@@ -185,6 +196,7 @@ export default defineComponent({
             editingManga,
             openEdit,
             onDialogUpdated,
+            onDialogDeleted,
             navigateToInfo,
         };
     }

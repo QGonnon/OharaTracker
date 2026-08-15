@@ -3,8 +3,8 @@ import Footer from './components/Shared/Footer/Footer.vue'
 </script>
 
 <template>
-  <div class="layout-main-container">
-    <div class="layout-main">
+  <div>
+    <div>
       <router-view />
     </div>
     <Footer />
