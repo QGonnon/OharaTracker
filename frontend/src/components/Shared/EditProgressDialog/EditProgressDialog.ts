@@ -5,6 +5,8 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { useAuthStore } from '../../../store/auth.module'
+import libraryService from '../../../services/library.service'
+import mangaService from '../../../services/manga.service'
 import { editDialogConfigs } from './editDialogConfig'
 import type { EditDialogRow, EditDialogType } from './editDialogConfig'
 
@@ -44,16 +46,12 @@ export default defineComponent({
     const itemTitle = computed(() => props.item?.title || '')
     const sources = computed(() => config.value.buildSourceOptions(props.item, rows.value))
 
-    const apiBase = () => import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
-
     const fetchValueOptions = async (idLibrary: number) => {
       valueOptions.value = []
       rows.value = []
       loadingValues.value = true
       try {
-        const resp = await fetch(`${apiBase()}/chapters/${idLibrary}`)
-        if (!resp.ok) return
-        const data: EditDialogRow[] = await resp.json()
+        const data: EditDialogRow[] = await mangaService.getChaptersForLibrary(idLibrary)
         rows.value = data
         valueOptions.value = config.value.buildValueOptions(data, editSource.value)
       } catch (err) {
@@ -104,20 +102,7 @@ export default defineComponent({
       try {
         const chosenValue = editValue.value === 'manual' ? editValueCustom.value : editValue.value
         const body = config.value.buildSaveBody(props.item, editSource.value, chosenValue, editStatus.value, editNotify.value)
-        const resp = await fetch(`${apiBase()}/library/user`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authStore.user.accessToken}`
-          },
-          body: JSON.stringify(body)
-        })
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({ message: 'Erreur' }))
-          throw new Error(err.message || 'Erreur lors de la sauvegarde')
-        }
-
-        const resJson = await resp.json().catch(() => ({}))
+        const resJson = await libraryService.updateLibraryEntry(authStore.user.accessToken, body)
         emit('updated', config.value.buildUpdatedPayload(resJson, body))
         visibleLocal.value = false
       } catch (err) {
@@ -135,18 +120,7 @@ export default defineComponent({
       deleting.value = true
       try {
         const body = config.value.buildDeleteBody(props.item, editSource.value)
-        const resp = await fetch(`${apiBase()}/library/user`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authStore.user.accessToken}`
-          },
-          body: JSON.stringify(body)
-        })
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({ message: 'Erreur' }))
-          throw new Error(err.message || 'Erreur lors de la suppression')
-        }
+        await libraryService.deleteFromLibrary(authStore.user.accessToken, body)
 
         emit('deleted', { title: props.item.title, site: body.site })
         visibleLocal.value = false
