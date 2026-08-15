@@ -6,6 +6,14 @@
 - Dbeaver (optionnel, pour visualiser la base de données)
 - Stripe CLI (installer globalement avec la commande `npm install --global @stripe/cli`)
 
+### Créer les fichiers de configuration :
+Dans api :
+- Créer un fichier `.env` à la racine du dossier `api` à partir du fichier `.env.example` et remplir les champs.
+- Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir du fichier `config.json.example`.
+
+Dans frontend :
+- Créer un fichier `.env` à la racine du dossier `frontend` à partir du fichier `.env.example` et remplir les champs.
+
 ### Initialiser le projet :
 ```
 cd api
@@ -15,11 +23,12 @@ cd ../frontend
 npm i
 ```
 
+### Débugage :
+- Si npm run dev ne fonctionne pas dans api, exécuter la commande `stripe listen --forward-to localhost:3000/stripe/webhook` pour verifier que l'API keys valable 3 mois a été généré.
+
 # API
 
 ### Lancer l'api :
-Créer un fichier `.env` à la racine du dossier `api` à partir du fichier `.env.example` et remplir les champs.
-Créer un fichier `config.json` dans le dossier `api/sequilize/config` à partir du fichier `config.json.example`.
 ```
 cd api
 npm run dev
@@ -46,7 +55,6 @@ export default router;
 # Frontend
 
 ### Lancer le frontend :
-Créer un fichier `.env` à la racine du dossier `frontend` à partir du fichier `.env.example` et remplir les champs.
 ```
 cd frontend
 npm run dev
