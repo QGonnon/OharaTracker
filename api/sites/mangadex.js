@@ -81,6 +81,9 @@ async function getMangaInfo(mangaId) {
             if (isOneshot) {
                 chapterNumber = 1;
             }
+            if(!isOneshot && chapterNumber === null) {
+                continue;
+            }
 
             await saveChapter('MangaDex', chapterNumber, chapterUrlFull, mangaUrl, mangaInfo);
         }
@@ -116,7 +119,7 @@ async function mangadex() {
             await delay(400);
             await getMangaInfo(mangaId);
         }
-        console.log(`✅ Scraped MangaDex terminé.`);
+        console.log(`✅ Scraping MangaDex terminé.`);
 
     } catch (error) {
         console.error(`❌ Erreur MangaDex: ${error}`);
