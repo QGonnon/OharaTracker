@@ -102,7 +102,7 @@ export const editDialogConfigs: Record<EditDialogType, EditDialogConfig> = {
       site: body.site,
       notifyEnabled: body.notifyEnabled
     }),
-    buildDeleteBody: (item, source) => ({ title: item.title, site: source || item.site || null })
+    buildDeleteBody: (item, source) => ({ libraryId: item.id, title: item.title, site: source || item.site || null })
   },
   anime: {
     i18nPrefix: 'edit_anime',
@@ -146,6 +146,6 @@ export const editDialogConfigs: Record<EditDialogType, EditDialogConfig> = {
       readingStatus: body.readingStatus,
       notifyEnabled: body.notifyEnabled
     }),
-    buildDeleteBody: (item) => ({ title: item.title, site: item.site || null })
+    buildDeleteBody: (item) => ({ libraryId: item.id, title: item.title, site: item.site || null })
   }
 }

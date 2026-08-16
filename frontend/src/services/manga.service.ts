@@ -11,12 +11,12 @@ class MangaService {
   async getAll(): Promise<Manga[]> {
     const response = await fetch(`${getApiBase()}/chapters`)
     if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
-    const chaptersMap: Record<string, any> = (await response.json()) || {}
+    const chapters = (await response.json()) || []
 
-    // Object.entries pour garder le libraryId (clé) et éviter les trous du tableau sparse
-    return Object.entries(chaptersMap)
-      .filter(([, m]) => m?.title)
-      .map(([id, m]) => this.withDisplayFields({ ...m, id: Number(id) } as Manga))
+    const list: any[] = Array.isArray(chapters) ? chapters : Object.values(chapters)
+    return list
+      .filter(m => m?.title)
+      .map(m => this.withDisplayFields({ ...m, id: Number(m.id) } as Manga))
   }
 
   findBySlug(mangas: Manga[], slug: string | string[]): Manga | undefined {

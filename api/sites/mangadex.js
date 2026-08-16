@@ -73,7 +73,7 @@ async function getMangaInfo(mangaId) {
         const chapterListData = await chapterListResponse.json();
         const chaptersList = chapterListData.data || [];
 
-        for (const chapter of chaptersList) {
+        for (const chapter of chaptersList.reverse()) {
             const mangaUrl = `https://mangadex.org/title/${mangaId}`;
             const chapterId = chapter.id;
             const chapterUrlFull = `https://mangadex.org/chapter/${chapterId}`;

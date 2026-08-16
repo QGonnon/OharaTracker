@@ -816,6 +816,8 @@ async function notifyFollowersOfNewChapter(idLibrary, idSource, chapter, title) 
 }
 
 function getChapters(callback, limit = null) {
+    // "libraryLastCreatedAt" = date du chapitre le plus récent de chaque manga, utilisée
+    // uniquement pour ordonner les mangas entre eux (le plus récemment mis à jour en premier).
     const query = `SELECT
             lc.id_library AS "chapterId",
             l.id AS "libraryId",
@@ -831,24 +833,31 @@ function getChapters(callback, limit = null) {
             lc.chapter AS "lastChapter",
             lc.url AS "chapterUrl",
             ls.url AS "mangaUrl",
-            s.name AS site
+            lc.created_at AS "chapterCreatedAt",
+            s.name AS site,
+            MAX(lc.created_at) OVER (PARTITION BY lc.id_library) AS "libraryLastCreatedAt"
          FROM "Chapters" lc
          JOIN "Library" l ON lc.id_library = l.id
          JOIN "Source" s ON lc.id_source = s.id_source
          JOIN "LibrarySource" ls ON lc.id_library = ls.id_library AND lc.id_source = ls.id_source
          LEFT JOIN "LibraryType" lt ON ls.id_library_type = lt.id
-         ORDER BY lc.id_library DESC, lc.id_source DESC, lc.chapter DESC${limit ? ' LIMIT :limit' : ''}`;
+         ORDER BY "libraryLastCreatedAt" DESC, lc.id_library DESC, lc.chapter DESC${limit ? ' LIMIT :limit' : ''}`;
 
     sequelize.query(query, {
         replacements: limit ? { limit } : {},
         type: QueryTypes.SELECT,
     })
         .then(rows => {
-            const groupedChapters = rows.reduce((acc, row) => {
+            // Map (et non un objet/tableau indexé par libraryId) pour conserver l'ordre
+            // d'apparition des lignes tel que trié en SQL : un objet/tableau JS réordonne
+            // silencieusement les clés numériques par ordre croissant, ce qui cassait le tri.
+            const groupedByLibrary = new Map();
+
+            for (const row of rows) {
                 const libraryId = row.libraryId;
-                if (!acc[libraryId]) {
-                    acc[libraryId] = {
-                        id: row.mangaId,
+                if (!groupedByLibrary.has(libraryId)) {
+                    groupedByLibrary.set(libraryId, {
+                        id: row.libraryId,
                         title: row.title,
                         type: row.type,
                         theme: row.theme,
@@ -859,29 +868,27 @@ function getChapters(callback, limit = null) {
                         coverPath: row.coverPath,
                         coverUrl: row.coverUrl,
                         sites: {},
-                        
-                    };
+                    });
                 }
-                if (!acc[libraryId].sites[row.site]) {
-                    acc[libraryId].sites[row.site] = {
-                        site: row.site,
+
+                const manga = groupedByLibrary.get(libraryId);
+                if (!manga.sites[row.site]) {
+                    manga.sites[row.site] = {
                         site: row.site,
                         mangaUrl: row.mangaUrl,
                         chapters: [],
                     };
                 }
-                const chapter = {
+
+                manga.sites[row.site].chapters.push({
                     chapter: row.lastChapter,
                     url: row.chapterUrl,
                     chapterUrl: row.chapterUrl,
                     site: row.site,
-                };
-                acc[libraryId].sites[row.site].chapters.push(chapter);
-                return acc;
-            }, []);
+                });
+            }
 
-            
-            return callback(null, groupedChapters);
+            return callback(null, Array.from(groupedByLibrary.values()));
         })
         .catch(err => callback(err));
 }
