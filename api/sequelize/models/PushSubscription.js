@@ -14,8 +14,7 @@ export default (sequelize, DataTypes) => {
     },
     endpoint: {
       type: DataTypes.STRING(500),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     p256dh: {
       type: DataTypes.STRING(255),
@@ -33,7 +32,10 @@ export default (sequelize, DataTypes) => {
   }, {
     tableName: 'PushSubscription',
     freezeTableName: true,
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      { unique: true, fields: ['endpoint', 'id_client'], name: 'pushsubscription_endpoint_client_unique' }
+    ]
   });
 
   PushSubscription.associate = models => {

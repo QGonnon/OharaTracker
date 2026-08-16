@@ -6,7 +6,7 @@ import {
     markAllNotificationsRead,
     deleteNotification,
     savePushSubscription,
-    removePushSubscription,
+    removePushSubscriptionForClient,
 } from '../utils/database.js';
 import { authenticate } from '../utils/auth.js';
 
@@ -93,7 +93,7 @@ router.delete('/subscribe', authenticate, async (req, res) => {
     }
 
     try {
-        await removePushSubscription(endpoint);
+        await removePushSubscriptionForClient(req.user.username, endpoint);
         res.json({ message: 'Abonnement push supprimé' });
     } catch (error) {
         console.error('❌ Erreur lors de la suppression de l\'abonnement push:', error);

@@ -572,8 +572,8 @@ async function savePushSubscription(username, { endpoint, keys }) {
     await sequelize.query(
         `INSERT INTO "PushSubscription" (id_client, endpoint, p256dh, auth, created_at)
          VALUES (:idClient, :endpoint, :p256dh, :auth, NOW())
-         ON CONFLICT (endpoint)
-         DO UPDATE SET id_client = EXCLUDED.id_client, p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth`,
+         ON CONFLICT (endpoint, id_client)
+         DO UPDATE SET p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth`,
         {
             replacements: { idClient: clients[0].id, endpoint, p256dh: keys.p256dh, auth: keys.auth },
             type: QueryTypes.INSERT,
@@ -586,6 +586,20 @@ async function removePushSubscription(endpoint) {
         'DELETE FROM "PushSubscription" WHERE endpoint = :endpoint',
         {
             replacements: { endpoint },
+            type: QueryTypes.DELETE,
+        }
+    );
+}
+
+// Supprime uniquement la ligne du client donné : un même endpoint (navigateur/appareil)
+// peut désormais être partagé par plusieurs clients, on ne veut pas désabonner les autres.
+async function removePushSubscriptionForClient(username, endpoint) {
+    await sequelize.query(
+        `DELETE FROM "PushSubscription" ps
+         USING "Client" c
+         WHERE ps.id_client = c.id AND c.name = :username AND ps.endpoint = :endpoint`,
+        {
+            replacements: { username, endpoint },
             type: QueryTypes.DELETE,
         }
     );
@@ -997,5 +1011,6 @@ export {
     deleteNotification,
     savePushSubscription,
     removePushSubscription,
+    removePushSubscriptionForClient,
     getPushSubscriptionsForUsers,
 };
