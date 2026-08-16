@@ -4,6 +4,7 @@ import './assets/styles.scss'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip'
 import Aura from '@primeuix/themes/aura'
 import { definePreset } from '@primeuix/themes'  // même package
 
@@ -52,6 +53,7 @@ app.use(router)
     .use(pinia)
     .use(i18n)
     .component('font-awesome-icon', FontAwesomeIcon)
+    .directive('tooltip', Tooltip)
 
 setupHttpInterceptors(pinia, router)
 

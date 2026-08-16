@@ -244,7 +244,8 @@
     "new_episode": "Episode {chapter} of {title} is available",
     "enable_push": "Enable push notifications",
     "push_denied": "Notification permission was denied. You can enable it in your browser settings.",
-    "push_subscribe_failed": "Push notifications could not be enabled on this browser ({error}). Check that no extension is blocking notifications."
+    "push_subscribe_failed": "Push notifications could not be enabled on this browser ({error}). Check that no extension is blocking notifications.",
+    "push_unsupported": "Push notifications are not available right now on this browser or device."
   },
   "profile": {
     "title": "My Profile",

@@ -206,7 +206,8 @@
     "new_episode": "L'episodio {chapter} di {title} è disponibile",
     "enable_push": "Attiva le notifiche push",
     "push_denied": "Il permesso per le notifiche è stato negato. Puoi attivarlo nelle impostazioni del browser.",
-    "push_subscribe_failed": "Impossibile attivare le notifiche push su questo browser ({error}). Controlla che nessuna estensione blocchi le notifiche."
+    "push_subscribe_failed": "Impossibile attivare le notifiche push su questo browser ({error}). Controlla che nessuna estensione blocchi le notifiche.",
+    "push_unsupported": "Le notifiche push non sono al momento disponibili su questo browser o dispositivo."
   },
   "profile": {
     "title": "Il mio profilo",

@@ -206,7 +206,8 @@
     "new_episode": "Episode {chapter} von {title} ist verfügbar",
     "enable_push": "Push-Benachrichtigungen aktivieren",
     "push_denied": "Die Benachrichtigungsberechtigung wurde verweigert. Du kannst sie in den Browsereinstellungen aktivieren.",
-    "push_subscribe_failed": "Push-Benachrichtigungen konnten in diesem Browser nicht aktiviert werden ({error}). Prüfe, ob eine Erweiterung Benachrichtigungen blockiert."
+    "push_subscribe_failed": "Push-Benachrichtigungen konnten in diesem Browser nicht aktiviert werden ({error}). Prüfe, ob eine Erweiterung Benachrichtigungen blockiert.",
+    "push_unsupported": "Push-Benachrichtigungen sind auf diesem Browser oder Gerät derzeit nicht verfügbar."
   },
   "profile": {
     "title": "Mein Profil",

@@ -63,6 +63,8 @@ export default defineComponent({
         alert(t('notifications.push_denied'))
       } else if (result === 'subscribe-failed') {
         alert(t('notifications.push_subscribe_failed', { error: notificationStore.pushError }))
+      } else if (result === 'unsupported') {
+        alert(t('notifications.push_unsupported'))
       }
     }
 

@@ -256,7 +256,8 @@
     "new_episode": "L'épisode {chapter} de {title} est disponible",
     "enable_push": "Activer les notifications push",
     "push_denied": "La permission de notification a été refusée. Vous pouvez l'activer dans les paramètres de votre navigateur.",
-    "push_subscribe_failed": "Impossible d'activer les notifications push sur ce navigateur ({error}). Vérifiez qu'aucune extension ne bloque les notifications."
+    "push_subscribe_failed": "Impossible d'activer les notifications push sur ce navigateur ({error}). Vérifiez qu'aucune extension ne bloque les notifications.",
+    "push_unsupported": "Les notifications push ne sont pas disponibles pour le moment sur ce navigateur ou cet appareil."
   },
   "profile": {
     "title": "Mon Profil",
