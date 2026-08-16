@@ -137,10 +137,10 @@
                             </Column>
 
                             <!-- Last Chapter Read Column -->
-                            <Column field="lastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
+                            <Column field="userLastChapter" :header="filterType === 'anime' ? $t('library.col_last_episode_seen') : $t('library.col_last_read')" sortable style="min-width: 150px;">
                                 <template #body="{ data }">
                                     <Button
-                                        :label="`${data.type === 'Anime' ? 'S' + data.lastChapter.split('.')[0] + 'E' + data.lastChapter.split('.')[1] : 'Ch.' + data.lastChapter.split('.')[0]}`"
+                                        :label="`${data.type === 'Anime' ? 'S' + data.userLastChapter.split('.')[0] + 'E' + data.userLastChapter.split('.')[1] : 'Ch.' + data.userLastChapter.split('.')[0]}`"
                                         @click="openChapter(data.chapterUrl)"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
