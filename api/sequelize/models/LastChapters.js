@@ -19,6 +19,11 @@ export default (sequelize, DataTypes) => {
     },
     url: {
       type: DataTypes.STRING(200)
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
     }
   }, {
     tableName: 'Chapters',
