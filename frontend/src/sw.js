@@ -1,5 +1,22 @@
-// Service Worker minimal pour les notifications Web Push (voir MDN Service Worker Cookbook - push-payload).
-// Pas de mise en cache/offline ici : seul le support Push/Notification est géré.
+// Service Worker : notifications Web Push (voir MDN Service Worker Cookbook - push-payload)
+// + mise en cache de l'app shell (precache Workbox injecté par vite-plugin-pwa en mode injectManifest)
+// pour permettre le chargement de l'application hors-ligne.
+
+import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from 'workbox-precaching'
+import { registerRoute, NavigationRoute } from 'workbox-routing'
+
+// Injecté au build par vite-plugin-pwa : liste des assets buildés (JS/CSS/HTML/icônes) à précacher.
+precacheAndRoute(self.__WB_MANIFEST)
+// Supprime les caches d'un précédent build lors de la mise à jour du SW.
+cleanupOutdatedCaches()
+
+// App Vue en SPA (vue-router en mode history) : toute navigation (ex: /library, /notifications)
+// doit servir index.html depuis le precache pour fonctionner hors-ligne.
+// (l'API backend étant sur une autre origine, ces requêtes ne passent pas par cette route.)
+registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')))
+
+self.skipWaiting()
+self.addEventListener('activate', () => self.clients.claim())
 
 self.addEventListener('push', (event) => {
   let payload = { title: 'Ohara Tracker', chapter: '', idLibrary: null }
