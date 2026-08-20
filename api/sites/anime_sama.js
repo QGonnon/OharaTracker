@@ -74,6 +74,17 @@ function cleanString(text) {
 
 // ─── Catalogue Scraper ─────────────────────────────────────────────────────────
 
+// Lit <div id="list_pagination"> et renvoie le plus grand numéro de page trouvé
+// (le lien vers la dernière page y est toujours présent, ex: 1 2 3 4 … 49 50).
+function getMaxPage($) {
+    const numbers = $('#list_pagination a[href*="page="]')
+        .map((_, el) => parseInt($(el).attr('href').match(/page=(\d+)/)?.[1], 10))
+        .get()
+        .filter(n => !isNaN(n));
+
+    return numbers.length > 0 ? Math.max(...numbers) : 1;
+}
+
 async function getAllAnime(reset = false) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -95,18 +106,18 @@ async function getAllAnime(reset = false) {
             const html = await res.text();
             const $ = cheerio.load(html);
 
-            const endPage = $('p.text-white.font-bold.text-2xl.h-96.p-5');
-            if (endPage.length > 0) {
-                fs.writeFileSync(PATH_ANIME, JSON.stringify(data, null, 2), 'utf-8');
-                return 'Récupération achevée';
-            }
-
             const cards = $('div.shrink-0.catalog-card.card-base');
             cards.each((_, card) => {
                 const titre = $(card).find('h2.card-title').text().trim() || 'Titre introuvable';
                 const link = $(card).find('a').attr('href') || '';
                 data.push({ title: normalizeTitle(titre), link });
             });
+
+            const maxPage = getMaxPage($);
+            if (cards.length === 0 || page >= maxPage) {
+                fs.writeFileSync(PATH_ANIME, JSON.stringify(data, null, 2), 'utf-8');
+                return 'Récupération achevée';
+            }
 
             page++;
         } catch (e) {
