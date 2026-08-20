@@ -34,8 +34,8 @@ self.addEventListener('push', (event) => {
     Promise.all([
       self.registration.showNotification(title, {
         body,
-        icon: '/vite.svg',
-        badge: '/vite.svg',
+        icon: '/pwa-192.png',
+        badge: '/pwa-192.png',
         data: { url, idLibrary: payload.idLibrary },
       }),
       // Prévient les onglets déjà ouverts pour rafraîchir le badge instantanément (bonus, pas le mécanisme de livraison)

@@ -20,7 +20,23 @@ export default defineConfig({
       },
       // L'enregistrement du SW est déjà fait manuellement dans main.ts.
       injectRegister: false,
-      manifest: false,
+      includeAssets: ['favicon.png', 'apple-touch-icon.png'],
+      manifest: {
+        name: 'Ohara Tracker',
+        short_name: 'Ohara Tracker',
+        description: 'Suivi de bibliothèque manga/anime : chapitres, épisodes et notifications.',
+        lang: 'fr',
+        start_url: '/',
+        scope: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#7c3aed',
+        icons: [
+          { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
       devOptions: {
         // Active le SW (avec precache) aussi en `vite dev`, pratique pour tester l'offline en local.
         enabled: true,
