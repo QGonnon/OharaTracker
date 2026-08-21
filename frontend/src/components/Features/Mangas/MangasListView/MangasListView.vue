@@ -141,7 +141,7 @@
                                 <template #body="{ data }">
                                     <Button
                                         :label="`${data.type === 'Anime' ? 'S' + data.userLastChapter.split('.')[0] + 'E' + data.userLastChapter.split('.')[1] : 'Ch.' + data.userLastChapter.split('.')[0]}`"
-                                        @click="openChapter(data.chapterUrl)"
+                                        @click="openChapter(getUserLastChapterUrl(data))"
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
                                         text

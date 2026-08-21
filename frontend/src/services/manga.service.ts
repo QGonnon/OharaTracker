@@ -61,6 +61,22 @@ class MangaService {
     }
   }
 
+  // URL du chapitre/épisode précis `chapterNumber` (ex: le dernier lu par l'utilisateur), à
+  // distinguer du dernier chapitre CONNU du site (getLastChapterInfo). Cherche d'abord sur la
+  // meilleure source, puis sur les autres au cas où ce numéro n'y aurait été vu que là.
+  getChapterUrl(manga: Manga, chapterNumber?: string): string | undefined {
+    if (!chapterNumber) return undefined
+    const bestKey = this.getBestSiteKey(manga)
+    const orderedKeys = bestKey
+      ? [bestKey, ...Object.keys(manga.sites || {}).filter(k => k !== bestKey)]
+      : Object.keys(manga.sites || {})
+    for (const key of orderedKeys) {
+      const found = manga.sites[key]?.chapters?.find(c => c.chapter === chapterNumber)
+      if (found) return found.chapterUrl || found.url
+    }
+    return undefined
+  }
+
   // Nombre total d'épisodes/saisons connus, déduit des chapitres (format "saison.episode") de la meilleure source
   getSeasonEpisodeStats(manga: Manga): { totalEpisodes?: number; totalSeasons?: number } {
     const bestKey = this.getBestSiteKey(manga)

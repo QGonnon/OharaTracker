@@ -156,9 +156,15 @@ export default defineComponent({
             editAnimeDialog.value = false;
         };
 
-        const openChapter = (url: string) => {
+        const openChapter = (url?: string) => {
+            if (!url) return;
             window.open(url, '_blank');
         };
+
+        // URL du chapitre effectivement lu par l'utilisateur (distinct du dernier chapitre
+        // connu du site) ; fallback sur celui-ci si le numéro lu n'a pas d'URL retrouvée.
+        const getUserLastChapterUrl = (manga: Manga): string | undefined =>
+            mangaStore.getChapterUrl(manga, manga.userLastChapter) ?? manga.chapterUrl;
 
         const navigateToInfo = (manga: Manga) => {
             const routeName = mangaStore.isAnimeType(manga) ? 'AnimeInfo' : 'MangaInfo';
@@ -189,6 +195,7 @@ export default defineComponent({
             viewMode,
             fetchMangas,
             openChapter,
+            getUserLastChapterUrl,
             getCoverUrl,
             // edit bindings
             editDialog,
