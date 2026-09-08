@@ -11,6 +11,8 @@ import Menu from "../../Shared/Menu/Menu.vue";
 import type { Manga } from "../../../types/index";
 import { slugify } from "../../../utils";
 import { useMangaStore } from "../../../store/manga.module";
+import { usePageSeo } from "../../../seo/usePageSeo";
+import { localeMedia } from "../../../seo/localePath";
 
 interface SortOption {
   label: string;
@@ -29,6 +31,9 @@ export default defineComponent({
     Tag,
     ProgressSpinner,
     Paginator,
+  },
+  setup() {
+    usePageSeo('search');
   },
   data() {
     return {
@@ -134,7 +139,9 @@ export default defineComponent({
     async loadMangas() {
       try {
         const mangaStore = useMangaStore();
-        this.allMangas = await mangaStore.fetchAll();
+        // Catalogue allégé : la recherche filtre sur titre, genre et statut,
+        // elle n'a jamais besoin des chapitres de toutes les sources.
+        this.allMangas = await mangaStore.fetchLight();
 
         // Extraire tous les genres uniques depuis les mangas
         this.extractGenres();
@@ -227,13 +234,10 @@ export default defineComponent({
           window.history.pushState({}, "", url);
         }
       } catch (error) {
+        // `this.$toast` était appelé ici, mais `ToastService` n'est installé
+        // nulle part dans l'application : l'appel était toujours `undefined`,
+        // donc sans effet. Retiré plutôt que laissé en faux filet de sécurité.
         console.error("Erreur lors de la recherche:", error);
-        this.$toast?.add({
-          severity: "error",
-          summary: "Erreur",
-          detail: "Une erreur est survenue lors de la recherche",
-          life: 3000,
-        });
       } finally {
         this.isLoading = false;
       }
@@ -252,14 +256,11 @@ export default defineComponent({
     },
 
     goToManga(manga: Manga) {
-      const cleanTitle = slugify(manga.title);
-      const isAnime = (manga.type || '').toString().toUpperCase() === 'ANIME';
-
-      if (isAnime) {
-        this.$router.push(`/anime/${cleanTitle}`);
-      } else {
-        this.$router.push(`/manga/${cleanTitle}`);
-      }
+      // La nature de l'œuvre et la langue active déterminent le segment d'URL
+      // (`/fr/manga/...`, `/es/pelicula/...`) : on passe par le helper plutôt
+      // que par un chemin en dur, qui déclencherait une redirection.
+      const store = useMangaStore();
+      this.$router.push(localeMedia(store.resolveMediaKind(null, manga.type), slugify(manga.title)));
     },
 
     getCoverUrl(manga: Manga): string {
@@ -272,9 +273,10 @@ export default defineComponent({
       if (manga.coverUrl) {
         return manga.coverUrl;
       }
-      
-      // Fallback image
-      return `https://picsum.photos/seed/${manga.id}/400/600`;
+
+      // Placeholder servi depuis notre domaine : une image externe aléatoire
+      // (picsum) ralentissait le rendu et changeait à chaque chargement.
+      return '/cover-placeholder.svg';
     },
 
     getStatusSeverity(status?: string): "success" | "info" | "warn" | "danger" | undefined {

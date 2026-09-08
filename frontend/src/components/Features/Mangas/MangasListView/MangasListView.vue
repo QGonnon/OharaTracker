@@ -12,7 +12,7 @@
 
                 <div v-if="clientInfo" class="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 shadow-sm border border-slate-200 dark:border-slate-700">
                     <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                        <i class="pi pi-user text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                        <i class="pi pi-user text-indigo-600 dark:text-indigo-400 text-lg" aria-hidden="true"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="font-semibold text-slate-900 dark:text-white text-sm">{{ clientInfo.clientName }}</span>
@@ -25,8 +25,8 @@
             </div>
 
             <!-- Loading State -->
-            <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-                <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4"></i>
+            <div v-if="loading" role="status" aria-live="polite" class="flex flex-col items-center justify-center py-20">
+                <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4" aria-hidden="true"></i>
                 <p class="text-lg text-slate-600 dark:text-slate-400">{{ $t('library.loading') }}</p>
             </div>
 
@@ -34,9 +34,9 @@
             <Message v-else-if="error" severity="error" :closable="true" class="mb-6">
                 <template #container="{ closeCallback }">
                     <div class="flex items-center gap-4">
-                        <i class="pi pi-exclamation-triangle"></i>
+                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                         <span>{{ error }}</span>
-                        <Button icon="pi pi-times" @click="closeCallback()" text rounded/>
+                        <Button icon="pi pi-times" :aria-label="$t('common.close')" @click="closeCallback()" text rounded/>
                     </div>
                 </template>
             </Message>
@@ -58,7 +58,7 @@
 
                             <div class="flex items-center gap-4">
                                 <div class="flex items-center gap-2">
-                                    <label class="text-sm text-slate-500 dark:text-slate-400">{{ $t('library.filter') }}</label>
+                                    <span id="library-filter-label" class="text-sm text-slate-500 dark:text-slate-400">{{ $t('library.filter') }}</span>
                                     <Button
                                         :label="$t('library.series')"
                                         :severity="filterType === 'anime' ? 'info' : 'secondary'"
@@ -85,6 +85,8 @@
                                         rounded
                                         text
                                         v-tooltip="$t('library.list_view')"
+                                        :aria-label="$t('library.list_view')"
+                                        :aria-pressed="viewMode === 'list'"
                                     />
                                     <Button
                                         @click="viewMode = 'grid'"
@@ -93,6 +95,8 @@
                                         rounded
                                         text
                                         v-tooltip="$t('library.grid_view')"
+                                        :aria-label="$t('library.grid_view')"
+                                        :aria-pressed="viewMode === 'grid'"
                                     />
                                 </div>
                             </div>
@@ -117,12 +121,13 @@
                             <!-- Title Column -->
                             <Column field="title" :header="$t('library.col_title')" sortable style="min-width: 200px;">
                                 <template #body="{ data }">
-                                    <span
-                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium cursor-pointer"
+                                    <button
+                                        type="button"
+                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                         @click="navigateToInfo(data)"
                                     >
                                         {{ data.title }}
-                                    </span>
+                                    </button>
                                 </template>
                             </Column>
 
@@ -189,7 +194,7 @@
                         </DataTable>
                         <!-- Empty message shown below the table so controls remain usable -->
                         <div v-if="displayedMangas.length === 0" class="text-center py-6">
-                            <i class="pi pi-inbox text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                            <i class="pi pi-inbox text-4xl text-slate-300 dark:text-slate-600 mb-3" aria-hidden="true"></i>
                             <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
                                 <span v-if="searchQuery">{{ $t('library.empty_search') }}</span>
                                 <span v-else-if="filterType === 'anime'">{{ $t('library.empty_anime') }}</span>
@@ -218,18 +223,21 @@
                     <div
                         v-for="manga in displayedMangas"
                         :key="manga.id"
-                        class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative"
+                        class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        role="link"
+                        tabindex="0"
                         @click="navigateToInfo(manga)"
+                        @keydown.enter="navigateToInfo(manga)"
+                        @keydown.space.prevent="navigateToInfo(manga)"
                     >
                         <div class="aspect-[3/4] overflow-hidden">
                             <img
                                 v-if="getCoverUrl(manga)"
                                 :src="getCoverUrl(manga)"
-                                :alt="manga.title"
-                                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                            />
+                                alt=""
+                                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" width="400" height="600" loading="lazy" decoding="async" />
                             <div v-else class="w-full h-full flex items-center justify-center bg-slate-300 dark:bg-slate-600">
-                                <i class="pi pi-image text-4xl text-slate-400"></i>
+                                <i class="pi pi-image text-4xl text-slate-400" aria-hidden="true"></i>
                             </div>
                         </div>
 
@@ -241,25 +249,26 @@
                             class="!absolute top-2 left-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-2"
                             @click.stop="openEdit(manga)"
                             v-tooltip="$t('library.edit')"
+                            :aria-label="$t('library.edit_item', { title: manga.title })"
                         />
 
                         <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2">
+                            <h2 class="font-semibold text-gray-900 dark:text-white line-clamp-2">
                                 {{ manga.title }}
-                            </h3>
-                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            </h2>
+                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-600 mt-1">
                                 <span class="flex items-center" v-if="manga.userLastChapter || manga.lastChapter">
-                                    <i class="pi pi-book mr-1"></i>
+                                    <i class="pi pi-book mr-1" aria-hidden="true"></i>
                                     Ch. {{ manga.userLastChapter || manga.lastChapter }}
                                 </span>
-                                <span v-if="manga.score != null" class="flex items-center gap-1 text-amber-500 font-medium text-xs">
-                                    <i class="pi pi-star-fill"></i>{{ manga.score }}
+                                <span v-if="manga.score != null" class="flex items-center gap-1 text-amber-700 font-medium text-xs">
+                                    <i class="pi pi-star-fill" aria-hidden="true"></i>{{ manga.score }}
                                 </span>
                             </div>
                             <div class="flex items-center justify-between mt-1">
                                 <Tag v-if="manga.readingStatus || manga.status" :value="manga.readingStatus || manga.status" :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))" />
                                 <span v-if="manga.note" class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 ml-2" v-tooltip.top="manga.note">
-                                    <i class="pi pi-comment mr-1"></i>{{ manga.note }}
+                                    <i class="pi pi-comment mr-1" aria-hidden="true"></i>{{ manga.note }}
                                 </span>
                             </div>
                         </div>

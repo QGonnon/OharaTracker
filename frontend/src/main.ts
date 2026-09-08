@@ -3,6 +3,7 @@ import './assets/styles.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createHead } from '@unhead/vue/client'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
 import Aura from '@primeuix/themes/aura'
@@ -12,10 +13,17 @@ import App from './App.vue'
 import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
 import i18n from './i18n'
+import { localePathPlugin } from './seo/localePath'
 import { useNotificationStore } from './store/notification.module'
 import { setupHttpInterceptors } from './services/http-interceptors'
 
 const pinia = createPinia()
+
+// Gestionnaire du <head> : titre, canonical, hreflang, Open Graph et JSON-LD
+// sont posés par le composable `useSeo` de chaque page (src/seo/useSeo.ts).
+// `createHead` du sous-chemin /client reprend la main sur les balises déjà
+// présentes dans index.html au lieu de les dupliquer.
+const head = createHead()
 
 const OharaPreset = definePreset(Aura, {
   semantic: {
@@ -52,6 +60,8 @@ app.use(PrimeVue, {
 app.use(router)
     .use(pinia)
     .use(i18n)
+    .use(head)
+    .use(localePathPlugin)
     .component('font-awesome-icon', FontAwesomeIcon)
     .directive('tooltip', Tooltip)
 

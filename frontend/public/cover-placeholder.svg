@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600" role="img" aria-label="Couverture indisponible">
+  <rect width="400" height="600" fill="#f4f4f5"/>
+  <rect x="0.5" y="0.5" width="399" height="599" fill="none" stroke="#e4e4e7"/>
+  <g fill="#a1a1aa">
+    <path d="M130 250h60v16h-60zM130 282h140v12H130zM130 312h140v12H130zM130 342h96v12h-96z"/>
+    <path d="M110 210h180v180H110zm12 12v156h156V222z" opacity=".35"/>
+  </g>
+  <text x="200" y="430" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" fill="#a1a1aa" text-anchor="middle">Ohara Tracker</text>
+</svg>

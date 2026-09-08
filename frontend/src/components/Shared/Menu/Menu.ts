@@ -1,13 +1,16 @@
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { Button, Drawer } from 'primevue'
+import Button from 'primevue/button'
+import Drawer from 'primevue/drawer'
 import PopupMenu from 'primevue/menu'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/auth.module'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from 'primevue/menuitem'
 import NotificationBell from '../NotificationBell/NotificationBell.vue'
+import { localeHome, localePath, switchLocalePath } from '../../../seo/localePath'
+import type { Locale } from '../../../seo/config'
 
-type SupportedLocale = 'fr' | 'en' | 'de' | 'it' | 'es'
+type SupportedLocale = Locale
 
 const LANGUAGES: { code: SupportedLocale; label: string }[] = [
   { code: 'fr', label: 'Français' },
@@ -37,8 +40,25 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => document.addEventListener('mousedown', handleClickOutside))
-    onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutside))
+    /**
+     * Le menu ne se fermait qu'au clic extérieur : un utilisateur au clavier
+     * n'avait aucun moyen d'en sortir sans le traverser entièrement.
+     * Le focus retourne sur le déclencheur, sinon il repartirait en haut de page.
+     */
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || !langDropdownOpen.value) return
+      langDropdownOpen.value = false
+      langDropdownRef.value?.querySelector<HTMLElement>('.nav-lang-trigger')?.focus()
+    }
+
+    onMounted(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscape)
+    })
+    onBeforeUnmount(() => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    })
 
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const name = computed(() => authStore.currentUser?.name || '')
@@ -68,13 +88,7 @@ export default defineComponent({
     }
 
     // Language
-    const currentLocale = computed({
-      get: () => locale.value as SupportedLocale,
-      set: (val: SupportedLocale) => {
-        locale.value = val
-        try { localStorage.setItem('lang', val) } catch (e) {}
-      },
-    })
+    const currentLocale = computed(() => locale.value as SupportedLocale)
 
     const currentLang = computed(
       () => LANGUAGES.find(l => l.code === currentLocale.value) ?? LANGUAGES[0]
@@ -82,18 +96,34 @@ export default defineComponent({
 
     const currentCode = computed(() => currentLang.value.code.toUpperCase())
 
+    /**
+     * Changer de langue = changer d'URL. Le router applique ensuite la nouvelle
+     * langue (et la mémorise), donc l'URL, le contenu et le `<html lang>` restent
+     * toujours cohérents — condition nécessaire pour que les hreflang soient valides.
+     */
     const selectLang = (code: SupportedLocale) => {
-      currentLocale.value = code
       langDropdownOpen.value = false
+      router.push({ path: switchLocalePath(route, code), query: route.query })
     }
+
+    /** Les alternatives de langue rendues en vrais `<a href>`, pour être crawlables. */
+    const languageLinks = computed(() =>
+      LANGUAGES.map(lang => ({ ...lang, to: switchLocalePath(route, lang.code) }))
+    )
 
     const isActive = (name: string) => route.name === name
 
+    const homeLink = computed(() => localeHome())
+
     const navLinks = computed(() => [
-      { label: t('nav.library'),   name: 'Search',     to: '/search',    icon: 'pi pi-book' },
-      { label: t('nav.discovery'), name: 'Découverte', to: '/discovery', icon: 'pi pi-compass' },
-      { label: t('nav.following'), name: 'Mes Suivis', to: '/list',      icon: 'pi pi-star' },
+      { label: t('nav.library'),   name: 'Search',    to: localePath('search'),    icon: 'pi pi-book' },
+      { label: t('nav.discovery'), name: 'Discovery', to: localePath('discovery'), icon: 'pi pi-compass' },
+      { label: t('nav.following'), name: 'Library',   to: localePath('library'),   icon: 'pi pi-star' },
     ])
+
+    const profileLink = computed(() => localePath('profile'))
+    const libraryLink = computed(() => localePath('library'))
+    const notificationsLink = computed(() => localePath('notifications'))
 
     const toggleUserMenu = (event: Event) => {
       userMenuRef.value?.toggle(event)
@@ -120,9 +150,14 @@ export default defineComponent({
       currentLang,
       currentCode,
       languages: LANGUAGES,
+      languageLinks,
       selectLang,
       isActive,
       navLinks,
+      homeLink,
+      profileLink,
+      libraryLink,
+      notificationsLink,
       toggleUserMenu,
       userMenuItems,
     }

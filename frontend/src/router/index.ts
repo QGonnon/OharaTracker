@@ -1,215 +1,229 @@
-// src/router/index.js
+import type { Component } from 'vue'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '../store/auth.module'
+import { setLocale, detectPreferredLocale } from '../i18n'
+import {
+  MEDIA_SEGMENT_ALIASES, PAGE_SEGMENTS, MEDIA_SEGMENTS, isLocale,
+  pageSegmentAliases, type Locale, type MediaKind, type PageKey,
+} from '../seo/config'
 
-// Import de tes composants existants
-import MangaInfo from '../components/Features/Mangas/MangaInfo/MangaInfo.vue'
-import Login from '../components/Auth/Login/Login.vue'
-import Register from '../components/Auth/Register/Register.vue'
+// L'accueil est importé directement : c'est la page d'entrée la plus fréquente,
+// la charger en différé ajouterait un aller-retour réseau avant le premier rendu.
 import Home from '../components/Features/Home/Home.vue'
-import Discovery from '../components/Features/Discovery/Discovery.vue'
-import MangasListView from '../components/Features/Mangas/MangasListView/MangasListView.vue'
-import Search from '../components/Features/Search/Search.vue'
-import Profile from '../components/Features/User/Profile/Profile.vue'
-import NotificationsView from '../components/Features/Notifications/NotificationsView.vue'
+
+// Toutes les autres pages sont chargées à la demande. Sans ça, ouvrir la fiche
+// d'un manga téléchargeait aussi le code des tarifs, du profil, des mentions
+// légales et de la recherche — un seul bundle de 1,4 Mo pour chaque visiteur.
+const MangaInfo = () => import('../components/Features/Mangas/MangaInfo/MangaInfo.vue')
+const Login = () => import('../components/Auth/Login/Login.vue')
+const Register = () => import('../components/Auth/Register/Register.vue')
+const Discovery = () => import('../components/Features/Discovery/Discovery.vue')
+const MangasListView = () => import('../components/Features/Mangas/MangasListView/MangasListView.vue')
+const Search = () => import('../components/Features/Search/Search.vue')
+const Profile = () => import('../components/Features/User/Profile/Profile.vue')
+const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
+const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
 
 // Pages statiques / footer
-import Pricing from '../components/Features/Static/Pricing/Pricing.vue'
-import Blog from '../components/Features/Static/Blog/Blog.vue'
-import Status from '../components/Features/Static/Status/Status.vue'
-import Changelog from '../components/Features/Static/Changelog/Changelog.vue'
-import Suggestions from '../components/Features/Static/Suggestions/Suggestions.vue'
-import SupportedSites from '../components/Features/Static/SupportedSites/SupportedSites.vue'
-import OfficialPartners from '../components/Features/Static/OfficialPartners/OfficialPartners.vue'
-import Contact from '../components/Features/Static/Contact/Contact.vue'
-import Terms from '../components/Features/Static/Terms/Terms.vue'
-import Privacy from '../components/Features/Static/Privacy/Privacy.vue'
-import Cookies from '../components/Features/Static/Cookies/Cookies.vue'
+const Pricing = () => import('../components/Features/Static/Pricing/Pricing.vue')
+const Blog = () => import('../components/Features/Static/Blog/Blog.vue')
+const Status = () => import('../components/Features/Static/Status/Status.vue')
+const Changelog = () => import('../components/Features/Static/Changelog/Changelog.vue')
+const Suggestions = () => import('../components/Features/Static/Suggestions/Suggestions.vue')
+const SupportedSites = () => import('../components/Features/Static/SupportedSites/SupportedSites.vue')
+const OfficialPartners = () => import('../components/Features/Static/OfficialPartners/OfficialPartners.vue')
+const Contact = () => import('../components/Features/Static/Contact/Contact.vue')
+const Terms = () => import('../components/Features/Static/Terms/Terms.vue')
+const Privacy = () => import('../components/Features/Static/Privacy/Privacy.vue')
+const Cookies = () => import('../components/Features/Static/Cookies/Cookies.vue')
+
+/**
+ * Préfixe de langue, optionnel dans le pattern pour que les anciennes URL sans
+ * préfixe continuent de matcher — le garde `beforeEach` les redirige ensuite
+ * vers leur forme canonique préfixée.
+ */
+const L = ':locale(fr|en|de|it|es)?'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    /** Page réservée aux utilisateurs connectés. */
+    requiresAuth?: boolean
+    /** Page qui ne doit jamais être indexée (espace privé, 404, tunnel d'inscription). */
+    noindex?: boolean
+    /** Clé de page fixe, source de vérité pour reconstruire l'URL canonique. */
+    pageKey?: PageKey
+    /** Nature d'œuvre déduite du segment d'URL emprunté. */
+    mediaKind?: MediaKind
+  }
+}
+
+/**
+ * Route d'une page fixe : le chemin canonique est celui de la langue de l'URL,
+ * et tous les segments des autres langues (plus les anciens chemins) sont
+ * acceptés en alias pour être redirigés vers lui.
+ */
+const pageRoute = (
+  key: PageKey,
+  name: string,
+  component: Component,
+  meta: RouteRecordRaw['meta'] = {}
+): RouteRecordRaw => {
+  const segments = pageSegmentAliases(key)
+  return {
+    path: `/${L}/${segments[0]}`,
+    alias: segments.slice(1).map(segment => `/${L}/${segment}`),
+    name,
+    component,
+    meta: { pageKey: key, ...meta },
+  }
+}
+
+/** Route d'une œuvre, pour une nature donnée et tous ses segments équivalents. */
+const mediaRoute = (kind: MediaKind, name: string): RouteRecordRaw => {
+  const segments = MEDIA_SEGMENT_ALIASES[kind]
+  return {
+    path: `/${L}/${segments[0]}/:name`,
+    alias: segments.slice(1).map(segment => `/${L}/${segment}/:name`),
+    name,
+    component: MangaInfo,
+    props: true,
+    meta: { mediaKind: kind },
+  }
+}
 
 const routes: RouteRecordRaw[] = [
+  // Accueil : `/`, `/fr`, `/en`… Le `/home` historique est redirigé plus bas.
   {
-    path: '/discovery',
-    name: 'Découverte',
-    component: Discovery,
-  },
-  {
-    path: '/home',
+    path: `/${L}`,
     name: 'Home',
     component: Home,
   },
-  /* {
-    path: '/new',
-    name: 'Nouveautés',
-    component: MangasCoverView,
-  }, */
+
+  // Catalogue
+  mediaRoute('lecture', 'MediaLecture'),
+  mediaRoute('serie', 'MediaSerie'),
+  mediaRoute('film', 'MediaFilm'),
+
+  pageRoute('discovery', 'Discovery', Discovery),
+  pageRoute('search', 'Search', Search),
+
+  // Compte — jamais indexé : contenu privé, ou page sans valeur en recherche
+  pageRoute('login', 'Login', Login, { noindex: true }),
+  pageRoute('register', 'Register', Register, { noindex: true }),
+  pageRoute('profile', 'Profile', Profile, { noindex: true, requiresAuth: true }),
+  pageRoute('library', 'Library', MangasListView, { noindex: true, requiresAuth: true }),
+  pageRoute('notifications', 'Notifications', NotificationsView, { noindex: true, requiresAuth: true }),
+
+  // Pages publiques indexables
+  pageRoute('pricing', 'Pricing', Pricing),
+  pageRoute('blog', 'Blog', Blog),
+  pageRoute('status', 'Status', Status),
+  pageRoute('changelog', 'Changelog', Changelog),
+  pageRoute('suggestions', 'Suggestions', Suggestions),
+  pageRoute('supportedSites', 'SupportedSites', SupportedSites),
+  pageRoute('officialPartners', 'OfficialPartners', OfficialPartners),
+  pageRoute('contact', 'Contact', Contact),
+  pageRoute('terms', 'Terms', Terms),
+  pageRoute('privacy', 'Privacy', Privacy),
+  pageRoute('cookies', 'Cookies', Cookies),
+
+  // Ancienne page d'accueil : une seule URL d'accueil par langue, pas deux.
+  { path: `/${L}/home`, redirect: to => `/${localeOf(to.params.locale)}` },
+
+  // Ancien groupe `/auth/login`
+  { path: `/${L}/auth/login`, redirect: to => pathOf('login', to.params.locale) },
+  { path: `/${L}/auth/register`, redirect: to => pathOf('register', to.params.locale) },
+  { path: `/${L}/user/profile`, redirect: to => pathOf('profile', to.params.locale) },
+  { path: `/${L}/user/list`, redirect: to => pathOf('library', to.params.locale) },
+
+  // Tout le reste est une vraie 404 : on n'envoie plus le visiteur (ni Google)
+  // sur l'accueil, ce qui produisait un « soft 404 » sur chaque URL morte.
   {
-    path: '/search',
-    name: 'Search',
-    component: Search,
-  },
-  {
-    path: '/lecture/:name',
-    name: 'LectureInfo',
-    component: MangaInfo,
-    props: true,
-  },
-  {
-    path: '/serie/:name',
-    name: 'SerieInfo',
-    component: MangaInfo,
-    props: true,
-  },
-  {
-    path: '/film/:name',
-    name: 'FilmInfo',
-    component: MangaInfo,
-    props: true,
-  },
-  {
-    path: '/manga/:name',
-    name: 'MangaInfo',
-    component: MangaInfo,
-    props: true,
-  },
-  {
-    path: '/anime/:name',
-    name: 'AnimeInfo',
-    component: MangaInfo,
-    props: true,
-  },
-  {
-    path: '/auth',
-    children: [
-      {
-        path: 'login',
-        name: 'Login',
-        component: Login,
-      },
-      {
-        path: '/register',
-        name: 'Register',
-        component: Register,
-      },
-    ]
-  },
-  {
-    path: '/user',
-    children: [
-      {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile,
-      },
-      {
-        path: '/list',
-        name: 'Library',
-        component: MangasListView,
-      },
-    ]
-  },
-  {
-    path: '/notifications',
-    name: 'Notifications',
-    component: NotificationsView,
-  },
-  {
-    path: '/pricing',
-    name: 'Pricing',
-    component: Pricing,
-  },
-  {
-    path: '/blog',
-    name: 'Blog',
-    component: Blog,
-  },
-  {
-    path: '/status',
-    name: 'Status',
-    component: Status,
-  },
-  {
-    path: '/changelog',
-    name: 'Changelog',
-    component: Changelog,
-  },
-  {
-    path: '/suggestions',
-    name: 'Suggestions',
-    component: Suggestions,
-  },
-  {
-    path: '/supported-sites',
-    name: 'SupportedSites',
-    component: SupportedSites,
-  },
-  {
-    path: '/official-partners',
-    name: 'OfficialPartners',
-    component: OfficialPartners,
-  },
-  {
-    path: '/contact',
-    name: 'Contact',
-    component: Contact,
-  },
-  {
-    path: '/terms',
-    name: 'Terms',
-    component: Terms,
-  },
-  {
-    path: '/privacy',
-    name: 'Privacy',
-    component: Privacy,
-  },
-  {
-    path: '/cookies',
-    name: 'Cookies',
-    component: Cookies,
-  },
-  {
-    path: '/:pathMatch(.*)',
-    redirect: '/home',
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
+    meta: { noindex: true },
   },
 ]
+
+const localeOf = (raw: unknown): Locale =>
+  isLocale(raw) ? raw : detectPreferredLocale()
+
+const pathOf = (key: PageKey, raw: unknown): string => {
+  const locale = localeOf(raw)
+  return `/${locale}/${PAGE_SEGMENTS[key][locale]}`
+}
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, _from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    }
-    if (to.hash) {
-      return { el: to.hash };
-    }
-    return { top: 0 };
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash }
+    return { top: 0 }
   },
 })
 
+/**
+ * Aligne la langue de l'application sur l'URL, puis force chaque URL vers sa
+ * forme canonique : préfixe de langue présent, et segment écrit dans la langue
+ * de ce préfixe. Sans ça un même contenu resterait accessible sous plusieurs
+ * URL (`/pricing`, `/fr/pricing`, `/fr/tarifs`) — du duplicate content.
+ */
 router.beforeEach((to, _from, next) => {
-  const protectedPages = ['Profile', 'Admin', 'Moderator', 'User', 'Library', 'Notifications'];
-  const requiresAuth = protectedPages.includes(to.name?.toString() || '');
-  const authStore = useAuthStore();
-  const loggedIn = authStore.isLoggedIn;
+  // Sur une 404 le paramètre `locale` n'est pas renseigné (la route attrape-tout
+  // n'en déclare pas) : on relit le préfixe dans le chemin pour afficher la page
+  // d'erreur dans la langue que le visiteur avait demandée.
+  const urlLocale = isLocale(to.params.locale)
+    ? to.params.locale
+    : to.path.split('/').filter(Boolean)[0]
 
-  if (requiresAuth && !loggedIn) {
-    next({ name: 'Login', query: { redirect: to.fullPath } });
-    return;
-  }
+  const locale = localeOf(urlLocale)
+  setLocale(locale)
 
-  // Ne plus bloquer ici - laisser Login.ts gérer la redirection post-login
-  if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
-    const redirect = to.query.redirect as string;
-    if (redirect && redirect !== '/auth/login' && redirect !== '/register') {
-      next(redirect);
-    } else {
-      next({ name: 'Profile' });
+  if (to.name !== 'NotFound') {
+    const canonical = canonicalPathFor(to, locale)
+    if (canonical && canonical !== to.path) {
+      next({ path: canonical, query: to.query, hash: to.hash, replace: true })
+      return
     }
-    return;
   }
 
-  next();
-});
+  const authStore = useAuthStore()
+  const loggedIn = authStore.isLoggedIn
+
+  if (to.meta.requiresAuth && !loggedIn) {
+    next({ path: pathOf('login', locale), query: { redirect: to.fullPath } })
+    return
+  }
+
+  // Un utilisateur déjà connecté n'a rien à faire sur connexion/inscription
+  if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
+    const redirect = to.query.redirect as string | undefined
+    next(redirect && !redirect.includes('/login') && !redirect.includes('/register')
+      ? redirect
+      : pathOf('profile', locale))
+    return
+  }
+
+  next()
+})
+
+/** Chemin canonique de la route visée, ou `null` s'il n'y a rien à corriger. */
+function canonicalPathFor(
+  to: { path: string; params: Record<string, unknown>; meta: { pageKey?: PageKey; mediaKind?: MediaKind } },
+  locale: Locale
+): string | null {
+  if (to.meta.pageKey) {
+    return `/${locale}/${PAGE_SEGMENTS[to.meta.pageKey][locale]}`
+  }
+  if (to.meta.mediaKind) {
+    const slug = String(to.params.name ?? '')
+    if (!slug) return null
+    return `/${locale}/${MEDIA_SEGMENTS[to.meta.mediaKind][locale]}/${encodeURIComponent(slug)}`
+  }
+  // Accueil
+  return `/${locale}`
+}
 
 export default router

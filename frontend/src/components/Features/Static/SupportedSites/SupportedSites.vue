@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <p class="text-center text-gray-400 dark:text-zinc-500 text-sm mt-8">
+      <p class="text-center text-gray-600 dark:text-zinc-400 text-sm mt-8">
         {{ $t('static.supported_sites.more_soon') }}
       </p>
     </div>

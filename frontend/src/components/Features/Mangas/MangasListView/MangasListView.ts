@@ -17,6 +17,7 @@ import { useMangaStore } from '../../../../store/manga.module'
 import { useLibraryStore } from '../../../../store/library.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
+import { usePageSeo } from '../../../../seo/usePageSeo';
 
 export default defineComponent({
     name: 'MangasListView',
@@ -35,6 +36,7 @@ export default defineComponent({
         Message,
     },
     setup() {
+      usePageSeo('library', { noindex: true });
         const router = useRouter()
         const route = useRoute()
         const authStore = useAuthStore()

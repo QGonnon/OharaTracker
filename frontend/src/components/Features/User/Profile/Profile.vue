@@ -31,7 +31,7 @@
         </aside>
 
         <!-- Main -->
-        <main class="flex-1 space-y-6">
+        <div class="flex-1 space-y-6">
 
           <!-- Informations personnelles -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
@@ -41,30 +41,32 @@
             </div>
             <form class="px-6 py-6 space-y-5" @submit.prevent="submitProfile">
               <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.username') }}</label>
+                <label for="profile-username" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.username') }}</label>
                 <input
+                  id="profile-username"
                   v-model="profileForm.username"
                   type="text"
                   autocomplete="username"
-                  class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
+                  class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
                   :placeholder="$t('profile.username_placeholder')"
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.email') }}</label>
+                <label for="profile-email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.email') }}</label>
                 <input
+                  id="profile-email"
                   v-model="profileForm.email"
                   type="email"
                   autocomplete="email"
-                  class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
+                  class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
                   :placeholder="$t('profile.email_placeholder')"
                 />
               </div>
 
-              <div v-if="profileSuccess" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
+              <div v-if="profileSuccess" role="status" aria-live="polite" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
                 {{ profileSuccess }}
               </div>
-              <div v-if="profileError" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              <div v-if="profileError" role="alert" aria-live="assertive" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
                 {{ profileError }}
               </div>
 
@@ -89,34 +91,37 @@
             <form class="px-6 py-6 space-y-5" @submit.prevent="submitPassword">
               <template v-if="hasPassword">
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.current_password') }}</label>
+                  <label for="profile-current-password" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.current_password') }}</label>
                   <input
+                    id="profile-current-password"
                     v-model="passwordForm.currentPassword"
                     type="password"
                     autocomplete="current-password"
-                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                     placeholder="••••••••"
                   />
                 </div>
               </template>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.new_password') }}</label>
+                  <label for="profile-new-password" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.new_password') }}</label>
                   <input
+                    id="profile-new-password"
                     v-model="passwordForm.newPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                     placeholder="••••••••"
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.confirm_password') }}</label>
+                  <label for="profile-confirm-password" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.confirm_password') }}</label>
                   <input
+                    id="profile-confirm-password"
                     v-model="passwordForm.confirmPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                     placeholder="••••••••"
                   />
                 </div>
@@ -132,15 +137,15 @@
                     :class="passwordStrength >= i ? passwordStrengthColor : 'bg-slate-200 dark:bg-slate-600'"
                   ></div>
                 </div>
-                <p class="text-xs font-medium" :class="passwordStrength >= 3 ? 'text-green-600' : passwordStrength >= 2 ? 'text-yellow-600' : 'text-red-500'">
+                <p class="text-xs font-medium" :class="passwordStrength >= 3 ? 'text-green-700' : passwordStrength >= 2 ? 'text-amber-700' : 'text-red-500'">
                   {{ passwordStrengthLabel }}
                 </p>
               </div>
 
-              <div v-if="passwordSuccess" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
+              <div v-if="passwordSuccess" role="status" aria-live="polite" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
                 {{ passwordSuccess }}
               </div>
-              <div v-if="passwordError" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              <div v-if="passwordError" role="alert" aria-live="assertive" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
                 {{ passwordError }}
               </div>
 
@@ -170,7 +175,7 @@
                 </span>
               </div>
 
-              <div v-if="subscriptionError" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              <div v-if="subscriptionError" role="alert" aria-live="assertive" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
                 {{ subscriptionError }}
               </div>
 
@@ -186,10 +191,11 @@
               </div>
               <div v-else class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.no_subscription') }}</p>
-                <RouterLink to="/pricing">
-                  <button class="px-6 py-2.5 rounded-xl border border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 font-semibold text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex-shrink-0">
-                    {{ $t('profile.view_plans') }}
-                  </button>
+                <RouterLink
+                  :to="pricingLink"
+                  class="inline-block px-6 py-2.5 rounded-xl border border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 font-semibold text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex-shrink-0"
+                >
+                  {{ $t('profile.view_plans') }}
                 </RouterLink>
               </div>
             </div>
@@ -215,7 +221,7 @@
             </div>
           </section>
 
-        </main>
+        </div>
       </div>
     </div>
   </div>

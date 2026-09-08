@@ -1,8 +1,9 @@
 import { ref, computed } from 'vue'
 import { slugify } from '../../../utils.js'
+import { localeMedia } from '../../../seo/localePath'
 import { defineComponent } from "vue";
 import Card from 'primevue/card';
-import { Button } from 'primevue';
+import Button from 'primevue/button'
 import type { Manga } from '../../../types/index'
 
 export default defineComponent({
@@ -19,11 +20,15 @@ export default defineComponent({
     setup(props) {
         const manga = props.manga
         const cleanTitle = slugify(manga.title)
-        const fallbackImage = ref(`https://picsum.photos/seed/${manga.id}/400/200`)
+        // Lien canonique localisé plutôt qu'un chemin en dur : évite une redirection
+        const workPath = computed(() => localeMedia('lecture', cleanTitle))
+        // Placeholder servi depuis notre domaine : une image externe aléatoire
+        // (picsum) ralentissait le rendu et changeait à chaque chargement.
+        const fallbackImage = ref('/cover-placeholder.svg')
 
         const coverSrc = computed(() => {
             const apiBase = import.meta.env.VITE_API_URL;
-            
+
             // Utiliser directement la prop sans casting
             if (manga.coverPath) {
                 return `${apiBase}/cdn/${manga.coverPath}`;
@@ -32,6 +37,6 @@ export default defineComponent({
             return fallbackImage.value;
         })
 
-        return { manga, coverSrc, cleanTitle };
+        return { manga, coverSrc, cleanTitle, workPath };
     },
 });

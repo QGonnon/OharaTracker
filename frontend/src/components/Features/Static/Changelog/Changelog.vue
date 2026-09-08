@@ -16,7 +16,7 @@
           <span class="absolute -left-[7px] w-3.5 h-3.5 rounded-full bg-violet-600 border-2 border-white dark:border-zinc-950" />
           <div class="flex items-center gap-3 mb-1">
             <span class="font-bold text-gray-900 dark:text-white">{{ entry.version }}</span>
-            <span class="text-xs text-gray-400 dark:text-zinc-500">{{ entry.date }}</span>
+            <span class="text-xs text-gray-600 dark:text-zinc-400">{{ entry.date }}</span>
           </div>
           <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{{ $t(entry.key) }}</p>
         </li>

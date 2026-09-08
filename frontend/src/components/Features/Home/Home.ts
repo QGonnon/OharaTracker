@@ -1,7 +1,13 @@
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed, ref, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
 import Menu from "../../Shared/Menu/Menu.vue";
-import { Button, Tag } from "primevue";
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import { useAuthStore } from "../../../store/auth.module";
+import { useSeo } from "../../../seo/useSeo";
+import { organizationJsonLd, webApplicationJsonLd, websiteJsonLd } from "../../../seo/jsonld";
+import { DEFAULT_LOCALE, isLocale, pagePath, type Locale } from "../../../seo/config";
+import { localeHome, localePath } from "../../../seo/localePath";
 
 const libraryImg   = new URL('../../../assets/screenshots/library.webp',   import.meta.url).href
 const discoveryImg = new URL('../../../assets/screenshots/discovery.webp',  import.meta.url).href
@@ -14,21 +20,83 @@ export default defineComponent({
   setup() {
     const authStore  = useAuthStore();
     const isLoggedIn = computed(() => authStore.isLoggedIn);
+    const { t, locale } = useI18n();
 
-    const lightboxSrc   = ref<string | null>(null)
-    const openLightbox  = (src: string) => { lightboxSrc.value = src }
-    const closeLightbox = () => { lightboxSrc.value = null }
+    const currentLocale = computed<Locale>(() =>
+      isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
+    );
+
+    // L'accueil porte les trois entités racines du site. Elles ne sont déclarées
+    // qu'ici : les autres pages s'y réfèrent par `@id` au lieu de les redupliquer.
+    useSeo({
+      target: { type: 'home' },
+      title: computed(() => t('seo.home.title')),
+      description: computed(() => t('seo.home.description')),
+      jsonLd: computed(() => [
+        organizationJsonLd(currentLocale.value, t('seo.home.description')),
+        // `SearchAction` : rend le site éligible à la barre de recherche Google
+        websiteJsonLd(currentLocale.value, pagePath('search', currentLocale.value)),
+        webApplicationJsonLd(currentLocale.value, t('seo.home.description')),
+      ]),
+    });
+
+    // Liens internes canoniques (préfixés par la langue) : un lien direct vers
+    // l'URL finale évite une redirection et transmet mieux le PageRank.
+    const registerPath = computed(() => localePath('register'));
+    const pricingPath = computed(() => localePath('pricing'));
+    const discoveryPath = computed(() => localePath('discovery'));
+    const homeLink = computed(() => localeHome());
+
+    // ---------------------------------------------------------------------
+    // Lightbox (dialogue modal)
+    // ---------------------------------------------------------------------
+
+    const lightboxSrc = ref<string | null>(null)
+    const lightboxAlt = ref('')
+    const lightboxCloseRef = ref<HTMLElement | null>(null)
+    /** Élément qui avait le focus avant l'ouverture, pour le lui rendre à la fermeture. */
+    let lastFocused: HTMLElement | null = null
+
+    const openLightbox = async (src: string, alt = '') => {
+      lastFocused = document.activeElement as HTMLElement | null
+      lightboxSrc.value = src
+      lightboxAlt.value = alt
+      // Empêche la page de défiler derrière le dialogue ouvert.
+      document.body.style.overflow = 'hidden'
+      await nextTick()
+      lightboxCloseRef.value?.focus()
+    }
+
+    const closeLightbox = () => {
+      lightboxSrc.value = null
+      lightboxAlt.value = ''
+      document.body.style.overflow = ''
+      // Sans cela, le focus repartirait en haut de page et l'utilisateur
+      // perdrait sa position dans la liste des captures.
+      lastFocused?.focus()
+    }
+
+    /** Le dialogue n'a qu'un élément focusable : Tab y revient toujours. */
+    const trapFocus = () => lightboxCloseRef.value?.focus()
 
     const scrollToScreenshots = () => {
-      document.getElementById("screenshots")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Respecte la préférence système « réduire les animations » : un
+      // défilement animé peut être désorientant, voire nauséeux.
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      document.getElementById("screenshots")?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
     };
 
+    // Les statuts étaient codés en dur en français alors que le site sert cinq
+    // langues : ils passent par des clés de traduction.
     const mockItems = [
-      { title: "One Piece",      chapter: "1110", status: "En cours", severity: "info"      as const, color: "bg-gradient-to-br from-orange-300 to-orange-500" },
-      { title: "Jujutsu Kaisen", chapter: "265",  status: "Terminé",  severity: "success"   as const, color: "bg-gradient-to-br from-purple-400 to-indigo-600" },
-      { title: "Chainsaw Man",   chapter: "172",  status: "En cours", severity: "info"      as const, color: "bg-gradient-to-br from-red-400 to-orange-500" },
-      { title: "Berserk",        chapter: "374",  status: "Planifié", severity: "secondary" as const, color: "bg-gradient-to-br from-zinc-500 to-zinc-700" },
-      { title: "Vinland Saga",   chapter: "212",  status: "En pause", severity: "warn"      as const, color: "bg-gradient-to-br from-amber-300 to-amber-500" },
+      { title: "One Piece",      chapter: "1110", statusKey: "home.mock_status_ongoing",  severity: "info"      as const, color: "bg-gradient-to-br from-orange-300 to-orange-500" },
+      { title: "Jujutsu Kaisen", chapter: "265",  statusKey: "home.mock_status_finished", severity: "success"   as const, color: "bg-gradient-to-br from-purple-400 to-indigo-600" },
+      { title: "Chainsaw Man",   chapter: "172",  statusKey: "home.mock_status_ongoing",  severity: "info"      as const, color: "bg-gradient-to-br from-red-400 to-orange-500" },
+      { title: "Berserk",        chapter: "374",  statusKey: "home.mock_status_planned",  severity: "secondary" as const, color: "bg-gradient-to-br from-zinc-500 to-zinc-700" },
+      { title: "Vinland Saga",   chapter: "212",  statusKey: "home.mock_status_paused",   severity: "warn"      as const, color: "bg-gradient-to-br from-amber-300 to-amber-500" },
     ];
 
     const stats = [
@@ -58,7 +126,8 @@ export default defineComponent({
       mockItems, stats, features, steps,
       scrollToScreenshots,
       libraryImg, discoveryImg, trackingImg, profileImg,
-      lightboxSrc, openLightbox, closeLightbox,
+      lightboxSrc, lightboxAlt, lightboxCloseRef, openLightbox, closeLightbox, trapFocus,
+      registerPath, pricingPath, discoveryPath, homeLink,
     };
   },
 });

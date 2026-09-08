@@ -1,7 +1,12 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { /*useRouter,*/ useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
+import { useSeo } from '../../../../seo/useSeo'
+import { breadcrumbJsonLd, mediaJsonLd } from '../../../../seo/jsonld'
+import { DEFAULT_LOCALE, isLocale, homePath, pagePath, type Locale } from '../../../../seo/config'
+import { localeMedia } from '../../../../seo/localePath'
 import { useAuthStore } from '../../../../store/auth.module'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
@@ -29,7 +34,8 @@ export default defineComponent({
 
   setup() {
     const route = useRoute()
-    //const router = useRouter()
+    const router = useRouter()
+    const { t, locale } = useI18n()
     const authStore = useAuthStore()
     const mangaStore = useMangaStore()
     const libraryStore = useLibraryStore()
@@ -78,29 +84,46 @@ export default defineComponent({
 
     const coverSrc = computed(() => mangaStore.getCoverUrl(manga.value))
 
-    // Génère le path de navigation vers une oeuvre similaire selon son type
+    // Lien vers une oeuvre similaire, sur l'URL canonique localisée : un lien
+    // interne qui pointe directement sur la bonne adresse évite une redirection
+    // et transmet mieux l'autorité à la page liée.
     const similarWorkPath = (item: Manga): string => {
       const kind = mangaStore.resolveMediaKind(null, item.type)
-      return `/${kind}/${slugify(item.title)}`
+      return localeMedia(kind, slugify(item.title))
     }
+
+    /** `true` quand le slug demandé ne correspond à aucune œuvre : la page est alors une 404. */
+    const notFound = ref(false)
 
     const fetchMangas = async () => {
       loading.value = true
       error.value = null
+      notFound.value = false
       try {
-        const entries = await mangaStore.fetchAll()
-        allMangas.value = entries
+        const slug = String(route.params.name ?? '')
 
-        const found = mangaStore.findBySlug(entries, route.params.name)
+        // Une seule œuvre est demandée au serveur. Auparavant la page chargeait
+        // tout le catalogue avec les chapitres de toutes les sources — plusieurs
+        // mégaoctets — avant d'en afficher une ligne.
+        const found = await mangaStore.fetchBySlug(slug)
 
         if (found) {
           manga.value = found
+
+          // Le slug canonique peut différer de celui de l'URL (ancienne forme,
+          // sans accents) : on corrige l'adresse sans ajouter d'entrée d'historique.
+          const canonicalSlug = slugify(found.title)
+          if (canonicalSlug && canonicalSlug !== slug) {
+            router.replace(localeMedia(mediaKind.value, canonicalSlug))
+          }
+
           if (isLoggedIn.value) {
             await checkLibraryStatus()
           }
         } else {
           manga.value = {} as Manga
-          error.value = 'Oeuvre non trouvée.'
+          notFound.value = true
+          error.value = t('errors.not_found.title')
         }
       } catch (err) {
         console.error('Erreur lors de la récupération :', err)
@@ -110,7 +133,99 @@ export default defineComponent({
       }
     }
 
-    onMounted(fetchMangas)
+    /**
+     * Œuvres similaires : chargées à part, depuis le catalogue allégé, et
+     * seulement une fois la fiche affichée. Elles ne doivent pas retarder le
+     * contenu principal, qui est ce que mesure le LCP.
+     */
+    const fetchSimilar = async () => {
+      try {
+        allMangas.value = await mangaStore.fetchLight()
+      } catch (err) {
+        console.error('Erreur chargement des oeuvres similaires', err)
+      }
+    }
+
+    onMounted(async () => {
+      await fetchMangas()
+      if (!notFound.value) fetchSimilar()
+    })
+
+    // ---------------------------------------------------------------------
+    // SEO
+    // ---------------------------------------------------------------------
+
+    const currentLocale = computed<Locale>(() =>
+      isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
+    )
+
+    const canonicalSlug = computed(() =>
+      manga.value.title ? slugify(manga.value.title) : String(route.params.name ?? '')
+    )
+
+    /** Description : le synopsis réel s'il existe, sinon un gabarit traduit. */
+    const seoDescription = computed(() => {
+      if (notFound.value) return t('errors.not_found.description')
+      const synopsis = manga.value.description?.replace(/\s+/g, ' ').trim()
+      if (synopsis) {
+        // Google tronque autour de 160 caractères : on coupe au mot entier.
+        if (synopsis.length <= 155) return synopsis
+        const cut = synopsis.slice(0, 155)
+        return cut.slice(0, cut.lastIndexOf(' ')).trimEnd() + '…'
+      }
+      return t(`seo.media.${mediaKind.value}.description`, { title: manga.value.title ?? '' })
+    })
+
+    useSeo({
+      target: computed(() => ({
+        type: 'media' as const,
+        kind: mediaKind.value,
+        slug: canonicalSlug.value,
+      })),
+      title: computed(() =>
+        notFound.value || !manga.value.title
+          ? t('errors.not_found.title')
+          : t(`seo.media.${mediaKind.value}.title`, { title: manga.value.title })
+      ),
+      description: seoDescription,
+      image: computed(() => (manga.value.title ? coverSrc.value : undefined)),
+      // Une fiche sans œuvre correspondante ne doit jamais entrer dans l'index.
+      noindex: computed(() => notFound.value || !manga.value.title),
+      ogType: 'article',
+      jsonLd: computed(() => {
+        if (notFound.value || !manga.value.title) return []
+        return [
+          mediaJsonLd({
+            title: manga.value.title,
+            kind: mediaKind.value,
+            description: manga.value.description,
+            author: manga.value.author,
+            artist: manga.value.artist,
+            theme: manga.value.theme,
+            image: coverSrc.value,
+            url: `${window.location.origin}${localeMedia(mediaKind.value, canonicalSlug.value, currentLocale.value)}`,
+            locale: currentLocale.value,
+            status: manga.value.status,
+            // Ces totaux arrivent parfois en chaîne depuis la base : schema.org
+            // attend un nombre, une chaîne invaliderait le rich result.
+            totalEpisodes: Number(totalEpisodes.value) || undefined,
+            totalSeasons: Number(totalSeasons.value) || undefined,
+            // Pas encore de note agrégée exposée : émettre un `aggregateRating`
+            // vide serait un rich result trompeur, sanctionné par Google.
+            ratingValue: null,
+            ratingCount: null,
+          }),
+          breadcrumbJsonLd([
+            { name: t('seo.breadcrumb.home'), path: homePath(currentLocale.value) },
+            { name: t('seo.discovery.title'), path: pagePath('discovery', currentLocale.value) },
+            {
+              name: manga.value.title,
+              path: localeMedia(mediaKind.value, canonicalSlug.value, currentLocale.value),
+            },
+          ]),
+        ]
+      }),
+    })
 
     watch(() => route.params.name, (newName, oldName) => {
       if (newName !== oldName) fetchMangas()
@@ -233,6 +348,7 @@ export default defineComponent({
       manga,
       loading,
       error,
+      notFound,
       openSource,
       coverSrc,
       isLoggedIn,

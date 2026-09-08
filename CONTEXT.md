@@ -63,13 +63,148 @@ Projet réalisé par le GME **QENOWA** (Noah Darmon, Quentin Gonnon, Wassim Mens
 - RGPD supervisé par Quentin Gonnon : consentement explicite, droit d'accès/suppression via API dédiées, minimisation des données, pas de tracking publicitaire.
 - Plan de gestion d'incident : isolation, analyse des logs, correctif, notification sous 72h.
 
-## SEO (non traité dans les versions précédentes de ce document)
-- Le frontend est une **SPA pure** (Vue + Vite), sans SSR ni SSG (pas de Nuxt, pas de prerendering).
-- `frontend/index.html` n'a qu'un seul jeu de meta tags statiques (title/description fixes) — **pas de title/description dynamiques par route**, pas de balises Open Graph/Twitter Card par page.
-- **Pas de `sitemap.xml` ni `robots.txt`** dans `frontend/public/`.
-- Pas de `@unhead/vue` ni équivalent pour piloter le `<head>` dynamiquement par route.
-- Le manifest PWA (`vite-plugin-pwa`) sert à l'installabilité, pas au SEO.
-- Conséquence : référencement naturel très faible en l'état — point à traiter si l'acquisition organique compte pour le projet (SSR/prerendering, meta dynamiques, sitemap, robots.txt, OG tags).
+## SEO (refonte complète le 2026-09-08)
+
+L'application reste une SPA Vue/Vite (pas de migration Nuxt), mais tout ce qu'une
+SPA ne sait pas faire seule est pris en charge par un middleware Express.
+
+### Architecture SEO
+- **URL préfixées par la langue** : `/fr/...`, `/en/...`, `/de/...`, `/it/...`, `/es/...`.
+  Avant, les 5 langues partageaient la même URL (bascule via `localStorage`), donc
+  4 langues sur 5 étaient inindexables. Les segments sont eux-mêmes traduits
+  (`/fr/tarifs`, `/de/preise`, `/es/precios`).
+- **Source de vérité unique des URL** : `frontend/src/seo/config.ts`, dupliquée
+  côté serveur dans `api/utils/seoRoutes.js`. `npm test` dans `api/` vérifie que
+  les deux ne divergent pas.
+- **Rendu serveur des métadonnées** : `api/seo/spa.js` sert `frontend/dist` en
+  injectant, à chaque requête, le `<title>`, la description, le canonical, les
+  hreflang (5 langues + `x-default`), l'Open Graph, la Twitter Card et le JSON-LD
+  de la page demandée. Les titres viennent des mêmes fichiers de traduction que
+  le frontend (`frontend/src/locales/*.json`, namespace `seo`), donc client et
+  serveur ne peuvent pas afficher deux textes différents.
+- **Vrais codes HTTP** : 301 vers l'URL canonique (ancien chemin, mauvaise langue,
+  mauvais segment de type), 404 réel sur une œuvre inconnue. Le catch-all du
+  router ne redirige plus vers `/home` — ce comportement produisait un « soft 404 »
+  sur chaque URL morte.
+- **Côté client** : `@unhead/vue` + `frontend/src/seo/useSeo.ts` reposent les mêmes
+  balises à chaque navigation ; `usePageSeo(pageKey)` couvre les pages fixes en une ligne.
+- **Données structurées** (`frontend/src/seo/jsonld.ts` et `api/seo/spa.js`) :
+  Organization, WebSite + SearchAction, WebApplication, BreadcrumbList,
+  ComicSeries/TVSeries/Movie par œuvre, CollectionPage sur la découverte,
+  FAQPage et Product/Offer sur les tarifs.
+- **`robots.txt` et `sitemap.xml` générés dynamiquement** (`api/routes/seo.js`),
+  servis à la racine du domaine. Le sitemap est un index : pages fixes + œuvres
+  découpées en fichiers, chaque URL portant ses alternates hreflang. Hors
+  production, `robots.txt` interdit tout le crawl (protège la préprod).
+- **Espaces privés en `noindex`** (connexion, inscription, profil, bibliothèque,
+  notifications) et exclus du sitemap.
+
+### Performance (Core Web Vitals)
+- Nouveaux endpoints `GET /chapters/light` (catalogue sans les chapitres) et
+  `GET /chapters/slug/:slug` (une œuvre). Auparavant la fiche d'une œuvre
+  téléchargeait *tout* le catalogue avec les chapitres de toutes les sources.
+- Routes chargées à la demande (`import()`) : le bundle initial passe d'environ
+  1,25 Mo à environ 0,75 Mo.
+- Imports PrimeVue profonds (`primevue/button`) au lieu du barrel `primevue`.
+- `compression` (gzip/brotli) sur l'API, `Cache-Control` long sur `/cdn` et les
+  assets versionnés, `preconnect` vers l'origine de l'API.
+- Dépendances `bootstrap`, `jquery` et `popper.js` supprimées : déclarées mais
+  jamais importées.
+
+### Slugs
+`slugify` rabat les accents sur la lettre de base et conserve le CJK, au lieu de
+supprimer tout caractère non-ASCII (`Ōkami` donnait `kami`, un titre japonais
+donnait une chaîne vide). L'ancienne forme reste acceptée en entrée pour ne pas
+casser les liens partagés, et redirige en 301 vers la nouvelle.
+Les implémentations client (`frontend/src/utils.ts`) et serveur
+(`api/utils/slug.js`) doivent rester identiques — c'est testé.
+
+### Images de partage
+`npm run og:image` (dans `frontend/`) génère `public/og-default-<langue>.png`
+en 1200×630, une par langue, à partir de `scripts/generate-og-image.mjs`.
+À relancer après toute modification du logo ou des accroches.
+
+## Accessibilité (RGAA / WCAG 2.1 AA — refonte le 2026-09-08)
+
+Audit complet puis correction de 42 problèmes (10 bloquants, 19 majeurs, 13 mineurs).
+Score Lighthouse Accessibilité : **100/100** sur toutes les pages testées.
+
+Principaux correctifs :
+- **Lien d'évitement + `<main>`** dans `App.vue` : la navigation n'a plus à être
+  retraversée à chaque page au clavier.
+- **Éléments cliquables non focusables** : les cartes de résultats de recherche,
+  de la bibliothèque et les notifications n'étaient atteignables qu'à la souris —
+  ces écrans étaient donc inutilisables au clavier.
+- **Formulaires** : les `<label for>` de connexion/inscription pointaient dans le
+  vide (vee-validate ne pose pas d'`id`), ceux du profil et du dialogue d'édition
+  n'avaient pas de `for` du tout. Les erreurs sont maintenant reliées au champ
+  (`aria-describedby`) et annoncées (`role="alert"`).
+- **Boutons sans nom** : le menu hamburger, la cloche de notifications et tous les
+  boutons à icône seule (le glyphe PrimeIcons est un caractère de zone privée
+  Unicode, muet pour un lecteur d'écran).
+- **Contrastes** : ~80 occurrences corrigées, y compris des surcharges du thème
+  PrimeVue (`.p-accordionheader`, boutons secondaires) mesurées à 4,3-4,4:1.
+- **Lightbox** : `role="dialog"`, fermeture à Échap, focus déplacé puis restitué.
+- **Deux `<h1>` par page** (le logo du menu en était un) et sauts de niveau.
+- **`prefers-reduced-motion`** respecté globalement (`assets/styles.scss`).
+- **Textes en dur en français** sur un site en 5 langues (alt des captures,
+  statuts du mockup d'accueil).
+
+`npm run check:a11y` (dans `frontend/`) rejoue un garde-fou anti-régression sur
+tous ces points ; il est branché en amont de `npm run build`, donc une régression
+bloque la compilation.
+
+## Sécurité HTTP et performance (2026-09-08)
+
+### En-têtes (`api/seo/security.js`)
+- `helmet` avec une **CSP stricte** : pas d'`unsafe-inline` sur `script-src`, un
+  **nonce par requête** pour les blocs JSON-LD (sans lui, Chrome les bloque et
+  les rich results disparaissent), `frame-ancestors 'none'`, `object-src 'none'`.
+- HSTS et `upgrade-insecure-requests` uniquement en production (les activer en
+  local bloquerait `http://localhost` dans le navigateur du développeur).
+- `express-rate-limit` : 10 tentatives/15 min sur `/auth/signin`, `/auth/signup`,
+  `/auth/google` et `/auth/change-password` ; 600 req/15 min sur le reste.
+- ⚠️ **`PUBLIC_API_URL` doit valoir exactement `VITE_API_URL`.** Si l'API est
+  servie depuis une autre origine que le site, l'omettre fait bloquer toutes les
+  requêtes de données par la CSP : l'application s'affiche mais reste vide, sans
+  aucune erreur côté serveur. Un test couvre ce cas.
+
+### Résultats Lighthouse mesurés (mobile, throttling par défaut)
+| Page | Perf | A11y | Bonnes pratiques | SEO |
+|---|---|---|---|---|
+| `/fr` | 79 | 100 | 100 | 100 |
+| `/fr/tarifs` | 80 | 100 | 100 | 100 |
+| `/fr/confidentialite` | 84 | 100 | 100 | 100 |
+| `/fr/decouverte` | 84 | 100 | 100 | 100 |
+| `/de` | 80 | 100 | 100 | 100 |
+
+Les pages de compte (`/en/register`…) affichent un SEO à 63 : c'est **voulu**,
+Lighthouse pénalise le `noindex` que l'on pose délibérément.
+
+### Correctifs de performance décisifs
+- **CLS de 0,678 → 0** : le pied de page remontait tant que le chunk de la route
+  n'était pas chargé, puis redescendait d'un coup. `#main-content { min-height:
+  100vh }` réserve la place. À lui seul, ce correctif a fait passer les pages
+  secondaires de 58-63 à 80-84.
+- **Préchargement du chunk de la route** (`api/seo/preload.js`) : le serveur sait
+  quelle page est demandée, il annonce son chunk dans le HTML au lieu de laisser
+  le navigateur le découvrir après exécution du bundle principal. Nécessite
+  `build.manifest: true` côté Vite.
+- `compression` (gzip) sur l'API : sans elle, le score tombe de 79 à 60.
+- Source maps de production activées.
+
+### Pièges connus
+- Le middleware SPA met `index.html` en cache au démarrage en production :
+  **redémarrer l'API après chaque `npm run build` du frontend**, sinon elle sert
+  un HTML qui référence des fichiers supprimés (page blanche).
+- Le score de performance reste limité par le JavaScript inutilisé (~300 ms) :
+  PrimeVue et son thème sont chargés en entier au démarrage. Levier restant si
+  besoin, mais coûteux.
+
+### Reste à faire
+- La page `/blog` est une coquille vide : c'est le principal levier de trafic
+  organique encore inexploité.
+- Déclarer le site et soumettre le sitemap à la Google Search Console.
 
 ## Structure du repo (aperçu)
 - `api/` — backend Node.js/Express : `routes/` (dont `auth.js`, `stripe.js`, `stripeWebhook.js`), `sequelize/` (config/migrations/models PostgreSQL), `utils/` (dont `auth.js`, `push.js`, `database.js`, `cover.js`), `sites/` (connecteurs scraping/APIs tierces : AniList, MAL, MangaDex, TMDB), `app.js`, `index.js`.
@@ -84,4 +219,52 @@ Projet réalisé par le GME **QENOWA** (Noah Darmon, Quentin Gonnon, Wassim Mens
 - Respecter la contrainte budget nul : privilégier les solutions open-source/gratuites déjà en place (PostgreSQL, OVH, Tailwind, Web Push natif) plutôt que d'introduire des services tiers payants (ex: éviter Firebase). Stripe est déjà en place pour la partie paiement, c'est une exception assumée du projet.
 - La stack UI frontend est hétérogène (Tailwind + PrimeVue + Bootstrap/jQuery) : avant d'ajouter un nouveau composant, vérifier quel framework UI est déjà utilisé dans la page/le module concerné plutôt que d'en introduire un quatrième.
 - Priorités sécurité identifiées à date : vérifier cryptographiquement les ID tokens Google (au lieu du simple décodage base64), ajouter `helmet` + rate-limiting sur les routes d'auth, supprimer le fallback JWT_SECRET en dur.
-- Priorités SEO identifiées à date : pas de SSR/SSG ni de meta dynamiques ni de sitemap/robots.txt — à considérer si l'acquisition organique est un objectif.
+- **Ne jamais construire une URL à la main.** Passer par `localePath()`, `localeHome()`
+  ou `localeMedia()` (`frontend/src/seo/localePath.ts`) : un chemin en dur comme
+  `/pricing` déclenche une redirection et casse le lien entre langue et URL.
+- Toute nouvelle page doit : être déclarée dans `PAGE_SEGMENTS` des **deux**
+  fichiers de config SEO, appeler `usePageSeo('saCle')`, et avoir ses textes
+  `seo.saCle.title` / `seo.saCle.description` dans les **5** fichiers de locale.
+  `npm test` dans `api/` échoue si la configuration est incohérente.
+- Les écrans de listing utilisent `mangaStore.fetchLight()` (catalogue allégé) ;
+  `fetchAll()` ne doit servir que si les chapitres sont réellement nécessaires.
+
+MODIFS SEO ACTUELLES :
+Ce qui était cassé, et comment c'est résolu
+1. 4 langues sur 5 étaient inindexables — le plus gros problème. Les 5 langues partageaient la même URL (bascule via localStorage). Google ne pouvait indexer qu'une version.
+→ URL préfixées et segments traduits : /fr/tarifs, /de/preise, /es/precios, /es/pelicula/akira. Chaque page déclare ses 5 alternates hreflang + x-default. Le sélecteur de langue navigue désormais vers l'URL équivalente (avant, il changeait le contenu sans changer l'URL — ce qui rend les hreflang invalides).
+
+2. Soft-404 généralisés — le catch-all redirigeait toute URL morte vers /home en 200.
+→ Vraie page 404, vrai statut HTTP 404, noindex. Et 301 vers l'URL canonique pour tous les anciens chemins.
+
+3. Un seul title/description pour tout le site, aucun canonical, aucun OG.
+→ Titres et descriptions rédigés par page et par langue (~21 clés × 5 locales), avec des mots-clés adaptés à chaque marché (« suivi manga » FR, « manga tracker » EN, « Manga Tracker » DE…).
+
+4. Le contenu n'était visible qu'après exécution du JS. api/seo/spa.js injecte le <head> complet côté serveur — Bing, Discord, WhatsApp et X voient maintenant le vrai contenu. Les titres viennent des mêmes fichiers de locale que le frontend, donc client et serveur ne peuvent pas diverger.
+
+5. Duplicate content par construction : /lecture/x, /manga/x, /anime/x, /serie/x, /film/x servaient la même œuvre. → Le type en base fait autorité, le reste redirige en 301.
+
+6. Performance : chaque fiche téléchargeait tout le catalogue avec tous les chapitres de toutes les sources. → Endpoints /chapters/light et /chapters/slug/:slug. Bundle initial ~1,25 Mo → ~0,75 Mo (routes en import(), imports PrimeVue profonds). J'ai aussi supprimé bootstrap, jquery et popper.js : déclarés mais jamais importés.
+
+7. slugify détruisait les titres non-ASCII — Ōkami → kami, un titre japonais → chaîne vide (page inaccessible). Corrigé, l'ancienne forme reste acceptée et redirige.
+
+Ajouté aussi : robots.txt + sitemap index dynamiques (avec hreflang par URL, et blocage total hors production), JSON-LD complet (Organization, WebSite+SearchAction, ComicSeries/TVSeries/Movie, BreadcrumbList, FAQPage, Product/Offer).
+
+Deux points d'attention
+1-Le rendu serveur suppose que l'API sert frontend/dist. Si OVH sert le frontend séparément (nginx), il faut soit router le trafic HTML vers l'API, soit proxifier au minimum /robots.txt et /sitemap*.xml — sinon ils sont introuvables à la racine du domaine. Dites-moi votre configuration de déploiement, j'adapte.
+
+1 — Config de déploiement : tu n'as rien à répondre pour l'instant
+En local tu as deux modes, et les deux fonctionnent déjà :
+
+Mode	Commande	Ce qui marche	Ce qui ne marche pas
+Dev	npm run dev dans frontend/ + api/	Tout le site, le routing par langue, les meta côté client	Pas de rendu serveur des meta, pas de robots/sitemap à la racine (ils sont sur localhost:3000)
+Prod locale	npm run build dans frontend/, puis node index.js dans api/	Tout, y compris rendu serveur, 301/404 réels, robots + sitemap sur localhost:3000	—
+Le mode « prod locale » est exactement ce qui tournera sur OVH. La question de déploiement se posera seulement le jour où quelqu'un mettra un nginx devant — à ce moment-là, dis-moi et j'écris la conf.
+
+2-Il faut renseigner SITE_URL et VITE_SITE_URL (ajoutés aux .env.example) : sans eux, les canonical pointent sur https://oharatracker.com par défaut.
+
+2 - Claude gère ca.
+
+3-Reste à faire, que je n'ai pas pu couvrir : une bannière Open Graph 1200×630 (design), et surtout la page /blog est une coquille vide — c'est aujourd'hui votre plus gros levier de trafic organique inexploité. Je peux m'en occuper si vous voulez.
+
+Claude gère ca.

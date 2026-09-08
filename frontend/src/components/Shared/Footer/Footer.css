@@ -12,7 +12,8 @@
 }
 
 .footer-logo {
-	background: linear-gradient(270deg, #4f46e5, #818cf8, #c4b5fd, #4f46e5);
+	/* #c4b5fd retiré du dégradé : son contraste tombait à 1,85:1 sur fond blanc. */
+	background: linear-gradient(270deg, #4f46e5, #6366f1, #4338ca, #4f46e5);
 	background-size: 300% 300%;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -21,16 +22,26 @@
 	letter-spacing: -0.02em;
 }
 
+/* En mode contraste forcé, `background-clip: text` n'est pas honoré et le texte
+   disparaîtrait entièrement : on rebascule sur une couleur système. */
+@media (forced-colors: active) {
+	.footer-logo {
+		background: none;
+		-webkit-text-fill-color: CanvasText;
+		color: CanvasText;
+	}
+}
+
 .footer-col-title {
 	font-size: 0.75rem;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-	color: #9ca3af;
+	color: #4b5563;
 }
 
 .dark-theme .footer-col-title {
-	color: #71717a;
+	color: #a1a1aa;
 }
 
 .footer-link {
@@ -59,7 +70,7 @@
 	width: 2.1rem;
 	height: 2.1rem;
 	border-radius: 8px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.28);
 	color: #4b5563;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }

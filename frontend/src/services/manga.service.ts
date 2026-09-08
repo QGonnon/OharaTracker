@@ -1,4 +1,4 @@
-import { slugify } from '../utils'
+import { slugCandidates } from '../utils'
 import type { Manga, MediaKind } from '../types/index'
 
 const getApiBase = (): string =>
@@ -19,8 +19,41 @@ class MangaService {
       .map(m => this.withDisplayFields({ ...m, id: Number(m.id) } as Manga))
   }
 
+  /**
+   * Catalogue allégé : une entrée par œuvre, sans la liste des chapitres.
+   * Suffit à tous les écrans de listing (découverte, recherche, œuvres
+   * similaires) et pèse une fraction de `getAll()`.
+   */
+  async getLight(): Promise<Manga[]> {
+    const response = await fetch(`${getApiBase()}/chapters/light`)
+    if (!response.ok) throw new Error(`Erreur catalogue: ${response.status}`)
+    const rows = (await response.json()) || []
+    return (Array.isArray(rows) ? rows : Object.values(rows))
+      .filter((m: any) => m?.title)
+      .map((m: any) => ({ ...m, id: Number(m.id), sites: m.sites ?? {} }) as Manga)
+  }
+
+  /**
+   * Une seule œuvre, résolue côté serveur depuis son slug.
+   * La page fiche téléchargeait auparavant l'intégralité du catalogue (tous les
+   * chapitres de toutes les sources) pour n'en afficher qu'une ligne.
+   */
+  async getBySlug(slug: string): Promise<Manga | null> {
+    const response = await fetch(`${getApiBase()}/chapters/slug/${encodeURIComponent(slug)}`)
+    if (response.status === 404) return null
+    if (!response.ok) throw new Error(`Erreur oeuvre: ${response.status}`)
+    const work = await response.json()
+    return this.withDisplayFields({ ...work, id: Number(work.id) } as Manga)
+  }
+
+  /**
+   * Résout une œuvre par son slug d'URL. Accepte aussi l'ancienne forme du slug
+   * (celle qui supprimait les accents) pour ne pas casser les liens déjà partagés.
+   */
   findBySlug(mangas: Manga[], slug: string | string[]): Manga | undefined {
-    return mangas.find(m => slugify(m.title) === slug)
+    const wanted = String(Array.isArray(slug) ? slug[0] : slug ?? '').toLowerCase()
+    if (!wanted) return undefined
+    return mangas.find(m => slugCandidates(m.title).some(c => c.toLowerCase() === wanted))
   }
 
   // Chapitres/épisodes connus pour une entrée de bibliothèque donnée, toutes sources confondues
@@ -34,7 +67,10 @@ class MangaService {
   getCoverUrl(manga: Pick<Manga, 'coverPath' | 'coverUrl' | 'title'>): string {
     if (manga.coverPath) return `${getApiBase()}/cdn/${manga.coverPath}`
     if (manga.coverUrl) return manga.coverUrl
-    return `https://picsum.photos/seed/${manga.title}/400/600`
+    // Placeholder servi depuis notre propre domaine : une image externe
+    // aléatoire (picsum) ralentissait le rendu, changeait à chaque chargement
+    // et se retrouvait publiée comme image Open Graph de la fiche.
+    return '/cover-placeholder.svg'
   }
 
   // Site qui possède le plus de chapitres, utilisé comme source "principale" du manga
