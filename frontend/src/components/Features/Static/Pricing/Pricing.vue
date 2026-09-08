@@ -100,40 +100,16 @@
         </div>
       </div>
 
-      <!-- FAQ -->
-      <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-12">
-          <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
-            {{ $t('faq.label') }}
-          </span>
-          <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
-            {{ $t('faq.title') }}
-          </h2>
-          <p class="text-gray-500 dark:text-zinc-400 leading-relaxed">
-            {{ $t('faq.subtitle') }}
-          </p>
-        </div>
-
-        <Accordion :value="[]" multiple>
-          <AccordionPanel v-for="(item, i) in faqItems" :key="i" :value="i">
-            <AccordionHeader>
-              <template #toggleicon="{ active }">
-                <span class="faq-toggle-icon" :class="{ 'faq-toggle-icon--active': active }">{{ active ? '−' : '+' }}</span>
-              </template>
-              {{ item.q }}
-            </AccordionHeader>
-            <AccordionContent>
-              <p class="text-gray-500 dark:text-zinc-400 leading-relaxed">{{ item.a }}</p>
-            </AccordionContent>
-          </AccordionPanel>
-        </Accordion>
+      <!-- La FAQ vit désormais sur sa propre page (meilleur ciblage SEO des
+           requêtes en question) : ce bloc n'est plus qu'un lien vers elle. -->
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-gray-600 dark:text-zinc-400 mb-3">{{ $t('static.pricing.faq_teaser') }}</p>
+        <RouterLink :to="faqLink" class="text-sm font-semibold text-violet-600 dark:text-violet-400 hover:underline">
+          {{ $t('faq.title') }} →
+        </RouterLink>
       </div>
     </div>
   </section>
 </template>
 
 <script src="./Pricing.ts"></script>
-
-<style>
-@import './Pricing.css';
-</style>

@@ -9,10 +9,13 @@ import { organizationJsonLd, webApplicationJsonLd, websiteJsonLd } from "../../.
 import { DEFAULT_LOCALE, isLocale, pagePath, type Locale } from "../../../seo/config";
 import { localeHome, localePath } from "../../../seo/localePath";
 
-const libraryImg   = new URL('../../../assets/screenshots/library.webp',   import.meta.url).href
-const discoveryImg = new URL('../../../assets/screenshots/discovery.webp',  import.meta.url).href
-const trackingImg  = new URL('../../../assets/screenshots/tracking.webp',   import.meta.url).href
-const profileImg   = new URL('../../../assets/screenshots/profile.webp',    import.meta.url).href
+// Versions réduites à 760 px générées par `npm run optimize:screenshots`.
+// Les originales (1076-1261 px) étaient affichées entre 175 et 350 px : 266 Ko
+// étaient téléchargés pour rien. Les sources restent dans le dépôt à côté.
+const libraryImg   = new URL('../../../assets/screenshots/library-preview.webp',   import.meta.url).href
+const discoveryImg = new URL('../../../assets/screenshots/discovery-preview.webp',  import.meta.url).href
+const trackingImg  = new URL('../../../assets/screenshots/tracking-preview.webp',   import.meta.url).href
+const profileImg   = new URL('../../../assets/screenshots/profile-preview.webp',    import.meta.url).href
 
 export default defineComponent({
   name: "Home",

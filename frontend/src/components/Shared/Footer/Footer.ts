@@ -30,6 +30,7 @@ export default defineComponent({
       {
         title: t('footer.resources'),
         links: [
+          { label: t('faq.label'),                 to: localePath('faq')              },
           { label: t('footer.blog'),               to: localePath('blog')             },
           { label: t('footer.changelog'),          to: localePath('changelog')        },
           { label: t('footer.suggestions'),        to: localePath('suggestions')      },

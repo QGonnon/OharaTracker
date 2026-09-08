@@ -52,12 +52,23 @@ const messages = (() => {
 
 export const translationsAvailable = () => LOCALES.some(l => messages[l] !== null);
 
+const lookupRaw = (locale, key) =>
+    key.split('.').reduce((acc, part) => acc?.[part], messages[locale]);
+
 /** Résout une clé pointée (`seo.home.title`) avec repli sur la langue par défaut. */
 export function t(locale, key, params = {}) {
-    const lookup = (loc) => key.split('.').reduce((acc, part) => acc?.[part], messages[loc]);
-    const raw = lookup(locale) ?? lookup(DEFAULT_LOCALE);
+    const raw = lookupRaw(locale, key) ?? lookupRaw(DEFAULT_LOCALE, key);
     if (typeof raw !== 'string') return '';
     return raw.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? '');
+}
+
+/**
+ * Variante de `t()` qui renvoie la ressource brute (tableau, objet) au lieu de
+ * forcer une chaîne. Sert par exemple à `faq.items`, une liste de questions/
+ * réponses, pour construire le JSON-LD `FAQPage` côté serveur.
+ */
+export function tRaw(locale, key) {
+    return lookupRaw(locale, key) ?? lookupRaw(DEFAULT_LOCALE, key);
 }
 
 // ---------------------------------------------------------------------------

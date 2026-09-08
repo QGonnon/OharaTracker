@@ -27,6 +27,7 @@ const NotFound = () => import('../components/Features/Static/NotFound/NotFound.v
 // Pages statiques / footer
 const Pricing = () => import('../components/Features/Static/Pricing/Pricing.vue')
 const Blog = () => import('../components/Features/Static/Blog/Blog.vue')
+const Faq = () => import('../components/Features/Static/Faq/Faq.vue')
 const Status = () => import('../components/Features/Static/Status/Status.vue')
 const Changelog = () => import('../components/Features/Static/Changelog/Changelog.vue')
 const Suggestions = () => import('../components/Features/Static/Suggestions/Suggestions.vue')
@@ -117,6 +118,7 @@ const routes: RouteRecordRaw[] = [
   // Pages publiques indexables
   pageRoute('pricing', 'Pricing', Pricing),
   pageRoute('blog', 'Blog', Blog),
+  pageRoute('faq', 'Faq', Faq),
   pageRoute('status', 'Status', Status),
   pageRoute('changelog', 'Changelog', Changelog),
   pageRoute('suggestions', 'Suggestions', Suggestions),
@@ -170,7 +172,7 @@ const router = createRouter({
  * de ce préfixe. Sans ça un même contenu resterait accessible sous plusieurs
  * URL (`/pricing`, `/fr/pricing`, `/fr/tarifs`) — du duplicate content.
  */
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   // Sur une 404 le paramètre `locale` n'est pas renseigné (la route attrape-tout
   // n'en déclare pas) : on relit le préfixe dans le chemin pour afficher la page
   // d'erreur dans la langue que le visiteur avait demandée.
@@ -179,7 +181,9 @@ router.beforeEach((to, _from, next) => {
     : to.path.split('/').filter(Boolean)[0]
 
   const locale = localeOf(urlLocale)
-  setLocale(locale)
+  // Les traductions sont chargées à la demande : on attend celles de la langue
+  // cible avant d'afficher la page, sinon elle apparaîtrait avec les clés brutes.
+  await setLocale(locale)
 
   if (to.name !== 'NotFound') {
     const canonical = canonicalPathFor(to, locale)

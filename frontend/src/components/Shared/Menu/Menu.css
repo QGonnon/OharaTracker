@@ -59,7 +59,13 @@
 	text-decoration: none;
 	font-weight: 800;
 	letter-spacing: -0.02em;
-	animation: logoShimmer 6s ease infinite;
+	/*
+	   Trois passages puis arrêt, au lieu d'une boucle infinie.
+	   WCAG 2.2.2 interdit un mouvement automatique de plus de 5 s sans moyen de
+	   le mettre en pause ; Lighthouse signalait par ailleurs cette animation
+	   comme non compositée (`background-position` force un repaint continu).
+	*/
+	animation: logoShimmer 6s ease 3;
 }
 
 /* En mode contraste forcé, `background-clip: text` n'est pas honoré et le texte

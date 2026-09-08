@@ -57,7 +57,8 @@
             <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
             <div class="w-2.5 h-2.5 rounded-full bg-green-400/80" />
             <div class="ml-3 flex-1 h-5 rounded bg-gray-200 dark:bg-zinc-700 flex items-center px-2.5">
-              <span class="text-[11px] text-gray-600 dark:text-zinc-400">{{ $t('home.mock_url') }}</span>
+              <!-- zinc-400 sur zinc-700 ne donnait que 4,07:1 en thème sombre. -->
+              <span class="text-[11px] text-gray-600 dark:text-zinc-300">{{ $t('home.mock_url') }}</span>
             </div>
           </div>
           <div class="p-4">
@@ -131,7 +132,7 @@
               <img
                 :src="libraryImg"
                 :alt="$t('home.screenshot_library_alt')"
-                width="1261" height="877" loading="lazy" decoding="async"
+                width="760" height="529" loading="lazy" decoding="async"
                 class="w-full h-full object-cover object-top"
               />
             </button>
@@ -144,7 +145,7 @@
               <img
                 :src="discoveryImg"
                 :alt="$t('home.screenshot_discovery_alt')"
-                width="1568" height="749" loading="lazy" decoding="async"
+                width="760" height="363" loading="lazy" decoding="async"
                 class="w-full h-full object-cover object-top"
               />
             </button>
@@ -168,7 +169,7 @@
               <div class="w-2 h-2 rounded-full bg-yellow-400/70" />
               <div class="w-2 h-2 rounded-full bg-green-400/70" />
             </div>
-            <img :src="trackingImg" :alt="$t('home.screenshot_tracking_alt')" width="1236" height="691" loading="lazy" decoding="async" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
+            <img :src="trackingImg" :alt="$t('home.screenshot_tracking_alt')" width="760" height="425" loading="lazy" decoding="async" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
           </button>
           <div class="flex items-center gap-2">
             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 text-[10px] font-semibold">
@@ -193,7 +194,7 @@
               <div class="w-2 h-2 rounded-full bg-yellow-400/70" />
               <div class="w-2 h-2 rounded-full bg-green-400/70" />
             </div>
-            <img :src="profileImg" :alt="$t('home.screenshot_profile_alt')" width="1077" height="848" loading="lazy" decoding="async" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
+            <img :src="profileImg" :alt="$t('home.screenshot_profile_alt')" width="760" height="598" loading="lazy" decoding="async" class="w-full object-cover object-top hover:brightness-105 transition-all duration-200" />
           </button>
           <div>
             <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">{{ $t('home.screenshot_profile_title') }}</h3>

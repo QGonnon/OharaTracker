@@ -12,7 +12,13 @@
   --p-primary-color: #818cf8;
   --p-primary-hover-color: #6366f1;
   --p-primary-active-color: #4f46e5;
-  --p-primary-contrast-color: #ffffff;
+  /*
+    En thème sombre la couleur principale est un indigo CLAIR (#818cf8) :
+    du texte blanc dessus ne donne que 2,98:1, sous le seuil AA de 4,5:1.
+    Un texte très sombre remonte à 5,36:1. Mesuré par Lighthouse sur le
+    bouton « Commencer gratuitement » de l'accueil.
+  */
+  --p-primary-contrast-color: #1e1b4b;
 }
 /* ══════════════════════════════════════════════════
    ACCESSIBILITÉ — RÉGLAGES GLOBAUX

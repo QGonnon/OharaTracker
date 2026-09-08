@@ -367,7 +367,8 @@
         "Partner platforms: priority visibility to our audience, on a subscription basis",
         "Content creators (YouTube, Twitch...): affiliation or compensation depending on the collaboration"
       ],
-      "partner_cta": "Contact us"
+      "partner_cta": "Contact us",
+      "faq_teaser": "Questions about plans or billing?"
     },
     "blog": {
       "label": "Blog",
@@ -480,7 +481,9 @@
         "q": "How long do features remain in Early Access?",
         "a": "There is no fixed duration. Features leave Early Access when ready."
       }
-    ]
+    ],
+    "more_label": "Go further",
+    "more_text": "Didn't find your answer?"
   },
   "seo": {
     "home": {
@@ -576,6 +579,10 @@
     "breadcrumb": {
       "home": "Home",
       "catalog": "Catalogue"
+    },
+    "faq": {
+      "title": "FAQ — frequently asked questions about Ohara Tracker",
+      "description": "How to track your manga and anime, manage your subscription, enable release notifications: every answer about Ohara Tracker."
     }
   },
   "errors": {

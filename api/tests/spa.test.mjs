@@ -90,6 +90,12 @@ check('statut 404 (plus de soft 404)', missing.status, 404)
 check('404 : noindex', missing.body.includes('content="noindex, nofollow"'), true)
 check('404 : titre FR', missing.body.includes("Cette page n"), true)
 
+console.log('\n=== FAQ — balisage rendu côté serveur ===')
+const faq = await get('/fr/faq')
+check('FAQPage présent avant exécution du JS', faq.body.includes('"@type":"FAQPage"'), true)
+check('au moins une question rendue', faq.body.includes('"@type":"Question"'), true)
+check('la FAQ ne fuite pas sur la page tarifs', (await get('/fr/tarifs')).body.includes('FAQPage'), false)
+
 console.log('\n=== Accueil ===')
 const home = await get('/en')
 check('WebSite JSON-LD', home.body.includes('"@type":"WebSite"'), true)

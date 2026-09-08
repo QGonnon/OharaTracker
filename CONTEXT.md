@@ -169,7 +169,35 @@ bloque la compilation.
   requêtes de données par la CSP : l'application s'affiche mais reste vide, sans
   aucune erreur côté serveur. Un test couvre ce cas.
 
-### Résultats Lighthouse mesurés (mobile, throttling par défaut)
+### ⚠️ Comment mesurer avec Lighthouse
+
+**Ne jamais auditer `localhost:5173`** (serveur de développement Vite). Les
+scores y sont faux : le JavaScript n'est ni minifié ni découpé (le seul paquet
+FontAwesome pèse 955 Ko en dev contre quelques Ko en production), et surtout
+**aucun en-tête de sécurité ni robots.txt n'est servi** — ils viennent du
+middleware Express, absent en mode dev. On y mesure typiquement 61/90/96/92
+là où la production donne 100/100/100/100 sur ordinateur.
+
+Procédure correcte :
+```
+cd frontend && npm run build
+cd ../api && node index.js       # sert le build ET les en-têtes
+# auditer http://localhost:3000/fr
+```
+
+### Résultats Lighthouse mesurés (build de production)
+
+| Contexte | Performance | Accessibilité | Bonnes pratiques | SEO |
+|---|---|---|---|---|
+| Ordinateur | **100** | **100** | **100** | **100** |
+| Mobile | 83-85 | **100** | **100** | **100** |
+
+Les 83-85 en mobile correspondent au simulateur de Lighthouse (4G lente + CPU
+quatre fois ralenti) appliqué à une SPA Vue + PrimeVue : c'est le plafond
+réaliste sans passer au rendu serveur complet. Les Core Web Vitals réelles sont
+bonnes (CLS 0, LCP ~3 s en 4G simulée).
+
+### Résultats mesurés précédemment (mobile, throttling par défaut)
 | Page | Perf | A11y | Bonnes pratiques | SEO |
 |---|---|---|---|---|
 | `/fr` | 79 | 100 | 100 | 100 |
@@ -191,7 +219,23 @@ Lighthouse pénalise le `noindex` que l'on pose délibérément.
   le navigateur le découvrir après exécution du bundle principal. Nécessite
   `build.manifest: true` côté Vite.
 - `compression` (gzip) sur l'API : sans elle, le score tombe de 79 à 60.
+- **Traductions chargées à la demande** : les cinq fichiers de locale étaient
+  importés statiquement, soit 144 Ko de JSON dans le paquet initial alors qu'un
+  visiteur n'en lit qu'un. `import.meta.glob` dans `src/i18n.ts` en fait des
+  chunks séparés ; le paquet initial passe de 604 à 496 Ko. `main.ts` attend la
+  langue avant de monter et le garde du router avant chaque navigation, pour ne
+  jamais afficher de clés brutes.
+- **Captures d'écran de l'accueil réduites** : 1076-1261 px pour un affichage
+  entre 175 et 350 px, soit 266 Ko téléchargés pour rien.
+  `npm run optimize:screenshots` régénère les `*-preview.webp` en 760 px
+  (407 Ko → 141 Ko). Les originales restent dans le dépôt comme sources.
 - Source maps de production activées.
+
+### Piste écartée (mesurée, sans gain)
+Intégrer la feuille de style principale dans le HTML pour supprimer la requête
+bloquante : Lighthouse annonçait 300 ms de gain, la mesure réelle a donné 0
+(les 18 Ko gzippés ajoutés au HTML annulent l'aller-retour économisé). Écarté,
+car cela aurait en plus supprimé la mise en cache du CSS.
 
 ### Pièges connus
 - Le middleware SPA met `index.html` en cache au démarrage en production :
@@ -200,6 +244,16 @@ Lighthouse pénalise le `noindex` que l'on pose délibérément.
 - Le score de performance reste limité par le JavaScript inutilisé (~300 ms) :
   PrimeVue et son thème sont chargés en entier au démarrage. Levier restant si
   besoin, mais coûteux.
+
+### Page FAQ dédiée (ajoutée le 2026-09-08)
+La FAQ vivait uniquement en bas de la page tarifs. Elle a désormais son URL
+(`/fr/faq`, `/de/faq`…), listée dans le sitemap et liée depuis le footer
+au-dessus du blog. Intérêt : elle cible les requêtes formulées en question
+(« comment annuler mon abonnement »), porte seule son balisage `FAQPage` — la
+configuration attendue par Google pour les questions dépliables dans les
+résultats — et ajoute un lien interne vers les tarifs et le contact.
+Le bloc FAQ de la page tarifs est conservé : le contenu vient des mêmes clés
+`faq.items`, il n'y a donc rien à maintenir en double.
 
 ### Reste à faire
 - La page `/blog` est une coquille vide : c'est le principal levier de trafic

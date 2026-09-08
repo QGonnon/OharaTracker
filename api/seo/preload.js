@@ -23,6 +23,7 @@ const PAGE_COMPONENTS = {
     search: 'src/components/Features/Search/Search.vue',
     pricing: 'src/components/Features/Static/Pricing/Pricing.vue',
     blog: 'src/components/Features/Static/Blog/Blog.vue',
+    faq: 'src/components/Features/Static/Faq/Faq.vue',
     status: 'src/components/Features/Static/Status/Status.vue',
     changelog: 'src/components/Features/Static/Changelog/Changelog.vue',
     suggestions: 'src/components/Features/Static/Suggestions/Suggestions.vue',

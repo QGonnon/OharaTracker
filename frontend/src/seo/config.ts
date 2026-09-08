@@ -98,6 +98,7 @@ export const PAGE_SEGMENTS = {
   search: { fr: 'recherche', en: 'search', de: 'suche', it: 'ricerca', es: 'busqueda' },
   pricing: { fr: 'tarifs', en: 'pricing', de: 'preise', it: 'prezzi', es: 'precios' },
   blog: { fr: 'blog', en: 'blog', de: 'blog', it: 'blog', es: 'blog' },
+  faq: { fr: 'faq', en: 'faq', de: 'faq', it: 'faq', es: 'faq' },
   status: { fr: 'statut', en: 'status', de: 'status', it: 'stato', es: 'estado' },
   changelog: { fr: 'nouveautes', en: 'changelog', de: 'changelog', it: 'novita', es: 'novedades' },
   suggestions: { fr: 'suggestions', en: 'suggestions', de: 'vorschlaege', it: 'suggerimenti', es: 'sugerencias' },

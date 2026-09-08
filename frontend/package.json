@@ -8,7 +8,8 @@
     "build": "node scripts/check-a11y.mjs && vue-tsc -b && vite build",
     "preview": "vite preview",
     "og:image": "node scripts/generate-og-image.mjs",
-    "check:a11y": "node scripts/check-a11y.mjs"
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "optimize:screenshots": "node scripts/optimize-screenshots.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

@@ -19,6 +19,7 @@ export const PAGE_SEGMENTS = {
     search: { fr: 'recherche', en: 'search', de: 'suche', it: 'ricerca', es: 'busqueda' },
     pricing: { fr: 'tarifs', en: 'pricing', de: 'preise', it: 'prezzi', es: 'precios' },
     blog: { fr: 'blog', en: 'blog', de: 'blog', it: 'blog', es: 'blog' },
+    faq: { fr: 'faq', en: 'faq', de: 'faq', it: 'faq', es: 'faq' },
     status: { fr: 'statut', en: 'status', de: 'status', it: 'stato', es: 'estado' },
     changelog: { fr: 'nouveautes', en: 'changelog', de: 'changelog', it: 'novita', es: 'novedades' },
     suggestions: { fr: 'suggestions', en: 'suggestions', de: 'vorschlaege', it: 'suggerimenti', es: 'sugerencias' },
@@ -54,6 +55,9 @@ export const INDEXABLE_PAGES = [
     { key: 'search', priority: '0.7', changefreq: 'weekly' },
     { key: 'pricing', priority: '0.8', changefreq: 'monthly' },
     { key: 'blog', priority: '0.7', changefreq: 'weekly' },
+    // La FAQ cible des requêtes en question ("comment annuler mon abonnement")
+    // et est éligible aux questions dépliables dans les résultats : priorité haute.
+    { key: 'faq', priority: '0.7', changefreq: 'monthly' },
     { key: 'supportedSites', priority: '0.6', changefreq: 'weekly' },
     { key: 'officialPartners', priority: '0.5', changefreq: 'monthly' },
     { key: 'changelog', priority: '0.5', changefreq: 'weekly' },

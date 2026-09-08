@@ -3,15 +3,11 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import Button from 'primevue/button'
-import Accordion from 'primevue/accordion'
-import AccordionPanel from 'primevue/accordionpanel'
-import AccordionHeader from 'primevue/accordionheader'
-import AccordionContent from 'primevue/accordioncontent'
 import { useAuthStore } from '../../../../store/auth.module';
 import SubscriptionService from '../../../../services/subscription.service';
 import AuthService from '../../../../services/auth.service';
 import { useSeo } from '../../../../seo/useSeo';
-import { breadcrumbJsonLd, faqJsonLd, pricingJsonLd } from '../../../../seo/jsonld';
+import { breadcrumbJsonLd, pricingJsonLd } from '../../../../seo/jsonld';
 import { DEFAULT_LOCALE, isLocale, homePath, pagePath, type Locale } from '../../../../seo/config';
 import { localePath } from '../../../../seo/localePath';
 
@@ -19,9 +15,9 @@ const PLAN_LEVEL: Record<string, number> = { Free: 0, Lite: 1, Pro: 2 };
 
 export default defineComponent({
   name: 'Pricing',
-  components: { Menu, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent },
+  components: { Menu, Button },
   setup() {
-    const { tm, t, locale } = useI18n();
+    const { t, locale } = useI18n();
 
     const seoLocale = computed<Locale>(() => (isLocale(locale.value) ? locale.value : DEFAULT_LOCALE));
 
@@ -51,9 +47,6 @@ export default defineComponent({
             },
           ],
         }),
-        // La FAQ de la page est déjà rédigée et traduite : la déclarer en
-        // `FAQPage` la rend éligible aux questions dépliables sous le résultat.
-        faqJsonLd(tm('faq.items') as { q: string; a: string }[]),
         breadcrumbJsonLd([
           { name: t('seo.breadcrumb.home'), path: homePath(seoLocale.value) },
           { name: t('seo.pricing.title'), path: pagePath('pricing', seoLocale.value) },
@@ -64,10 +57,6 @@ export default defineComponent({
     const authStore = useAuthStore();
     const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null);
     const currentPlanName = ref('Free');
-
-    // tm() renvoie les ressources brutes (tableaux/objets) sans interpolation,
-    // adapté à une liste statique de questions/réponses traduites.
-    const faqItems = computed(() => tm('faq.items') as { q: string; a: string }[]);
 
     onMounted(async () => {
       if (!authStore.isLoggedIn) return;
@@ -134,7 +123,7 @@ export default defineComponent({
     }
 
     return {
-      faqItems,
+      faqLink: computed(() => localePath('faq')),
       contactLink: computed(() => localePath('contact')),
       checkoutLoadingPlan,
       handleCheckout,

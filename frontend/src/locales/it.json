@@ -361,7 +361,8 @@
         "Piattaforme partner: visibilità prioritaria presso il nostro pubblico, in abbonamento",
         "Content creator (YouTube, Twitch...): affiliazione o compenso a seconda della collaborazione"
       ],
-      "partner_cta": "Contattaci"
+      "partner_cta": "Contattaci",
+      "faq_teaser": "Domande sui piani o sulla fatturazione?"
     },
     "blog": {
       "label": "Blog",
@@ -474,7 +475,9 @@
         "q": "Per quanto tempo le funzionalità restano in accesso anticipato?",
         "a": "Non c'è una durata fissa. Una funzionalità esce dall'accesso anticipato quando è pronta."
       }
-    ]
+    ],
+    "more_label": "Vai oltre",
+    "more_text": "Non hai trovato la tua risposta?"
   },
   "seo": {
     "home": {
@@ -570,6 +573,10 @@
     "breadcrumb": {
       "home": "Home",
       "catalog": "Catalogo"
+    },
+    "faq": {
+      "title": "FAQ — domande frequenti su Ohara Tracker",
+      "description": "Come seguire i tuoi manga e anime, gestire il tuo abbonamento, attivare le notifiche di uscita: tutte le risposte su Ohara Tracker."
     }
   },
   "errors": {

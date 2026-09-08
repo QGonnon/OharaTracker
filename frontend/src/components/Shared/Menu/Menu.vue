@@ -112,9 +112,15 @@
 
         <!-- User avatar + popup (desktop only) -->
         <div v-if="isLoggedIn" class="hidden md:block">
+          <!--
+            `aria-label` explicite : le seul texte du bouton est le pseudo, et
+            celui-ci est vide tant que le profil n'est pas chargé (ou si le compte
+            n'a pas de nom). Le bouton était alors annoncé « bouton », sans plus.
+          -->
           <button
             type="button"
             class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-200 nav-user-trigger"
+            :aria-label="name ? `${$t('nav.user_menu')} : ${name}` : $t('nav.user_menu')"
             aria-haspopup="true"
             aria-controls="user-menu"
             @click="toggleUserMenu"

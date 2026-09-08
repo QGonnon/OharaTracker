@@ -160,7 +160,13 @@ check('confidentialité ES listée', pages.body.includes('<loc>https://oharatrac
 check('alternates hreflang', pages.body.includes('xhtml:link rel="alternate" hreflang="it"'), true)
 check('x-default', pages.body.includes('hreflang="x-default"'), true)
 check('aucune page privée', /<loc>[^<]*\/(profil|connexion|inscription|bibliotheque)</.test(pages.body), false)
-check('14 pages × 5 langues', (pages.body.match(/<loc>/g) || []).length, 14 * 5)
+// Accueil + toutes les pages publiques indexables, dans les cinq langues.
+// Le compte est dérivé de la configuration plutôt que figé, pour que l'ajout
+// d'une page ne fasse pas échouer le test sans raison.
+const { INDEXABLE_PAGES } = await import('../utils/seoRoutes.js')
+const expectedUrls = (1 + INDEXABLE_PAGES.length) * 5
+check(`${1 + INDEXABLE_PAGES.length} pages × 5 langues`, (pages.body.match(/<loc>/g) || []).length, expectedUrls)
+check('la FAQ est bien dans le sitemap', pages.body.includes('<loc>https://oharatracker.com/fr/faq</loc>'), true)
 
 // En dehors de la production, robots.txt doit tout interdire : sinon la préprod
 // se retrouve indexée et concurrence la production sur les mêmes contenus.

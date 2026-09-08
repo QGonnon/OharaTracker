@@ -4,7 +4,7 @@ import express from 'express';
 import { getWorkBySlug } from '../utils/catalog.js';
 import { slugify } from '../utils/slug.js';
 import {
-    renderHead, resolvePath, negotiateLocale, isPrivatePage, t, translationsAvailable,
+    renderHead, resolvePath, negotiateLocale, isPrivatePage, t, tRaw, translationsAvailable,
     LOCALES, DEFAULT_LOCALE, SITE_NAME, siteUrl, abs,
     homePath, pagePath, mediaPath,
 } from './head.js';
@@ -25,6 +25,34 @@ const coverUrl = work => {
     if (work.coverUrl) return work.coverUrl;
     return null;
 };
+
+/**
+ * JSON-LD propre à certaines pages fixes, en plus du fil d'Ariane commun.
+ *
+ * Le client (`Faq.ts`, `Pricing.ts`) pose déjà ce même balisage via `useSeo`,
+ * mais uniquement après exécution du JavaScript. Sans cette version serveur,
+ * un crawler qui n'exécute pas JS (Bing, la plupart des extracteurs de rich
+ * results) ne voit jamais le `FAQPage` — ce qui viderait de son intérêt SEO la
+ * page dédiée. Seule la FAQ est répliquée ici : c'est le seul balisage dont le
+ * contenu est entièrement disponible dans les fichiers de traduction (les prix
+ * de la page tarifs, eux, dépendent de calculs côté client).
+ */
+function pageSpecificJsonLd(pageKey, locale) {
+    if (pageKey !== 'faq') return [];
+
+    const items = tRaw(locale, 'faq.items');
+    if (!Array.isArray(items)) return [];
+
+    return [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: items.map(item => ({
+            '@type': 'Question',
+            name: item.q,
+            acceptedAnswer: { '@type': 'Answer', text: item.a },
+        })),
+    }];
+}
 
 /** Fil d'Ariane commun à toutes les pages profondes. */
 const breadcrumb = (locale, trail) => ({
@@ -202,6 +230,7 @@ async function describe(req) {
             description: t(locale, `seo.${pageKey}.description`),
             noindex,
             jsonLd: noindex || !indexable ? [] : [
+                ...pageSpecificJsonLd(pageKey, locale),
                 breadcrumb(locale, [
                     { name: t(locale, 'seo.breadcrumb.home'), path: homePath(locale) },
                     { name: t(locale, `seo.${pageKey}.title`), path: pagePath(pageKey, locale) },
