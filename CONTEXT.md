@@ -169,21 +169,54 @@ bloque la compilation.
   requêtes de données par la CSP : l'application s'affiche mais reste vide, sans
   aucune erreur côté serveur. Un test couvre ce cas.
 
-### ⚠️ Comment mesurer avec Lighthouse
+### ⚠️ Comment mesurer avec Lighthouse (lire avant tout audit)
 
-**Ne jamais auditer `localhost:5173`** (serveur de développement Vite). Les
-scores y sont faux : le JavaScript n'est ni minifié ni découpé (le seul paquet
-FontAwesome pèse 955 Ko en dev contre quelques Ko en production), et surtout
-**aucun en-tête de sécurité ni robots.txt n'est servi** — ils viennent du
-middleware Express, absent en mode dev. On y mesure typiquement 61/90/96/92
-là où la production donne 100/100/100/100 sur ordinateur.
+Trois pièges, dans l'ordre où on les rencontre. Les trois donnent un score
+Performance/SEO/Bonnes pratiques bas **sans qu'il y ait de bug dans le code**.
 
-Procédure correcte :
+**Piège 1 — tester `localhost:5173` au lieu de `localhost:3000`.**
+`5173` est le serveur de dev Vite : rien n'y est minifié ni découpé (le seul
+paquet FontAwesome y pèse 955 Ko contre quelques Ko en prod), et surtout
+**aucun en-tête de sécurité ni `robots.txt` n'y est servi** — ils viennent du
+middleware Express (`api/`), absent de Vite. Score typique : 61/90/96/92 sur
+Vite contre 100/100/100/100 sur la vraie stack. → **Toujours tester via l'API
+(port 3000), jamais via Vite seul.**
+
+**Piège 2 — `NODE_ENV=development` bloque tout le crawl, donc le score SEO.**
+`api/routes/seo.js` fait exprès de renvoyer `Disallow: /` dans `robots.txt`
+quand `NODE_ENV !== 'production'` — protection pour qu'une préprod mal
+configurée ne se retrouve jamais indexée par accident. Effet de bord : si votre
+`.env` local a `NODE_ENV=development` (le réglage normal en dev), l'audit
+Lighthouse SEO chute autour de **69**, à cause d'un seul critère (« Page is
+blocked from indexing ») — tout le reste (Performance, Accessibilité, Bonnes
+pratiques) reste inchangé. **Ce n'est pas un bug** : c'est la même protection
+qui s'applique, que vous testiez en local ou en préprod. Pour mesurer le vrai
+score SEO, il faut temporairement (ou durablement, voir piège 3)
+`NODE_ENV=production` dans `api/.env`.
+
+**Piège 3 — passer en `NODE_ENV=production` active HSTS.**
+Avec `NODE_ENV=production`, `api/seo/security.js` envoie l'en-tête
+`Strict-Transport-Security`. Si vous testez ensuite `http://localhost:3000`
+dans votre **vrai navigateur** (pas en Lighthouse headless), celui-ci peut
+mémoriser « ce domaine doit toujours être en HTTPS » pendant un an, et refuser
+ensuite de recharger la version HTTP en clair. Pour nettoyer si ça arrive :
+`edge://net-internals/#hsts` (ou `chrome://net-internals/#hsts`) → « Delete
+domain security policies » → taper `localhost` → Delete.
+
+**Procédure correcte, à chaque fois :**
 ```
 cd frontend && npm run build
-cd ../api && node index.js       # sert le build ET les en-têtes
-# auditer http://localhost:3000/fr
+cd ../api
+# NODE_ENV=development dans .env est le réglage normal du dépôt (dev quotidien).
+# Pour un audit Lighthouse dont le score SEO doit refléter la réalité,
+# passer temporairement NODE_ENV=production dans api/.env avant de lancer :
+node index.js
+# auditer http://localhost:3000/fr, puis remettre NODE_ENV=development
+# dans .env avant de committer/pusher quoi que ce soit.
 ```
+`api/.env` est ignoré par git (`api/.gitignore`) : cette bascule ne part
+jamais dans un commit, mais gardez `development` au quotidien pour ne pas
+tomber sur le piège 3 sans le vouloir.
 
 ### Résultats Lighthouse mesurés (build de production)
 
@@ -283,42 +316,10 @@ Le bloc FAQ de la page tarifs est conservé : le contenu vient des mêmes clés
 - Les écrans de listing utilisent `mangaStore.fetchLight()` (catalogue allégé) ;
   `fetchAll()` ne doit servir que si les chapitres sont réellement nécessaires.
 
-MODIFS SEO ACTUELLES :
-Ce qui était cassé, et comment c'est résolu
-1. 4 langues sur 5 étaient inindexables — le plus gros problème. Les 5 langues partageaient la même URL (bascule via localStorage). Google ne pouvait indexer qu'une version.
-→ URL préfixées et segments traduits : /fr/tarifs, /de/preise, /es/precios, /es/pelicula/akira. Chaque page déclare ses 5 alternates hreflang + x-default. Le sélecteur de langue navigue désormais vers l'URL équivalente (avant, il changeait le contenu sans changer l'URL — ce qui rend les hreflang invalides).
-
-2. Soft-404 généralisés — le catch-all redirigeait toute URL morte vers /home en 200.
-→ Vraie page 404, vrai statut HTTP 404, noindex. Et 301 vers l'URL canonique pour tous les anciens chemins.
-
-3. Un seul title/description pour tout le site, aucun canonical, aucun OG.
-→ Titres et descriptions rédigés par page et par langue (~21 clés × 5 locales), avec des mots-clés adaptés à chaque marché (« suivi manga » FR, « manga tracker » EN, « Manga Tracker » DE…).
-
-4. Le contenu n'était visible qu'après exécution du JS. api/seo/spa.js injecte le <head> complet côté serveur — Bing, Discord, WhatsApp et X voient maintenant le vrai contenu. Les titres viennent des mêmes fichiers de locale que le frontend, donc client et serveur ne peuvent pas diverger.
-
-5. Duplicate content par construction : /lecture/x, /manga/x, /anime/x, /serie/x, /film/x servaient la même œuvre. → Le type en base fait autorité, le reste redirige en 301.
-
-6. Performance : chaque fiche téléchargeait tout le catalogue avec tous les chapitres de toutes les sources. → Endpoints /chapters/light et /chapters/slug/:slug. Bundle initial ~1,25 Mo → ~0,75 Mo (routes en import(), imports PrimeVue profonds). J'ai aussi supprimé bootstrap, jquery et popper.js : déclarés mais jamais importés.
-
-7. slugify détruisait les titres non-ASCII — Ōkami → kami, un titre japonais → chaîne vide (page inaccessible). Corrigé, l'ancienne forme reste acceptée et redirige.
-
-Ajouté aussi : robots.txt + sitemap index dynamiques (avec hreflang par URL, et blocage total hors production), JSON-LD complet (Organization, WebSite+SearchAction, ComicSeries/TVSeries/Movie, BreadcrumbList, FAQPage, Product/Offer).
-
-Deux points d'attention
-1-Le rendu serveur suppose que l'API sert frontend/dist. Si OVH sert le frontend séparément (nginx), il faut soit router le trafic HTML vers l'API, soit proxifier au minimum /robots.txt et /sitemap*.xml — sinon ils sont introuvables à la racine du domaine. Dites-moi votre configuration de déploiement, j'adapte.
-
-1 — Config de déploiement : tu n'as rien à répondre pour l'instant
-En local tu as deux modes, et les deux fonctionnent déjà :
-
-Mode	Commande	Ce qui marche	Ce qui ne marche pas
-Dev	npm run dev dans frontend/ + api/	Tout le site, le routing par langue, les meta côté client	Pas de rendu serveur des meta, pas de robots/sitemap à la racine (ils sont sur localhost:3000)
-Prod locale	npm run build dans frontend/, puis node index.js dans api/	Tout, y compris rendu serveur, 301/404 réels, robots + sitemap sur localhost:3000	—
-Le mode « prod locale » est exactement ce qui tournera sur OVH. La question de déploiement se posera seulement le jour où quelqu'un mettra un nginx devant — à ce moment-là, dis-moi et j'écris la conf.
-
-2-Il faut renseigner SITE_URL et VITE_SITE_URL (ajoutés aux .env.example) : sans eux, les canonical pointent sur https://oharatracker.com par défaut.
-
-2 - Claude gère ca.
-
-3-Reste à faire, que je n'ai pas pu couvrir : une bannière Open Graph 1200×630 (design), et surtout la page /blog est une coquille vide — c'est aujourd'hui votre plus gros levier de trafic organique inexploité. Je peux m'en occuper si vous voulez.
-
-Claude gère ca.
+## Déploiement (question ouverte)
+Le rendu serveur suppose que l'API sert `frontend/dist` (c'est ce que fait
+`node index.js` en local, et c'est le mode testé). Si un jour le frontend est
+servi séparément par un reverse proxy (nginx sur OVH, par exemple), il faudra
+soit router tout le trafic HTML vers l'API, soit proxifier au minimum
+`/robots.txt` et `/sitemap*.xml` vers elle — sinon ils sont introuvables à la
+racine du domaine public. À traiter le jour où cette configuration est décidée.
