@@ -4,9 +4,12 @@ import type { Manga, MediaKind } from '../types/index';
 
 interface MangaState {
   items: Manga[];
+  /** Catalogue allégé (sans les chapitres), caché séparément du catalogue complet. */
+  light: Manga[];
   loading: boolean;
   error: string;
   loaded: boolean;
+  lightLoaded: boolean;
 }
 
 // Enveloppe Pinia autour de MangaService : centralise le cache de la liste des
@@ -15,9 +18,11 @@ interface MangaState {
 export const useMangaStore = defineStore('manga', {
   state: (): MangaState => ({
     items: [],
+    light: [],
     loading: false,
     error: '',
     loaded: false,
+    lightLoaded: false,
   }),
 
   actions: {
@@ -39,6 +44,32 @@ export const useMangaStore = defineStore('manga', {
       } finally {
         this.loading = false;
       }
+    },
+
+    /**
+     * Catalogue allégé (sans les chapitres), mis en cache comme `fetchAll`.
+     * À préférer partout où seules les vignettes sont affichées.
+     */
+    async fetchLight(force = false): Promise<Manga[]> {
+      if (this.lightLoaded && !force) return this.light;
+
+      this.loading = true;
+      this.error = '';
+      try {
+        this.light = await MangaService.getLight();
+        this.lightLoaded = true;
+        return this.light;
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : 'Erreur lors du chargement du catalogue';
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /** Une seule œuvre, résolue par son slug côté serveur. */
+    async fetchBySlug(slug: string): Promise<Manga | null> {
+      return MangaService.getBySlug(slug);
     },
 
     // Chapitres/épisodes connus pour une entrée de bibliothèque donnée

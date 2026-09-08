@@ -2,7 +2,10 @@
  * Types et interfaces centralisés pour l'application
  */
 
-export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
+// Définition unique, partagée avec la configuration SEO : les segments d'URL
+// (`/manga`, `/anime`, `/film`) sont dérivés de ces trois natures, donc toute
+// valeur supplémentaire ici produirait une URL que le router ne sait pas générer.
+export type { MediaKind } from '../seo/config';
 
 export interface Manga {
   id?: number,

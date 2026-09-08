@@ -47,8 +47,11 @@
    LOGO
    ══════════════════════════════════════════════════ */
 
-.layout-topbar h1 a {
-	background: linear-gradient(270deg, #4f46e5, #818cf8, #c4b5fd, #4f46e5);
+/* Le logo n'est plus un <h1> (il créait un second titre de niveau 1 sur chaque
+   page) : le sélecteur cible désormais la classe. Le dégradé ne descend plus
+   jusqu'à #c4b5fd, dont le contraste tombait à 1,85:1 sur fond blanc. */
+.layout-topbar .topbar-logo a {
+	background: linear-gradient(270deg, #4f46e5, #6366f1, #4338ca, #4f46e5);
 	background-size: 300% 300%;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -56,7 +59,23 @@
 	text-decoration: none;
 	font-weight: 800;
 	letter-spacing: -0.02em;
-	animation: logoShimmer 6s ease infinite;
+	/*
+	   Trois passages puis arrêt, au lieu d'une boucle infinie.
+	   WCAG 2.2.2 interdit un mouvement automatique de plus de 5 s sans moyen de
+	   le mettre en pause ; Lighthouse signalait par ailleurs cette animation
+	   comme non compositée (`background-position` force un repaint continu).
+	*/
+	animation: logoShimmer 6s ease 3;
+}
+
+/* En mode contraste forcé, `background-clip: text` n'est pas honoré et le texte
+   disparaîtrait entièrement : on rebascule sur une couleur système. */
+@media (forced-colors: active) {
+	.layout-topbar .topbar-logo a {
+		background: none;
+		-webkit-text-fill-color: CanvasText;
+		color: CanvasText;
+	}
 }
 
 /* ══════════════════════════════════════════════════
@@ -98,7 +117,7 @@
 	width: 2.1rem;
 	height: 2.1rem;
 	border-radius: 8px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.28);
 	background: transparent;
 	color: var(--text-color);
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
@@ -135,7 +154,7 @@
 	height: 2.1rem;
 	padding: 0 0.6rem;
 	border-radius: 8px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.28);
 	background: transparent;
 	color: var(--text-color);
 	cursor: pointer;
@@ -184,7 +203,7 @@
 	background: #ffffff;
 	border: 1px solid rgba(0, 0, 0, 0.08);
 	border-radius: 10px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 	padding: 0.3rem;
 	margin: 0;
 	list-style: none;
@@ -198,15 +217,23 @@
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
+/* L'option est un <li> qui enveloppe un <a> : le padding est porté par le lien
+   pour que toute la surface de l'option reste cliquable. */
 .nav-lang-option {
+	border-radius: 7px;
+	transition: background 0.15s ease;
+	color: #374151;
+}
+
+.nav-lang-option-link {
 	display: flex;
 	align-items: center;
 	gap: 0.55rem;
 	padding: 0.45rem 0.65rem;
 	border-radius: 7px;
 	cursor: pointer;
-	transition: background 0.15s ease;
-	color: #374151;
+	color: inherit;
+	text-decoration: none;
 }
 
 .dark-theme .nav-lang-option {
@@ -274,7 +301,7 @@
 	gap: 0.4rem;
 	font-size: 0.75rem;
 	font-weight: 600;
-	color: #9ca3af;
+	color: #4b5563;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 }

@@ -2,26 +2,61 @@ import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import Menu from '../../../Shared/Menu/Menu.vue';
-import { Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
+import Button from 'primevue/button'
 import { useAuthStore } from '../../../../store/auth.module';
 import SubscriptionService from '../../../../services/subscription.service';
 import AuthService from '../../../../services/auth.service';
+import { useSeo } from '../../../../seo/useSeo';
+import { breadcrumbJsonLd, pricingJsonLd } from '../../../../seo/jsonld';
+import { DEFAULT_LOCALE, isLocale, homePath, pagePath, type Locale } from '../../../../seo/config';
+import { localePath } from '../../../../seo/localePath';
 
 const PLAN_LEVEL: Record<string, number> = { Free: 0, Lite: 1, Pro: 2 };
 
 export default defineComponent({
   name: 'Pricing',
-  components: { Menu, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent },
+  components: { Menu, Button },
   setup() {
-    const { tm, t } = useI18n();
+    const { t, locale } = useI18n();
+
+    const seoLocale = computed<Locale>(() => (isLocale(locale.value) ? locale.value : DEFAULT_LOCALE));
+
+    /** Prix affichés, normalisés pour schema.org (point décimal, sans symbole). */
+    const numericPrice = (raw: string) =>
+      String(raw ?? '').replace(/[^\d.,]/g, '').replace(',', '.') || '0';
+
+    useSeo({
+      target: { type: 'page', key: 'pricing' },
+      title: computed(() => t('seo.pricing.title')),
+      description: computed(() => t('seo.pricing.description')),
+      jsonLd: computed(() => [
+        // Offres : Google peut afficher le prix directement dans les résultats.
+        pricingJsonLd({
+          locale: seoLocale.value,
+          description: t('static.pricing.desc'),
+          offers: [
+            {
+              name: t('static.pricing.lite_title'),
+              price: numericPrice(t('static.pricing.lite_price')),
+              currency: 'EUR',
+            },
+            {
+              name: t('static.pricing.pro_title'),
+              price: numericPrice(t('static.pricing.pro_price')),
+              currency: 'EUR',
+            },
+          ],
+        }),
+        breadcrumbJsonLd([
+          { name: t('seo.breadcrumb.home'), path: homePath(seoLocale.value) },
+          { name: t('seo.pricing.title'), path: pagePath('pricing', seoLocale.value) },
+        ]),
+      ]),
+    });
     const router = useRouter();
     const authStore = useAuthStore();
     const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null);
     const currentPlanName = ref('Free');
-
-    // tm() renvoie les ressources brutes (tableaux/objets) sans interpolation,
-    // adapté à une liste statique de questions/réponses traduites.
-    const faqItems = computed(() => tm('faq.items') as { q: string; a: string }[]);
 
     onMounted(async () => {
       if (!authStore.isLoggedIn) return;
@@ -71,7 +106,7 @@ export default defineComponent({
 
     async function handleCheckout(plan: 'lite' | 'pro') {
       if (!authStore.isLoggedIn) {
-        router.push({ name: 'Register', query: { redirect: '/pricing' } });
+        router.push({ path: localePath('register'), query: { redirect: localePath('pricing') } });
         return;
       }
 
@@ -88,7 +123,8 @@ export default defineComponent({
     }
 
     return {
-      faqItems,
+      faqLink: computed(() => localePath('faq')),
+      contactLink: computed(() => localePath('contact')),
       checkoutLoadingPlan,
       handleCheckout,
       isLiteDisabled,

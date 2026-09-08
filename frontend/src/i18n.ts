@@ -1,38 +1,84 @@
 import { createI18n } from 'vue-i18n'
-import fr from './locales/fr.json'
-import en from './locales/en.json'
-import de from './locales/de.json'
-import it from './locales/it.json'
-import es from './locales/es.json'
+import { LOCALES, DEFAULT_LOCALE, isLocale, type Locale } from './seo/config'
 
-type SupportedLocale = 'fr' | 'en' | 'de' | 'it' | 'es'
-const SUPPORTED: SupportedLocale[] = ['fr', 'en', 'de', 'it', 'es']
+export type SupportedLocale = Locale
+export const SUPPORTED = LOCALES
 
-function detectLocale(): SupportedLocale {
-  // 1. Preference saved by user
+/**
+ * Langue à utiliser quand l'URL n'en impose pas (racine du site, première visite).
+ * L'URL reste prioritaire : c'est le router qui appelle `setLocale` à chaque
+ * navigation, pour qu'une page `/de/...` soit toujours servie en allemand,
+ * quelle que soit la préférence enregistrée.
+ */
+export function detectPreferredLocale(): SupportedLocale {
+  // 1. Choix explicite de l'utilisateur
   try {
-    const saved = localStorage.getItem('lang') as SupportedLocale | null
-    if (saved && SUPPORTED.includes(saved)) return saved
-  } catch { /* ignore */ }
+    const saved = localStorage.getItem('lang')
+    if (isLocale(saved)) return saved
+  } catch { /* localStorage indisponible (navigation privée, cookies bloqués) */ }
 
-  // 2. Browser/OS language list
-  const browserLangs = navigator.languages?.length
+  // 2. Langues du navigateur/OS, du plus précis au plus général
+  const browserLangs = typeof navigator !== 'undefined' && navigator.languages?.length
     ? navigator.languages
-    : [navigator.language]
+    : typeof navigator !== 'undefined' ? [navigator.language] : []
 
   for (const lang of browserLangs) {
-    // match full tag first ('fr-FR' → 'fr'), then short code
-    const short = lang.toLowerCase().split('-')[0] as SupportedLocale
-    if (SUPPORTED.includes(short)) return short
+    const short = lang?.toLowerCase().split('-')[0]
+    if (isLocale(short)) return short
   }
 
-  return 'en'
+  return DEFAULT_LOCALE
 }
 
-export default createI18n({
+/**
+ * Fichiers de traduction, chargés à la demande.
+ *
+ * Les cinq langues étaient importées statiquement : 144 Ko de JSON se
+ * retrouvaient dans le bundle initial alors qu'un visiteur n'en lit qu'une.
+ * `import.meta.glob` laisse Vite en faire des chunks séparés, téléchargés
+ * uniquement quand la langue est réellement demandée.
+ */
+const messageLoaders = import.meta.glob<{ default: Record<string, unknown> }>('./locales/*.json')
+
+const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: detectLocale(),
-  fallbackLocale: 'en',
-  messages: { fr, en, de, it, es },
+  locale: DEFAULT_LOCALE,
+  fallbackLocale: DEFAULT_LOCALE,
+  // Démarre sans messages : `loadLocaleMessages` les injecte avant le montage.
+  messages: {},
 })
+
+/** Langues déjà téléchargées, pour ne pas refaire la requête à chaque bascule. */
+const loaded = new Set<SupportedLocale>()
+
+/** Télécharge et enregistre les messages d'une langue. Idempotent. */
+export async function loadLocaleMessages(locale: SupportedLocale): Promise<void> {
+  if (loaded.has(locale)) return
+
+  const loader = messageLoaders[`./locales/${locale}.json`]
+  if (!loader) return
+
+  const module = await loader()
+  i18n.global.setLocaleMessage(locale, module.default as never)
+  loaded.add(locale)
+}
+
+/**
+ * Change la langue active et la mémorise pour les prochaines visites.
+ *
+ * Asynchrone parce que les messages peuvent ne pas être encore téléchargés ;
+ * la langue n'est appliquée qu'une fois ceux-ci disponibles, pour ne jamais
+ * afficher de clés de traduction brutes pendant le chargement.
+ */
+export async function setLocale(locale: SupportedLocale): Promise<void> {
+  await loadLocaleMessages(locale)
+  if (i18n.global.locale.value !== locale) {
+    i18n.global.locale.value = locale
+  }
+  try {
+    localStorage.setItem('lang', locale)
+  } catch { /* ignore */ }
+}
+
+export default i18n

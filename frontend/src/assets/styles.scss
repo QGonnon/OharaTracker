@@ -12,5 +12,114 @@
   --p-primary-color: #818cf8;
   --p-primary-hover-color: #6366f1;
   --p-primary-active-color: #4f46e5;
-  --p-primary-contrast-color: #ffffff;
+  /*
+    En thème sombre la couleur principale est un indigo CLAIR (#818cf8) :
+    du texte blanc dessus ne donne que 2,98:1, sous le seuil AA de 4,5:1.
+    Un texte très sombre remonte à 5,36:1. Mesuré par Lighthouse sur le
+    bouton « Commencer gratuitement » de l'accueil.
+  */
+  --p-primary-contrast-color: #1e1b4b;
+}
+/* ══════════════════════════════════════════════════
+   ACCESSIBILITÉ — RÉGLAGES GLOBAUX
+   ══════════════════════════════════════════════════ */
+
+/*
+  Respect de la préférence système « réduire les animations ».
+
+  Le site comporte plusieurs animations en boucle infinie (dégradé du logo,
+  pastilles `animate-pulse`, spinners) et des transitions au survol sur presque
+  toutes les cartes. Pour une personne sujette au mal des transports vestibulaire
+  ou aux migraines, c'est inconfortable voire déclencheur. On neutralise sans
+  supprimer : une durée quasi nulle laisse les transitions se terminer, donc les
+  callbacks `transitionend` continuent de se déclencher.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+  Contour de focus visible et homogène sur les contrôles personnalisés.
+  Le contour natif du navigateur est peu lisible sur les fonds violets et
+  sombres du site ; `:focus-visible` ne l'affiche qu'au clavier, jamais à la souris.
+*/
+.nav-theme-toggle:focus-visible,
+.nav-lang-trigger:focus-visible,
+.nav-lang-mobile-btn:focus-visible,
+.nav-lang-option-link:focus-visible,
+.nav-user-trigger:focus-visible,
+.footer-social-btn:focus-visible,
+.footer-link:focus-visible {
+  outline: 2px solid #4338ca;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.dark-theme {
+  .nav-theme-toggle:focus-visible,
+  .nav-lang-trigger:focus-visible,
+  .nav-lang-mobile-btn:focus-visible,
+  .nav-lang-option-link:focus-visible,
+  .nav-user-trigger:focus-visible,
+  .footer-social-btn:focus-visible,
+  .footer-link:focus-visible {
+    outline-color: #a5b4fc;
+  }
+}
+
+/*
+  Contenu réservé aux lecteurs d'écran : retiré visuellement, mais laissé dans
+  l'arbre d'accessibilité. `display: none` l'aurait masqué aux deux.
+*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/*
+  Contraste des en-têtes d'accordéon PrimeVue.
+
+  Le thème Aura utilise `text.color` (#6b6b78) sur `content.background` (#e8e9f3),
+  soit 4,34:1 — sous le seuil AA de 4,5:1 pour du texte de 16 px. Mesuré par
+  Lighthouse sur la FAQ de la page tarifs. On assombrit le texte plutôt que
+  d'éclaircir le fond, pour ne pas toucher au reste du thème.
+*/
+.p-accordionheader {
+  color: #3f3f46;
+}
+
+.dark-theme .p-accordionheader {
+  color: #e4e4e7;
+}
+
+/*
+  Contraste du libellé des boutons secondaires PrimeVue.
+
+  Le thème rend `#64748b` sur le fond violet très clair du héros : 4,45:1,
+  juste sous le seuil AA de 4,5:1 pour 16 px. Mesuré par Lighthouse.
+*/
+.p-button-secondary.p-button-outlined,
+.p-button-secondary.p-button-text {
+  color: #475569;
+}
+
+.dark-theme {
+  .p-button-secondary.p-button-outlined,
+  .p-button-secondary.p-button-text {
+    color: #cbd5e1;
+  }
 }

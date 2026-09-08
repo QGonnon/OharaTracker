@@ -5,9 +5,8 @@
       <div class="aspect-[3/4] overflow-hidden">
         <img
           :src="coverSrc"
-          :alt="manga.title"
-          class="w-full h-full object-cover hover:scale-110 transition-transform duration-300 bg-slate-100 dark:bg-slate-700"
-        />
+          :alt="$t('cards.cover_of', { title: manga.title })"
+          class="w-full h-full object-cover hover:scale-110 transition-transform duration-300 bg-slate-100 dark:bg-slate-700" width="400" height="600" loading="lazy" decoding="async" />
       </div>
     </template>
 
@@ -18,7 +17,7 @@
     </template>
 
     <template #subtitle>
-      <p class="text-center text-blue-500 dark:text-green-300 text-sm">{{ manga.site }}</p>
+      <p class="text-center text-blue-700 dark:text-green-300 text-sm">{{ manga.site }}</p>
     </template>
 
     <template #content>
@@ -38,7 +37,7 @@
         </Button>
 
         <Button asChild v-slot="slotProps" class="flex-1 max-w-[130px]">
-          <RouterLink :to="`/anime/${cleanTitle}`" :class="slotProps.class">
+          <RouterLink :to="workPath" :class="slotProps.class">
             📜 {{ $t('cards.watch_anime') }}
           </RouterLink>
         </Button>

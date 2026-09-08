@@ -1,2 +1,88 @@
+# ─────────────────────────────────────────────────────────────
+# Secrets et configuration locale
+# ─────────────────────────────────────────────────────────────
+# Tout fichier d'environnement est exclu par défaut, SAUF les modèles
+# `.env.example` qui doivent rester versionnés pour documenter les variables
+# attendues. Le repo étant public, cette règle est la plus importante du fichier.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Configuration Sequelize : contient l'utilisateur et le mot de passe PostgreSQL.
+# Seul `config.json.example` est versionné.
+**/sequelize/config/config.json
+
+# Clés et certificats, quelle que soit leur position dans l'arborescence
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+
+# ─────────────────────────────────────────────────────────────
+# Dépendances et artefacts de build
+# ─────────────────────────────────────────────────────────────
+node_modules/
+dist/
+dist-ssr/
+build/
+.vite/
+*.tsbuildinfo
+
+# Service worker et manifeste générés par vite-plugin-pwa
+frontend/dev-dist/
+frontend/public/sw.js
+frontend/public/workbox-*.js
+
+# ─────────────────────────────────────────────────────────────
+# Données locales
+# ─────────────────────────────────────────────────────────────
+# Couvertures téléchargées par le scraping : plusieurs centaines de Mo,
+# régénérables, et sans intérêt dans l'historique.
 cdn/*
-.claude
+!cdn/.gitkeep
+
+# Données de travail du scraping
+api/data/
+
+# ─────────────────────────────────────────────────────────────
+# Logs et rapports
+# ─────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+coverage/
+.nyc_output/
+lighthouse-report.*
+.lighthouseci/
+
+# ─────────────────────────────────────────────────────────────
+# Éditeurs et systèmes d'exploitation
+# ─────────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Outils d'assistance locaux
+.claude/
+.cursor/
+.aider*
+
+# Fichiers temporaires
+*.tmp
+*.temp
+.cache/

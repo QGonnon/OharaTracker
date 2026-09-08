@@ -11,19 +11,19 @@
         </h1>
       </div>
 
-      <div class="space-y-3">
-        <div
+      <ul class="space-y-3">
+        <li
           v-for="service in services"
           :key="service.key"
           class="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900"
         >
           <span class="font-medium text-gray-700 dark:text-zinc-200">{{ $t(service.key) }}</span>
-          <span class="inline-flex items-center gap-2 text-sm font-semibold text-green-600 dark:text-green-400">
-            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span class="inline-flex items-center gap-2 text-sm font-semibold text-green-700 dark:text-green-400">
+            <span aria-hidden="true" class="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             {{ $t('static.status.operational') }}
           </span>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </section>
 </template>

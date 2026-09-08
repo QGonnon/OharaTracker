@@ -1,4 +1,5 @@
 import { getChapters, getChaptersByLibrary } from '../utils/index.js';
+import { getCatalogLight, getWorkBySlug } from '../utils/catalog.js';
 import express from 'express';
 
 const router = express.Router()
@@ -11,6 +12,38 @@ router.get('/', (req, res) => {
         }
         res.json(rows);
     })
+});
+
+/**
+ * Catalogue allégé : une entrée par œuvre, sans la liste des chapitres.
+ * Destiné aux écrans de listing (découverte, recherche, œuvres similaires), qui
+ * chargeaient jusqu'ici l'intégralité des chapitres de toutes les sources.
+ */
+router.get('/light', async (_req, res) => {
+    try {
+        const rows = await getCatalogLight();
+        // Le catalogue bouge au rythme des scrapings : 5 min de cache partagé
+        // suffisent à absorber les pics sans servir de données périmées.
+        res.set('Cache-Control', 'public, max-age=60, s-maxage=300');
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+/**
+ * Une seule œuvre, résolue par son slug d'URL.
+ * Évite de télécharger tout le catalogue pour afficher une fiche.
+ */
+router.get('/slug/:slug', async (req, res) => {
+    try {
+        const work = await getWorkBySlug(req.params.slug);
+        if (!work) return res.status(404).json({ error: 'Oeuvre introuvable' });
+        res.set('Cache-Control', 'public, max-age=60, s-maxage=300');
+        res.json(work);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 router.get('/:id_library', (req, res) => {

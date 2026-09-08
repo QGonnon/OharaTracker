@@ -5,7 +5,7 @@
       <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">
         {{ $t('legal.terms.title') }}
       </h1>
-      <p class="text-sm text-gray-400 dark:text-zinc-500 mb-10">{{ $t('legal.last_updated') }}</p>
+      <p class="text-sm text-gray-600 dark:text-zinc-400 mb-10">{{ $t('legal.last_updated') }}</p>
 
       <div class="space-y-8">
         <div v-for="(section, i) in sections" :key="i">

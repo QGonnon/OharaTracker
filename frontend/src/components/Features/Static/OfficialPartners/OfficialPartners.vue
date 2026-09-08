@@ -14,7 +14,7 @@
         </p>
       </div>
 
-      <p class="text-center text-gray-400 dark:text-zinc-500 text-sm">
+      <p class="text-center text-gray-600 dark:text-zinc-400 text-sm">
         {{ $t('static.official_partners.empty') }}
       </p>
     </div>

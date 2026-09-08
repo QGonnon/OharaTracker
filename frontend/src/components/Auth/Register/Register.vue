@@ -19,36 +19,51 @@
             <Form @submit="handleRegister" :validation-schema="schema" class="space-y-8">
               <div v-if="!successful" class="space-y-8">
                 <div class="space-y-2">
-                  <label for="username" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.username') }}</label>
+                  <label for="register-username" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.username') }}</label>
                   <Field
+                    id="register-username"
                     name="username"
+                    autocomplete="username"
+                    required
+                    aria-required="true"
+                    aria-describedby="register-username-error"
                     type="text"
-                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-500 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                     :placeholder="$t('auth.username_placeholder')"
                   />
-                  <ErrorMessage name="username" class="text-sm text-red-600 dark:text-red-400" />
+                  <ErrorMessage id="register-username-error" name="username" role="alert" class="text-sm text-red-600 dark:text-red-400" />
                 </div>
 
                 <div class="space-y-2">
-                  <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
+                  <label for="register-email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
                   <Field
+                    id="register-email"
                     name="email"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    aria-describedby="register-email-error"
                     type="email"
-                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-500 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                     placeholder="votre@email.com"
                   />
-                  <ErrorMessage name="email" class="text-sm text-red-600 dark:text-red-400" />
+                  <ErrorMessage id="register-email-error" name="email" role="alert" class="text-sm text-red-600 dark:text-red-400" />
                 </div>
 
                 <div class="space-y-2">
-                  <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
+                  <label for="register-password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
                   <Field
+                    id="register-password"
                     name="password"
+                    autocomplete="new-password"
+                    required
+                    aria-required="true"
+                    aria-describedby="register-password-error"
                     type="password"
-                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                    class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-500 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                     placeholder="••••••••"
                   />
-                  <ErrorMessage name="password" class="text-sm text-red-600 dark:text-red-400" />
+                  <ErrorMessage id="register-password-error" name="password" role="alert" class="text-sm text-red-600 dark:text-red-400" />
                 </div>
 
                 <div class="pt-2">
@@ -73,8 +88,15 @@
               </div>
             </Form>
 
+            <!--
+              Le message n'était jamais annoncé : un échec d'inscription restait
+              invisible pour un lecteur d'écran. Un succès est poli, une erreur
+              est assertive car elle bloque la suite du parcours.
+            -->
             <div
               v-if="message"
+              :role="successful ? 'status' : 'alert'"
+              :aria-live="successful ? 'polite' : 'assertive'"
               class="rounded-xl"
               :class="successful ? 'bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400'"
             >

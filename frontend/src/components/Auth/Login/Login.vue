@@ -18,25 +18,35 @@
           <div class="px-8 py-8">
             <Form @submit="handleLogin" :validation-schema="schema" class="space-y-6">
               <div class="space-y-2">
-                <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
+                <label for="login-email" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.email') }}</label>
                 <Field
+                  id="login-email"
                   name="email"
+                  autocomplete="email"
+                  required
+                  aria-required="true"
+                  aria-describedby="login-email-error"
                   type="text"
-                  class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                  class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-500 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                   :placeholder="$t('auth.email_placeholder')"
                 />
-                <ErrorMessage name="email" class="text-sm text-red-600 dark:text-red-400" />
+                <ErrorMessage id="login-email-error" name="email" role="alert" class="text-sm text-red-600 dark:text-red-400" />
               </div>
 
               <div class="space-y-2">
-                <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
+                <label for="login-password" class="block text-sm font-semibold text-slate-700 dark:text-zinc-300">{{ $t('auth.password') }}</label>
                 <Field
+                  id="login-password"
                   name="password"
+                  autocomplete="current-password"
+                  required
+                  aria-required="true"
+                  aria-describedby="login-password-error"
                   type="password"
-                  class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                  class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 placeholder-slate-500 dark:placeholder-zinc-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                   placeholder="••••••••"
                 />
-                <ErrorMessage name="password" class="text-sm text-red-600 dark:text-red-400" />
+                <ErrorMessage id="login-password-error" name="password" role="alert" class="text-sm text-red-600 dark:text-red-400" />
               </div>
 
               <div class="pt-2">
@@ -59,7 +69,7 @@
                 </button>
               </div>
 
-              <div v-if="message" class="rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 px-4 py-3 text-sm">
+              <div v-if="message" role="alert" aria-live="assertive" class="rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 px-4 py-3 text-sm">
                 {{ message }}
               </div>
             </Form>

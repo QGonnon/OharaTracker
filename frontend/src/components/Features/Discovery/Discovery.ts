@@ -1,8 +1,13 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { slugify } from '../../../utils.js';
 import Menu from "../../Shared/Menu/Menu.js";
 import { useMangaStore } from '../../../store/manga.module';
 import type { Manga } from '../../../types/index';
+import { useSeo } from '../../../seo/useSeo';
+import { breadcrumbJsonLd, collectionJsonLd } from '../../../seo/jsonld';
+import { DEFAULT_LOCALE, isLocale, absoluteUrl, homePath, pagePath, type Locale } from '../../../seo/config';
+import { localeMedia } from '../../../seo/localePath';
 
 export default defineComponent({
   name: 'Discovery',
@@ -11,6 +16,7 @@ export default defineComponent({
   },
   setup() {
     const mangaStore = useMangaStore();
+    const { t, locale } = useI18n();
     const featuredMangas = ref<Manga[]>([]);
     const featuredAnimes = ref<Manga[]>([]);
     const loading = ref(true);
@@ -96,7 +102,9 @@ export default defineComponent({
 
     const fetchMangas = async () => {
       try {
-        const mangaList = await mangaStore.fetchAll();
+        // Catalogue allégé : cette page n'affiche que des vignettes, elle n'a
+        // aucun besoin des chapitres de toutes les sources.
+        const mangaList = await mangaStore.fetchLight();
         featuredMangas.value = mangaList.filter(m => !isAnime(m));
         featuredAnimes.value = mangaList.filter(m => isAnime(m));
       } catch (err) {
@@ -108,7 +116,44 @@ export default defineComponent({
 
     onMounted(fetchMangas);
 
+    // ---------------------------------------------------------------------
+    // SEO
+    // ---------------------------------------------------------------------
+
+    const currentLocale = computed<Locale>(() =>
+      isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
+    );
+
+    /** Lien canonique localisé vers une œuvre du catalogue. */
+    const workPath = (item: Manga): string =>
+      localeMedia(mangaStore.resolveMediaKind(null, item.type), slugify(item.title));
+
+    useSeo({
+      target: { type: 'page', key: 'discovery' },
+      title: computed(() => t('seo.discovery.title')),
+      description: computed(() => t('seo.discovery.description')),
+      jsonLd: computed(() => [
+        // `ItemList` : décrit la page comme un vrai catalogue et donne à Google
+        // un chemin d'exploration vers chaque fiche, même sans exécuter le JS.
+        collectionJsonLd({
+          name: t('seo.discovery.title'),
+          description: t('seo.discovery.description'),
+          url: absoluteUrl(pagePath('discovery', currentLocale.value)),
+          locale: currentLocale.value,
+          items: allItems.value.slice(0, 100).map(item => ({
+            name: item.title,
+            url: workPath(item),
+          })),
+        }),
+        breadcrumbJsonLd([
+          { name: t('seo.breadcrumb.home'), path: homePath(currentLocale.value) },
+          { name: t('seo.discovery.title'), path: pagePath('discovery', currentLocale.value) },
+        ]),
+      ]),
+    });
+
     return {
+      workPath,
       featuredMangas,
       featuredAnimes,
       loading,

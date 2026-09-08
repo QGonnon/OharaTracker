@@ -10,7 +10,11 @@
     "theme_light": "Cambiar al tema claro",
     "theme_dark": "Cambiar al tema oscuro",
     "lang": "ES",
-    "language": "Idioma"
+    "language": "Idioma",
+    "main": "Navegación principal",
+    "open_menu": "Abrir el menú de navegación",
+    "close_menu": "Cerrar el menú de navegación",
+    "user_menu": "Menú de la cuenta"
   },
   "auth": {
     "login_subtitle": "Inicio de sesión",
@@ -49,8 +53,6 @@
     "cta_heading": "¿Listo para empezar?",
     "cta_desc": "Únete a miles de lectores que ya gestionan su colección con OharaTracker.",
     "footer": "Gratis · Sin publicidad · Código abierto",
-    "advanced_reaserch": "Búsqueda avanzada",
-    "advanced_reaserch_text": "Encuentra cualquier manga en segundos con nuestro motor de búsqueda inteligente.",
     "personalized_tracking": "Seguimiento personalizado",
     "personalized_tracking_text": "Lleva un registro de tus lecturas con listas personalizables, notas y estados.",
     "notification": "Notificaciones",
@@ -70,7 +72,36 @@
     "number_manga": "Mangas disponibles",
     "number_anime": "Animes referenciados",
     "number_users": "Usuarios activos",
-    "number_chapter": "Capítulos seguidos"
+    "number_chapter": "Capítulos seguidos",
+    "screenshot_library_alt": "Captura de la biblioteca personal",
+    "screenshot_discovery_alt": "Captura de la página de descubrimiento",
+    "screenshot_tracking_alt": "Captura del seguimiento de lectura",
+    "screenshot_profile_alt": "Captura del perfil de usuario",
+    "mock_status_ongoing": "En curso",
+    "mock_status_finished": "Finalizado",
+    "mock_status_planned": "Planeado",
+    "mock_status_paused": "En pausa",
+    "premium_badge": "OharaTracker Premium",
+    "premium_heading": "Sube de nivel.",
+    "premium_desc": "Desbloquea funciones avanzadas: personalización de perfil mejorada, notificaciones ilimitadas, recomendaciones inteligentes, estadísticas detalladas y funciones sociales adicionales.",
+    "premium_plan_personal": "Oferta para Particulares",
+    "premium_plan_personal_label": "Usuarios",
+    "premium_plan_pro": "Oferta para Profesionales",
+    "premium_plan_pro_label": "Socios",
+    "premium_cta": "Explorar Premium",
+    "premium_sub": "Elige la oferta que más te convenga.",
+    "screenshots_label": "Vista previa",
+    "screenshots_heading": "Descubre Ohara Tracker",
+    "screenshots_desc": "Interfaces claras, adaptadas a todo tipo de dispositivos y pensadas para tu comodidad.",
+    "screenshot_library_title": "Biblioteca y Descubrimiento",
+    "screenshot_library_desc": "Encuentra tus contenidos favoritos y descubre tus próximas obsesiones.",
+    "screenshot_tracking_title": "Mis seguimientos",
+    "screenshot_tracking_desc": "Mantén tu progreso en todos tus títulos y gestiona tus suscripciones para recibir avisos de los últimos lanzamientos.",
+    "screenshot_tracking_badge": "El corazón de la app",
+    "screenshot_profile_title": "Mi perfil",
+    "screenshot_profile_desc": "Personaliza tu perfil, modifica tus preferencias, consulta tus estadísticas y gestiona tus amigos.",
+    "advanced_search": "Búsqueda avanzada",
+    "advanced_search_text": "Encuentra cualquier manga en segundos con nuestro motor de búsqueda inteligente."
   },
   "library": {
     "title": "Mi lista",
@@ -92,7 +123,12 @@
     "reload": "Recargar",
     "empty_search": "Ninguna lectura coincide con tu búsqueda.",
     "empty_anime": "No se encontró ningún anime en tu biblioteca.",
-    "empty_reading": "No se encontró ninguna lectura en tu biblioteca."
+    "empty_reading": "No se encontró ninguna lectura en tu biblioteca.",
+    "followed_count": "{n} seguidos",
+    "edit_item": "Editar {title}",
+    "unknown": "Desconocido",
+    "col_last_episode_seen": "Último episodio visto",
+    "col_last_episode": "Último episodio"
   },
   "search": {
     "title": "Biblioteca",
@@ -117,7 +153,10 @@
     "list_view": "Vista de lista",
     "results": "{n} resultado(s) encontrado(s)",
     "no_results": "No se encontraron resultados",
-    "modify_criteria": "Intenta modificar tus criterios de búsqueda"
+    "modify_criteria": "Intenta modificar tus criterios de búsqueda",
+    "label": "Buscar una obra",
+    "results_label": "resultado(s)",
+    "loading": "Buscando…"
   },
   "discovery": {
     "trending": "Tendencias",
@@ -128,7 +167,8 @@
     "watch": "Ver",
     "read_now": "Leer ahora",
     "details": "Detalles",
-    "catalog": "Catálogo"
+    "catalog": "Catálogo",
+    "page_title": "Descubre manga y anime"
   },
   "manga": {
     "loading": "Cargando manga...",
@@ -145,7 +185,14 @@
     "add_to_library": "Añadir a mi biblioteca",
     "edit": "Editar",
     "similar": "Obras similares",
-    "unknown": "Desconocido"
+    "unknown": "Desconocido",
+    "studio": "Estudio",
+    "total_episodes": "Episodios totales",
+    "total_seasons": "Temporadas",
+    "release_date": "Fecha de estreno",
+    "average_score": "Puntuación media",
+    "user_score": "Mi puntuación",
+    "season": "Temporada {n}"
   },
   "latest": {
     "title": "Últimos lanzamientos",
@@ -163,7 +210,8 @@
     "read_chapter": "Leer capítulo",
     "view_manga": "Ver manga",
     "watch_episode": "Ver episodio",
-    "watch_anime": "Ver anime"
+    "watch_anime": "Ver anime",
+    "cover_of": "Portada de {title}"
   },
   "edit_library": {
     "title": "Editar lectura",
@@ -207,7 +255,8 @@
     "enable_push": "Activar notificaciones push",
     "push_denied": "Se denegó el permiso de notificación. Puedes activarlo en la configuración de tu navegador.",
     "push_subscribe_failed": "No se pudieron activar las notificaciones push en este navegador ({error}). Comprueba que ninguna extensión las esté bloqueando.",
-    "push_unsupported": "Las notificaciones push no están disponibles por ahora en este navegador o dispositivo."
+    "push_unsupported": "Las notificaciones push no están disponibles por ahora en este navegador o dispositivo.",
+    "title_with_count": "Notificaciones, {n} sin leer"
   },
   "profile": {
     "title": "Mi perfil",
@@ -240,7 +289,9 @@
     "danger_zone": "Zona de peligro",
     "danger_sub": "Acciones sobre tu sesión",
     "logout_title": "Cerrar sesión",
-    "logout_description": "Terminar tu sesión actual en este dispositivo"
+    "logout_description": "Terminar tu sesión actual en este dispositivo",
+    "strength_of": "Seguridad de la contraseña: {level}",
+    "default_username": "Usuario"
   },
   "footer": {
     "tagline": "Tu biblioteca única para seguir mangas, manhwas, manhuas y animes, sin usar diez plataformas distintas.",
@@ -261,7 +312,8 @@
     "twitter": "Síguenos en X",
     "contact": "Contacto",
     "social": "Social",
-    "rights": "Todos los derechos reservados."
+    "rights": "Todos los derechos reservados.",
+    "blog": "Blog"
   },
   "static": {
     "pricing": {
@@ -309,7 +361,8 @@
         "Plataformas asociadas: visibilidad prioritaria ante nuestra audiencia, mediante suscripción",
         "Creadores de contenido (YouTube, Twitch...): afiliación o remuneración según la colaboración"
       ],
-      "partner_cta": "Contáctanos"
+      "partner_cta": "Contáctanos",
+      "faq_teaser": "¿Dudas sobre los planes o la facturación?"
     },
     "blog": {
       "label": "Blog",
@@ -422,6 +475,125 @@
         "q": "¿Cuánto tiempo permanece una función en acceso anticipado?",
         "a": "No hay una duración fija. Una función sale del acceso anticipado cuando está lista."
       }
-    ]
+    ],
+    "more_label": "Saber más",
+    "more_text": "¿No has encontrado tu respuesta?"
+  },
+  "seo": {
+    "home": {
+      "title": "Sigue manga, manhwa y anime — todo en un solo lugar",
+      "description": "Sigue tus manga, manhwa, manhua y anime en una única biblioteca. Notificaciones de nuevos capítulos, progreso sincronizado y descubrimiento. Gratis."
+    },
+    "discovery": {
+      "title": "Descubre manga y anime para seguir",
+      "description": "Explora el catálogo de Ohara Tracker: manga, manhwa, manhua, anime y películas asiáticas, filtrados por género y tema. Añádelos a tu biblioteca con un clic."
+    },
+    "search": {
+      "title": "Buscar un manga, manhwa o anime",
+      "description": "Busca entre miles de manga, manhwa, manhua, anime y películas asiáticas. Encuentra una serie por título, género o tema y sigue sus lanzamientos."
+    },
+    "pricing": {
+      "title": "Precios — planes Gratis, Perso y Pro",
+      "description": "Ohara Tracker es gratis para seguir tus lecturas. Los planes Perso y Pro añaden filtros guardados, notificaciones prioritarias y panel personalizable."
+    },
+    "blog": {
+      "title": "Blog — noticias de manga y anime",
+      "description": "Noticias sobre lanzamientos de manga y anime, guías de seguimiento de lectura y novedades de Ohara Tracker."
+    },
+    "status": {
+      "title": "Estado de los servicios",
+      "description": "Estado en tiempo real de los servicios de Ohara Tracker: API, notificaciones push, sincronización de fuentes y sitio web."
+    },
+    "changelog": {
+      "title": "Novedades y notas de versión",
+      "description": "Todas las actualizaciones de Ohara Tracker: nuevas funciones, fuentes añadidas y correcciones, versión a versión."
+    },
+    "suggestions": {
+      "title": "Propón una función o una fuente",
+      "description": "Propón una función, informa de un error o solicita añadir una nueva fuente de manga o anime a Ohara Tracker."
+    },
+    "supportedSites": {
+      "title": "Sitios y fuentes compatibles",
+      "description": "Todas las fuentes que sigue Ohara Tracker: plataformas de manga, manhwa, manhua y anime cuyos lanzamientos se detectan automáticamente."
+    },
+    "officialPartners": {
+      "title": "Socios oficiales",
+      "description": "Las plataformas legales asociadas a las que Ohara Tracker te redirige para leer y ver tus series."
+    },
+    "contact": {
+      "title": "Contacto y soporte",
+      "description": "¿Una duda, un error, una propuesta de colaboración? Escribe al equipo de Ohara Tracker."
+    },
+    "terms": {
+      "title": "Términos de uso",
+      "description": "Los términos de uso de Ohara Tracker: tus derechos, tus obligaciones y el funcionamiento de la cuenta."
+    },
+    "privacy": {
+      "title": "Política de privacidad",
+      "description": "Cómo Ohara Tracker recopila, usa y protege tus datos personales conforme al RGPD. Alojamiento europeo, sin rastreo publicitario."
+    },
+    "cookies": {
+      "title": "Política de cookies",
+      "description": "Las cookies y el almacenamiento local que usa Ohara Tracker, para qué sirven y cómo rechazarlos."
+    },
+    "login": {
+      "title": "Iniciar sesión",
+      "description": "Inicia sesión en tu cuenta de Ohara Tracker para volver a tu biblioteca y tus notificaciones."
+    },
+    "register": {
+      "title": "Crear una cuenta gratis",
+      "description": "Crea una cuenta gratuita de Ohara Tracker y empieza a seguir tus manga, manhwa y anime en segundos."
+    },
+    "profile": {
+      "title": "Mi perfil",
+      "description": "Gestiona tu cuenta, tu suscripción y tus preferencias de Ohara Tracker."
+    },
+    "library": {
+      "title": "Mi biblioteca",
+      "description": "Tu biblioteca personal: progreso, estado de lectura y valoraciones."
+    },
+    "notifications": {
+      "title": "Mis notificaciones",
+      "description": "Tus avisos de nuevos capítulos y episodios."
+    },
+    "media": {
+      "lecture": {
+        "title": "{title}: capítulos, lanzamientos y seguimiento de lectura",
+        "description": "Sigue {title} en Ohara Tracker: últimos capítulos, avisos de lanzamiento y progreso de lectura. Añádelo a tu biblioteca gratis."
+      },
+      "serie": {
+        "title": "{title}: episodios, temporadas y seguimiento",
+        "description": "Sigue {title} en Ohara Tracker: últimos episodios, temporadas, avisos de lanzamiento y progreso. Añádelo a tu biblioteca gratis."
+      },
+      "film": {
+        "title": "{title}: ficha, estreno y dónde verla",
+        "description": "Ficha de {title} en Ohara Tracker: sinopsis, géneros, plataformas de streaming y seguimiento. Añádela a tu biblioteca gratis."
+      }
+    },
+    "breadcrumb": {
+      "home": "Inicio",
+      "catalog": "Catálogo"
+    },
+    "faq": {
+      "title": "FAQ — preguntas frecuentes sobre Ohara Tracker",
+      "description": "Cómo seguir tus manga y anime, gestionar tu suscripción, activar los avisos de lanzamiento: todas las respuestas sobre Ohara Tracker."
+    }
+  },
+  "errors": {
+    "not_found": {
+      "label": "Error 404",
+      "title": "Esta página no existe",
+      "description": "La página que buscas se ha movido, se ha eliminado o nunca existió. Puede que la obra que buscas aún no esté en nuestro catálogo.",
+      "back_home": "Volver al inicio",
+      "suggestions": "O sigue por aquí"
+    }
+  },
+  "a11y": {
+    "skip_to_content": "Ir al contenido principal"
+  },
+  "common": {
+    "close": "Cerrar",
+    "opens_new_tab": "abre una pestaña nueva",
+    "loading": "Cargando…"
   }
 }
