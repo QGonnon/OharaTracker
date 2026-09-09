@@ -1,13 +1,7 @@
-/**
- * Tests du middleware de rendu serveur des métadonnées (api/seo/spa.js).
- *
- * Nécessite un build du frontend : sans frontend/dist/index.html le middleware
- * ne se crée pas et le test est ignoré (lancer `npm run build` dans frontend/).
- *
- * Vérifie ce qu'un robot reçoit réellement : redirections 301 vers l'URL
- * canonique, vrais 404, et un <head> unique et complet par page.
- */
+// Tests du middleware de rendu serveur des métadonnées (api/seo/spa.js).
 import http from 'node:http'
+import { after, before, describe, test } from 'node:test'
+import assert from 'node:assert/strict'
 import express from 'express'
 
 process.env.SITE_URL = 'https://oharatracker.com'
@@ -15,94 +9,120 @@ process.env.NODE_ENV = 'production'
 
 const { createSpaMiddleware } = await import('../seo/spa.js')
 
+// Nécessite un build du frontend : sans frontend/dist/index.html le middleware ne se crée pas.
 const spa = createSpaMiddleware()
-if (!spa) {
-    console.log('⏭️  frontend/dist absent — test ignoré (lancez `npm run build` dans frontend/).')
-    process.exit(0)
-}
+const skip = spa ? false : 'frontend/dist absent — lancez `npm run build` dans frontend/'
 
-const app = express()
-app.use(spa)
-const server = http.createServer(app)
-await new Promise(r => server.listen(0, r))
-const port = server.address().port
+describe('Middleware SPA (rendu SSR des métadonnées)', { skip }, () => {
+    let server, port
 
-const get = (path, headers = {}) => new Promise((resolve, reject) => {
-  http.get({ host: '127.0.0.1', port, path, headers }, res => {
-    let body = ''
-    res.on('data', c => (body += c))
-    res.on('end', () => resolve({ status: res.statusCode, location: res.headers.location, body }))
-  }).on('error', reject)
+    before(async () => {
+        const app = express()
+        app.use(spa)
+        server = http.createServer(app)
+        await new Promise(r => server.listen(0, r))
+        port = server.address().port
+    })
+
+    after(() => server.close())
+
+    const get = (path, headers = {}) => new Promise((resolve, reject) => {
+        http.get({ host: '127.0.0.1', port, path, headers }, res => {
+            let body = ''
+            res.on('data', c => (body += c))
+            res.on('end', () => resolve({ status: res.statusCode, location: res.headers.location, body }))
+        }).on('error', reject)
+    })
+
+    describe('Redirections 301 vers la forme canonique', () => {
+        test('/ -> 301 /fr (Accept-Language)', async () => {
+            const root = await get('/', { 'accept-language': 'fr-FR,fr;q=0.9' })
+            assert.strictEqual(root.status, 301)
+            assert.strictEqual(root.location, '/fr')
+        })
+
+        test('/ -> /de pour un visiteur allemand', async () => {
+            const rootDe = await get('/', { 'accept-language': 'de-DE,de;q=0.9' })
+            assert.strictEqual(rootDe.location, '/de')
+        })
+
+        test('/pricing -> 301 /fr/tarifs', async () => {
+            const legacy = await get('/pricing', { 'accept-language': 'fr' })
+            assert.strictEqual(legacy.status, 301)
+            assert.strictEqual(legacy.location, '/fr/tarifs')
+        })
+
+        test('/home -> /it', async () => {
+            const legacyHome = await get('/home', { 'accept-language': 'it' })
+            assert.strictEqual(legacyHome.location, '/it')
+        })
+
+        test('query preservee dans la redirection', async () => {
+            const withQuery = await get('/pricing?utm_source=discord', { 'accept-language': 'es' })
+            assert.strictEqual(withQuery.location, '/es/precios?utm_source=discord')
+        })
+    })
+
+    describe('Page rendue cote serveur', () => {
+        test('/fr/tarifs', async () => {
+            const fr = await get('/fr/tarifs')
+            assert.strictEqual(fr.status, 200)
+            assert.match(fr.body, /<html[^>]*\slang="fr"/)
+            assert.ok(fr.body.includes('<title>Tarifs — offres gratuite, Perso et Pro | Ohara Tracker</title>'))
+            assert.ok(fr.body.includes('<link rel="canonical" href="https://oharatracker.com/fr/tarifs">'))
+            assert.ok(fr.body.includes('hreflang="de" href="https://oharatracker.com/de/preise"'))
+            assert.ok(fr.body.includes('hreflang="x-default" href="https://oharatracker.com/en/pricing"'))
+            assert.ok(fr.body.includes('property="og:url" content="https://oharatracker.com/fr/tarifs"'))
+            assert.ok(fr.body.includes('"@type":"BreadcrumbList"'))
+            assert.strictEqual((fr.body.match(/<title>/g) || []).length, 1)
+            assert.strictEqual((fr.body.match(/name="description"/g) || []).length, 1)
+        })
+
+        test('/de/datenschutz', async () => {
+            const de = await get('/de/datenschutz')
+            assert.match(de.body, /<html[^>]*\slang="de"/)
+            assert.ok(de.body.includes('Datenschutzerkl'))
+        })
+    })
+
+    describe('Pages privees', () => {
+        test('/fr/profil', async () => {
+            const profile = await get('/fr/profil')
+            assert.strictEqual(profile.status, 200)
+            assert.ok(profile.body.includes('content="noindex, nofollow"'))
+            assert.ok(!profile.body.includes('rel="alternate"'))
+        })
+    })
+
+    describe('404 reelles', () => {
+        test('/fr/cette-page-nexiste-pas', async () => {
+            const missing = await get('/fr/cette-page-nexiste-pas')
+            assert.strictEqual(missing.status, 404)
+            assert.ok(missing.body.includes('content="noindex, nofollow"'))
+            assert.ok(missing.body.includes('Cette page n'))
+        })
+    })
+
+    describe('FAQ — balisage rendu côté serveur', () => {
+        test('FAQPage présent avant exécution du JS', async () => {
+            const faq = await get('/fr/faq')
+            assert.ok(faq.body.includes('"@type":"FAQPage"'))
+            assert.ok(faq.body.includes('"@type":"Question"'))
+        })
+
+        test('la FAQ ne fuite pas sur la page tarifs', async () => {
+            const tarifs = await get('/fr/tarifs')
+            assert.ok(!tarifs.body.includes('FAQPage'))
+        })
+    })
+
+    describe('Accueil', () => {
+        test('/en', async () => {
+            const home = await get('/en')
+            assert.ok(home.body.includes('"@type":"WebSite"'))
+            assert.ok(home.body.includes('"@type":"SearchAction"'))
+            assert.ok(home.body.includes('"@type":"Organization"'))
+            assert.ok(home.body.includes('/en/search?search_term_string') || home.body.includes('search?q={search_term_string}'))
+        })
+    })
 })
-
-let failures = 0
-const check = (label, actual, expected) => {
-  const ok = JSON.stringify(actual) === JSON.stringify(expected)
-  if (!ok) failures++
-  console.log(`${ok ? 'OK  ' : 'FAIL'}  ${label}`)
-  if (!ok) console.log(`        attendu : ${JSON.stringify(expected)}\n        obtenu  : ${JSON.stringify(actual)}`)
-}
-
-console.log('=== Redirections 301 vers la forme canonique ===')
-const root = await get('/', { 'accept-language': 'fr-FR,fr;q=0.9' })
-check('/ -> 301', root.status, 301)
-check('/ -> /fr (Accept-Language)', root.location, '/fr')
-
-const rootDe = await get('/', { 'accept-language': 'de-DE,de;q=0.9' })
-check('/ -> /de pour un visiteur allemand', rootDe.location, '/de')
-
-const legacy = await get('/pricing', { 'accept-language': 'fr' })
-check('/pricing -> 301', legacy.status, 301)
-check('/pricing -> /fr/tarifs', legacy.location, '/fr/tarifs')
-
-const legacyHome = await get('/home', { 'accept-language': 'it' })
-check('/home -> /it', legacyHome.location, '/it')
-
-const withQuery = await get('/pricing?utm_source=discord', { 'accept-language': 'es' })
-check('query preservee dans la redirection', withQuery.location, '/es/precios?utm_source=discord')
-
-console.log('\n=== Page rendue cote serveur ===')
-const fr = await get('/fr/tarifs')
-check('200', fr.status, 200)
-check('lang=fr sur <html>', /<html[^>]*\slang="fr"/.test(fr.body), true)
-check('titre FR', fr.body.includes('<title>Tarifs — offres gratuite, Perso et Pro | Ohara Tracker</title>'), true)
-check('canonical', fr.body.includes('<link rel="canonical" href="https://oharatracker.com/fr/tarifs">'), true)
-check('hreflang de -> /de/preise', fr.body.includes('hreflang="de" href="https://oharatracker.com/de/preise"'), true)
-check('x-default -> /en/pricing', fr.body.includes('hreflang="x-default" href="https://oharatracker.com/en/pricing"'), true)
-check('og:url', fr.body.includes('property="og:url" content="https://oharatracker.com/fr/tarifs"'), true)
-check('fil d ariane JSON-LD', fr.body.includes('"@type":"BreadcrumbList"'), true)
-check('un seul <title>', (fr.body.match(/<title>/g) || []).length, 1)
-check('une seule meta description', (fr.body.match(/name="description"/g) || []).length, 1)
-
-const de = await get('/de/datenschutz')
-check('page DE : lang=de', /<html[^>]*\slang="de"/.test(de.body), true)
-check('page DE : titre traduit', de.body.includes('Datenschutzerkl'), true)
-
-console.log('\n=== Pages privees ===')
-const profile = await get('/fr/profil')
-check('profil : 200', profile.status, 200)
-check('profil : noindex', profile.body.includes('content="noindex, nofollow"'), true)
-check('profil : aucun hreflang', profile.body.includes('rel="alternate"'), false)
-
-console.log('\n=== 404 reelles ===')
-const missing = await get('/fr/cette-page-nexiste-pas')
-check('statut 404 (plus de soft 404)', missing.status, 404)
-check('404 : noindex', missing.body.includes('content="noindex, nofollow"'), true)
-check('404 : titre FR', missing.body.includes("Cette page n"), true)
-
-console.log('\n=== FAQ — balisage rendu côté serveur ===')
-const faq = await get('/fr/faq')
-check('FAQPage présent avant exécution du JS', faq.body.includes('"@type":"FAQPage"'), true)
-check('au moins une question rendue', faq.body.includes('"@type":"Question"'), true)
-check('la FAQ ne fuite pas sur la page tarifs', (await get('/fr/tarifs')).body.includes('FAQPage'), false)
-
-console.log('\n=== Accueil ===')
-const home = await get('/en')
-check('WebSite JSON-LD', home.body.includes('"@type":"WebSite"'), true)
-check('SearchAction (sitelinks searchbox)', home.body.includes('"@type":"SearchAction"'), true)
-check('Organization JSON-LD', home.body.includes('"@type":"Organization"'), true)
-check('urlTemplate de recherche', home.body.includes('/en/search?search_term_string') || home.body.includes('search?q={search_term_string}'), true)
-
-server.close()
-console.log(`\n${failures === 0 ? '✅ tous les tests passent' : `❌ ${failures} test(s) en echec`}`)
-process.exit(failures === 0 ? 0 : 1)
