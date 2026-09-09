@@ -1,12 +1,4 @@
-/**
- * Garde-fou anti-régression d'accessibilité.
- *
- * Ne remplace pas un audit (Lighthouse, axe, test au lecteur d'écran) : il
- * vérifie seulement que les défauts déjà corrigés ne reviennent pas. Chaque
- * règle correspond à un problème réellement trouvé sur ce projet.
- *
- * Lancer avec `npm run check:a11y`.
- */
+// Garde-fou anti-régression d'accessibilité (npm run check:a11y) : ne remplace pas un audit complet.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -23,15 +15,9 @@ const problems = []
 const report = (file, line, rule, detail) =>
   problems.push({ file: path.relative(SRC, file), line, rule, detail })
 
-/** Numéro de ligne d'un index de caractère. */
 const lineOf = (source, index) => source.slice(0, index).split('\n').length
 
-/**
- * Neutralise les commentaires HTML en préservant les positions.
- * Sans ça, une balise citée dans un commentaire explicatif est signalée comme
- * un vrai défaut. Les caractères sont remplacés par des espaces plutôt que
- * supprimés, pour que les numéros de ligne restent exacts.
- */
+// Neutralise les commentaires HTML (espaces, pas suppression, pour garder les numéros de ligne).
 const stripComments = source =>
   source.replace(/<!--[\s\S]*?-->/g, block => block.replace(/[^\n]/g, ' '))
 
@@ -39,7 +25,6 @@ for (const file of walk(SRC)) {
   const source = stripComments(fs.readFileSync(file, 'utf8'))
 
   // 1. Élément non interactif porteur d'un @click sans équivalent clavier.
-  //    Rendait la recherche et la bibliothèque inutilisables au clavier.
   for (const m of source.matchAll(/<(div|span|li|img|p)\b[^>]*@click[^>]*>/g)) {
     if (/role=|tabindex=|@keydown|@click.stop/.test(m[0])) continue
     report(file, lineOf(source, m.index), 'clic sans clavier',
@@ -61,13 +46,13 @@ for (const file of walk(SRC)) {
       'Button avec icon= mais ni label= ni aria-label=')
   }
 
-  // 4. <label> sans `for` ni contrôle englobé : ignoré par les lecteurs d'écran.
+  // 4. <label> sans `for` : ignoré par les lecteurs d'écran.
   for (const m of source.matchAll(/<label\b(?:(?!>)[\s\S])*>/g)) {
     if (/\bfor=/.test(m[0])) continue
     report(file, lineOf(source, m.index), 'label orphelin', m[0].slice(0, 70).replace(/\s+/g, ' '))
   }
 
-  // 5. Bouton ou lien imbriqué dans un lien : HTML invalide, clavier imprévisible.
+  // 5. Bouton imbriqué dans un lien : HTML invalide, clavier imprévisible.
   for (const m of source.matchAll(/<RouterLink\b(?:(?!<\/RouterLink>)[\s\S])*?<(Button|button)\b/g)) {
     report(file, lineOf(source, m.index), 'bouton dans un lien',
       'utiliser <Button asChild v-slot> autour du RouterLink')
@@ -88,7 +73,7 @@ for (const file of walk(SRC)) {
     }
   }
 
-  // 7. Couleurs dont le contraste est connu comme insuffisant sur ce projet.
+  // 7. Couleurs à contraste connu insuffisant.
   const WEAK = ['text-gray-400', 'dark:text-zinc-500', 'dark:text-zinc-600',
     'placeholder-slate-400', 'text-orange-500', 'text-amber-500', 'text-blue-500']
   for (const cls of WEAK) {

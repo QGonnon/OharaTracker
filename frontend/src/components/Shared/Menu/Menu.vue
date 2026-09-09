@@ -3,11 +3,6 @@
     <nav class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2 sm:px-6"
          :aria-label="$t('nav.main')">
 
-      <!--
-        Le logo était un titre de niveau 1. Comme ce menu est monté en tête de
-        chaque page, chaque page en avait deux, le premier étant le nom du site :
-        la navigation par titres remontait la marque au lieu du sujet de la page.
-      -->
       <div class="topbar-logo text-2xl font-bold">
         <RouterLink :to="homeLink" class="hover:opacity-80 transition-opacity">Ohara Tracker</RouterLink>
       </div>
@@ -35,10 +30,6 @@
 
         <!-- Language dropdown -->
         <div class="nav-lang-wrapper" ref="langDropdownRef">
-          <!--
-            L'état ouvert/fermé n'était signalé que par la rotation du chevron,
-            donc invisible pour un lecteur d'écran : `aria-expanded` le porte.
-          -->
           <button
             type="button"
             class="nav-lang-trigger"
@@ -55,11 +46,7 @@
 
           <Transition name="lang-drop">
             <ul v-if="langDropdownOpen" id="lang-dropdown" class="nav-lang-dropdown">
-              <!--
-                De vrais <a href> plutôt que des boutons : le sélecteur de langue
-                devient un lien que les moteurs peuvent suivre vers la version
-                traduite, ce qui renforce les balises hreflang du <head>.
-              -->
+              <!-- <a href> plutôt que des boutons : renforce les hreflang du <head>. -->
               <li
                 v-for="lang in languageLinks"
                 :key="lang.code"
@@ -74,7 +61,6 @@
                   @click="langDropdownOpen = false"
                 >
                   <span class="nav-lang-option-label">{{ lang.label }}</span>
-                  <!-- L'état sélectionné est déjà porté par `aria-current` -->
                   <i v-if="lang.code === currentLocale" aria-hidden="true" class="pi pi-check nav-lang-option-check" />
                 </RouterLink>
               </li>
@@ -82,10 +68,6 @@
           </Transition>
         </div>
 
-        <!--
-          `title` seul ne constitue pas un nom accessible fiable (inaccessible au
-          tactile) et ne dit rien de l'état courant : `aria-label` + `aria-pressed`.
-        -->
         <button
           type="button"
           class="nav-theme-toggle"
@@ -112,11 +94,6 @@
 
         <!-- User avatar + popup (desktop only) -->
         <div v-if="isLoggedIn" class="hidden md:block">
-          <!--
-            `aria-label` explicite : le seul texte du bouton est le pseudo, et
-            celui-ci est vide tant que le profil n'est pas chargé (ou si le compte
-            n'a pas de nom). Le bouton était alors annoncé « bouton », sans plus.
-          -->
           <button
             type="button"
             class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-200 nav-user-trigger"
@@ -125,8 +102,6 @@
             aria-controls="user-menu"
             @click="toggleUserMenu"
           >
-            <!-- L'initiale doublonne le pseudo juste à côté : annoncée seule, ce
-                 serait une lettre isolée sans signification. -->
             <div aria-hidden="true"
               class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold select-none">
               {{ name[0]?.toUpperCase() }}
@@ -139,11 +114,6 @@
           <PopupMenu id="user-menu" ref="userMenuRef" :model="userMenuItems" popup />
         </div>
 
-        <!--
-          Seul accès à la navigation sur mobile. Il n'avait aucun nom accessible :
-          l'icône PrimeIcons est un glyphe en zone privée Unicode, donc invisible
-          pour un lecteur d'écran.
-        -->
         <button
           type="button"
           class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-zinc-400 transition-colors"
@@ -160,10 +130,6 @@
     </nav>
   </header>
 
-  <!--
-    PrimeVue pose déjà `role="dialog"`, le piège de focus et la fermeture par
-    Échap, mais aucun nom : le dialogue était annoncé sans titre.
-  -->
   <Drawer
     id="mobile-drawer"
     v-model:visible="mobileOpen"
@@ -208,7 +174,6 @@
           <span id="lang-mobile-label" class="nav-lang-mobile-label">
             <i class="pi pi-globe" aria-hidden="true" /> {{ $t('nav.language') }}
           </span>
-          <!-- Groupe de bascules : l'état actif n'était signalé que par la couleur. -->
           <div class="nav-lang-mobile-options" role="group" aria-labelledby="lang-mobile-label">
             <button
               v-for="lang in languages"

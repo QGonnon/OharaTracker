@@ -14,16 +14,10 @@ router.get('/', (req, res) => {
     })
 });
 
-/**
- * Catalogue allégé : une entrée par œuvre, sans la liste des chapitres.
- * Destiné aux écrans de listing (découverte, recherche, œuvres similaires), qui
- * chargeaient jusqu'ici l'intégralité des chapitres de toutes les sources.
- */
+// Catalogue allégé : une entrée par œuvre, sans la liste des chapitres.
 router.get('/light', async (_req, res) => {
     try {
         const rows = await getCatalogLight();
-        // Le catalogue bouge au rythme des scrapings : 5 min de cache partagé
-        // suffisent à absorber les pics sans servir de données périmées.
         res.set('Cache-Control', 'public, max-age=60, s-maxage=300');
         res.json(rows);
     } catch (err) {
@@ -31,10 +25,6 @@ router.get('/light', async (_req, res) => {
     }
 });
 
-/**
- * Une seule œuvre, résolue par son slug d'URL.
- * Évite de télécharger tout le catalogue pour afficher une fiche.
- */
 router.get('/slug/:slug', async (req, res) => {
     try {
         const work = await getWorkBySlug(req.params.slug);

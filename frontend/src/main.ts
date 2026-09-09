@@ -20,10 +20,7 @@ import { setupHttpInterceptors } from './services/http-interceptors'
 
 const pinia = createPinia()
 
-// Gestionnaire du <head> : titre, canonical, hreflang, Open Graph et JSON-LD
-// sont posés par le composable `useSeo` de chaque page (src/seo/useSeo.ts).
-// `createHead` du sous-chemin /client reprend la main sur les balises déjà
-// présentes dans index.html au lieu de les dupliquer.
+// /client reprend la main sur les balises déjà présentes dans index.html au lieu de les dupliquer.
 const head = createHead()
 
 const OharaPreset = definePreset(Aura, {
@@ -77,10 +74,8 @@ try {
     }
 } catch (e) {}
 
-// Les traductions sont chargées à la demande : on attend celles de la langue
-// demandée avant de monter, sinon le premier rendu afficherait les clés brutes.
-// La langue vient de l'URL quand elle en porte une (`/de/...`), sinon de la
-// préférence enregistrée ou du navigateur.
+// On attend les traductions de la langue avant de monter, sinon le premier rendu
+// afficherait les clés brutes. Langue prise dans l'URL sinon dans la préférence enregistrée.
 const initialLocale = (() => {
     const first = window.location.pathname.split('/').filter(Boolean)[0]
     return isLocale(first) ? first : detectPreferredLocale()

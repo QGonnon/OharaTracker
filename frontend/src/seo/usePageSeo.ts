@@ -5,14 +5,7 @@ import { breadcrumbJsonLd } from './jsonld'
 import { homePath, pagePath, type Locale, type PageKey } from './config'
 import { DEFAULT_LOCALE, isLocale } from './config'
 
-/**
- * SEO d'une page fixe en une ligne : le titre et la description sont lus dans
- * `seo.<pageKey>` des fichiers de locale, donc traduits dans les cinq langues
- * sans rien écrire dans le composant.
- *
- * @param pageKey  page concernée (même clé que dans le router et `PAGE_SEGMENTS`)
- * @param options.noindex  pages privées : exclues de l'index et du fil d'Ariane
- */
+// Titre et description lus dans seo.<pageKey> des fichiers de locale, traduits automatiquement.
 export function usePageSeo(pageKey: PageKey, options: { noindex?: boolean } = {}) {
   const { t, locale } = useI18n()
 
@@ -20,8 +13,7 @@ export function usePageSeo(pageKey: PageKey, options: { noindex?: boolean } = {}
     isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
   )
 
-  // Fil d'Ariane à deux niveaux (Accueil > la page) : inutile de le générer
-  // pour une page non indexée, Google ne la verra jamais.
+  // Inutile de générer le fil d'Ariane pour une page non indexée.
   const jsonLd = computed(() =>
     options.noindex
       ? []

@@ -2,15 +2,8 @@ import { QueryTypes } from 'sequelize';
 import { sequelize } from './database.js';
 import { slugCandidates, slugify, resolveMediaKind } from './slug.js';
 
-/**
- * Vue légère du catalogue : une ligne par œuvre, sans ses chapitres.
- *
- * `GET /chapters` renvoie l'intégralité des chapitres de toutes les sources pour
- * toutes les œuvres — plusieurs mégaoctets. Les écrans qui n'affichent que des
- * vignettes (découverte, recherche, œuvres similaires) n'ont besoin que de ceci,
- * ce qui change radicalement le temps de chargement, donc les Core Web Vitals,
- * donc le classement.
- */
+// Vue légère du catalogue (une ligne par œuvre, sans les chapitres) pour les écrans
+// de listing, qui n'ont pas besoin des mégaoctets renvoyés par GET /chapters.
 export async function getCatalogLight() {
     return sequelize.query(
         `SELECT
@@ -37,10 +30,6 @@ export async function getCatalogLight() {
     );
 }
 
-/**
- * Toutes les œuvres sous la forme attendue par le sitemap et le rendu serveur
- * des métadonnées : slug canonique, nature, date de dernière mise à jour.
- */
 export async function getCatalogForSitemap() {
     const rows = await getCatalogLight();
     return rows
@@ -50,8 +39,6 @@ export async function getCatalogForSitemap() {
             title: row.title,
             slug: slugify(row.title),
             kind: resolveMediaKind(row.type),
-            // `lastmod` = date du chapitre le plus récent : c'est ce qui dit à Google
-            // qu'il vaut la peine de recrawler la page.
             lastmod: row.updatedAt ? new Date(row.updatedAt).toISOString() : null,
             description: row.description,
             theme: row.theme,
@@ -64,14 +51,7 @@ export async function getCatalogForSitemap() {
         }));
 }
 
-/**
- * Une œuvre et ses chapitres, résolue depuis son slug d'URL.
- *
- * Le slug n'existe pas en base (il est dérivé du titre) : on résout donc en deux
- * temps — la vue légère pour trouver l'identifiant, puis le détail de cette seule
- * œuvre. Renvoie aussi `canonicalSlug` pour que l'appelant puisse rediriger si
- * l'URL utilisait l'ancienne forme du slug.
- */
+// Le slug n'existe pas en base (dérivé du titre) : on résout via la vue légère d'abord.
 export async function getWorkBySlug(slug) {
     const wanted = String(slug ?? '').toLowerCase();
     if (!wanted) return null;
@@ -97,8 +77,7 @@ export async function getWorkBySlug(slug) {
         { replacements: { idLibrary: match.id }, type: QueryTypes.SELECT }
     );
 
-    // Regroupement par source, même forme que `GET /chapters` pour que le
-    // frontend puisse consommer les deux endpoints sans code spécifique.
+    // Même forme que GET /chapters pour que le frontend consomme les deux endpoints identiquement.
     const sites = {};
     for (const row of chapters) {
         if (!sites[row.site]) {

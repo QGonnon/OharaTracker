@@ -19,11 +19,7 @@ class MangaService {
       .map(m => this.withDisplayFields({ ...m, id: Number(m.id) } as Manga))
   }
 
-  /**
-   * Catalogue allégé : une entrée par œuvre, sans la liste des chapitres.
-   * Suffit à tous les écrans de listing (découverte, recherche, œuvres
-   * similaires) et pèse une fraction de `getAll()`.
-   */
+  // Catalogue allégé (une entrée par œuvre, sans les chapitres), pour les écrans de listing.
   async getLight(): Promise<Manga[]> {
     const response = await fetch(`${getApiBase()}/chapters/light`)
     if (!response.ok) throw new Error(`Erreur catalogue: ${response.status}`)
@@ -33,11 +29,6 @@ class MangaService {
       .map((m: any) => ({ ...m, id: Number(m.id), sites: m.sites ?? {} }) as Manga)
   }
 
-  /**
-   * Une seule œuvre, résolue côté serveur depuis son slug.
-   * La page fiche téléchargeait auparavant l'intégralité du catalogue (tous les
-   * chapitres de toutes les sources) pour n'en afficher qu'une ligne.
-   */
   async getBySlug(slug: string): Promise<Manga | null> {
     const response = await fetch(`${getApiBase()}/chapters/slug/${encodeURIComponent(slug)}`)
     if (response.status === 404) return null
@@ -46,10 +37,7 @@ class MangaService {
     return this.withDisplayFields({ ...work, id: Number(work.id) } as Manga)
   }
 
-  /**
-   * Résout une œuvre par son slug d'URL. Accepte aussi l'ancienne forme du slug
-   * (celle qui supprimait les accents) pour ne pas casser les liens déjà partagés.
-   */
+  // Accepte aussi l'ancienne forme du slug pour ne pas casser les liens déjà partagés.
   findBySlug(mangas: Manga[], slug: string | string[]): Manga | undefined {
     const wanted = String(Array.isArray(slug) ? slug[0] : slug ?? '').toLowerCase()
     if (!wanted) return undefined
@@ -67,10 +55,7 @@ class MangaService {
   getCoverUrl(manga: Pick<Manga, 'coverPath' | 'coverUrl' | 'title'>): string {
     if (manga.coverPath) return `${getApiBase()}/cdn/${manga.coverPath}`
     if (manga.coverUrl) return manga.coverUrl
-    // Placeholder servi depuis notre propre domaine : une image externe
-    // aléatoire (picsum) ralentissait le rendu, changeait à chaque chargement
-    // et se retrouvait publiée comme image Open Graph de la fiche.
-    return '/cover-placeholder.svg'
+    return '/cover-placeholder.svg' // évite une image externe aléatoire, mauvaise pour LCP et og:image
   }
 
   // Site qui possède le plus de chapitres, utilisé comme source "principale" du manga
@@ -123,23 +108,19 @@ class MangaService {
   resolveMediaKind(routeName: string | symbol | null | undefined, dbType?: string): MediaKind {
     const name = String(routeName || '').toLowerCase()
 
-    // Priorité : nom de route explicite (nouvelles routes)
     if (name.includes('lecture')) return 'lecture'
     if (name.includes('serie')) return 'serie'
     if (name.includes('film')) return 'film'
 
-    // Fallback : champ type BDD (migration en cours par le collègue)
     if (dbType) {
       const t = dbType.toLowerCase()
       if (t === 'lecture') return 'lecture'
       if (t === 'serie') return 'serie'
       if (t === 'film') return 'film'
-      // Anciens types
       if (t === 'anime') return 'serie'
       if (t === 'manga') return 'lecture'
     }
 
-    // Fallback : anciennes routes
     if (name.includes('anime')) return 'serie'
     return 'lecture' // défaut
   }

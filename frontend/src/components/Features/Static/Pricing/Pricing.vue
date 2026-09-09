@@ -100,8 +100,6 @@
         </div>
       </div>
 
-      <!-- La FAQ vit désormais sur sa propre page (meilleur ciblage SEO des
-           requêtes en question) : ce bloc n'est plus qu'un lien vers elle. -->
       <div class="max-w-3xl mx-auto text-center">
         <p class="text-gray-600 dark:text-zinc-400 mb-3">{{ $t('static.pricing.faq_teaser') }}</p>
         <RouterLink :to="faqLink" class="text-sm font-semibold text-violet-600 dark:text-violet-400 hover:underline">

@@ -14,30 +14,17 @@ export const siteUrl = () =>
 
 const abs = p => `${siteUrl()}${p}`;
 
-/** Échappement pour insertion dans un attribut ou un nœud texte HTML. */
 const esc = value => String(value ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-/** Échappement pour insertion dans un <script type="application/ld+json">. */
 const escJson = obj => JSON.stringify(obj).replace(/</g, '\\u003c');
-
-// ---------------------------------------------------------------------------
-// Traductions
-// ---------------------------------------------------------------------------
 
 const LOCALES_DIR = path.resolve(process.cwd(), '../frontend/src/locales');
 
-/**
- * Les mêmes fichiers de traduction que le frontend, lus au démarrage.
- *
- * Le titre et la description rendus par le serveur doivent être identiques à
- * ceux que l'application posera ensuite côté client : les dupliquer ici en dur
- * garantirait qu'ils divergent un jour, et Google verrait alors un contenu
- * différent de l'utilisateur.
- */
+// Lus depuis les mêmes fichiers que le frontend pour garantir un contenu identique SSR/client.
 const messages = (() => {
     const loaded = {};
     for (const locale of LOCALES) {
@@ -55,47 +42,22 @@ export const translationsAvailable = () => LOCALES.some(l => messages[l] !== nul
 const lookupRaw = (locale, key) =>
     key.split('.').reduce((acc, part) => acc?.[part], messages[locale]);
 
-/** Résout une clé pointée (`seo.home.title`) avec repli sur la langue par défaut. */
 export function t(locale, key, params = {}) {
     const raw = lookupRaw(locale, key) ?? lookupRaw(DEFAULT_LOCALE, key);
     if (typeof raw !== 'string') return '';
     return raw.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? '');
 }
 
-/**
- * Variante de `t()` qui renvoie la ressource brute (tableau, objet) au lieu de
- * forcer une chaîne. Sert par exemple à `faq.items`, une liste de questions/
- * réponses, pour construire le JSON-LD `FAQPage` côté serveur.
- */
+// Renvoie la ressource brute (tableau/objet), ex. faq.items pour le JSON-LD FAQPage.
 export function tRaw(locale, key) {
     return lookupRaw(locale, key) ?? lookupRaw(DEFAULT_LOCALE, key);
 }
 
-// ---------------------------------------------------------------------------
-// Construction du <head>
-// ---------------------------------------------------------------------------
-
-/**
- * Sérialise les balises SEO d'une page.
- *
- * @param {object} input
- * @param {string} input.locale
- * @param {(locale: string) => string} input.pathFor  chemin de la page dans une langue donnée
- * @param {string} input.title        titre sans le nom du site
- * @param {string} input.description
- * @param {string} [input.image]      URL absolue de l'image de partage
- * @param {boolean} [input.noindex]
- * @param {string} [input.ogType]
- * @param {object[]} [input.jsonLd]
- * @param {string} [input.nonce]  nonce CSP à porter sur les blocs JSON-LD
- */
 export function renderHead(input) {
     const { locale, pathFor, description, image, noindex, jsonLd = [], nonce } = input;
     const canonical = abs(pathFor(locale));
     const title = input.title?.includes(SITE_NAME) ? input.title : `${input.title} | ${SITE_NAME}`;
-    // Bannière 1200×630 dans la langue de la page, générée par
-    // `npm run og:image` côté frontend. Doit rester aligné sur
-    // `defaultOgImage` dans frontend/src/seo/useSeo.ts.
+    // Doit rester aligné sur `defaultOgImage` dans frontend/src/seo/useSeo.ts.
     const ogImage = image || abs(`/og-default-${locale}.png`);
 
     const tags = [
@@ -129,13 +91,10 @@ export function renderHead(input) {
     );
 
     if (nonce) {
-        // Permet au code client (unhead) de réutiliser le même nonce quand il
-        // repose les balises lors d'une navigation interne.
+        // Permet à unhead côté client de réutiliser le même nonce sur navigation interne.
         tags.push(`<meta name="csp-nonce" content="${esc(nonce)}">`);
     }
 
-    // Sans nonce, une CSP stricte bloque ces blocs et fait disparaître les
-    // rich results : l'attribut n'est donc pas optionnel en production.
     const nonceAttr = nonce ? ` nonce="${esc(nonce)}"` : '';
     for (const block of jsonLd) {
         tags.push(`<script type="application/ld+json"${nonceAttr}>${escJson(block)}</script>`);
@@ -144,15 +103,11 @@ export function renderHead(input) {
     return tags.join('\n    ');
 }
 
-// ---------------------------------------------------------------------------
-// Résolution d'une URL entrante
-// ---------------------------------------------------------------------------
-
 const SEGMENT_TO_KIND = {};
 for (const [kind, byLocale] of Object.entries(MEDIA_SEGMENTS)) {
     for (const segment of Object.values(byLocale)) SEGMENT_TO_KIND[segment] = kind;
 }
-// Anciens segments, encore présents dans des liens partagés
+// Anciens segments encore présents dans des liens partagés.
 Object.assign(SEGMENT_TO_KIND, { lecture: 'lecture', serie: 'serie', anime: 'serie', manga: 'lecture' });
 
 const SEGMENT_TO_PAGE = {};
@@ -160,12 +115,6 @@ for (const [key, byLocale] of Object.entries(PAGE_SEGMENTS)) {
     for (const segment of Object.values(byLocale)) SEGMENT_TO_PAGE[segment] = key;
 }
 
-/**
- * Analyse un chemin et dit de quelle page il s'agit.
- *
- * @returns {{kind:'home'|'page'|'media'|'unknown', locale:string, localeInPath:boolean,
- *            pageKey?:string, mediaKind?:string, slug?:string}}
- */
 export function resolvePath(pathname, acceptLanguage = '') {
     const segments = pathname.split('/').filter(Boolean).map(decodeURIComponent);
 
@@ -192,7 +141,6 @@ export function resolvePath(pathname, acceptLanguage = '') {
     return { kind: 'unknown', locale, localeInPath };
 }
 
-/** Langue déduite de l'en-tête `Accept-Language`, pour la racine du site. */
 export function negotiateLocale(acceptLanguage = '') {
     const ranked = String(acceptLanguage)
         .split(',')
