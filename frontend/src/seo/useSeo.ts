@@ -7,10 +7,7 @@ import {
   type Locale, type MediaKind, type PageKey,
 } from './config'
 
-/**
- * Identité d'une page indépendamment de la langue : c'est ce qui permet de
- * construire les 5 URL équivalentes d'une même page pour les balises hreflang.
- */
+// Identité d'une page indépendamment de la langue, pour construire les URL équivalentes (hreflang).
 export type SeoTarget =
   | { type: 'home' }
   | { type: 'page'; key: PageKey }
@@ -26,46 +23,24 @@ const pathFor = (target: SeoTarget, locale: Locale): string => {
 
 export interface SeoOptions {
   target: MaybeRefOrGetter<SeoTarget>
-  /** Titre de la page, sans le nom du site (ajouté automatiquement). */
   title: MaybeRefOrGetter<string>
-  /** Meta description : 140-160 caractères, elle est tronquée par Google au-delà. */
-  description: MaybeRefOrGetter<string>
-  /** Image de partage (OG/Twitter), absolue ou relative au site. */
+  description: MaybeRefOrGetter<string> // 140-160 caractères, tronquée par Google au-delà
   image?: MaybeRefOrGetter<string | undefined>
-  /** `true` sur tout ce qui est privé, dupliqué ou sans valeur de recherche. */
   noindex?: MaybeRefOrGetter<boolean>
-  /** Blocs JSON-LD (schema.org) injectés dans le `<head>`. */
   jsonLd?: MaybeRefOrGetter<object[] | undefined>
-  /** `article` pour un billet de blog, `website` sinon. */
   ogType?: MaybeRefOrGetter<string>
 }
 
-/**
- * Bannière de partage par défaut, dans la langue de la page.
- * Générée par `npm run og:image` (voir `scripts/generate-og-image.mjs`).
- */
+// Bannière de partage par défaut, dans la langue de la page.
 const defaultOgImage = (locale: Locale) => `/og-default-${locale}.png`
 
-/**
- * Nonce CSP posé par le rendu serveur (`api/seo/security.js`).
- *
- * La politique de sécurité interdit les scripts inline sans nonce : sans lui,
- * les blocs JSON-LD reposés lors d'une navigation interne seraient bloqués par
- * le navigateur, et le site perdrait ses données structurées en cours de visite.
- * Lu une seule fois : la valeur ne change pas pendant la vie du document.
- */
+// Nonce CSP posé par le rendu serveur (api/seo/security.js) ; lu une fois, ne change pas.
 const cspNonce = (() => {
   if (typeof document === 'undefined') return undefined
   return document.querySelector<HTMLMetaElement>('meta[name="csp-nonce"]')?.content || undefined
 })()
 
-/**
- * Pose l'intégralité des signaux SEO d'une page : titre, description, canonical,
- * alternates hreflang pour les 5 langues, Open Graph, Twitter Card, JSON-LD, et
- * l'attribut `lang` du `<html>`.
- *
- * À appeler une fois par page, dans le `setup()`.
- */
+// Pose l'intégralité des signaux SEO d'une page. À appeler une fois par page, dans le setup().
 export function useSeo(options: SeoOptions) {
   const { locale } = useI18n()
 
@@ -79,8 +54,7 @@ export function useSeo(options: SeoOptions) {
 
   const fullTitle = computed(() => {
     const raw = toValue(options.title)?.trim() || SITE_NAME
-    // Le titre de l'accueil porte déjà la marque : on évite « Ohara Tracker | Ohara Tracker »
-    return raw.includes(SITE_NAME) ? raw : `${raw} | ${SITE_NAME}`
+    return raw.includes(SITE_NAME) ? raw : `${raw} | ${SITE_NAME}` // évite "Ohara Tracker | Ohara Tracker"
   })
 
   const description = computed(() => toValue(options.description) ?? '')
@@ -94,11 +68,7 @@ export function useSeo(options: SeoOptions) {
   useHead(computed(() => {
     const loc = currentLocale.value
 
-    // Une balise alternate par langue + `x-default` pour les visiteurs dont la
-    // langue n'est pas couverte. Google exige que chaque page se cite elle-même.
-    //
-    // Le type de unhead pour `rel: 'alternate'` vise le cas des flux RSS et
-    // réclame un `type` ; les alternates de langue n'en ont pas, d'où le cast.
+    // Cast nécessaire : le type unhead pour rel:'alternate' vise les flux RSS et réclame un `type`.
     const alternates = (noindex.value
       ? []
       : [
@@ -127,14 +97,11 @@ export function useSeo(options: SeoOptions) {
         { name: 'description', content: description.value },
         {
           name: 'robots',
-          // `max-image-preview:large` autorise la grande vignette dans les résultats,
-          // décisif sur un catalogue où la couverture fait le clic.
           content: noindex.value
             ? 'noindex, nofollow'
             : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
         },
 
-        // Open Graph — aperçu sur Discord, WhatsApp, Facebook, LinkedIn
         { property: 'og:site_name', content: SITE_NAME },
         { property: 'og:type', content: toValue(options.ogType) || 'website' },
         { property: 'og:title', content: fullTitle.value },
@@ -147,7 +114,6 @@ export function useSeo(options: SeoOptions) {
           content: OG_LOCALE[l],
         })),
 
-        // Twitter/X — `summary_large_image` donne la carte pleine largeur
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: fullTitle.value },
         { name: 'twitter:description', content: description.value },
@@ -155,8 +121,7 @@ export function useSeo(options: SeoOptions) {
         ...(TWITTER_HANDLE ? [{ name: 'twitter:site', content: TWITTER_HANDLE }] : []),
       ],
       script: jsonLd.map((block, i) => ({
-        // `key` stable : sans ça unhead accumulerait les blocs à chaque navigation
-        key: `ld-${i}`,
+        key: `ld-${i}`, // stable, sinon unhead accumule les blocs à chaque navigation
         type: 'application/ld+json',
         ...(cspNonce ? { nonce: cspNonce } : {}),
         innerHTML: JSON.stringify(block),
