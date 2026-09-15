@@ -1,13 +1,11 @@
 import axios from 'axios';
 import authHeader from './auth-header';
-
-const getApiBase = (): string =>
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`;
+import { API_BASE } from './api';
 
 class SubscriptionService {
   async createCheckoutSession(plan: 'lite' | 'pro'): Promise<{ url: string }> {
     const response = await axios.post(
-      `${getApiBase()}/stripe/create-checkout-session`,
+      `${API_BASE}/stripe/create-checkout-session`,
       { plan },
       { headers: authHeader() }
     );
@@ -16,7 +14,7 @@ class SubscriptionService {
 
   async createPlanChangeSession(plan: 'lite' | 'pro'): Promise<{ url: string }> {
     const response = await axios.post(
-      `${getApiBase()}/stripe/create-plan-change-session`,
+      `${API_BASE}/stripe/create-plan-change-session`,
       { plan },
       { headers: authHeader() }
     );
@@ -25,7 +23,7 @@ class SubscriptionService {
 
   async createPortalSession(): Promise<{ url: string }> {
     const response = await axios.post(
-      `${getApiBase()}/stripe/create-portal-session`,
+      `${API_BASE}/stripe/create-portal-session`,
       {},
       { headers: authHeader() }
     );

@@ -1,7 +1,6 @@
 import type { AppNotification } from '../types/index'
 
-const getApiBase = (): string =>
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+import { API_BASE } from './api'
 
 class NotificationService {
   async getNotifications(token: string, opts: { unreadOnly?: boolean; limit?: number } = {}): Promise<AppNotification[]> {
@@ -10,7 +9,7 @@ class NotificationService {
     if (opts.limit) params.set('limit', String(opts.limit))
     const query = params.toString()
 
-    const response = await fetch(`${getApiBase()}/notifications${query ? `?${query}` : ''}`, {
+    const response = await fetch(`${API_BASE}/notifications${query ? `?${query}` : ''}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (!response.ok) throw new Error(`Erreur notifications: ${response.status}`)
@@ -18,7 +17,7 @@ class NotificationService {
   }
 
   async getUnreadCount(token: string): Promise<number> {
-    const response = await fetch(`${getApiBase()}/notifications/unread-count`, {
+    const response = await fetch(`${API_BASE}/notifications/unread-count`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (!response.ok) throw new Error(`Erreur unread-count: ${response.status}`)
@@ -27,7 +26,7 @@ class NotificationService {
   }
 
   async markAsRead(token: string, id: number): Promise<void> {
-    const response = await fetch(`${getApiBase()}/notifications/${id}/read`, {
+    const response = await fetch(`${API_BASE}/notifications/${id}/read`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -35,7 +34,7 @@ class NotificationService {
   }
 
   async markAllAsRead(token: string): Promise<void> {
-    const response = await fetch(`${getApiBase()}/notifications/read-all`, {
+    const response = await fetch(`${API_BASE}/notifications/read-all`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -43,7 +42,7 @@ class NotificationService {
   }
 
   async deleteNotification(token: string, id: number): Promise<void> {
-    const response = await fetch(`${getApiBase()}/notifications/${id}`, {
+    const response = await fetch(`${API_BASE}/notifications/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -51,7 +50,7 @@ class NotificationService {
   }
 
   async subscribePush(token: string, subscription: PushSubscription): Promise<void> {
-    const response = await fetch(`${getApiBase()}/notifications/subscribe`, {
+    const response = await fetch(`${API_BASE}/notifications/subscribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +62,7 @@ class NotificationService {
   }
 
   async unsubscribePush(token: string, endpoint: string): Promise<void> {
-    const response = await fetch(`${getApiBase()}/notifications/subscribe`, {
+    const response = await fetch(`${API_BASE}/notifications/subscribe`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import { MEDIA_SEGMENTS, PAGE_SEGMENTS } from './routeTranslations.js';
-import { urlset, urlEntry, abs } from './xml.js';
+import { urlset, urlEntry, abs, xmlSanitize } from './xml.js';
+import { getCatalogForSitemap } from './catalog.js';
 
  const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
  const DEFAULT_LOCALE = 'en';
@@ -48,9 +49,9 @@ async function sitemap(callback) {
             const chunks = Math.max(1, Math.ceil(catalog.length / perChunk));
     
             const entries = [
-                '  <sitemap><loc>' + xml(abs('/sitemap-pages.xml')) + '</loc></sitemap>',
+                '  <sitemap><loc>' + xmlSanitize(abs('/sitemap-pages.xml')) + '</loc></sitemap>',
                 ...Array.from({ length: chunks }, (_, i) =>
-                    `  <sitemap><loc>${xml(abs(`/sitemap-media-${i + 1}.xml`))}</loc></sitemap>`),
+                    `  <sitemap><loc>${xmlSanitize(abs(`/sitemap-media-${i + 1}.xml`))}</loc></sitemap>`),
             ].join('\n');
             
             const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -121,10 +122,7 @@ function robotsTxt(callback) {
             'User-agent: *',
             'Allow: /',
             ...privatePaths,
-            'Disallow: /auth/',
-            'Disallow: /client/',
-            'Disallow: /stripe/',
-            'Disallow: /notifications/',
+            'Disallow: /api/',
             '',
             `Sitemap: ${abs('/sitemap.xml')}`,
             '',

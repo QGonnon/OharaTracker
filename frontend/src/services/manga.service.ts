@@ -1,15 +1,14 @@
 import { slugCandidates } from '../utils'
 import type { Manga, MediaKind } from '../types/index'
 
-const getApiBase = (): string =>
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+import { API_BASE, CDN_BASE } from './api'
 
 // Sources dont la présence dans `sites` indique un anime plutôt qu'un manga/lecture
 const ANIME_SOURCES = ['moviedb', 'anime-sama']
 
 class MangaService {
   async getAll(): Promise<Manga[]> {
-    const response = await fetch(`${getApiBase()}/chapters`)
+    const response = await fetch(`${API_BASE}/chapters`)
     if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
     const chapters = (await response.json()) || []
 
@@ -21,7 +20,7 @@ class MangaService {
 
   // Catalogue allégé (une entrée par œuvre, sans les chapitres), pour les écrans de listing.
   async getLight(): Promise<Manga[]> {
-    const response = await fetch(`${getApiBase()}/chapters/light`)
+    const response = await fetch(`${API_BASE}/chapters/light`)
     if (!response.ok) throw new Error(`Erreur catalogue: ${response.status}`)
     const rows = (await response.json()) || []
     return (Array.isArray(rows) ? rows : Object.values(rows))
@@ -30,7 +29,7 @@ class MangaService {
   }
 
   async getBySlug(slug: string): Promise<Manga | null> {
-    const response = await fetch(`${getApiBase()}/chapters/slug/${encodeURIComponent(slug)}`)
+    const response = await fetch(`${API_BASE}/chapters/slug/${encodeURIComponent(slug)}`)
     if (response.status === 404) return null
     if (!response.ok) throw new Error(`Erreur oeuvre: ${response.status}`)
     const work = await response.json()
@@ -46,14 +45,14 @@ class MangaService {
 
   // Chapitres/épisodes connus pour une entrée de bibliothèque donnée, toutes sources confondues
   async getChaptersForLibrary(idLibrary: number): Promise<{ chapter: string; url: string; site: string }[]> {
-    const response = await fetch(`${getApiBase()}/chapters/${idLibrary}`)
+    const response = await fetch(`${API_BASE}/chapters/${idLibrary}`)
     if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
     return response.json()
   }
 
   // Le cover est soit hébergé localement (coverPath, servi via /cdn), soit une URL externe (coverUrl)
   getCoverUrl(manga: Pick<Manga, 'coverPath' | 'coverUrl' | 'title'>): string {
-    if (manga.coverPath) return `${getApiBase()}/cdn/${manga.coverPath}`
+    if (manga.coverPath) return `${CDN_BASE}/${manga.coverPath}`
     if (manga.coverUrl) return manga.coverUrl
     return '/cover-placeholder.svg' // évite une image externe aléatoire, mauvaise pour LCP et og:image
   }

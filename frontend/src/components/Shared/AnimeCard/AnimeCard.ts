@@ -5,6 +5,7 @@ import { defineComponent } from "vue";
 import Card from 'primevue/card';
 import Button from 'primevue/button'
 import type { Manga } from '../../../types/index'
+import { CDN_BASE } from '../../../services/api'
 
 export default defineComponent({
     props: {
@@ -27,9 +28,8 @@ export default defineComponent({
         const fallbackImage = ref('/cover-placeholder.svg')
 
         const coverSrc = computed(() => {
-            const apiBase = import.meta.env.VITE_API_URL;
             if ((manga as any).coverPath) {
-                return `${apiBase}/cdn/${(manga as any).coverPath}`;
+                return `${CDN_BASE}/${(manga as any).coverPath}`;
             }
             if ((manga as any).coverUrl) return (manga as any).coverUrl;
             return fallbackImage.value;

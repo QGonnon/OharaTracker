@@ -22,56 +22,71 @@ const preconnectApi = (apiUrl: string): Plugin => ({
 })
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    vue(),
-    tailwindcss(),
-    preconnectApi(loadEnv(mode, process.cwd(), 'VITE_').VITE_API_URL ?? ''),
-    VitePWA({
-      // Garde notre propre sw.js (push notifications) ; Workbox y injecte juste le precache.
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.js',
-      injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
-      },
-      injectRegister: false, // enregistrement du SW déjà fait manuellement dans main.ts
-      includeAssets: ['favicon.png', 'apple-touch-icon.png'],
-      manifest: {
-        name: 'Ohara Tracker',
-        short_name: 'Ohara Tracker',
-        description: 'Suivi de bibliothèque manga/anime : chapitres, épisodes et notifications.',
-        lang: 'fr',
-        start_url: '/',
-        scope: '/',
-        display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#7c3aed',
-        icons: [
-          { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: '/pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-        ],
-      },
-      devOptions: {
-        enabled: true, // active le SW aussi en `vite dev`, pratique pour tester l'offline
-        type: 'module',
-      },
-    }),
-  ],
-  build: {
-    sourcemap: true, // pas servies aux visiteurs, mais rendent les erreurs de prod lisibles
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
 
-    // Utilisé par api/seo/spa.js pour précharger le chunk de la page demandée dès le HTML.
-    manifest: true,
-    rollupOptions: {
-      output: {
-        // PrimeVue n'est délibérément PAS regroupé ici : le nommer forcerait Rollup à inclure
-        // son barrel entier (~680 Ko) au lieu des imports profonds (primevue/button) réels.
-        manualChunks: {
-          vue: ['vue', 'vue-router', 'pinia', 'vue-i18n'],
+  // Reproduit en dev le montage single-origin de api/app.js.
+  const toApi = { target: env.VITE_API_URL, changeOrigin: true }
+
+  return {
+    plugins: [
+      vue(),
+      tailwindcss(),
+      preconnectApi(env.VITE_API_URL ?? ''),
+      VitePWA({
+        // Garde notre propre sw.js (push notifications) ; Workbox y injecte juste le precache.
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.js',
+        injectManifest: {
+          globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
+        },
+        injectRegister: false, // enregistrement du SW déjà fait manuellement dans main.ts
+        includeAssets: ['favicon.png', 'apple-touch-icon.png'],
+        manifest: {
+          name: 'Ohara Tracker',
+          short_name: 'Ohara Tracker',
+          description: 'Suivi de bibliothèque manga/anime : chapitres, épisodes et notifications.',
+          lang: 'fr',
+          start_url: '/',
+          scope: '/',
+          display: 'standalone',
+          background_color: '#ffffff',
+          theme_color: '#7c3aed',
+          icons: [
+            { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+            { src: '/pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          ],
+        },
+        devOptions: {
+          enabled: true, // active le SW aussi en `vite dev`, pratique pour tester l'offline
+          type: 'module',
+        },
+      }),
+    ],
+    server: {
+      proxy: {
+        '/api': toApi,
+        '/cdn': toApi,
+        '/robots.txt': toApi,
+        '^/sitemap.*\\.xml$': toApi,
+      },
+    },
+    build: {
+      sourcemap: true, // pas servies aux visiteurs, mais rendent les erreurs de prod lisibles
+
+      // Utilisé par api/seo/spa.js pour précharger le chunk de la page demandée dès le HTML.
+      manifest: true,
+      rollupOptions: {
+        output: {
+          // PrimeVue n'est délibérément PAS regroupé ici : le nommer forcerait Rollup à inclure
+          // son barrel entier (~680 Ko) au lieu des imports profonds (primevue/button) réels.
+          manualChunks: {
+            vue: ['vue', 'vue-router', 'pinia', 'vue-i18n'],
+          },
         },
       },
     },
-  },
-}))
+  }
+})

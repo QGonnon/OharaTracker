@@ -1,7 +1,8 @@
 import { DEFAULT_LOCALE } from './seoRoutes.js';
+import { LOCALES } from './seoRoutes.js';
 
 // Échappement XML : un titre contenant `&` ou `<` casserait le sitemap.
-const xml = value => String(value ?? '')
+export const xmlSanitize = value => String(value ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -11,16 +12,16 @@ const xml = value => String(value ?? '')
 // Une entrée <url> avec ses alternates hreflang pour chaque langue.
 export const urlEntry = ({ pathFor, lastmod, changefreq, priority }) => LOCALES.map(locale => {
     const alternates = [
-        ...LOCALES.map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${xml(abs(pathFor(l)))}"/>`),
-        `    <xhtml:link rel="alternate" hreflang="x-default" href="${xml(abs(pathFor(DEFAULT_LOCALE)))}"/>`,
+        ...LOCALES.map(l => `    <xhtml:link rel="alternate" hreflang="${l}" href="${xmlSanitize(abs(pathFor(l)))}"/>`),
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlSanitize(abs(pathFor(DEFAULT_LOCALE)))}"/>`,
     ].join('\n');
 
     return [
         '  <url>',
-        `    <loc>${xml(abs(pathFor(locale)))}</loc>`,
-        lastmod ? `    <lastmod>${xml(lastmod)}</lastmod>` : null,
-        changefreq ? `    <changefreq>${changefreq}</changefreq>` : null,
-        priority ? `    <priority>${priority}</priority>` : null,
+        `    <loc>${xmlSanitize(abs(pathFor(locale)))}</loc>`,
+        lastmod ? `    <lastmod>${xmlSanitize(lastmod)}</lastmod>` : null,
+        changefreq ? `    <changefreq>${xmlSanitize(changefreq)}</changefreq>` : null,
+        priority ? `    <priority>${xmlSanitize(priority)}</priority>` : null,
         alternates,
         '  </url>',
     ].filter(Boolean).join('\n');

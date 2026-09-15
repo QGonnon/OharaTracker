@@ -3,27 +3,16 @@ import routes from './routes/index.js';
 import seoRoutes from './routes/seo.js';
 import stripeWebhookHandler from './routes/stripeWebhook.js';
 import { securityHeaders, cspNonce, authRateLimit, apiRateLimit } from './seo/security.js';
-import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config();
 
-const frontendUrl = process.env.SITE_URL;
-
 function startApp(){
     const app = express();
     const cdnPath = path.resolve(process.cwd(), '../cdn');
-
-    const corsOptions = {
-        origin: [frontendUrl, 'http://localhost:3000'],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization']
-    };
-
-    app.use(cors(corsOptions));
+    const distPath = path.resolve(process.cwd(), '../frontend/dist');
 
     // Le nonce doit exister avant que la CSP ne soit calculée : il y est référencé.
     app.use(cspNonce);
@@ -45,12 +34,22 @@ function startApp(){
         immutable: true,
     }));
 
-    app.use('/auth/signin', authRateLimit);
-    app.use('/auth/signup', authRateLimit);
-    app.use('/auth/google', authRateLimit);
-    app.use('/auth/change-password', authRateLimit);
+    app.use('/api/auth/signin', authRateLimit);
+    app.use('/api/auth/signup', authRateLimit);
+    app.use('/api/auth/google', authRateLimit);
+    app.use('/api/auth/change-password', authRateLimit);
 
-    app.use('/', apiRateLimit, routes)
+    app.use('/api', apiRateLimit, routes)
+
+    // Avant le fallback SPA : un endpoint inconnu doit répondre en JSON, pas en HTML.
+    app.use('/api', (_req, res) => res.status(404).json({ message: 'Endpoint introuvable' }));
+
+    // En dev c'est Vite qui sert le front et proxifie /api, /cdn et les fichiers SEO.
+    if (process.env.NODE_ENV === 'production') {
+        app.use('/assets', express.static(path.join(distPath, 'assets'), { maxAge: '1y', immutable: true }));
+        app.use(express.static(distPath, { index: false }));
+        app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
+    }
 
     app.listen(3000, () => {
         console.log('🔧 Serveur API démarré sur le port 3000');

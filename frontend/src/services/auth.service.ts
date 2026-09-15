@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { API_BASE } from './api';
 
-const API_URL = import.meta.env.VITE_API_URL + '/auth/';
+const API_URL = `${API_BASE}/auth/`;
 
 class AuthService {
   login(user: any) {
