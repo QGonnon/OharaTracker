@@ -11,7 +11,7 @@ import path from 'path';
 
 dotenv.config();
 
-const frontendUrl = process.env.APP_URL + ':' + process.env.APP_PORT;
+const frontendUrl = process.env.SITE_URL;
 
 function startApp(){
     const app = express();
