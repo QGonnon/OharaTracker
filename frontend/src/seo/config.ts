@@ -29,8 +29,7 @@ export const isLocale = (value: unknown): value is Locale =>
 
 // Fixée via VITE_SITE_URL en prod ; retombe sur l'origine courante en dev.
 export const SITE_URL: string = (
-  import.meta.env.VITE_SITE_URL ||
-  (typeof window !== 'undefined' ? window.location.origin : 'https://oharatracker.com')
+  import.meta.env.VITE_SITE_URL
 ).replace(/\/+$/, '')
 
 export const SITE_NAME = 'Ohara Tracker'

@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-const siteUrl = () => (process.env.SITE_URL || process.env.APP_URL || 'https://oharatracker.com').replace(/\/+$/, '');
+const siteUrl = () => (process.env.SITE_URL || 'https://oharatracker.com').replace(/\/+$/, '');
 
 const abs = path => `${siteUrl()}${path}`;
 

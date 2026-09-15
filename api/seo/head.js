@@ -10,7 +10,7 @@ const SITE_NAME = 'Ohara Tracker';
 const OG_LOCALE = { fr: 'fr_FR', en: 'en_US', de: 'de_DE', it: 'it_IT', es: 'es_ES' };
 
 export const siteUrl = () =>
-    (process.env.SITE_URL || process.env.APP_URL || 'https://oharatracker.com').replace(/\/+$/, '');
+    (process.env.SITE_URL || 'https://oharatracker.com').replace(/\/+$/, '');
 
 const abs = p => `${siteUrl()}${p}`;
 

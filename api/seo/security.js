@@ -19,7 +19,6 @@ const toOrigin = raw => {
 const apiOrigins = () => [
     toOrigin(process.env.PUBLIC_API_URL),
     toOrigin(process.env.SITE_URL),
-    toOrigin(process.env.APP_URL),
 ].filter((origin, i, all) => origin && all.indexOf(origin) === i);
 
 // Nonce par requête pour les blocs JSON-LD, requis par la CSP stricte plutôt que 'unsafe-inline'.
