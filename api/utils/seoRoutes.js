@@ -5,8 +5,6 @@ import { getCatalogForSitemap } from './catalog.js';
  const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
  const DEFAULT_LOCALE = 'en';
 
- { MEDIA_SEGMENTS, PAGE_SEGMENTS };
-
 // Pages de compte (connexion, profil...) volontairement absentes : elles sont en noindex.
  const INDEXABLE_PAGES = [
     { key: 'discovery', priority: '0.9', changefreq: 'daily' },
@@ -30,15 +28,15 @@ const PRIVATE_PAGE_KEYS = ['login', 'register', 'profile', 'library', 'notificat
 const CHUNK = 10000; // max URL par fichier sitemap (limite du protocole : 50 000)
 
 
-async function homePath(locale) {
+function homePath(locale) {
     return `/${locale}`;
 }
 
-async function pagePath(key, locale) {
+function pagePath(key, locale) {
     return `/${locale}/${PAGE_SEGMENTS[key][locale]}`;
 }
 
-async function mediaPath(kind, slug, locale) {
+function mediaPath(kind, slug, locale) {
     return `/${locale}/${MEDIA_SEGMENTS[kind][locale]}/${encodeURIComponent(slug)}`;
 }
 
@@ -135,7 +133,7 @@ function robotsTxt(callback) {
 }
 
 export {
-    LOCALES, DEFAULT_LOCALE, INDEXABLE_PAGES, PAGE_SEGMENTS, PRIVATE_PAGE_KEYS,
+    LOCALES, DEFAULT_LOCALE, INDEXABLE_PAGES, MEDIA_SEGMENTS, PAGE_SEGMENTS, PRIVATE_PAGE_KEYS,
     homePath, pagePath, mediaPath, sitemap, sitemapPages, sitemapMedia, robotsTxt,
 }
 
