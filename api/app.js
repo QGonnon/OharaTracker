@@ -2,7 +2,6 @@ import express from 'express';
 import routes from './routes/index.js';
 import seoRoutes from './routes/seo.js';
 import stripeWebhookHandler from './routes/stripeWebhook.js';
-import { createSpaMiddleware } from './seo/spa.js';
 import { securityHeaders, cspNonce, authRateLimit, apiRateLimit } from './seo/security.js';
 import cors from 'cors';
 import compression from 'compression';
@@ -52,10 +51,6 @@ function startApp(){
     app.use('/auth/change-password', authRateLimit);
 
     app.use('/', apiRateLimit, routes)
-
-    // Absent si frontend/dist n'existe pas (dev : Vite sert le frontend).
-    const spa = createSpaMiddleware();
-    if (spa) app.use(spa);
 
     app.listen(3000, () => {
         console.log('🔧 Serveur API démarré sur le port 3000');
