@@ -7,7 +7,7 @@ import { authenticate } from '../utils/auth.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const FRONTEND_URL = `${process.env.APP_URL}:${process.env.APP_PORT}`;
+const FRONTEND_URL = `${process.env.SITE_URL}`;
 
 const PLAN_PRICE_IDS = {
     lite: process.env.STRIPE_PRICE_ID_LITE,

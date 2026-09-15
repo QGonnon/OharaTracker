@@ -1,0 +1,27 @@
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: #4338ca;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: -3px;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+#main-content {
+  min-height: 100vh;
+}

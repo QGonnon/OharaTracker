@@ -1,14 +1,5 @@
-// Miroir exact de `frontend/src/utils.ts`.
-//
-// Le slug d'une œuvre est calculé à partir de son titre, jamais stocké en base.
-// Il doit donc être produit à l'identique côté client et côté serveur, sinon une
-// URL générée par le sitemap ne résoudrait pas dans l'application (et inversement).
-// Toute modification ici doit être répercutée dans `frontend/src/utils.ts`.
-
-const TRANSLITERATIONS = {
-    'æ': 'ae', 'œ': 'oe', 'ø': 'o', 'đ': 'd', 'ð': 'd', 'þ': 'th', 'ß': 'ss', 'ł': 'l', 'ı': 'i',
-    '·': '-', '・': '-', '×': 'x', '＆': 'and', '&': 'and', '@': 'at',
-};
+// Miroir exact de `frontend/src/utils.ts` — le slug doit être identique côté client et serveur.
+import { TRANSLITERATIONS } from './transliterations.js';
 
 /** Ancien slug : supprimait tout caractère non-ASCII. Conservé pour résoudre les URL déjà partagées. */
 export function slugifyLegacy(text) {

@@ -9,9 +9,7 @@ import { organizationJsonLd, webApplicationJsonLd, websiteJsonLd } from "../../.
 import { DEFAULT_LOCALE, isLocale, pagePath, type Locale } from "../../../seo/config";
 import { localeHome, localePath } from "../../../seo/localePath";
 
-// Versions réduites à 760 px générées par `npm run optimize:screenshots`.
-// Les originales (1076-1261 px) étaient affichées entre 175 et 350 px : 266 Ko
-// étaient téléchargés pour rien. Les sources restent dans le dépôt à côté.
+// Versions réduites générées par `npm run optimize:screenshots` (sources conservées à côté).
 const libraryImg   = new URL('../../../assets/screenshots/library-preview.webp',   import.meta.url).href
 const discoveryImg = new URL('../../../assets/screenshots/discovery-preview.webp',  import.meta.url).href
 const trackingImg  = new URL('../../../assets/screenshots/tracking-preview.webp',   import.meta.url).href
@@ -29,42 +27,32 @@ export default defineComponent({
       isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
     );
 
-    // L'accueil porte les trois entités racines du site. Elles ne sont déclarées
-    // qu'ici : les autres pages s'y réfèrent par `@id` au lieu de les redupliquer.
+    // Les autres pages référencent ces entités par @id plutôt que de les redupliquer.
     useSeo({
       target: { type: 'home' },
       title: computed(() => t('seo.home.title')),
       description: computed(() => t('seo.home.description')),
       jsonLd: computed(() => [
         organizationJsonLd(currentLocale.value, t('seo.home.description')),
-        // `SearchAction` : rend le site éligible à la barre de recherche Google
         websiteJsonLd(currentLocale.value, pagePath('search', currentLocale.value)),
         webApplicationJsonLd(currentLocale.value, t('seo.home.description')),
       ]),
     });
 
-    // Liens internes canoniques (préfixés par la langue) : un lien direct vers
-    // l'URL finale évite une redirection et transmet mieux le PageRank.
     const registerPath = computed(() => localePath('register'));
     const pricingPath = computed(() => localePath('pricing'));
     const discoveryPath = computed(() => localePath('discovery'));
     const homeLink = computed(() => localeHome());
 
-    // ---------------------------------------------------------------------
-    // Lightbox (dialogue modal)
-    // ---------------------------------------------------------------------
-
     const lightboxSrc = ref<string | null>(null)
     const lightboxAlt = ref('')
     const lightboxCloseRef = ref<HTMLElement | null>(null)
-    /** Élément qui avait le focus avant l'ouverture, pour le lui rendre à la fermeture. */
-    let lastFocused: HTMLElement | null = null
+    let lastFocused: HTMLElement | null = null // pour rendre le focus à la fermeture
 
     const openLightbox = async (src: string, alt = '') => {
       lastFocused = document.activeElement as HTMLElement | null
       lightboxSrc.value = src
       lightboxAlt.value = alt
-      // Empêche la page de défiler derrière le dialogue ouvert.
       document.body.style.overflow = 'hidden'
       await nextTick()
       lightboxCloseRef.value?.focus()
@@ -74,17 +62,12 @@ export default defineComponent({
       lightboxSrc.value = null
       lightboxAlt.value = ''
       document.body.style.overflow = ''
-      // Sans cela, le focus repartirait en haut de page et l'utilisateur
-      // perdrait sa position dans la liste des captures.
       lastFocused?.focus()
     }
 
-    /** Le dialogue n'a qu'un élément focusable : Tab y revient toujours. */
     const trapFocus = () => lightboxCloseRef.value?.focus()
 
     const scrollToScreenshots = () => {
-      // Respecte la préférence système « réduire les animations » : un
-      // défilement animé peut être désorientant, voire nauséeux.
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       document.getElementById("screenshots")?.scrollIntoView({
         behavior: reduceMotion ? "auto" : "smooth",
@@ -92,8 +75,6 @@ export default defineComponent({
       });
     };
 
-    // Les statuts étaient codés en dur en français alors que le site sert cinq
-    // langues : ils passent par des clés de traduction.
     const mockItems = [
       { title: "One Piece",      chapter: "1110", statusKey: "home.mock_status_ongoing",  severity: "info"      as const, color: "bg-gradient-to-br from-orange-300 to-orange-500" },
       { title: "Jujutsu Kaisen", chapter: "265",  statusKey: "home.mock_status_finished", severity: "success"   as const, color: "bg-gradient-to-br from-purple-400 to-indigo-600" },

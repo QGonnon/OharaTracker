@@ -7,13 +7,9 @@ import {
   pageSegmentAliases, type Locale, type MediaKind, type PageKey,
 } from '../seo/config'
 
-// L'accueil est importé directement : c'est la page d'entrée la plus fréquente,
-// la charger en différé ajouterait un aller-retour réseau avant le premier rendu.
+// L'accueil est importé directement (page d'entrée la plus fréquente) ; le reste est à la demande.
 import Home from '../components/Features/Home/Home.vue'
 
-// Toutes les autres pages sont chargées à la demande. Sans ça, ouvrir la fiche
-// d'un manga téléchargeait aussi le code des tarifs, du profil, des mentions
-// légales et de la recherche — un seul bundle de 1,4 Mo pour chaque visiteur.
 const MangaInfo = () => import('../components/Features/Mangas/MangaInfo/MangaInfo.vue')
 const Login = () => import('../components/Auth/Login/Login.vue')
 const Register = () => import('../components/Auth/Register/Register.vue')
@@ -24,7 +20,6 @@ const Profile = () => import('../components/Features/User/Profile/Profile.vue')
 const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
 const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
 
-// Pages statiques / footer
 const Pricing = () => import('../components/Features/Static/Pricing/Pricing.vue')
 const Blog = () => import('../components/Features/Static/Blog/Blog.vue')
 const Faq = () => import('../components/Features/Static/Faq/Faq.vue')
@@ -38,31 +33,18 @@ const Terms = () => import('../components/Features/Static/Terms/Terms.vue')
 const Privacy = () => import('../components/Features/Static/Privacy/Privacy.vue')
 const Cookies = () => import('../components/Features/Static/Cookies/Cookies.vue')
 
-/**
- * Préfixe de langue, optionnel dans le pattern pour que les anciennes URL sans
- * préfixe continuent de matcher — le garde `beforeEach` les redirige ensuite
- * vers leur forme canonique préfixée.
- */
+// Optionnel pour que les anciennes URL sans préfixe matchent encore ; beforeEach les redirige.
 const L = ':locale(fr|en|de|it|es)?'
 
 declare module 'vue-router' {
   interface RouteMeta {
-    /** Page réservée aux utilisateurs connectés. */
     requiresAuth?: boolean
-    /** Page qui ne doit jamais être indexée (espace privé, 404, tunnel d'inscription). */
     noindex?: boolean
-    /** Clé de page fixe, source de vérité pour reconstruire l'URL canonique. */
-    pageKey?: PageKey
-    /** Nature d'œuvre déduite du segment d'URL emprunté. */
+    pageKey?: PageKey // source de vérité pour reconstruire l'URL canonique
     mediaKind?: MediaKind
   }
 }
 
-/**
- * Route d'une page fixe : le chemin canonique est celui de la langue de l'URL,
- * et tous les segments des autres langues (plus les anciens chemins) sont
- * acceptés en alias pour être redirigés vers lui.
- */
 const pageRoute = (
   key: PageKey,
   name: string,
@@ -79,7 +61,6 @@ const pageRoute = (
   }
 }
 
-/** Route d'une œuvre, pour une nature donnée et tous ses segments équivalents. */
 const mediaRoute = (kind: MediaKind, name: string): RouteRecordRaw => {
   const segments = MEDIA_SEGMENT_ALIASES[kind]
   return {
@@ -138,8 +119,7 @@ const routes: RouteRecordRaw[] = [
   { path: `/${L}/user/profile`, redirect: to => pathOf('profile', to.params.locale) },
   { path: `/${L}/user/list`, redirect: to => pathOf('library', to.params.locale) },
 
-  // Tout le reste est une vraie 404 : on n'envoie plus le visiteur (ni Google)
-  // sur l'accueil, ce qui produisait un « soft 404 » sur chaque URL morte.
+  // Tout le reste est une vraie 404, pas un soft-404 vers l'accueil.
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
@@ -166,23 +146,14 @@ const router = createRouter({
   },
 })
 
-/**
- * Aligne la langue de l'application sur l'URL, puis force chaque URL vers sa
- * forme canonique : préfixe de langue présent, et segment écrit dans la langue
- * de ce préfixe. Sans ça un même contenu resterait accessible sous plusieurs
- * URL (`/pricing`, `/fr/pricing`, `/fr/tarifs`) — du duplicate content.
- */
+// Force chaque URL vers sa forme canonique, sinon un même contenu serait accessible sous plusieurs URL.
 router.beforeEach(async (to, _from, next) => {
-  // Sur une 404 le paramètre `locale` n'est pas renseigné (la route attrape-tout
-  // n'en déclare pas) : on relit le préfixe dans le chemin pour afficher la page
-  // d'erreur dans la langue que le visiteur avait demandée.
+  // La route 404 attrape-tout ne déclare pas `locale` : on relit le préfixe dans le chemin.
   const urlLocale = isLocale(to.params.locale)
     ? to.params.locale
     : to.path.split('/').filter(Boolean)[0]
 
   const locale = localeOf(urlLocale)
-  // Les traductions sont chargées à la demande : on attend celles de la langue
-  // cible avant d'afficher la page, sinon elle apparaîtrait avec les clés brutes.
   await setLocale(locale)
 
   if (to.name !== 'NotFound') {
@@ -201,7 +172,7 @@ router.beforeEach(async (to, _from, next) => {
     return
   }
 
-  // Un utilisateur déjà connecté n'a rien à faire sur connexion/inscription
+  // Un utilisateur déjà connecté n'a rien à faire sur connexion/inscription.
   if (loggedIn && (to.name === 'Login' || to.name === 'Register')) {
     const redirect = to.query.redirect as string | undefined
     next(redirect && !redirect.includes('/login') && !redirect.includes('/register')
@@ -213,7 +184,6 @@ router.beforeEach(async (to, _from, next) => {
   next()
 })
 
-/** Chemin canonique de la route visée, ou `null` s'il n'y a rien à corriger. */
 function canonicalPathFor(
   to: { path: string; params: Record<string, unknown>; meta: { pageKey?: PageKey; mediaKind?: MediaKind } },
   locale: Locale
@@ -226,8 +196,7 @@ function canonicalPathFor(
     if (!slug) return null
     return `/${locale}/${MEDIA_SEGMENTS[to.meta.mediaKind][locale]}/${encodeURIComponent(slug)}`
   }
-  // Accueil
-  return `/${locale}`
+  return `/${locale}` // accueil
 }
 
 export default router

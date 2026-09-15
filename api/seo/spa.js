@@ -14,29 +14,19 @@ import { renderPreloads } from './preload.js';
 const DIST = path.resolve(process.cwd(), '../frontend/dist');
 const INDEX = path.join(DIST, 'index.html');
 
-/** Type schema.org le plus précis pour chaque nature d'œuvre. */
 const SCHEMA_TYPE = { lecture: 'ComicSeries', serie: 'TVSeries', film: 'Movie' };
 
 const ORG_ID = () => `${siteUrl()}/#organization`;
 
-/** URL absolue de la couverture d'une œuvre, pour l'image de partage. */
 const coverUrl = work => {
     if (work.coverPath) return abs(`/cdn/${work.coverPath}`);
     if (work.coverUrl) return work.coverUrl;
     return null;
 };
 
-/**
- * JSON-LD propre à certaines pages fixes, en plus du fil d'Ariane commun.
- *
- * Le client (`Faq.ts`, `Pricing.ts`) pose déjà ce même balisage via `useSeo`,
- * mais uniquement après exécution du JavaScript. Sans cette version serveur,
- * un crawler qui n'exécute pas JS (Bing, la plupart des extracteurs de rich
- * results) ne voit jamais le `FAQPage` — ce qui viderait de son intérêt SEO la
- * page dédiée. Seule la FAQ est répliquée ici : c'est le seul balisage dont le
- * contenu est entièrement disponible dans les fichiers de traduction (les prix
- * de la page tarifs, eux, dépendent de calculs côté client).
- */
+// Réplique côté serveur le JSON-LD FAQPage que le client pose via useSeo, pour les
+// crawlers qui n'exécutent pas JS. Seule la FAQ est concernée : son contenu est
+// entièrement disponible dans les traductions (contrairement aux prix, calculés côté client).
 function pageSpecificJsonLd(pageKey, locale) {
     if (pageKey !== 'faq') return [];
 
@@ -54,7 +44,6 @@ function pageSpecificJsonLd(pageKey, locale) {
     }];
 }
 
-/** Fil d'Ariane commun à toutes les pages profondes. */
 const breadcrumb = (locale, trail) => ({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -66,19 +55,8 @@ const breadcrumb = (locale, trail) => ({
     })),
 });
 
-/**
- * Sert l'application compilée en injectant, à chaque requête, les balises SEO
- * de la page demandée.
- *
- * Sans ça, un robot qui n'exécute pas JavaScript (Bing, les aperçus Discord,
- * WhatsApp, LinkedIn, X…) ne voit qu'une coquille vide avec un titre unique pour
- * toutes les URL. Google finit par exécuter le JS, mais bien plus tard et sans
- * garantie ; ici titre, description, canonical, hreflang, Open Graph et JSON-LD
- * sont déjà présents dans la réponse HTML initiale.
- *
- * Le middleware corrige aussi ce qu'une SPA ne peut pas corriger seule :
- * les vrais codes 301 et 404, que le routeur client ne peut pas émettre.
- */
+// Sert l'app compilée en injectant les balises SEO par requête, pour les crawlers
+// qui n'exécutent pas JS ; gère aussi les vrais codes 301/404 qu'une SPA ne peut pas émettre.
 export function createSpaMiddleware() {
     if (!fs.existsSync(INDEX)) {
         console.warn(`⚠️  SEO : ${INDEX} introuvable — le rendu serveur des métadonnées est désactivé.`);
@@ -91,35 +69,28 @@ export function createSpaMiddleware() {
 
     const router = express.Router();
 
-    // En production le HTML est lu une fois ; en dev on relit à chaque requête
-    // pour ne pas avoir à redémarrer l'API après un rebuild du frontend.
+    // En dev on relit le fichier à chaque requête pour éviter de redémarrer l'API après un rebuild.
     const cachedTemplate = process.env.NODE_ENV === 'production'
         ? fs.readFileSync(INDEX, 'utf8')
         : null;
     const template = () => cachedTemplate ?? fs.readFileSync(INDEX, 'utf8');
 
-    // Les assets versionnés (hash dans le nom) peuvent être mis en cache un an :
-    // c'est ce qui fait passer les visites répétées de « lent » à « instantané ».
     router.use('/assets', express.static(path.join(DIST, 'assets'), {
         immutable: true,
         maxAge: '1y',
     }));
 
-    // Le reste des fichiers statiques (icônes, manifeste, service worker).
-    // `index: false` pour que la racine passe par la logique SEO ci-dessous.
+    // index: false pour que la racine passe par la logique SEO ci-dessous.
     router.use(express.static(DIST, { index: false, maxAge: '1h' }));
 
     router.get(/.*/, async (req, res, next) => {
-        // On ne traite que les navigations : les requêtes d'API ou d'assets
-        // manquants doivent continuer leur chemin normalement.
         if (!req.accepts('html') || req.method !== 'GET') return next();
 
         try {
             const page = await describe(req);
 
             if (page.redirect) {
-                // 301 et non 302 : la forme canonique est définitive, et c'est ce
-                // qui transfère l'autorité de l'ancienne URL vers la nouvelle.
+                // 301 (permanent) : transfère l'autorité SEO de l'ancienne URL vers la nouvelle.
                 return res.redirect(301, page.redirect);
             }
 
@@ -131,7 +102,6 @@ export function createSpaMiddleware() {
 
             res.status(page.status || 200);
             res.set('Content-Type', 'text/html; charset=utf-8');
-            // Le HTML porte des données de catalogue : court cache partagé, jamais privé.
             res.set('Cache-Control', page.status === 404
                 ? 'no-store'
                 : 'public, max-age=0, s-maxage=300');
@@ -145,14 +115,7 @@ export function createSpaMiddleware() {
     return router;
 }
 
-/**
- * Remplace les métadonnées de repli d'`index.html` par celles de la page.
- *
- * Le template en contient déjà (pour le cas où ce middleware n'est pas actif) :
- * si on se contentait d'ajouter les nôtres, chaque page servirait deux `<title>`
- * et deux `<meta name="description">`. Google n'en retient qu'un, arbitrairement,
- * et les outils d'audit signalent la page comme mal formée.
- */
+// Remplace les métadonnées de repli d'index.html (sinon chaque page servirait un <title> en double).
 function injectHead(template, page) {
     const preloads = page.preloads ? `    ${page.preloads}\n` : '';
     return template
@@ -162,16 +125,11 @@ function injectHead(template, page) {
         .replace(/<html([^>]*)\slang="[^"]*"/i, `<html$1 lang="${page.locale}"`);
 }
 
-/**
- * Décrit la page demandée : quelles métadonnées poser, quel statut HTTP renvoyer,
- * ou vers quelle URL rediriger.
- */
 async function describe(req) {
     const resolved = resolvePath(req.path, req.headers['accept-language']);
     const { locale } = resolved;
 
-    // Une URL sans préfixe de langue n'est pas canonique : on redirige, sinon le
-    // même contenu resterait accessible sous deux adresses.
+    // Une URL sans préfixe de langue n'est pas canonique : on redirige.
     if (!resolved.localeInPath && resolved.kind !== 'unknown') {
         const target = canonicalPath(resolved, negotiateLocale(req.headers['accept-language']));
         if (target) return { redirect: target + queryOf(req) };
@@ -241,13 +199,10 @@ async function describe(req) {
 
     if (resolved.kind === 'media') {
         const work = await getWorkBySlug(resolved.slug);
-
-        // Œuvre inconnue : vraie 404, jamais une redirection vers l'accueil.
         if (!work) return notFound(locale);
 
-        // La nature en base fait autorité sur le segment emprunté : une série
-        // demandée sous `/manga/...` est redirigée vers `/anime/...`, ce qui
-        // supprime le duplicate content entre les cinq anciens segments.
+        // La nature en base fait autorité : une série sous /manga/... est redirigée vers
+        // /anime/..., ce qui évite le duplicate content entre les anciens segments.
         const canonicalSlug = work.canonicalSlug || slugify(work.title);
         const canonical = mediaPath(work.kind, canonicalSlug, locale);
         if (canonical !== req.path) return { redirect: canonical + queryOf(req) };
@@ -310,7 +265,6 @@ const queryOf = req => {
     return i === -1 ? '' : req.originalUrl.slice(i);
 };
 
-/** Chemin canonique correspondant à une URL résolue sans préfixe de langue. */
 function canonicalPath(resolved, locale) {
     if (resolved.kind === 'home') return homePath(locale);
     if (resolved.kind === 'page') return pagePath(resolved.pageKey, locale);
@@ -318,7 +272,6 @@ function canonicalPath(resolved, locale) {
     return null;
 }
 
-/** Coupe une description au dernier mot entier, pour ne pas tronquer en plein mot. */
 function truncate(text, max) {
     const clean = String(text).replace(/\s+/g, ' ').trim();
     if (clean.length <= max) return clean;

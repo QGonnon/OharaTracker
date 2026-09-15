@@ -1,62 +1,16 @@
-// Miroir de `frontend/src/seo/config.ts`.
-//
-// Le sitemap et le rendu serveur des métadonnées doivent produire exactement les
-// mêmes URL que le router du frontend. Toute modification des segments ici doit
-// être répercutée là-bas (et inversement) — `npm run seo:check` à la racine de
-// `api/` vérifie que les deux tables concordent.
+import { MEDIA_SEGMENTS, PAGE_SEGMENTS } from './routeTranslations.js';
+import { urlset, urlEntry, abs, xmlSanitize } from './xml.js';
+import { getCatalogForSitemap } from './catalog.js';
 
-export const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
-export const DEFAULT_LOCALE = 'en';
+ const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
+ const DEFAULT_LOCALE = 'en';
 
-export const MEDIA_SEGMENTS = {
-    lecture: { fr: 'manga', en: 'manga', de: 'manga', it: 'manga', es: 'manga' },
-    serie: { fr: 'anime', en: 'anime', de: 'anime', it: 'anime', es: 'anime' },
-    film: { fr: 'film', en: 'movie', de: 'film', it: 'film', es: 'pelicula' },
-};
-
-export const PAGE_SEGMENTS = {
-    discovery: { fr: 'decouverte', en: 'discover', de: 'entdecken', it: 'scopri', es: 'descubrir' },
-    search: { fr: 'recherche', en: 'search', de: 'suche', it: 'ricerca', es: 'busqueda' },
-    pricing: { fr: 'tarifs', en: 'pricing', de: 'preise', it: 'prezzi', es: 'precios' },
-    blog: { fr: 'blog', en: 'blog', de: 'blog', it: 'blog', es: 'blog' },
-    faq: { fr: 'faq', en: 'faq', de: 'faq', it: 'faq', es: 'faq' },
-    status: { fr: 'statut', en: 'status', de: 'status', it: 'stato', es: 'estado' },
-    changelog: { fr: 'nouveautes', en: 'changelog', de: 'changelog', it: 'novita', es: 'novedades' },
-    suggestions: { fr: 'suggestions', en: 'suggestions', de: 'vorschlaege', it: 'suggerimenti', es: 'sugerencias' },
-    supportedSites: {
-        fr: 'sites-supportes', en: 'supported-sites', de: 'unterstuetzte-seiten',
-        it: 'siti-supportati', es: 'sitios-compatibles',
-    },
-    officialPartners: {
-        fr: 'partenaires-officiels', en: 'official-partners', de: 'offizielle-partner',
-        it: 'partner-ufficiali', es: 'socios-oficiales',
-    },
-    contact: { fr: 'contact', en: 'contact', de: 'kontakt', it: 'contatti', es: 'contacto' },
-    terms: { fr: 'conditions-utilisation', en: 'terms', de: 'nutzungsbedingungen', it: 'termini', es: 'terminos' },
-    privacy: { fr: 'confidentialite', en: 'privacy', de: 'datenschutz', it: 'privacy', es: 'privacidad' },
-    cookies: { fr: 'cookies', en: 'cookies', de: 'cookies', it: 'cookie', es: 'cookies' },
-    login: { fr: 'connexion', en: 'login', de: 'anmelden', it: 'accedi', es: 'iniciar-sesion' },
-    register: { fr: 'inscription', en: 'register', de: 'registrieren', it: 'registrati', es: 'registro' },
-    profile: { fr: 'profil', en: 'profile', de: 'profil', it: 'profilo', es: 'perfil' },
-    library: { fr: 'bibliotheque', en: 'library', de: 'bibliothek', it: 'biblioteca', es: 'biblioteca' },
-    notifications: {
-        fr: 'notifications', en: 'notifications', de: 'benachrichtigungen',
-        it: 'notifiche', es: 'notificaciones',
-    },
-};
-
-/**
- * Pages publiques à faire figurer dans le sitemap, avec leur priorité relative.
- * Les pages de compte (connexion, profil, bibliothèque…) en sont volontairement
- * absentes : elles sont en `noindex`, les lister enverrait un signal contradictoire.
- */
-export const INDEXABLE_PAGES = [
+// Pages de compte (connexion, profil...) volontairement absentes : elles sont en noindex.
+ const INDEXABLE_PAGES = [
     { key: 'discovery', priority: '0.9', changefreq: 'daily' },
     { key: 'search', priority: '0.7', changefreq: 'weekly' },
     { key: 'pricing', priority: '0.8', changefreq: 'monthly' },
     { key: 'blog', priority: '0.7', changefreq: 'weekly' },
-    // La FAQ cible des requêtes en question ("comment annuler mon abonnement")
-    // et est éligible aux questions dépliables dans les résultats : priorité haute.
     { key: 'faq', priority: '0.7', changefreq: 'monthly' },
     { key: 'supportedSites', priority: '0.6', changefreq: 'weekly' },
     { key: 'officialPartners', priority: '0.5', changefreq: 'monthly' },
@@ -69,10 +23,117 @@ export const INDEXABLE_PAGES = [
     { key: 'cookies', priority: '0.2', changefreq: 'yearly' },
 ];
 
-/** Chemins jamais indexables, quel que soit le préfixe de langue. */
-export const PRIVATE_PAGE_KEYS = ['login', 'register', 'profile', 'library', 'notifications'];
+const PRIVATE_PAGE_KEYS = ['login', 'register', 'profile', 'library', 'notifications'];
 
-export const homePath = locale => `/${locale}`;
-export const pagePath = (key, locale) => `/${locale}/${PAGE_SEGMENTS[key][locale]}`;
-export const mediaPath = (kind, slug, locale) =>
-    `/${locale}/${MEDIA_SEGMENTS[kind][locale]}/${encodeURIComponent(slug)}`;
+const CHUNK = 10000; // max URL par fichier sitemap (limite du protocole : 50 000)
+
+
+function homePath(locale) {
+    return `/${locale}`;
+}
+
+function pagePath(key, locale) {
+    return `/${locale}/${PAGE_SEGMENTS[key][locale]}`;
+}
+
+function mediaPath(kind, slug, locale) {
+    return `/${locale}/${MEDIA_SEGMENTS[kind][locale]}/${encodeURIComponent(slug)}`;
+}
+
+async function sitemap(callback) {
+    try {
+            const catalog = await getCatalogForSitemap();
+            const perChunk = Math.floor(CHUNK / LOCALES.length);
+            const chunks = Math.max(1, Math.ceil(catalog.length / perChunk));
+    
+            const entries = [
+                '  <sitemap><loc>' + xmlSanitize(abs('/sitemap-pages.xml')) + '</loc></sitemap>',
+                ...Array.from({ length: chunks }, (_, i) =>
+                    `  <sitemap><loc>${xmlSanitize(abs(`/sitemap-media-${i + 1}.xml`))}</loc></sitemap>`),
+            ].join('\n');
+            
+            const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    ${entries}
+    </sitemapindex>
+    `;
+            return callback(null, xml);
+    } catch (err) {
+        callback(err);
+    }
+}
+
+function sitemapPages(callback) {
+    try{
+        const body = [
+            urlEntry({ pathFor: homePath, changefreq: 'daily', priority: '1.0' }),
+            ...INDEXABLE_PAGES.map(page => urlEntry({
+                pathFor: locale => pagePath(page.key, locale),
+                changefreq: page.changefreq,
+                priority: page.priority,
+            })),
+        ].join('\n');
+        callback(null, urlset(body));
+    } catch (err) {
+        callback(err);
+    }
+}
+
+async function sitemapMedia(chunkParam, callback) {
+    try {
+        const chunk = parseInt(chunkParam, 10);
+        if (!Number.isInteger(chunk) || chunk < 1) {
+            return res.status(404).json({ error: 'Sitemap introuvable' });
+        }
+
+        const catalog = await getCatalogForSitemap();
+        const perChunk = Math.floor(CHUNK / LOCALES.length);
+        const slice = catalog.slice((chunk - 1) * perChunk, chunk * perChunk);
+        if (slice.length === 0) return res.status(404).json({ error: 'Sitemap introuvable' });
+
+        const body = slice.map(work => urlEntry({
+            pathFor: locale => mediaPath(work.kind, work.slug, locale),
+            lastmod: work.lastmod,
+            changefreq: 'weekly',
+            priority: '0.8',
+        })).join('\n');
+
+        callback(null, urlset(body));
+    } catch (err) {
+        callback(err);
+    }
+}
+
+function robotsTxt(callback) {
+    try{
+        if (process.env.NODE_ENV !== 'production') {
+            const body = 'User-agent: *\nDisallow: /\n'
+            callback(null, body);
+            return;
+        }
+    
+        const privatePaths = PRIVATE_PAGE_KEYS.flatMap(key =>
+            LOCALES.map(locale => `Disallow: /${locale}/${PAGE_SEGMENTS[key][locale]}`)
+        );
+    
+        const body = [
+            'User-agent: *',
+            'Allow: /',
+            ...privatePaths,
+            'Disallow: /api/',
+            '',
+            `Sitemap: ${abs('/sitemap.xml')}`,
+            '',
+        ].join('\n')
+        callback(null, body);
+    }
+    catch (err) {
+        callback(err);
+    }
+}
+
+export {
+    LOCALES, DEFAULT_LOCALE, INDEXABLE_PAGES, MEDIA_SEGMENTS, PAGE_SEGMENTS, PRIVATE_PAGE_KEYS,
+    homePath, pagePath, mediaPath, sitemap, sitemapPages, sitemapMedia, robotsTxt,
+}
+

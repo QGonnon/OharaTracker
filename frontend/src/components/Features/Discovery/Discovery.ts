@@ -102,8 +102,6 @@ export default defineComponent({
 
     const fetchMangas = async () => {
       try {
-        // Catalogue allégé : cette page n'affiche que des vignettes, elle n'a
-        // aucun besoin des chapitres de toutes les sources.
         const mangaList = await mangaStore.fetchLight();
         featuredMangas.value = mangaList.filter(m => !isAnime(m));
         featuredAnimes.value = mangaList.filter(m => isAnime(m));
@@ -116,15 +114,10 @@ export default defineComponent({
 
     onMounted(fetchMangas);
 
-    // ---------------------------------------------------------------------
-    // SEO
-    // ---------------------------------------------------------------------
-
     const currentLocale = computed<Locale>(() =>
       isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
     );
 
-    /** Lien canonique localisé vers une œuvre du catalogue. */
     const workPath = (item: Manga): string =>
       localeMedia(mangaStore.resolveMediaKind(null, item.type), slugify(item.title));
 
@@ -133,8 +126,6 @@ export default defineComponent({
       title: computed(() => t('seo.discovery.title')),
       description: computed(() => t('seo.discovery.description')),
       jsonLd: computed(() => [
-        // `ItemList` : décrit la page comme un vrai catalogue et donne à Google
-        // un chemin d'exploration vers chaque fiche, même sans exécuter le JS.
         collectionJsonLd({
           name: t('seo.discovery.title'),
           description: t('seo.discovery.description'),

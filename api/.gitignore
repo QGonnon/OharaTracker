@@ -1,23 +1,13 @@
-# Les règles générales sont à la racine du dépôt ; ce fichier ne garde que ce
-# qui est propre à l'API, pour rester lisible même sorti de son contexte.
-
 node_modules/
 
-# Secrets : identifiants de base, clés Stripe, clés VAPID, secret JWT.
-# Seul `.env.example` est versionné.
 .env
 .env.*
 !.env.example
 
-# Identifiants PostgreSQL utilisés par sequelize-cli.
-# Seul `config.json.example` est versionné.
 sequelize/config/config.json
 
-# Données produites par le scraping
 data/
 
-# Le service de compte n'est pas censé écrire dans le dépôt, mais on s'assure
-# qu'un dump ou un export ne parte pas par accident sur un repo public.
 *.sql
 *.dump
 *.sqlite

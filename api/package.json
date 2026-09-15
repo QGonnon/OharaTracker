@@ -5,11 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node tests/seo.test.mjs && node tests/seo-parity.test.mjs && node tests/security.test.mjs && node tests/spa.test.mjs",
+    "test": "node --test",
     "init": "npx sequelize-cli db:migrate",
     "dev": "concurrently -n API,STRIPE -c blue,magenta --hide STRIPE --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\"",
     "dev:stripe": "concurrently -n API,STRIPE -c blue,magenta --kill-others-on-fail \"node index.js\" \"stripe listen --forward-to localhost:3000/stripe/webhook\"",
-    "test:seo": "node tests/seo.test.mjs && node tests/seo-parity.test.mjs && node tests/security.test.mjs && node tests/spa.test.mjs"
+    "test:seo": "node --test tests/seo.test.mjs tests/seo-parity.test.mjs tests/security.test.mjs tests/spa.test.mjs"
   },
   "keywords": [],
   "author": "",

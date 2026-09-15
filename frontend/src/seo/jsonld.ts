@@ -1,9 +1,5 @@
-// Générateurs de données structurées schema.org.
-//
-// Chaque bloc est un objet JSON-LD prêt à être injecté par `useSeo`. Les `@id`
-// sont stables et absolus pour que Google relie entre elles les entités décrites
-// sur des pages différentes (l'Organization citée par une œuvre est la même que
-// celle décrite sur l'accueil).
+// Générateurs de données structurées schema.org, injectées par useSeo.
+// Les @id sont stables et absolus pour que Google relie les mêmes entités entre pages.
 
 import {
   SITE_NAME, SITE_URL, SOCIAL_PROFILES, absoluteUrl, homePath, pagePath,
@@ -13,7 +9,7 @@ import {
 const ORG_ID = `${SITE_URL}/#organization`
 const SITE_ID = `${SITE_URL}/#website`
 
-/** L'éditeur du site. Référencé par `@id` partout ailleurs plutôt que redupliqué. */
+// Référencé par @id ailleurs plutôt que redupliqué.
 export const organizationJsonLd = (locale: Locale, description: string) => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -30,10 +26,7 @@ export const organizationJsonLd = (locale: Locale, description: string) => ({
   sameAs: SOCIAL_PROFILES,
 })
 
-/**
- * Le site lui-même, avec le `SearchAction` qui rend éligible à la « sitelinks
- * search box » : une barre de recherche Ohara Tracker directement dans Google.
- */
+// SearchAction rend éligible à la sitelinks search box dans les résultats Google.
 export const websiteJsonLd = (locale: Locale, searchPath: string) => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -52,10 +45,7 @@ export const websiteJsonLd = (locale: Locale, searchPath: string) => ({
   },
 })
 
-/**
- * L'application elle-même. `WebApplication` + offre gratuite permet d'apparaître
- * sur les requêtes « application de suivi manga » avec le prix affiché.
- */
+// WebApplication + offre gratuite : apparaît avec le prix affiché sur les requêtes pertinentes.
 export const webApplicationJsonLd = (locale: Locale, description: string) => ({
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -75,10 +65,6 @@ export const webApplicationJsonLd = (locale: Locale, description: string) => ({
   },
 })
 
-/**
- * Fil d'Ariane. Google l'affiche à la place de l'URL brute dans les résultats,
- * ce qui améliore nettement le taux de clic sur les pages profondes.
- */
 export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -90,7 +76,6 @@ export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
   })),
 })
 
-/** Type schema.org le plus précis pour chaque nature d'œuvre du catalogue. */
 const SCHEMA_TYPE: Record<MediaKind, string> = {
   lecture: 'ComicSeries',
   serie: 'TVSeries',
@@ -103,7 +88,6 @@ export interface MediaJsonLdInput {
   description?: string
   author?: string
   artist?: string
-  /** Thèmes/genres, tels que stockés en base (chaîne séparée par des virgules). */
   theme?: string
   image?: string
   url: string
@@ -111,16 +95,10 @@ export interface MediaJsonLdInput {
   status?: string
   totalEpisodes?: number
   totalSeasons?: number
-  /** Note moyenne sur 10 et nombre de votes — omis si l'œuvre n'est pas encore notée. */
   ratingValue?: number | null
   ratingCount?: number | null
 }
 
-/**
- * Une œuvre du catalogue. C'est le bloc qui compte le plus : il permet à Google
- * de comprendre que la page décrit une série précise et de la rattacher à
- * l'entité correspondante du Knowledge Graph.
- */
 export const mediaJsonLd = (input: MediaJsonLdInput) => {
   const genres = (input.theme ?? '')
     .split(',')
@@ -149,8 +127,7 @@ export const mediaJsonLd = (input: MediaJsonLdInput) => {
     if (input.totalSeasons) base.numberOfSeasons = input.totalSeasons
   }
 
-  // `aggregateRating` sans note réelle est une violation des règles Google
-  // (rich result trompeur) : on ne l'émet que si la note existe vraiment.
+  // aggregateRating sans note réelle est un rich result trompeur, sanctionné par Google.
   if (input.ratingValue && input.ratingCount && input.ratingCount > 0) {
     base.aggregateRating = {
       '@type': 'AggregateRating',
@@ -164,7 +141,6 @@ export const mediaJsonLd = (input: MediaJsonLdInput) => {
   return base
 }
 
-/** Page de listing (découverte, résultats) : décrit la collection et ses éléments. */
 export const collectionJsonLd = (input: {
   name: string
   description: string
@@ -191,7 +167,6 @@ export const collectionJsonLd = (input: {
   },
 })
 
-/** FAQ : éligible au rich result « questions dépliables » sous le résultat. */
 export const faqJsonLd = (items: { q: string; a: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -202,7 +177,6 @@ export const faqJsonLd = (items: { q: string; a: string }[]) => ({
   })),
 })
 
-/** Offres payantes de la page tarifs, avec prix affichés dans les résultats. */
 export const pricingJsonLd = (input: {
   locale: Locale
   description: string

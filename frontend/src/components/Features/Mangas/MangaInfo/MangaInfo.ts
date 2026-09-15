@@ -51,17 +51,14 @@ export default defineComponent({
     const isAnime = computed(() => mangaStore.isAnimeType(manga.value))
     const userScore = computed(() => manga.value.userScore ?? null)
 
-    // Totaux épisodes/saisons : valeur BDD si dispo, sinon déduits des chapitres connus
     const seasonEpisodeStats = computed(() => mangaStore.getSeasonEpisodeStats(manga.value))
     const totalEpisodes = computed(() => manga.value.totalEpisodes ?? seasonEpisodeStats.value.totalEpisodes)
     const totalSeasons = computed(() => manga.value.totalSeasons ?? seasonEpisodeStats.value.totalSeasons)
 
-    // Source de vérité unique pour le type de média
     const mediaKind = computed(() =>
       mangaStore.resolveMediaKind(route.name, manga.value.type)
     )
 
-    // Aliases lisibles dans le template
     const isLecture = computed(() => mediaKind.value === 'lecture')
     const isSerie = computed(() => mediaKind.value === 'serie')
     const isFilm = computed(() => mediaKind.value === 'film')
@@ -84,16 +81,12 @@ export default defineComponent({
 
     const coverSrc = computed(() => mangaStore.getCoverUrl(manga.value))
 
-    // Lien vers une oeuvre similaire, sur l'URL canonique localisée : un lien
-    // interne qui pointe directement sur la bonne adresse évite une redirection
-    // et transmet mieux l'autorité à la page liée.
     const similarWorkPath = (item: Manga): string => {
       const kind = mangaStore.resolveMediaKind(null, item.type)
       return localeMedia(kind, slugify(item.title))
     }
 
-    /** `true` quand le slug demandé ne correspond à aucune œuvre : la page est alors une 404. */
-    const notFound = ref(false)
+    const notFound = ref(false) // true si le slug demandé ne correspond à aucune œuvre (404)
 
     const fetchMangas = async () => {
       loading.value = true
@@ -101,17 +94,12 @@ export default defineComponent({
       notFound.value = false
       try {
         const slug = String(route.params.name ?? '')
-
-        // Une seule œuvre est demandée au serveur. Auparavant la page chargeait
-        // tout le catalogue avec les chapitres de toutes les sources — plusieurs
-        // mégaoctets — avant d'en afficher une ligne.
         const found = await mangaStore.fetchBySlug(slug)
 
         if (found) {
           manga.value = found
 
-          // Le slug canonique peut différer de celui de l'URL (ancienne forme,
-          // sans accents) : on corrige l'adresse sans ajouter d'entrée d'historique.
+          // Le slug canonique peut différer de celui de l'URL (ancienne forme, sans accents).
           const canonicalSlug = slugify(found.title)
           if (canonicalSlug && canonicalSlug !== slug) {
             router.replace(localeMedia(mediaKind.value, canonicalSlug))
@@ -133,11 +121,7 @@ export default defineComponent({
       }
     }
 
-    /**
-     * Œuvres similaires : chargées à part, depuis le catalogue allégé, et
-     * seulement une fois la fiche affichée. Elles ne doivent pas retarder le
-     * contenu principal, qui est ce que mesure le LCP.
-     */
+    // Chargées après la fiche pour ne pas retarder le contenu principal (LCP).
     const fetchSimilar = async () => {
       try {
         allMangas.value = await mangaStore.fetchLight()
@@ -151,10 +135,6 @@ export default defineComponent({
       if (!notFound.value) fetchSimilar()
     })
 
-    // ---------------------------------------------------------------------
-    // SEO
-    // ---------------------------------------------------------------------
-
     const currentLocale = computed<Locale>(() =>
       isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
     )
@@ -163,7 +143,6 @@ export default defineComponent({
       manga.value.title ? slugify(manga.value.title) : String(route.params.name ?? '')
     )
 
-    /** Description : le synopsis réel s'il existe, sinon un gabarit traduit. */
     const seoDescription = computed(() => {
       if (notFound.value) return t('errors.not_found.description')
       const synopsis = manga.value.description?.replace(/\s+/g, ' ').trim()
@@ -189,7 +168,6 @@ export default defineComponent({
       ),
       description: seoDescription,
       image: computed(() => (manga.value.title ? coverSrc.value : undefined)),
-      // Une fiche sans œuvre correspondante ne doit jamais entrer dans l'index.
       noindex: computed(() => notFound.value || !manga.value.title),
       ogType: 'article',
       jsonLd: computed(() => {
@@ -206,12 +184,10 @@ export default defineComponent({
             url: `${window.location.origin}${localeMedia(mediaKind.value, canonicalSlug.value, currentLocale.value)}`,
             locale: currentLocale.value,
             status: manga.value.status,
-            // Ces totaux arrivent parfois en chaîne depuis la base : schema.org
-            // attend un nombre, une chaîne invaliderait le rich result.
+            // schema.org attend un nombre ; la base renvoie parfois ces totaux en chaîne.
             totalEpisodes: Number(totalEpisodes.value) || undefined,
             totalSeasons: Number(totalSeasons.value) || undefined,
-            // Pas encore de note agrégée exposée : émettre un `aggregateRating`
-            // vide serait un rich result trompeur, sanctionné par Google.
+            // Pas de note agrégée exposée : un aggregateRating vide serait un rich result trompeur.
             ratingValue: null,
             ratingCount: null,
           }),
@@ -251,7 +227,6 @@ export default defineComponent({
       if (chapterUrl.value) window.open(chapterUrl.value, '_blank')
     }
 
-    // 📖 Ouvrir la page du manga sur la source avec le plus de chapitres
     const openSource = () => {
       const bestKey = mangaStore.getBestSiteKey(manga.value)
       const mangaUrl = bestKey ? manga.value.sites[bestKey]?.mangaUrl : undefined
@@ -313,7 +288,7 @@ export default defineComponent({
         const { chapter, chapterUrl: bestChapterUrl } = mangaStore.getLastChapterInfo(manga.value)
         const { ok, status, data } = await libraryStore.addToLibrary(manga.value.id, {
           title: manga.value.title,
-          type: mediaKind.value, // envoie le nouveau type normalisé
+          type: mediaKind.value,
           author: manga.value.author,
           theme: manga.value.theme,
           status: manga.value.status,

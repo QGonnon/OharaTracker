@@ -13,6 +13,7 @@ import { slugify } from "../../../utils";
 import { useMangaStore } from "../../../store/manga.module";
 import { usePageSeo } from "../../../seo/usePageSeo";
 import { localeMedia } from "../../../seo/localePath";
+import { CDN_BASE } from "../../../services/api";
 
 interface SortOption {
   label: string;
@@ -264,10 +265,8 @@ export default defineComponent({
     },
 
     getCoverUrl(manga: Manga): string {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      
       if (manga.coverPath) {
-        return `${apiBase}/cdn/${manga.coverPath}`;
+        return `${CDN_BASE}/${manga.coverPath}`;
       }
       
       if (manga.coverUrl) {
