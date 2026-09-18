@@ -77,3 +77,31 @@
 .manga-card:nth-child(3) { animation-delay: 0.15s; }
 .manga-card:nth-child(4) { animation-delay: 0.2s; }
 .manga-card:nth-child(5) { animation-delay: 0.25s; }
+
+.back-to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  width: 3rem;
+  height: 3rem;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.25);
+}
+
+.back-to-top-fade-enter-active,
+.back-to-top-fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.back-to-top-fade-enter-from,
+.back-to-top-fade-leave-to {
+  opacity: 0;
+  transform: translateY(0.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top-fade-enter-active,
+  .back-to-top-fade-leave-active {
+    transition: none;
+  }
+}

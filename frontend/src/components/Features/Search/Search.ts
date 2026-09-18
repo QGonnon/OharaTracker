@@ -6,7 +6,6 @@ import Select from "primevue/select";
 import InputNumber from "primevue/inputnumber";
 import Tag from "primevue/tag";
 import ProgressSpinner from "primevue/progressspinner";
-import Paginator from "primevue/paginator";
 import Menu from "../../Shared/Menu/Menu.vue";
 import type { Manga } from "../../../types/index";
 import { slugify } from "../../../utils";
@@ -31,7 +30,6 @@ export default defineComponent({
     InputNumber,
     Tag,
     ProgressSpinner,
-    Paginator,
   },
   setup() {
     usePageSeo('search');
@@ -72,10 +70,12 @@ export default defineComponent({
         { label: "Plus ancien", value: "oldest" },
       ] as SortOption[],
       
-      // Pagination
-      itemsPerPage: 12,
+      // Défilement infini
+      pageSize: 24,
+      visibleCount: 24,
       totalResults: 0,
-      currentPage: 0,
+      scrollObserver: null as IntersectionObserver | null,
+      showBackToTop: false,
     };
   },
   async mounted() {
@@ -98,6 +98,16 @@ export default defineComponent({
     }
     
     this.performSearch();
+    this.setupInfiniteScroll();
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+  },
+  beforeUnmount() {
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+    window.removeEventListener("scroll", this.onScroll);
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   },
   watch: {
     searchQuery() {
@@ -132,8 +142,10 @@ export default defineComponent({
   },
   computed: {
     visibleResults(): Manga[] {
-      const start = this.currentPage * this.itemsPerPage;
-      return this.searchResults.slice(start, start + this.itemsPerPage);
+      return this.searchResults.slice(0, this.visibleCount);
+    },
+    hasMore(): boolean {
+      return this.visibleCount < this.searchResults.length;
     },
   },
   methods: {
@@ -225,8 +237,8 @@ export default defineComponent({
         
         this.searchResults = results;
         this.totalResults = results.length;
-        // Reset to first page when new search performed
-        this.currentPage = 0;
+        // Nouvelle recherche : on repart du haut de la liste.
+        this.visibleCount = this.pageSize;
         
         // Update URL with search query
         if (this.searchQuery) {
@@ -241,6 +253,9 @@ export default defineComponent({
         console.error("Erreur lors de la recherche:", error);
       } finally {
         this.isLoading = false;
+        // La liste vient d'être remplacée : si elle ne remplit pas l'écran,
+        // on charge la tranche suivante sans attendre un scroll.
+        this.maybeLoadMore();
       }
     },
 
@@ -254,6 +269,7 @@ export default defineComponent({
       this.searchResults = [];
       this.hasSearched = false;
       this.totalResults = 0;
+      this.visibleCount = this.pageSize;
     },
 
     goToManga(manga: Manga) {
@@ -293,10 +309,59 @@ export default defineComponent({
       }
     },
 
-    onPageChange(event: { page: number; rows: number }) {
-      this.currentPage = event.page;
-      this.itemsPerPage = event.rows;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    onScroll() {
+      // Le bouton n'apparaît qu'une fois la première rangée dépassée
+      this.showBackToTop = window.scrollY > 600;
+    },
+
+    scrollToTop() {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    },
+
+    setupInfiniteScroll() {
+      const sentinel = this.$refs.scrollSentinel as HTMLElement | undefined;
+      if (!sentinel || typeof IntersectionObserver === "undefined") {
+        return;
+      }
+
+      // `rootMargin` déclenche le chargement un écran avant la fin, pour que
+      // la grille soit déjà remplie quand l'utilisateur arrive en bas.
+      this.scrollObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            this.loadMore();
+          }
+        },
+        { rootMargin: "600px 0px" }
+      );
+      this.scrollObserver.observe(sentinel);
+    },
+
+    loadMore() {
+      if (this.isLoading || !this.hasMore) {
+        return;
+      }
+
+      this.visibleCount = Math.min(
+        this.visibleCount + this.pageSize,
+        this.searchResults.length
+      );
+
+      this.maybeLoadMore();
+    },
+
+    // L'observer ne se redéclenche pas tant que le sentinel reste visible
+    maybeLoadMore() {
+      this.$nextTick(() => {
+        const sentinel = this.$refs.scrollSentinel as HTMLElement | undefined;
+        if (!sentinel || !this.hasMore) {
+          return;
+        }
+        if (sentinel.getBoundingClientRect().top <= window.innerHeight + 600) {
+          this.loadMore();
+        }
+      });
     },
 
     sortResults(results: Manga[]): Manga[] {

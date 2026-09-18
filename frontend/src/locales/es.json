@@ -156,7 +156,9 @@
     "modify_criteria": "Intenta modificar tus criterios de búsqueda",
     "label": "Buscar una obra",
     "results_label": "resultado(s)",
-    "loading": "Buscando…"
+    "loading": "Buscando…",
+    "loading_more": "Cargando más resultados…",
+    "end_of_results": "Has llegado al final de los resultados"
   },
   "discovery": {
     "trending": "Tendencias",
@@ -593,6 +595,7 @@
   },
   "common": {
     "close": "Cerrar",
+    "back_to_top": "Volver arriba",
     "opens_new_tab": "abre una pestaña nueva",
     "loading": "Cargando…"
   }

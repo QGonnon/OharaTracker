@@ -156,7 +156,9 @@
     "modify_criteria": "Prova a modificare i criteri di ricerca",
     "label": "Cerca un titolo",
     "results_label": "risultato/i",
-    "loading": "Ricerca in corso…"
+    "loading": "Ricerca in corso…",
+    "loading_more": "Caricamento di altri risultati…",
+    "end_of_results": "Hai raggiunto la fine dei risultati"
   },
   "discovery": {
     "trending": "Tendenze",
@@ -593,6 +595,7 @@
   },
   "common": {
     "close": "Chiudi",
+    "back_to_top": "Torna su",
     "opens_new_tab": "apre una nuova scheda",
     "loading": "Caricamento…"
   }
