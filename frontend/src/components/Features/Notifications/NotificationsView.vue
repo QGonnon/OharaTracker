@@ -28,8 +28,8 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-        <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4"></i>
+      <div v-if="loading" role="status" aria-live="polite" class="flex flex-col items-center justify-center py-20">
+        <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4" aria-hidden="true"></i>
         <p class="text-lg text-slate-600 dark:text-slate-400">{{ $t('library.loading') }}</p>
       </div>
 
@@ -37,9 +37,9 @@
       <Message v-else-if="error" severity="error" :closable="true" class="mb-6">
         <template #container="{ closeCallback }">
           <div class="flex items-center gap-4">
-            <i class="pi pi-exclamation-triangle"></i>
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             <span>{{ error }}</span>
-            <Button icon="pi pi-times" @click="closeCallback()" text rounded/>
+            <Button icon="pi pi-times" :aria-label="$t('common.close')" @click="closeCallback()" text rounded/>
           </div>
         </template>
       </Message>
@@ -48,7 +48,7 @@
       <Card v-else-if="notifications.length === 0">
         <template #content>
           <div class="text-center py-12">
-            <i class="pi pi-bell-slash text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+            <i class="pi pi-bell-slash text-4xl text-slate-300 dark:text-slate-600 mb-3" aria-hidden="true"></i>
             <p class="text-sm text-slate-600 dark:text-slate-400">{{ $t('notifications.empty') }}</p>
           </div>
         </template>
@@ -67,9 +67,8 @@
             <div class="flex items-center gap-4">
               <img
                 :src="getCoverUrl(n)"
-                :alt="n.title"
-                class="w-12 h-16 object-cover rounded-md flex-shrink-0"
-              />
+                alt=""
+                class="w-12 h-16 object-cover rounded-md flex-shrink-0" width="48" height="64" loading="lazy" decoding="async" />
               <div class="flex-1 min-w-0">
                 <p class="text-sm text-slate-800 dark:text-zinc-200" :class="{ 'font-semibold': !n.isRead }">
                   {{ messageFor(n) }}
@@ -86,6 +85,7 @@
                 severity="secondary"
                 @click="remove(n, $event)"
                 v-tooltip="$t('notifications.delete')"
+                :aria-label="$t('notifications.delete')"
               />
             </div>
           </template>

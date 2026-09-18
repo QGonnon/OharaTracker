@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue';
 import Menu from '../../../Shared/Menu/Menu.vue';
-import { Button } from 'primevue';
+import Button from 'primevue/button'
+import { usePageSeo } from '../../../../seo/usePageSeo';
 
 // Image fournie par l'utilisateur : à placer dans frontend/src/assets/images/ohara_logo_Discord.webp
 const discordQr = new URL('../../../../assets/images/ohara_logo_Discord.webp', import.meta.url).href;
@@ -10,6 +11,7 @@ export default defineComponent({
   name: 'Contact',
   components: { Menu, Button },
   setup() {
+    usePageSeo('contact');
     return { discordQr, DISCORD_URL };
   },
 });

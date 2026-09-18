@@ -10,7 +10,11 @@
     "theme_light": "Switch to light theme",
     "theme_dark": "Switch to dark theme",
     "lang": "EN",
-    "language": "Language"
+    "language": "Language",
+    "main": "Main navigation",
+    "open_menu": "Open navigation menu",
+    "close_menu": "Close navigation menu",
+    "user_menu": "Account menu"
   },
   "auth": {
     "login_subtitle": "Login",
@@ -30,82 +34,74 @@
   },
   "home": {
     "badge": "Multi-media tracker",
- 
     "heading_1": "Track your media,",
     "heading_2": "all in one place.",
- 
     "description": "Manage your personal library, enable notifications, and never miss a new release again.",
- 
     "start_free": "Get started for free",
     "see_demo": "See the demo",
     "free": "Free",
     "no_ads": "No ads",
- 
     "mock_url": "oharatracker.com/list",
     "my_library": "My library",
     "titles": "titles",
     "chapter": "Ch.",
- 
-    "number_manga":   "Mangas & Manhwas",
-    "number_anime":   "Anime & Series",
-    "number_users":   "Active users",
+    "number_manga": "Mangas & Manhwas",
+    "number_anime": "Anime & Series",
+    "number_users": "Active users",
     "number_chapter": "Chapters tracked",
- 
-
-    "features_label":   "Features",
+    "features_label": "Features",
     "features_heading": "Everything you need to track your media",
-    "features_desc":    "A complete tool to centralize, organize, and never miss anything from your favorite series.",
- 
-    "advanced_search":      "Advanced search",
+    "features_desc": "A complete tool to centralize, organize, and never miss anything from your favorite series.",
+    "advanced_search": "Advanced search",
     "advanced_search_text": "Find any title among thousands of manga, manhwa, anime and series with precise filters: genre, status, reading platform and more.",
- 
-    "personalized_tracking":      "Personalized tracking",
+    "personalized_tracking": "Personalized tracking",
     "personalized_tracking_text": "Mark titles as Reading, Completed, Planned or On Hold. Rate them, add tags and find them instantly in your library.",
- 
-    "notification":      "Release notifications",
+    "notification": "Release notifications",
     "notification_text": "Get alerted as soon as a new chapter or episode drops, so you never miss an update from the series you follow.",
- 
-    "multi_source":      "Multi-source",
+    "multi_source": "Multi-source",
     "multi_source_text": "OharaTracker aggregates data from multiple platforms (MangaDex, AniList, Asura Scans…) to give you a unified view of all your content.",
- 
-    "statistics":      "Stats & history",
+    "statistics": "Stats & history",
     "statistics_text": "Track your activity: chapters read, estimated reading time, genre breakdown and your library's growth over time.",
- 
-    "community":      "Community",
+    "community": "Community",
     "community_text": "Share your profile, compare libraries with friends and see what the community is following right now.",
- 
-
-    "screenshots_label":   "Preview",
+    "screenshots_label": "Preview",
     "screenshots_heading": "See OharaTracker in action",
-    "screenshots_desc":    "A clean interface built for media enthusiasts — manga, anime, series.",
- 
+    "screenshots_desc": "A clean interface built for media enthusiasts — manga, anime, series.",
     "screenshot_library_title": "Library",
-    "screenshot_library_desc":  "List or cover view, filters, tags, notes and statuses: your collection organized the way you want.",
- 
+    "screenshot_library_desc": "List or cover view, filters, tags, notes and statuses: your collection organized the way you want.",
     "screenshot_tracking_title": "Free & Premium tracking",
-    "screenshot_tracking_desc":  "Compare features across tiers and upgrade in one click when you're ready.",
+    "screenshot_tracking_desc": "Compare features across tiers and upgrade in one click when you're ready.",
     "screenshot_tracking_badge": "Popular",
- 
     "screenshot_profile_title": "User profile",
-    "screenshot_profile_desc":  "Your reading history, statistics and recent activity — visible to friends if you choose.",
- 
-
-    "quickstart_label":   "Quick start",
+    "screenshot_profile_desc": "Your reading history, statistics and recent activity — visible to friends if you choose.",
+    "quickstart_label": "Quick start",
     "quickstart_heading": "Up and running in under a minute",
- 
     "steps1_title": "Create your account",
-    "steps1_desc":  "Free sign-up in seconds. No credit card required.",
- 
+    "steps1_desc": "Free sign-up in seconds. No credit card required.",
     "steps2_title": "Add your first titles",
-    "steps2_desc":  "Search for your favorite manga, manhwa, anime or series and add them to your library in one click.",
- 
+    "steps2_desc": "Search for your favorite manga, manhwa, anime or series and add them to your library in one click.",
     "steps3_title": "Track and never miss a release",
-    "steps3_desc":  "Enable notifications, update your progress, and let OharaTracker alert you whenever something new drops.",
- 
-
+    "steps3_desc": "Enable notifications, update your progress, and let OharaTracker alert you whenever something new drops.",
     "cta_heading": "Ready to centralize your media?",
-    "cta_desc":    "Join thousands of users already tracking their manga, anime and series on OharaTracker.",
-    "footer":      "Free sign-up · No commitment · No ads"
+    "cta_desc": "Join thousands of users already tracking their manga, anime and series on OharaTracker.",
+    "footer": "Free sign-up · No commitment · No ads",
+    "screenshot_library_alt": "Screenshot of the personal library",
+    "screenshot_discovery_alt": "Screenshot of the discovery page",
+    "screenshot_tracking_alt": "Screenshot of reading progress tracking",
+    "screenshot_profile_alt": "Screenshot of the user profile",
+    "mock_status_ongoing": "Ongoing",
+    "mock_status_finished": "Finished",
+    "mock_status_planned": "Planned",
+    "mock_status_paused": "Paused",
+    "premium_badge": "OharaTracker Premium",
+    "premium_heading": "Level up.",
+    "premium_desc": "Unlock advanced features: enhanced profile customization, unlimited notifications, smart recommendations, detailed statistics and additional social features.",
+    "premium_plan_personal": "Personal Plan",
+    "premium_plan_personal_label": "Users",
+    "premium_plan_pro": "Professional Plan",
+    "premium_plan_pro_label": "Partners",
+    "premium_cta": "Explore Premium",
+    "premium_sub": "Choose the plan that fits you."
   },
   "library": {
     "title": "My Watchlist",
@@ -129,7 +125,10 @@
     "reload": "Reload",
     "empty_search": "No reading matches your search.",
     "empty_anime": "No anime found in your library.",
-    "empty_reading": "No reading found in your library."
+    "empty_reading": "No reading found in your library.",
+    "followed_count": "{n} tracked",
+    "edit_item": "Edit {title}",
+    "unknown": "Unknown"
   },
   "search": {
     "title": "Library",
@@ -154,7 +153,10 @@
     "list_view": "List view",
     "results": "{n} result(s) found",
     "no_results": "No results found",
-    "modify_criteria": "Try modifying your search criteria"
+    "modify_criteria": "Try modifying your search criteria",
+    "label": "Search for a title",
+    "results_label": "result(s)",
+    "loading": "Searching…"
   },
   "discovery": {
     "trending": "Trending",
@@ -165,7 +167,8 @@
     "watch": "Watch",
     "read_now": "Read now",
     "details": "Details",
-    "catalog": "Catalog"
+    "catalog": "Catalog",
+    "page_title": "Discover manga and anime"
   },
   "manga": {
     "loading": "Loading manga...",
@@ -183,7 +186,13 @@
     "add_to_library": "Add to my library",
     "edit": "Edit",
     "similar": "Similar works",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "studio": "Studio",
+    "total_episodes": "Total episodes",
+    "total_seasons": "Seasons",
+    "release_date": "Release date",
+    "average_score": "Average score",
+    "user_score": "My score"
   },
   "latest": {
     "title": "Latest Releases",
@@ -201,7 +210,8 @@
     "read_chapter": "Read chapter",
     "view_manga": "View manga",
     "watch_episode": "Watch episode",
-    "watch_anime": "Watch anime"
+    "watch_anime": "Watch anime",
+    "cover_of": "Cover of {title}"
   },
   "edit_library": {
     "title": "Edit reading",
@@ -245,7 +255,8 @@
     "enable_push": "Enable push notifications",
     "push_denied": "Notification permission was denied. You can enable it in your browser settings.",
     "push_subscribe_failed": "Push notifications could not be enabled on this browser ({error}). Check that no extension is blocking notifications.",
-    "push_unsupported": "Push notifications are not available right now on this browser or device."
+    "push_unsupported": "Push notifications are not available right now on this browser or device.",
+    "title_with_count": "Notifications, {n} unread"
   },
   "profile": {
     "title": "My Profile",
@@ -278,7 +289,9 @@
     "danger_zone": "Danger zone",
     "danger_sub": "Actions on your session",
     "logout_title": "Sign out",
-    "logout_description": "End your current session on this device"
+    "logout_description": "End your current session on this device",
+    "strength_of": "Password strength: {level}",
+    "default_username": "User"
   },
   "footer": {
     "tagline": "Your one library to track manga, manhwa, manhua and anime, without juggling ten different platforms.",
@@ -299,7 +312,8 @@
     "twitter": "Follow us on X",
     "contact": "Contact",
     "social": "Social",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "blog": "Blog"
   },
   "static": {
     "about": {
@@ -353,7 +367,8 @@
         "Partner platforms: priority visibility to our audience, on a subscription basis",
         "Content creators (YouTube, Twitch...): affiliation or compensation depending on the collaboration"
       ],
-      "partner_cta": "Contact us"
+      "partner_cta": "Contact us",
+      "faq_teaser": "Questions about plans or billing?"
     },
     "blog": {
       "label": "Blog",
@@ -466,6 +481,125 @@
         "q": "How long do features remain in Early Access?",
         "a": "There is no fixed duration. Features leave Early Access when ready."
       }
-    ]
+    ],
+    "more_label": "Go further",
+    "more_text": "Didn't find your answer?"
+  },
+  "seo": {
+    "home": {
+      "title": "Track manga, manhwa and anime — all in one place",
+      "description": "Track your manga, manhwa, manhua and anime in a single library. Chapter release notifications, synced progress and discovery. Free to use."
+    },
+    "discovery": {
+      "title": "Discover manga and anime to track",
+      "description": "Browse the Ohara Tracker catalogue: manga, manhwa, manhua, anime and Asian films, filtered by genre and theme. Add them to your library in one click."
+    },
+    "search": {
+      "title": "Search for a manga, manhwa or anime",
+      "description": "Search thousands of manga, manhwa, manhua, anime and Asian films. Find a series by title, genre or theme and track its releases."
+    },
+    "pricing": {
+      "title": "Pricing — Free, Personal and Pro plans",
+      "description": "Ohara Tracker is free to track your reading. Personal and Pro plans add saved filters, priority notifications and a customisable dashboard."
+    },
+    "blog": {
+      "title": "Blog — manga and anime news and updates",
+      "description": "Manga and anime release news, reading-tracker guides and Ohara Tracker product updates."
+    },
+    "status": {
+      "title": "Service status",
+      "description": "Live status of Ohara Tracker services: API, push notifications, source syncing and website."
+    },
+    "changelog": {
+      "title": "Changelog and release notes",
+      "description": "Every Ohara Tracker update: new features, newly supported sources and fixes, version by version."
+    },
+    "suggestions": {
+      "title": "Suggest a feature or a source",
+      "description": "Suggest a feature, report a bug, or request a new manga or anime source to be added to Ohara Tracker."
+    },
+    "supportedSites": {
+      "title": "Supported sites and sources",
+      "description": "Every source Ohara Tracker follows: manga, manhwa, manhua and anime platforms whose releases are detected automatically."
+    },
+    "officialPartners": {
+      "title": "Official partners",
+      "description": "The legal partner platforms Ohara Tracker links out to so you can read and watch your series."
+    },
+    "contact": {
+      "title": "Contact and support",
+      "description": "A question, a bug, a partnership request? Get in touch with the Ohara Tracker team."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "description": "The terms of service for Ohara Tracker: your rights, your obligations and how accounts work."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "How Ohara Tracker collects, uses and protects your personal data under the GDPR. European hosting, no advertising trackers."
+    },
+    "cookies": {
+      "title": "Cookie policy",
+      "description": "The cookies and local storage Ohara Tracker uses, what they are for, and how to refuse them."
+    },
+    "login": {
+      "title": "Sign in",
+      "description": "Sign in to your Ohara Tracker account to get back to your library and notifications."
+    },
+    "register": {
+      "title": "Create a free account",
+      "description": "Create a free Ohara Tracker account and start tracking your manga, manhwa and anime in seconds."
+    },
+    "profile": {
+      "title": "My profile",
+      "description": "Manage your Ohara Tracker account, subscription and preferences."
+    },
+    "library": {
+      "title": "My library",
+      "description": "Your personal library: progress, reading status and ratings."
+    },
+    "notifications": {
+      "title": "My notifications",
+      "description": "Your chapter and episode release alerts."
+    },
+    "media": {
+      "lecture": {
+        "title": "{title}: chapters, releases and reading tracker",
+        "description": "Track {title} on Ohara Tracker: latest chapters, release alerts and reading progress. Add it to your library for free."
+      },
+      "serie": {
+        "title": "{title}: episodes, seasons and tracking",
+        "description": "Track {title} on Ohara Tracker: latest episodes, seasons, release alerts and progress. Add it to your library for free."
+      },
+      "film": {
+        "title": "{title}: details, release and where to watch",
+        "description": "Ohara Tracker page for {title}: synopsis, genres, streaming platforms and tracking. Add it to your library for free."
+      }
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "catalog": "Catalogue"
+    },
+    "faq": {
+      "title": "FAQ — frequently asked questions about Ohara Tracker",
+      "description": "How to track your manga and anime, manage your subscription, enable release notifications: every answer about Ohara Tracker."
+    }
+  },
+  "errors": {
+    "not_found": {
+      "label": "Error 404",
+      "title": "This page does not exist",
+      "description": "The page you are looking for has been moved, deleted, or never existed. The title you want may not be in our catalogue yet.",
+      "back_home": "Back to home",
+      "suggestions": "Or carry on here"
+    }
+  },
+  "a11y": {
+    "skip_to_content": "Skip to main content"
+  },
+  "common": {
+    "close": "Close",
+    "opens_new_tab": "opens in a new tab",
+    "loading": "Loading…"
   }
 }

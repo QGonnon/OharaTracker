@@ -1,15 +1,20 @@
 <template>
   <div v-if="isLoggedIn" class="relative">
     <button
+      type="button"
       class="nav-theme-toggle relative"
-      :title="$t('notifications.title')"
+      :aria-label="unreadCount > 0
+        ? $t('notifications.title_with_count', { n: unreadCount })
+        : $t('notifications.title')"
+      aria-haspopup="dialog"
       @click="toggle"
     >
-      <i class="pi pi-bell text-sm" />
+      <i class="pi pi-bell text-sm" aria-hidden="true" />
       <Badge
         v-if="unreadCount > 0"
         :value="badgeValue"
         severity="danger"
+        aria-hidden="true"
         class="!absolute -top-1 -right-1 !text-[10px] !min-w-[1.1rem] !h-[1.1rem] !leading-[1.1rem]"
       />
     </button>
@@ -29,11 +34,11 @@
         </div>
 
         <div v-if="loading" class="flex items-center justify-center py-8">
-          <i class="pi pi-spin pi-spinner text-xl text-indigo-500" />
+          <i class="pi pi-spin pi-spinner text-xl text-indigo-500"  aria-hidden="true"/>
         </div>
 
-        <div v-else-if="recentNotifications.length === 0" class="py-8 text-center text-sm text-gray-500 dark:text-zinc-400">
-          <i class="pi pi-bell-slash text-2xl mb-2 block text-gray-300 dark:text-zinc-600" />
+        <div v-else-if="recentNotifications.length === 0" class="py-8 text-center text-sm text-gray-600 dark:text-zinc-400">
+          <i class="pi pi-bell-slash text-2xl mb-2 block text-gray-300 dark:text-zinc-400"  aria-hidden="true"/>
           {{ $t('notifications.empty') }}
         </div>
 
@@ -41,11 +46,15 @@
           <li
             v-for="n in recentNotifications"
             :key="n.id"
-            class="flex items-start gap-2 px-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
             :class="{ 'bg-indigo-50/60 dark:bg-indigo-500/5': !n.isRead }"
+          >
+          <button
+            type="button"
+            class="w-full text-left flex items-start gap-2 px-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-indigo-600"
             @click="openNotification(n)"
           >
             <span
+              aria-hidden="true"
               class="mt-1.5 w-2 h-2 rounded-full flex-shrink-0"
               :class="n.isRead ? 'bg-transparent' : 'bg-indigo-500'"
             />
@@ -53,8 +62,11 @@
               <p class="text-sm text-gray-800 dark:text-zinc-200 line-clamp-2" :class="{ 'font-semibold': !n.isRead }">
                 {{ messageFor(n) }}
               </p>
-              <span class="text-xs text-gray-400 dark:text-zinc-500">{{ new Date(n.createdAt).toLocaleString() }}</span>
+              <time :datetime="n.createdAt" class="text-xs text-gray-600 dark:text-zinc-400">
+                {{ new Date(n.createdAt).toLocaleString($i18n.locale) }}
+              </time>
             </div>
+          </button>
           </li>
         </ul>
 

@@ -3,6 +3,7 @@ import './assets/styles.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createHead } from '@unhead/vue/client'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
 import Aura from '@primeuix/themes/aura'
@@ -11,11 +12,16 @@ import { definePreset } from '@primeuix/themes'  // même package
 import App from './App.vue'
 import router from './router'
 import { FontAwesomeIcon } from './plugins/font-awesome.ts'
-import i18n from './i18n'
+import i18n, { detectPreferredLocale, loadLocaleMessages } from './i18n'
+import { isLocale } from './seo/config'
+import { localePathPlugin } from './seo/localePath'
 import { useNotificationStore } from './store/notification.module'
 import { setupHttpInterceptors } from './services/http-interceptors'
 
 const pinia = createPinia()
+
+// /client reprend la main sur les balises déjà présentes dans index.html au lieu de les dupliquer.
+const head = createHead()
 
 const OharaPreset = definePreset(Aura, {
   semantic: {
@@ -52,6 +58,8 @@ app.use(PrimeVue, {
 app.use(router)
     .use(pinia)
     .use(i18n)
+    .use(head)
+    .use(localePathPlugin)
     .component('font-awesome-icon', FontAwesomeIcon)
     .directive('tooltip', Tooltip)
 
@@ -66,7 +74,23 @@ try {
     }
 } catch (e) {}
 
-app.mount('#app')
+// On attend les traductions de la langue avant de monter, sinon le premier rendu
+// afficherait les clés brutes. Langue prise dans l'URL sinon dans la préférence enregistrée.
+const initialLocale = (() => {
+    const first = window.location.pathname.split('/').filter(Boolean)[0]
+    return isLocale(first) ? first : detectPreferredLocale()
+})()
+
+loadLocaleMessages(initialLocale)
+    .then(() => {
+        i18n.global.locale.value = initialLocale
+    })
+    .catch((err: unknown) => {
+        console.error('Erreur lors du chargement des traductions:', err)
+    })
+    .finally(() => {
+        app.mount('#app')
+    })
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch((err) => {

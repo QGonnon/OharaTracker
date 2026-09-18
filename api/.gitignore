@@ -1,4 +1,14 @@
 node_modules/
+
 .env
+.env.*
+!.env.example
+
 sequelize/config/config.json
+
 data/
+
+*.sql
+*.dump
+*.sqlite
+*.sqlite3

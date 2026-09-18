@@ -1,7 +1,12 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { /*useRouter,*/ useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import { slugify } from '../../../../utils'
+import { useSeo } from '../../../../seo/useSeo'
+import { breadcrumbJsonLd, mediaJsonLd } from '../../../../seo/jsonld'
+import { DEFAULT_LOCALE, isLocale, homePath, pagePath, type Locale } from '../../../../seo/config'
+import { localeMedia } from '../../../../seo/localePath'
 import { useAuthStore } from '../../../../store/auth.module'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
@@ -29,7 +34,8 @@ export default defineComponent({
 
   setup() {
     const route = useRoute()
-    //const router = useRouter()
+    const router = useRouter()
+    const { t, locale } = useI18n()
     const authStore = useAuthStore()
     const mangaStore = useMangaStore()
     const libraryStore = useLibraryStore()
@@ -45,17 +51,14 @@ export default defineComponent({
     const isAnime = computed(() => mangaStore.isAnimeType(manga.value))
     const userScore = computed(() => manga.value.userScore ?? null)
 
-    // Totaux épisodes/saisons : valeur BDD si dispo, sinon déduits des chapitres connus
     const seasonEpisodeStats = computed(() => mangaStore.getSeasonEpisodeStats(manga.value))
     const totalEpisodes = computed(() => manga.value.totalEpisodes ?? seasonEpisodeStats.value.totalEpisodes)
     const totalSeasons = computed(() => manga.value.totalSeasons ?? seasonEpisodeStats.value.totalSeasons)
 
-    // Source de vérité unique pour le type de média
     const mediaKind = computed(() =>
       mangaStore.resolveMediaKind(route.name, manga.value.type)
     )
 
-    // Aliases lisibles dans le template
     const isLecture = computed(() => mediaKind.value === 'lecture')
     const isSerie = computed(() => mediaKind.value === 'serie')
     const isFilm = computed(() => mediaKind.value === 'film')
@@ -78,29 +81,37 @@ export default defineComponent({
 
     const coverSrc = computed(() => mangaStore.getCoverUrl(manga.value))
 
-    // Génère le path de navigation vers une oeuvre similaire selon son type
     const similarWorkPath = (item: Manga): string => {
       const kind = mangaStore.resolveMediaKind(null, item.type)
-      return `/${kind}/${slugify(item.title)}`
+      return localeMedia(kind, slugify(item.title))
     }
+
+    const notFound = ref(false) // true si le slug demandé ne correspond à aucune œuvre (404)
 
     const fetchMangas = async () => {
       loading.value = true
       error.value = null
+      notFound.value = false
       try {
-        const entries = await mangaStore.fetchAll()
-        allMangas.value = entries
-
-        const found = mangaStore.findBySlug(entries, route.params.name)
+        const slug = String(route.params.name ?? '')
+        const found = await mangaStore.fetchBySlug(slug)
 
         if (found) {
           manga.value = found
+
+          // Le slug canonique peut différer de celui de l'URL (ancienne forme, sans accents).
+          const canonicalSlug = slugify(found.title)
+          if (canonicalSlug && canonicalSlug !== slug) {
+            router.replace(localeMedia(mediaKind.value, canonicalSlug))
+          }
+
           if (isLoggedIn.value) {
             await checkLibraryStatus()
           }
         } else {
           manga.value = {} as Manga
-          error.value = 'Oeuvre non trouvée.'
+          notFound.value = true
+          error.value = t('errors.not_found.title')
         }
       } catch (err) {
         console.error('Erreur lors de la récupération :', err)
@@ -110,7 +121,87 @@ export default defineComponent({
       }
     }
 
-    onMounted(fetchMangas)
+    // Chargées après la fiche pour ne pas retarder le contenu principal (LCP).
+    const fetchSimilar = async () => {
+      try {
+        allMangas.value = await mangaStore.fetchLight()
+      } catch (err) {
+        console.error('Erreur chargement des oeuvres similaires', err)
+      }
+    }
+
+    onMounted(async () => {
+      await fetchMangas()
+      if (!notFound.value) fetchSimilar()
+    })
+
+    const currentLocale = computed<Locale>(() =>
+      isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
+    )
+
+    const canonicalSlug = computed(() =>
+      manga.value.title ? slugify(manga.value.title) : String(route.params.name ?? '')
+    )
+
+    const seoDescription = computed(() => {
+      if (notFound.value) return t('errors.not_found.description')
+      const synopsis = manga.value.description?.replace(/\s+/g, ' ').trim()
+      if (synopsis) {
+        // Google tronque autour de 160 caractères : on coupe au mot entier.
+        if (synopsis.length <= 155) return synopsis
+        const cut = synopsis.slice(0, 155)
+        return cut.slice(0, cut.lastIndexOf(' ')).trimEnd() + '…'
+      }
+      return t(`seo.media.${mediaKind.value}.description`, { title: manga.value.title ?? '' })
+    })
+
+    useSeo({
+      target: computed(() => ({
+        type: 'media' as const,
+        kind: mediaKind.value,
+        slug: canonicalSlug.value,
+      })),
+      title: computed(() =>
+        notFound.value || !manga.value.title
+          ? t('errors.not_found.title')
+          : t(`seo.media.${mediaKind.value}.title`, { title: manga.value.title })
+      ),
+      description: seoDescription,
+      image: computed(() => (manga.value.title ? coverSrc.value : undefined)),
+      noindex: computed(() => notFound.value || !manga.value.title),
+      ogType: 'article',
+      jsonLd: computed(() => {
+        if (notFound.value || !manga.value.title) return []
+        return [
+          mediaJsonLd({
+            title: manga.value.title,
+            kind: mediaKind.value,
+            description: manga.value.description,
+            author: manga.value.author,
+            artist: manga.value.artist,
+            theme: manga.value.theme,
+            image: coverSrc.value,
+            url: `${window.location.origin}${localeMedia(mediaKind.value, canonicalSlug.value, currentLocale.value)}`,
+            locale: currentLocale.value,
+            status: manga.value.status,
+            // schema.org attend un nombre ; la base renvoie parfois ces totaux en chaîne.
+            totalEpisodes: Number(totalEpisodes.value) || undefined,
+            totalSeasons: Number(totalSeasons.value) || undefined,
+            // Pas de note agrégée exposée : un aggregateRating vide serait un rich result trompeur.
+            ratingValue: null,
+            ratingCount: null,
+          }),
+          breadcrumbJsonLd([
+            { name: t('seo.breadcrumb.home'), path: homePath(currentLocale.value) },
+            { name: t('seo.discovery.title'), path: pagePath('discovery', currentLocale.value) },
+            {
+              name: manga.value.title,
+              path: localeMedia(mediaKind.value, canonicalSlug.value, currentLocale.value),
+            },
+          ]),
+        ]
+      }),
+    })
 
     watch(() => route.params.name, (newName, oldName) => {
       if (newName !== oldName) fetchMangas()
@@ -136,7 +227,6 @@ export default defineComponent({
       if (chapterUrl.value) window.open(chapterUrl.value, '_blank')
     }
 
-    // 📖 Ouvrir la page du manga sur la source avec le plus de chapitres
     const openSource = () => {
       const bestKey = mangaStore.getBestSiteKey(manga.value)
       const mangaUrl = bestKey ? manga.value.sites[bestKey]?.mangaUrl : undefined
@@ -198,7 +288,7 @@ export default defineComponent({
         const { chapter, chapterUrl: bestChapterUrl } = mangaStore.getLastChapterInfo(manga.value)
         const { ok, status, data } = await libraryStore.addToLibrary(manga.value.id, {
           title: manga.value.title,
-          type: mediaKind.value, // envoie le nouveau type normalisé
+          type: mediaKind.value,
           author: manga.value.author,
           theme: manga.value.theme,
           status: manga.value.status,
@@ -233,6 +323,7 @@ export default defineComponent({
       manga,
       loading,
       error,
+      notFound,
       openSource,
       coverSrc,
       isLoggedIn,

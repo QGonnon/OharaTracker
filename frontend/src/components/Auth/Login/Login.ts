@@ -3,6 +3,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useAuthStore } from '../../../store/auth.module';
 import Menu from '../../Shared/Menu/Menu.vue'
+import { usePageSeo } from '../../../seo/usePageSeo';
 
 declare global {
   interface Window {
@@ -17,6 +18,9 @@ export default defineComponent({
     Field,
     ErrorMessage,
     Menu,
+  },
+  setup() {
+    usePageSeo('login', { noindex: true });
   },
   data() {
     const schema = yup.object().shape({

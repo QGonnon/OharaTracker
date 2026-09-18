@@ -7,37 +7,39 @@
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
           {{ $t('search.title') }}
         </h1>
-        <p class="text-gray-600 dark:text-gray-400">
+        <p class="text-gray-600 dark:text-gray-600">
           {{ $t('search.subtitle') }}
         </p>
       </div>
 
       <!-- Search Bar -->
       <div class="mb-8">
-        <div class="flex gap-4">
-          <span class="p-input-icon-left flex-1">
+        <form class="flex gap-4" role="search" @submit.prevent="performSearch">
+          <div class="p-input-icon-left flex-1">
+            <label for="search-query" class="sr-only">{{ $t('search.label') }}</label>
             <InputText
+              id="search-query"
               v-model="searchQuery"
+              type="search"
               :placeholder="$t('search.placeholder')"
               class="w-full"
-              @keyup.enter="performSearch"
             />
-          </span>
+          </div>
           <Button
+            type="submit"
             :label="$t('search.search_btn')"
             icon="pi pi-search"
-            @click="performSearch"
             :loading="isLoading"
             class="px-8"
           />
-        </div>
+        </form>
       </div>
 
       <!-- Filters Section -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            <i class="pi pi-filter mr-2"></i>{{ $t('search.filters') }}
+            <i class="pi pi-filter mr-2" aria-hidden="true"></i>{{ $t('search.filters') }}
           </h2>
           <Button
             :label="$t('search.reset')"
@@ -49,21 +51,23 @@
 
         <!-- Type Filter -->
         <div class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <label class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 block">
+          <span id="filter-type-label" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 block">
             {{ $t('search.filter_type') }}
-          </label>
-          <div class="flex gap-2">
+          </span>
+          <div class="flex gap-2" role="group" aria-labelledby="filter-type-label">
             <Button
               :label="$t('search.all')"
               :severity="filterType === 'all' ? 'info' : 'secondary'"
+              :aria-pressed="filterType === 'all'"
               class="!px-3"
               text
               rounded
-              @click="filterType = filterType === 'all' ? 'all' : 'all'"
+              @click="filterType = 'all'"
             />
             <Button
               :label="$t('search.series')"
               :severity="filterType === 'anime' ? 'info' : 'secondary'"
+              :aria-pressed="filterType === 'anime'"
               class="!px-3"
               text
               rounded
@@ -72,6 +76,7 @@
             <Button
               :label="$t('search.reading')"
               :severity="filterType === 'lecture' ? 'info' : 'secondary'"
+              :aria-pressed="filterType === 'lecture'"
               class="!px-3"
               text
               rounded
@@ -147,37 +152,40 @@
 
       <!-- View Toggle -->
       <div class="flex items-center justify-between mb-6">
-        <div class="text-gray-700 dark:text-gray-300">
-          <span class="font-semibold">{{ totalResults }}</span> {{ $t('search.results', { n: '' }).replace('{n} ', '') }}
+        <div class="text-gray-700 dark:text-gray-300" role="status" aria-live="polite" aria-atomic="true">
+          <span class="font-semibold">{{ totalResults }}</span> {{ $t('search.results_label') }}
         </div>
         <div class="flex gap-2">
           <Button
             icon="pi pi-th-large"
             :outlined="viewMode !== 'grid'"
+            :aria-label="$t('search.grid_view')"
+            :aria-pressed="viewMode === 'grid'"
             @click="viewMode = 'grid'"
-            :title="$t('search.grid_view')"
           />
           <Button
             icon="pi pi-list"
             :outlined="viewMode !== 'list'"
+            :aria-label="$t('search.list_view')"
+            :aria-pressed="viewMode === 'list'"
             @click="viewMode = 'list'"
-            :title="$t('search.list_view')"
           />
         </div>
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="flex justify-center items-center py-20">
-        <ProgressSpinner />
+      <div v-if="isLoading" role="status" aria-live="polite" class="flex justify-center items-center py-20">
+        <ProgressSpinner aria-hidden="true" />
+        <span class="sr-only">{{ $t('search.loading') }}</span>
       </div>
 
       <!-- No Results -->
       <div v-else-if="!isLoading && searchResults.length === 0 && hasSearched" class="text-center py-20">
-        <i class="pi pi-search text-6xl text-gray-400 mb-4"></i>
+        <i class="pi pi-search text-6xl text-gray-600 mb-4" aria-hidden="true"></i>
         <h3 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
           {{ $t('search.no_results') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400">
+        <p class="text-gray-500 dark:text-gray-600">
           {{ $t('search.modify_criteria') }}
         </p>
       </div>
@@ -187,23 +195,26 @@
         <div
           v-for="manga in visibleResults"
           :key="manga.id"
-          class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+          class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          role="link"
+          tabindex="0"
           @click="goToManga(manga)"
+          @keydown.enter="goToManga(manga)"
+          @keydown.space.prevent="goToManga(manga)"
         >
           <div class="aspect-[3/4] overflow-hidden">
             <img
               :src="getCoverUrl(manga)"
-              :alt="manga.title"
-              class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-            />
+              alt=""
+              class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" width="400" height="600" loading="lazy" decoding="async" />
           </div>
           <div class="p-4">
             <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
               {{ manga.title }}
             </h3>
-            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-600">
               <span class="flex items-center" v-if="manga.lastChapter">
-                <i class="pi pi-book mr-1"></i>
+                <i class="pi pi-book mr-1" aria-hidden="true"></i>
                 {{ (manga.type && manga.type.toString().toLowerCase() === 'anime') ? 'S' + manga.lastChapter.split('.')[0] + 'E' + manga.lastChapter.split('.')[1] : 'Ch.' + manga.lastChapter.split('.')[0]}}
               </span>
               <Tag v-if="manga.status" :value="manga.status" :severity="getStatusSeverity(manga.status)" />
@@ -217,22 +228,25 @@
         <div
           v-for="manga in visibleResults"
           :key="manga.id"
-          class="manga-card-list bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow duration-300 cursor-pointer flex gap-4"
+          class="manga-card-list bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow duration-300 cursor-pointer flex gap-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          role="link"
+          tabindex="0"
           @click="goToManga(manga)"
+          @keydown.enter="goToManga(manga)"
+          @keydown.space.prevent="goToManga(manga)"
         >
           <div class="w-24 h-32 flex-shrink-0 rounded overflow-hidden">
             <img
               :src="getCoverUrl(manga)"
-              :alt="manga.title"
-              class="w-full h-full object-cover"
-            />
+              alt=""
+              class="w-full h-full object-cover" width="400" height="600" loading="lazy" decoding="async" />
           </div>
           <div class="flex-1 flex flex-col justify-between">
             <div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {{ manga.title }}
               </h3>
-              <p v-if="manga.description" class="text-gray-600 dark:text-gray-400 text-sm mb-2 line-clamp-2">
+              <p v-if="manga.description" class="text-gray-600 dark:text-gray-600 text-sm mb-2 line-clamp-2">
                 {{ manga.description }}
               </p>
               <div class="flex flex-wrap gap-2 mb-2">
@@ -241,12 +255,12 @@
               </div>
             </div>
             <div class="flex items-center justify-between">
-              <span v-if="manga.author" class="text-sm text-gray-600 dark:text-gray-400">
-                <i class="pi pi-user mr-1"></i>{{ manga.author }}
+              <span v-if="manga.author" class="text-sm text-gray-600 dark:text-gray-600">
+                <i class="pi pi-user mr-1" aria-hidden="true"></i>{{ manga.author }}
               </span>
               <div class="flex items-center gap-4">
                 <span v-if="manga.lastChapter" class="flex items-center text-sm">
-                  <i class="pi pi-book mr-1"></i>
+                  <i class="pi pi-book mr-1" aria-hidden="true"></i>
                   {{ (manga.type && manga.type.toString().toLowerCase() === 'anime') ? 'S'+manga.lastChapter.split('.')[0] + 'E'+manga.lastChapter.split('.')[1] : 'Ch.' + manga.lastChapter }}
                 </span>
                 <Tag v-if="manga.status" :value="manga.status" :severity="getStatusSeverity(manga.status)" />

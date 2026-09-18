@@ -16,12 +16,14 @@
         <img
           :src="discordQr"
           :alt="$t('static.contact.qr_alt')"
-          class="w-44 h-44 rounded-xl border border-gray-200 dark:border-white/10 bg-white p-2"
-        />
-        <p class="text-sm text-gray-500 dark:text-zinc-400">{{ $t('static.contact.scan_hint') }}</p>
-        <a :href="DISCORD_URL" target="_blank" rel="noopener noreferrer">
-          <Button :label="$t('static.contact.join_discord')" class="font-semibold" />
-        </a>
+          class="w-44 h-44 rounded-xl border border-gray-200 dark:border-white/10 bg-white p-2" width="176" height="176" loading="lazy" decoding="async" />
+        <p class="text-sm text-gray-600 dark:text-zinc-400">{{ $t('static.contact.scan_hint') }}</p>
+        <Button asChild v-slot="slotProps" class="font-semibold">
+          <a :href="DISCORD_URL" target="_blank" rel="noopener noreferrer" :class="slotProps.class">
+            {{ $t('static.contact.join_discord') }}
+            <span class="sr-only">({{ $t('common.opens_new_tab') }})</span>
+          </a>
+        </Button>
       </div>
     </div>
   </section>

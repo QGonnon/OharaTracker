@@ -1,13 +1,19 @@
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { useAuthStore } from '../../../../store/auth.module';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
 import SubscriptionService from '../../../../services/subscription.service';
+import { usePageSeo } from '../../../../seo/usePageSeo';
+import { localePath } from '../../../../seo/localePath';
 
 export default defineComponent({
   name: 'Profile',
   components: { Menu },
 
+  setup() {
+    usePageSeo('profile', { noindex: true });
+    return { pricingLink: computed(() => localePath('pricing')) };
+  },
   data() {
     const authStore = useAuthStore();
     const user = authStore.currentUser;

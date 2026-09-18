@@ -1,8 +1,5 @@
-/**
- * Types et interfaces centralisés pour l'application
- */
-
-export type MediaKind = 'lecture' | 'serie' | 'film' | 'Manga' | 'Anime';
+// Partagé avec la config SEO : les segments d'URL sont dérivés de ces natures.
+export type { MediaKind } from '../seo/config';
 
 export interface Manga {
   id?: number,

@@ -11,9 +11,12 @@
       <p class="text-gray-500 dark:text-zinc-400 leading-relaxed mb-8">
         {{ $t('static.suggestions.desc') }}
       </p>
-      <a :href="DISCORD_URL" target="_blank" rel="noopener noreferrer">
-        <Button :label="$t('static.suggestions.cta')" class="font-semibold" />
-      </a>
+      <Button asChild v-slot="slotProps" class="font-semibold">
+        <a :href="DISCORD_URL" target="_blank" rel="noopener noreferrer" :class="slotProps.class">
+          {{ $t('static.suggestions.cta') }}
+          <span class="sr-only">({{ $t('common.opens_new_tab') }})</span>
+        </a>
+      </Button>
     </div>
   </section>
 </template>

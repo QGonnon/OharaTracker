@@ -9,6 +9,7 @@ import { useNotificationStore } from '../../../store/notification.module'
 import { useMangaStore } from '../../../store/manga.module'
 import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
+import { localeMedia } from '../../../seo/localePath'
 
 export default defineComponent({
   name: 'NotificationBell',
@@ -49,7 +50,7 @@ export default defineComponent({
       if (n.chapterUrl) {
         window.open(n.chapterUrl, '_blank')
       } else {
-        router.push(`/manga/${slugify(n.title)}`)
+        router.push(localeMedia(mangaStore.resolveMediaKind(null, n.mediaType ?? undefined), slugify(n.title)))
       }
     }
 

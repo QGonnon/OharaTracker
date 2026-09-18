@@ -10,11 +10,14 @@ import { useNotificationStore } from '../../../store/notification.module'
 import { useMangaStore } from '../../../store/manga.module'
 import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
+import { usePageSeo } from '../../../seo/usePageSeo';
+import { localeMedia } from '../../../seo/localePath'
 
 export default defineComponent({
   name: 'NotificationsView',
   components: { Menu, Card, Button, Message, Tag },
   setup() {
+    usePageSeo('notifications', { noindex: true });
     const router = useRouter()
     const { t } = useI18n()
     const notificationStore = useNotificationStore()
@@ -48,7 +51,7 @@ export default defineComponent({
       if (n.chapterUrl) {
         window.open(n.chapterUrl, '_blank')
       } else {
-        router.push(`/manga/${slugify(n.title)}`)
+        router.push(localeMedia(mangaStore.resolveMediaKind(null, n.mediaType ?? undefined), slugify(n.title)))
       }
     }
 

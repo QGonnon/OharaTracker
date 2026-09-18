@@ -2,9 +2,14 @@
   <Menu />
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <!-- Titre de repli, remplace par celui de l oeuvre une fois chargee. -->
+    <h1 v-if="loading || error || !manga.title" class="sr-only">
+      {{ loading ? $t('manga.loading') : $t('errors.not_found.title') }}
+    </h1>
+
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-      <i class="pi pi-spin pi-spinner text-4xl text-primary mb-4"></i>
+    <div v-if="loading" role="status" aria-live="polite" class="flex flex-col items-center justify-center py-20">
+      <i class="pi pi-spin pi-spinner text-4xl text-primary mb-4" aria-hidden="true"></i>
       <p class="text-lg text-surface-500">{{ $t('manga.loading') }}</p>
     </div>
 
@@ -19,9 +24,18 @@
       <div class="lg:col-span-1">
         <Card class="overflow-hidden">
           <template #content>
+            <!--
+              La couverture est l'élément LCP de la fiche : dimensions explicites
+              pour réserver la place (évite le décalage de mise en page) et
+              `fetchpriority="high"` pour qu'elle passe avant le reste.
+            -->
             <img
               :src="coverSrc"
-              :alt="manga.title"
+              alt=""
+              width="400"
+              height="600"
+              fetchpriority="high"
+              decoding="async"
               class="w-full h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
             />
           </template>
@@ -59,7 +73,7 @@
 
               <!-- Auteur (lecture uniquement) -->
               <div v-if="isLecture" class="flex items-start gap-3">
-                <i class="pi pi-user text-primary mt-1"></i>
+                <i class="pi pi-user text-primary mt-1" aria-hidden="true"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.author') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -70,7 +84,7 @@
 
               <!-- Studio (série et film) -->
               <div v-if="isSerie || isFilm" class="flex items-start gap-3">
-                <i class="pi pi-building text-primary mt-1"></i>
+                <i class="pi pi-building text-primary mt-1" aria-hidden="true"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.studio') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -83,7 +97,7 @@
 
               <!-- Nb chapitres (lecture) -->
               <div v-if="isLecture" class="flex items-start gap-3">
-                <i class="pi pi-book text-primary mt-1"></i>
+                <i class="pi pi-book text-primary mt-1" aria-hidden="true"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ isAnime ? $t('manga.last_episode') : $t('manga.last_chapter') }}</p>
                   <p v-if="isAnime" class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -98,7 +112,7 @@
               <!-- Nb épisodes + saisons (série) -->
               <template v-if="isSerie">
                 <div class="flex items-start gap-3">
-                  <i class="pi pi-video text-primary mt-1"></i>
+                  <i class="pi pi-video text-primary mt-1" aria-hidden="true"></i>
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_episodes') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -107,7 +121,7 @@
                   </div>
                 </div>
                 <div class="flex items-start gap-3">
-                  <i class="pi pi-list text-primary mt-1"></i>
+                  <i class="pi pi-list text-primary mt-1" aria-hidden="true"></i>
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.total_seasons') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -121,7 +135,7 @@
 
               <!-- Date de parution (tous les types) -->
               <div class="flex items-start gap-3">
-                <i class="pi pi-calendar text-primary mt-1"></i>
+                <i class="pi pi-calendar text-primary mt-1" aria-hidden="true"></i>
                 <div>
                   <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.release_date') }}</p>
                   <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -135,7 +149,7 @@
               <!-- Scores (tous les types) -->
               <div class="flex gap-6">
                 <div class="flex items-start gap-3">
-                  <i class="pi pi-star text-primary mt-1"></i>
+                  <i class="pi pi-star text-primary mt-1" aria-hidden="true"></i>
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.average_score') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -144,7 +158,7 @@
                   </div>
                 </div>
                 <div v-if="isLoggedIn && isInLibrary" class="flex items-start gap-3">
-                  <i class="pi pi-star-fill text-warning mt-1"></i>
+                  <i class="pi pi-star-fill text-warning mt-1" aria-hidden="true"></i>
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.user_score') }}</p>
                     <p class="text-base font-medium text-surface-900 dark:text-surface-0">
@@ -234,7 +248,7 @@
       >
         <img
           :src="getItemCover(item)"
-          :alt="item.title"
+          :alt="$t('cards.cover_of', { title: item.title })"
           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />

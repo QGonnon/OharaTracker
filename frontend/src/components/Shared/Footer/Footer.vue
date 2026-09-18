@@ -6,14 +6,14 @@
 
         <!-- Logo + baseline -->
         <div class="col-span-2 md:col-span-2 flex flex-col gap-4">
-          <RouterLink to="/" class="text-xl font-extrabold footer-logo w-fit">
+          <RouterLink :to="homeLink" class="text-xl font-extrabold footer-logo w-fit">
             Ohara Tracker
           </RouterLink>
-          <p class="text-sm text-gray-500 dark:text-zinc-400 max-w-xs leading-relaxed">
+          <p class="text-sm text-gray-600 dark:text-zinc-400 max-w-xs leading-relaxed">
             {{ $t('footer.tagline') }}
           </p>
           <div class="footer-bottom mt-0 pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p class="text-xs text-gray-400 dark:text-zinc-500">
+            <p class="text-xs text-gray-600 dark:text-zinc-400">
                 &copy; {{ year }} Ohara Tracker - {{ $t('footer.rights') }}
             </p>
           </div>
@@ -21,7 +21,7 @@
 
         <!-- Columns -->
         <div v-for="col in columns" :key="col.title" class="col-span-1">
-          <h4 class="footer-col-title">{{ col.title }}</h4>
+          <h2 class="footer-col-title">{{ col.title }}</h2>
           <ul class="flex flex-col gap-2.5 mt-3">
             <li v-for="link in col.links" :key="link.to">
               <RouterLink :to="link.to" class="footer-link">
@@ -33,10 +33,10 @@
 
         <!-- Social -->
         <div class="col-span-1">
-          <h4 class="footer-col-title">{{ $t('footer.social') }}</h4>
+          <h2 class="footer-col-title">{{ $t('footer.social') }}</h2>
           <ul class="flex flex-col gap-2.5 mt-3">
             <li>
-              <RouterLink to="/contact" class="footer-link">
+              <RouterLink :to="contactLink" class="footer-link">
                 {{ $t('footer.contact') }}
               </RouterLink>
             </li>

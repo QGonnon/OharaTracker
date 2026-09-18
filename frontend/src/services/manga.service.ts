@@ -1,15 +1,14 @@
-import { slugify } from '../utils'
+import { slugCandidates } from '../utils'
 import type { Manga, MediaKind } from '../types/index'
 
-const getApiBase = (): string =>
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:3000`
+import { API_BASE, CDN_BASE } from './api'
 
 // Sources dont la présence dans `sites` indique un anime plutôt qu'un manga/lecture
 const ANIME_SOURCES = ['moviedb', 'anime-sama']
 
 class MangaService {
   async getAll(): Promise<Manga[]> {
-    const response = await fetch(`${getApiBase()}/chapters`)
+    const response = await fetch(`${API_BASE}/chapters`)
     if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
     const chapters = (await response.json()) || []
 
@@ -19,22 +18,43 @@ class MangaService {
       .map(m => this.withDisplayFields({ ...m, id: Number(m.id) } as Manga))
   }
 
+  // Catalogue allégé (une entrée par œuvre, sans les chapitres), pour les écrans de listing.
+  async getLight(): Promise<Manga[]> {
+    const response = await fetch(`${API_BASE}/chapters/light`)
+    if (!response.ok) throw new Error(`Erreur catalogue: ${response.status}`)
+    const rows = (await response.json()) || []
+    return (Array.isArray(rows) ? rows : Object.values(rows))
+      .filter((m: any) => m?.title)
+      .map((m: any) => ({ ...m, id: Number(m.id), sites: m.sites ?? {} }) as Manga)
+  }
+
+  async getBySlug(slug: string): Promise<Manga | null> {
+    const response = await fetch(`${API_BASE}/chapters/slug/${encodeURIComponent(slug)}`)
+    if (response.status === 404) return null
+    if (!response.ok) throw new Error(`Erreur oeuvre: ${response.status}`)
+    const work = await response.json()
+    return this.withDisplayFields({ ...work, id: Number(work.id) } as Manga)
+  }
+
+  // Accepte aussi l'ancienne forme du slug pour ne pas casser les liens déjà partagés.
   findBySlug(mangas: Manga[], slug: string | string[]): Manga | undefined {
-    return mangas.find(m => slugify(m.title) === slug)
+    const wanted = String(Array.isArray(slug) ? slug[0] : slug ?? '').toLowerCase()
+    if (!wanted) return undefined
+    return mangas.find(m => slugCandidates(m.title).some(c => c.toLowerCase() === wanted))
   }
 
   // Chapitres/épisodes connus pour une entrée de bibliothèque donnée, toutes sources confondues
   async getChaptersForLibrary(idLibrary: number): Promise<{ chapter: string; url: string; site: string }[]> {
-    const response = await fetch(`${getApiBase()}/chapters/${idLibrary}`)
+    const response = await fetch(`${API_BASE}/chapters/${idLibrary}`)
     if (!response.ok) throw new Error(`Erreur chapters: ${response.status}`)
     return response.json()
   }
 
   // Le cover est soit hébergé localement (coverPath, servi via /cdn), soit une URL externe (coverUrl)
   getCoverUrl(manga: Pick<Manga, 'coverPath' | 'coverUrl' | 'title'>): string {
-    if (manga.coverPath) return `${getApiBase()}/cdn/${manga.coverPath}`
+    if (manga.coverPath) return `${CDN_BASE}/${manga.coverPath}`
     if (manga.coverUrl) return manga.coverUrl
-    return `https://picsum.photos/seed/${manga.title}/400/600`
+    return '/cover-placeholder.svg' // évite une image externe aléatoire, mauvaise pour LCP et og:image
   }
 
   // Site qui possède le plus de chapitres, utilisé comme source "principale" du manga
@@ -103,23 +123,19 @@ class MangaService {
   resolveMediaKind(routeName: string | symbol | null | undefined, dbType?: string): MediaKind {
     const name = String(routeName || '').toLowerCase()
 
-    // Priorité : nom de route explicite (nouvelles routes)
     if (name.includes('lecture')) return 'lecture'
     if (name.includes('serie')) return 'serie'
     if (name.includes('film')) return 'film'
 
-    // Fallback : champ type BDD (migration en cours par le collègue)
     if (dbType) {
       const t = dbType.toLowerCase()
       if (t === 'lecture') return 'lecture'
       if (t === 'serie') return 'serie'
       if (t === 'film') return 'film'
-      // Anciens types
       if (t === 'anime') return 'serie'
       if (t === 'manga') return 'lecture'
     }
 
-    // Fallback : anciennes routes
     if (name.includes('anime')) return 'serie'
     return 'lecture' // défaut
   }
