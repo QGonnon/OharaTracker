@@ -69,3 +69,36 @@ class AppearanceService {
 }
 
 export const appearanceService = new AppearanceService()
+
+export interface DiscoveryPreferences {
+  defaultType: 'all' | 'manga' | 'anime'
+  pinnedGenres: string[]
+  hideTrending: boolean
+  hideSpotlight: boolean
+}
+
+class DiscoveryPreferencesService {
+  async get(token: string): Promise<{ preferences: DiscoveryPreferences | null; unlocked: boolean }> {
+    const response = await fetch(`${API_BASE}/client/discovery`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error('Erreur préférences Découverte')
+    return response.json()
+  }
+
+  async update(token: string, preferences: Partial<DiscoveryPreferences>): Promise<{ preferences: DiscoveryPreferences }> {
+    const response = await fetch(`${API_BASE}/client/discovery`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(preferences)
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.message || 'Erreur lors de la sauvegarde')
+    return data
+  }
+}
+
+export const discoveryPreferencesService = new DiscoveryPreferencesService()

@@ -189,7 +189,14 @@
     "for_you_desc": "Suggerito a partire dai generi che segui.",
     "for_you_popular": "I più seguiti in questo momento, in attesa che la tua biblioteca cresca.",
     "for_you_locked": "I suggerimenti intelligenti sono inclusi nei piani Lite e Pro.",
-    "see_plans": "Vedi i piani"
+    "see_plans": "Vedi i piani",
+    "customize": "Personalizza",
+    "default_type": "Vista predefinita",
+    "all": "Tutto",
+    "hide_spotlight": "Nascondi il primo piano",
+    "hide_trending": "Nascondi le tendenze",
+    "cancel": "Annulla",
+    "save": "Salva"
   },
   "manga": {
     "loading": "Caricamento manga...",

@@ -10,6 +10,7 @@ import { DEFAULT_LOCALE, isLocale, absoluteUrl, homePath, pagePath, type Locale 
 import { localeMedia, localePath } from '../../../seo/localePath';
 import { useAuthStore } from '../../../store/auth.module';
 import SuggestionService, { type Suggestion } from '../../../services/suggestion.service';
+import { discoveryPreferencesService, type DiscoveryPreferences } from '../../../services/preferences.service';
 
 export default defineComponent({
   name: 'Discovery',
@@ -23,6 +24,9 @@ export default defineComponent({
     const suggestions = ref<Suggestion[]>([]);
     const suggestionsLocked = ref(false);
     const suggestionsFallback = ref(false);
+    const discoveryPrefs = ref<DiscoveryPreferences | null>(null);
+    const canCustomize = ref(false);
+    const customizerOpen = ref(false);
     const featuredMangas = ref<Manga[]>([]);
     const featuredAnimes = ref<Manga[]>([]);
     const loading = ref(true);
@@ -133,9 +137,49 @@ export default defineComponent({
       }
     };
 
+    // Préférences Pro : elles décident de l'état initial de la page, pas de son contenu.
+    const fetchDiscoveryPrefs = async () => {
+      const token = authStore.user?.accessToken;
+      if (!token) return;
+
+      try {
+        const { preferences, unlocked } = await discoveryPreferencesService.get(token);
+        canCustomize.value = unlocked;
+        discoveryPrefs.value = preferences;
+        if (preferences?.defaultType) activeType.value = preferences.defaultType;
+        if (preferences?.pinnedGenres?.length) activeGenre.value = preferences.pinnedGenres[0];
+      } catch {
+        discoveryPrefs.value = null;
+      }
+    };
+
+    const saveDiscoveryPrefs = async () => {
+      const token = authStore.user?.accessToken;
+      if (!token || !discoveryPrefs.value) return;
+
+      try {
+        const { preferences } = await discoveryPreferencesService.update(token, discoveryPrefs.value);
+        discoveryPrefs.value = preferences;
+        customizerOpen.value = false;
+      } catch {
+        // L'échec laisse le panneau ouvert : l'utilisateur voit que rien n'a été enregistré.
+      }
+    };
+
+    const openCustomizer = () => {
+      discoveryPrefs.value = discoveryPrefs.value ?? {
+        defaultType: activeType.value as DiscoveryPreferences['defaultType'],
+        pinnedGenres: activeGenre.value ? [activeGenre.value] : [],
+        hideTrending: false,
+        hideSpotlight: false,
+      };
+      customizerOpen.value = true;
+    };
+
     onMounted(() => {
       fetchMangas();
       fetchSuggestions();
+      fetchDiscoveryPrefs();
     });
 
     const currentLocale = computed<Locale>(() =>
@@ -172,6 +216,11 @@ export default defineComponent({
     const suggestionCover = (item: Suggestion): string => mangaStore.getCoverUrl(item as any);
 
     return {
+      discoveryPrefs,
+      canCustomize,
+      customizerOpen,
+      openCustomizer,
+      saveDiscoveryPrefs,
       suggestions,
       suggestionsLocked,
       suggestionsFallback,

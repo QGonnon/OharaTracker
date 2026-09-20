@@ -58,6 +58,9 @@ export default (sequelize, DataTypes) => {
     },
     theme: {
       type: DataTypes.STRING(20)
+    },
+    discovery_preferences: {
+      type: DataTypes.JSONB
     }
   }, {
     tableName: 'Client',

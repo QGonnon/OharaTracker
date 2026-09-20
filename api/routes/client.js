@@ -1,5 +1,6 @@
 import express from 'express';
-import { getClient, getClientPreferences, updateClientPreferences } from '../utils/database.js';
+import { QueryTypes } from 'sequelize';
+import { sequelize, getClient, getClientPreferences, updateClientPreferences } from '../utils/database.js';
 import { authenticate } from '../utils/auth.js';
 import { getPlanForUser, limitsFor, requireFeature } from '../utils/plan.js';
 import { THEMES, getAppearance, updateAppearance } from '../utils/appearance.js';
@@ -63,6 +64,67 @@ router.patch('/preferences', authenticate, async (req, res) => {
     } catch (error) {
         console.error('❌ Erreur lors de la mise à jour des préférences:', error);
         res.status(error.statusCode || 500).json({ message: error.message || 'Erreur serveur' });
+    }
+});
+
+const DISCOVERY_TYPES = ['all', 'manga', 'anime'];
+const MAX_PINNED_GENRES = 10;
+
+router.get('/discovery', authenticate, async (req, res) => {
+    try {
+        const plan = await getPlanForUser(req.user.username);
+        const rows = await sequelize.query(
+            'SELECT discovery_preferences AS preferences FROM "Client" WHERE name = :username',
+            { replacements: { username: req.user.username }, type: QueryTypes.SELECT }
+        );
+
+        res.json({
+            preferences: rows[0]?.preferences ?? null,
+            plan,
+            unlocked: limitsFor(plan).customDiscovery === true,
+        });
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération de la Découverte:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+// Personnalisation de la page Découverte, réservée à l'offre Pro.
+router.patch('/discovery', authenticate, requireFeature('customDiscovery'), async (req, res) => {
+    const { defaultType, pinnedGenres, hideTrending, hideSpotlight } = req.body ?? {};
+
+    if (defaultType !== undefined && !DISCOVERY_TYPES.includes(defaultType)) {
+        return res.status(400).json({ message: 'Type par défaut inconnu' });
+    }
+    if (pinnedGenres !== undefined) {
+        if (!Array.isArray(pinnedGenres) || pinnedGenres.length > MAX_PINNED_GENRES) {
+            return res.status(400).json({ message: `Au maximum ${MAX_PINNED_GENRES} genres épinglés` });
+        }
+        if (pinnedGenres.some(genre => typeof genre !== 'string' || genre.length > 40)) {
+            return res.status(400).json({ message: 'Genre invalide' });
+        }
+    }
+
+    const preferences = {
+        defaultType: defaultType ?? 'all',
+        pinnedGenres: pinnedGenres ?? [],
+        hideTrending: hideTrending === true,
+        hideSpotlight: hideSpotlight === true,
+    };
+
+    try {
+        await sequelize.query(
+            'UPDATE "Client" SET discovery_preferences = :preferences::jsonb WHERE name = :username',
+            {
+                replacements: { username: req.user.username, preferences: JSON.stringify(preferences) },
+                type: QueryTypes.UPDATE,
+            }
+        );
+
+        res.json({ preferences });
+    } catch (error) {
+        console.error('❌ Erreur lors de la personnalisation de la Découverte:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
     }
 });
 

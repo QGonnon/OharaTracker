@@ -5,7 +5,7 @@
   <h1 class="sr-only">{{ $t('seo.discovery.title') }}</h1>
 
   <!-- SPOTLIGHT avec PrimeVue Card -->
-  <div v-if="spotlightItem && !loading" class="w-full flex justify-center items-center min-h-[480px] relative overflow-hidden bg-gradient-to-br from-violet-600/60 to-indigo-900/80">
+  <div v-if="spotlightItem && !loading && !discoveryPrefs?.hideSpotlight" class="w-full flex justify-center items-center min-h-[480px] relative overflow-hidden bg-gradient-to-br from-violet-600/60 to-indigo-900/80">
     <!-- Backdrop (en dessous) -->
     <div class="absolute inset-0" :style="{ backgroundImage: `url(${getCoverUrl(spotlightItem)})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(28px) brightness(0.35) saturate(1.4)' }"></div>
     <!-- Overlay -->
@@ -51,11 +51,47 @@
   <div class="bg-gray-50 dark:bg-gray-900 min-h-[60vh] pb-16">
     <!-- FILTER BAR -->
     <div class="sticky top-16 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 backdrop-blur flex flex-col gap-2 px-8 py-3">
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-center">
         <button v-for="t in types" :key="t.value" type="button" :aria-pressed="activeType === t.value" @click="setType(t.value)" :class="['px-4 py-1.5 rounded-full font-semibold text-sm transition', activeType === t.value ? 'bg-violet-600 text-white shadow' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-violet-100 dark:hover:bg-violet-900']">
           {{ t.label }}
         </button>
+
+        <button v-if="canCustomize" type="button" @click="openCustomizer"
+                class="ml-auto px-4 py-1.5 rounded-full text-sm font-semibold border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition">
+          <i class="pi pi-sliders-h mr-1.5 text-xs" aria-hidden="true"></i>{{ $t('discovery.customize') }}
+        </button>
       </div>
+
+      <!-- Personnalisation de la page (offre Pro) -->
+      <form v-if="customizerOpen && discoveryPrefs" class="rounded-xl border border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-800 p-4 mt-2 grid gap-3 sm:grid-cols-2"
+            @submit.prevent="saveDiscoveryPrefs">
+        <div>
+          <label for="disc-type" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">{{ $t('discovery.default_type') }}</label>
+          <select id="disc-type" v-model="discoveryPrefs.defaultType"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm">
+            <option value="all">{{ $t('discovery.all') }}</option>
+            <option value="manga">Manga</option>
+            <option value="anime">Anime</option>
+          </select>
+        </div>
+        <div class="flex flex-col justify-center gap-2">
+          <div class="flex items-center gap-2">
+            <input id="disc-hide-spotlight" type="checkbox" v-model="discoveryPrefs.hideSpotlight" class="accent-violet-600" />
+            <label for="disc-hide-spotlight" class="text-sm text-gray-700 dark:text-gray-200">{{ $t('discovery.hide_spotlight') }}</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="disc-hide-trending" type="checkbox" v-model="discoveryPrefs.hideTrending" class="accent-violet-600" />
+            <label for="disc-hide-trending" class="text-sm text-gray-700 dark:text-gray-200">{{ $t('discovery.hide_trending') }}</label>
+          </div>
+        </div>
+        <div class="sm:col-span-2 flex justify-end gap-2">
+          <button type="button" @click="customizerOpen = false"
+                  class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm">{{ $t('discovery.cancel') }}</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition">
+            {{ $t('discovery.save') }}
+          </button>
+        </div>
+      </form>
     </div>
 
     <!-- SUGGESTIONS PERSONNALISÉES -->
@@ -91,7 +127,7 @@
     </section>
 
     <!-- TRENDING STRIP -->
-    <section v-if="trending.length && activeGenre === '' && activeType === 'all'" class="px-8 pt-10">
+    <section v-if="trending.length && activeGenre === '' && activeType === 'all' && !discoveryPrefs?.hideTrending" class="px-8 pt-10">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
         <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $t('discovery.trending') }}</h2>

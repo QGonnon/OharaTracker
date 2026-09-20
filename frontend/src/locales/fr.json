@@ -189,7 +189,14 @@
     "for_you_desc": "Suggéré à partir des genres que vous suivez.",
     "for_you_popular": "Le plus suivi en ce moment, en attendant que votre bibliothèque se remplisse.",
     "for_you_locked": "Les suggestions intelligentes sont incluses dans les offres Lite et Pro.",
-    "see_plans": "Voir les offres"
+    "see_plans": "Voir les offres",
+    "customize": "Personnaliser",
+    "default_type": "Affichage par défaut",
+    "all": "Tout",
+    "hide_spotlight": "Masquer la mise en avant",
+    "hide_trending": "Masquer les tendances",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
   },
   "manga": {
     "loading": "Chargement du manga...",
