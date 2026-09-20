@@ -8,7 +8,7 @@ import { authenticate, JWT_SECRET } from '../utils/auth.js';
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, referralCode } = req.body;
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Tous les champs sont requis' });
@@ -36,10 +36,25 @@ router.post('/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
 
+        // Un code d'affiliation inconnu ne bloque pas l'inscription : il est simplement ignoré.
+        const referrer = referralCode
+            ? await sequelize.query(
+                'SELECT affiliate_code FROM "Partner" WHERE affiliate_code = :code AND is_active = true LIMIT 1',
+                { replacements: { code: String(referralCode).slice(0, 24) }, type: QueryTypes.SELECT }
+            )
+            : [];
+
         await sequelize.query(
-            'INSERT INTO "Client" (name, code, email, password, id_subscription) VALUES (:username, :code, :email, :password, 1)',
+            `INSERT INTO "Client" (name, code, email, password, id_subscription, referred_by)
+             VALUES (:username, :code, :email, :password, 1, :referredBy)`,
             {
-                replacements: { username, code: randomSuffix, email, password: hashedPassword },
+                replacements: {
+                    username,
+                    code: randomSuffix,
+                    email,
+                    password: hashedPassword,
+                    referredBy: referrer[0]?.affiliate_code ?? null,
+                },
                 type: QueryTypes.INSERT
             }
         );

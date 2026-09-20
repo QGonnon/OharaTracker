@@ -59,6 +59,10 @@ export default defineComponent({
   },
   methods: {
     handleRegister(user: any) {
+      // Code d'affiliation porté par l'URL du créateur (?ref=...), attribué au filleul.
+      const referralCode = this.$route.query.ref as string | undefined;
+      if (referralCode) user = { ...user, referralCode };
+
       this.message = "";
       this.successful = false;
       this.loading = true;

@@ -476,7 +476,10 @@
       "label": "Partenaires officiels",
       "title": "Nos partenaires officiels",
       "desc": "Créateurs de contenu (YouTube, Twitch...) et sites partenaires avec lesquels OharaTracker collabore.",
-      "empty": "Aucun partenariat officiel pour le moment. Revenez bientôt !"
+      "empty": "Aucun partenariat officiel pour le moment. Revenez bientôt !",
+      "loading": "Chargement des partenaires...",
+      "become": "Vous êtes une plateforme ou un créateur ?",
+      "contact_us": "Contactez-nous"
     },
     "contact": {
       "label": "Contact",

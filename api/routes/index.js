@@ -11,6 +11,7 @@ import watchlists from './watchlists.js';
 import suggestions from './suggestions.js';
 import filters from './filters.js';
 import community from './community.js';
+import partners from './partners.js';
 
 
 const router = express.Router();
@@ -30,6 +31,7 @@ router
     .use('/suggestions', suggestions)
     .use('/filters', filters)
     .use('/community', community)
+    .use('/partners', partners)
     .use('/stripe', stripeRoutes);
 
 export default router;

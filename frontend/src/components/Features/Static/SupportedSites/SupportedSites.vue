@@ -15,13 +15,19 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div
+        <component
           v-for="site in sites"
-          :key="site"
-          class="p-5 rounded-xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900 text-center font-semibold text-gray-700 dark:text-zinc-200"
+          :is="site.url ? 'a' : 'div'"
+          :key="site.name"
+          :href="site.url || undefined"
+          :rel="site.url ? 'noopener nofollow' : undefined"
+          target="_blank"
+          class="p-5 rounded-xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900 text-center text-gray-700 dark:text-zinc-200 block"
+          :class="site.url ? 'hover:border-violet-300 dark:hover:border-violet-700 transition' : ''"
         >
-          {{ site }}
-        </div>
+          <span class="font-semibold block">{{ site.name }}</span>
+          <span v-if="site.description" class="text-xs text-gray-600 dark:text-zinc-300 block mt-1">{{ site.description }}</span>
+        </component>
       </div>
 
       <p class="text-center text-gray-600 dark:text-zinc-400 text-sm mt-8">

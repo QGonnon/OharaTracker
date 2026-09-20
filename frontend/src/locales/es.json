@@ -476,7 +476,10 @@
       "label": "Socios oficiales",
       "title": "Nuestros socios oficiales",
       "desc": "Creadores de contenido (YouTube, Twitch...) y sitios asociados con los que colabora OharaTracker.",
-      "empty": "Todavía no hay ninguna asociación oficial. ¡Vuelve pronto!"
+      "empty": "Todavía no hay ninguna asociación oficial. ¡Vuelve pronto!",
+      "loading": "Cargando socios...",
+      "become": "¿Eres una plataforma o un creador?",
+      "contact_us": "Contáctanos"
     },
     "contact": {
       "label": "Contacto",
