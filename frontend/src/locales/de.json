@@ -16,7 +16,8 @@
     "close_menu": "Navigationsmenü schließen",
     "user_menu": "Kontomenü",
     "stats": "Statistiken",
-    "watchlists": "Meine Listen"
+    "watchlists": "Meine Listen",
+    "community": "Community"
   },
   "auth": {
     "login_subtitle": "Anmeldung",
@@ -733,5 +734,40 @@
     "by": "von {name}",
     "quota_reached": "Dein Tarif erlaubt {n} Liste(n).",
     "see_plans": "Angebote ansehen"
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Folge deinen Freunden und sieh, was sie lesen.",
+    "feed": "Aktivitäten",
+    "feed_empty": "Noch nichts zu sehen — füge Freunde hinzu.",
+    "loading": "Wird geladen...",
+    "find": "Profil suchen",
+    "search_placeholder": "Benutzername (mind. 2 Zeichen)",
+    "no_result": "Kein öffentliches Profil gefunden.",
+    "add": "Hinzufügen",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "remove": "Freund entfernen",
+    "requests": "Erhaltene Anfragen",
+    "friends": "Meine Freunde",
+    "friends_empty": "Du hast noch keine Freunde.",
+    "pending_sent": "{n} Anfrage(n) warten auf Antwort.",
+    "works": "{n} verfolgte Titel",
+    "visibility": "Sichtbarkeit des Profils",
+    "visibility_desc": "Ein öffentliches Profil ist über den Namen auffindbar. Deine Aktivität sehen nur Freunde.",
+    "public": "Öffentliches Profil",
+    "private": "Privates Profil",
+    "action": {
+      "added": "hat hinzugefügt",
+      "progress": "ist weitergekommen bei",
+      "rated": "hat bewertet",
+      "completed": "hat abgeschlossen"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "accepted": "Freund",
+      "self": "Du",
+      "none": ""
+    }
   }
 }

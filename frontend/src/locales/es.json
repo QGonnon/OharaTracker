@@ -16,7 +16,8 @@
     "close_menu": "Cerrar el menú de navegación",
     "user_menu": "Menú de la cuenta",
     "stats": "Estadísticas",
-    "watchlists": "Mis listas"
+    "watchlists": "Mis listas",
+    "community": "Comunidad"
   },
   "auth": {
     "login_subtitle": "Inicio de sesión",
@@ -733,5 +734,40 @@
     "by": "por {name}",
     "quota_reached": "Tu plan está limitado a {n} lista(s).",
     "see_plans": "Ver los planes"
+  },
+  "community": {
+    "title": "Comunidad",
+    "subtitle": "Sigue a tus amigos y descubre qué leen.",
+    "feed": "Actividad",
+    "feed_empty": "Nada por aquí: añade amigos para ver su actividad.",
+    "loading": "Cargando...",
+    "find": "Buscar un perfil",
+    "search_placeholder": "Usuario (mín. 2 caracteres)",
+    "no_result": "No se ha encontrado ningún perfil público.",
+    "add": "Añadir",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "remove": "Quitar de amigos",
+    "requests": "Solicitudes recibidas",
+    "friends": "Mis amigos",
+    "friends_empty": "Todavía no tienes amigos.",
+    "pending_sent": "{n} solicitud(es) pendiente(s) de respuesta.",
+    "works": "{n} obra(s) seguida(s)",
+    "visibility": "Visibilidad del perfil",
+    "visibility_desc": "Un perfil público puede encontrarse por su nombre. Tu actividad solo la ven tus amigos.",
+    "public": "Perfil público",
+    "private": "Perfil privado",
+    "action": {
+      "added": "ha añadido",
+      "progress": "ha avanzado en",
+      "rated": "ha puntuado",
+      "completed": "ha terminado"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Amigo",
+      "self": "Tú",
+      "none": ""
+    }
   }
 }

@@ -16,7 +16,8 @@
     "close_menu": "Close navigation menu",
     "user_menu": "Account menu",
     "stats": "Statistics",
-    "watchlists": "My lists"
+    "watchlists": "My lists",
+    "community": "Community"
   },
   "auth": {
     "login_subtitle": "Login",
@@ -733,5 +734,40 @@
     "by": "by {name}",
     "quota_reached": "Your plan is limited to {n} list(s).",
     "see_plans": "See the plans"
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Follow your friends and see what they are reading.",
+    "feed": "Activity feed",
+    "feed_empty": "Nothing here yet — add friends to see their activity.",
+    "loading": "Loading...",
+    "find": "Find a profile",
+    "search_placeholder": "Username (min. 2 characters)",
+    "no_result": "No public profile found.",
+    "add": "Add",
+    "accept": "Accept",
+    "decline": "Decline",
+    "remove": "Remove friend",
+    "requests": "Received requests",
+    "friends": "My friends",
+    "friends_empty": "You have no friends yet.",
+    "pending_sent": "{n} request(s) awaiting an answer.",
+    "works": "{n} title(s) tracked",
+    "visibility": "Profile visibility",
+    "visibility_desc": "A public profile can be found by username. Your activity stays visible to friends only.",
+    "public": "Public profile",
+    "private": "Private profile",
+    "action": {
+      "added": "added",
+      "progress": "made progress on",
+      "rated": "rated",
+      "completed": "completed"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Friend",
+      "self": "You",
+      "none": ""
+    }
   }
 }

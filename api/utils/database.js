@@ -309,6 +309,9 @@ async function addLibraryToUser({
         }
     );
 
+    const { recordActivity } = await import('./community.js');
+    await recordActivity(username, library.id, 'added');
+
     return { idLibrary: library.id, duplicate: false };
 }
 
@@ -443,6 +446,11 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
             }
         );
     }
+
+    const { recordActivity } = await import('./community.js');
+    await recordActivity(username, idLibrary,
+        readingStatus === 'Terminé' ? 'completed' : (score ? 'rated' : 'progress'),
+        readingStatus === 'Terminé' ? null : (score ? `${score}/10` : lastChapter || null));
 
     return { idLibrary: idLibrary };
 }

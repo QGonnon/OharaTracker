@@ -20,6 +20,7 @@ const Profile = () => import('../components/Features/User/Profile/Profile.vue')
 const Stats = () => import('../components/Features/User/Stats/Stats.vue')
 const Watchlists = () => import('../components/Features/User/Watchlists/Watchlists.vue')
 const SharedWatchlist = () => import('../components/Features/User/Watchlists/SharedWatchlist.vue')
+const Community = () => import('../components/Features/User/Community/Community.vue')
 const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
 const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
 
@@ -114,6 +115,7 @@ const routes: RouteRecordRaw[] = [
   pageRoute('stats', 'Stats', Stats, { noindex: true, requiresAuth: true }),
   pageRoute('watchlists', 'Watchlists', Watchlists, { noindex: true, requiresAuth: true }),
   sharedWatchlistRoute(),
+  pageRoute('community', 'Community', Community, { noindex: true, requiresAuth: true }),
   pageRoute('notifications', 'Notifications', NotificationsView, { noindex: true, requiresAuth: true }),
 
   // Pages publiques indexables

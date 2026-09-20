@@ -16,7 +16,8 @@
     "close_menu": "Fermer le menu de navigation",
     "user_menu": "Menu du compte",
     "stats": "Statistiques",
-    "watchlists": "Mes listes"
+    "watchlists": "Mes listes",
+    "community": "Communauté"
   },
   "auth": {
     "login_subtitle": "Connexion",
@@ -733,5 +734,40 @@
     "by": "par {name}",
     "quota_reached": "Votre offre est limitée à {n} liste(s).",
     "see_plans": "Voir les offres"
+  },
+  "community": {
+    "title": "Communauté",
+    "subtitle": "Suivez vos amis et découvrez ce qu'ils lisent.",
+    "feed": "Fil d'actualité",
+    "feed_empty": "Rien à afficher : ajoutez des amis pour voir leur activité.",
+    "loading": "Chargement...",
+    "find": "Trouver un profil",
+    "search_placeholder": "Pseudo (2 caractères min.)",
+    "no_result": "Aucun profil public trouvé.",
+    "add": "Ajouter",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "remove": "Retirer des amis",
+    "requests": "Demandes reçues",
+    "friends": "Mes amis",
+    "friends_empty": "Vous n'avez pas encore d'ami.",
+    "pending_sent": "{n} demande(s) en attente de réponse.",
+    "works": "{n} œuvre(s) suivie(s)",
+    "visibility": "Visibilité du profil",
+    "visibility_desc": "Un profil public peut être trouvé par pseudo. Votre activité reste réservée à vos amis.",
+    "public": "Profil public",
+    "private": "Profil privé",
+    "action": {
+      "added": "a ajouté",
+      "progress": "a avancé sur",
+      "rated": "a noté",
+      "completed": "a terminé"
+    },
+    "status": {
+      "pending": "En attente",
+      "accepted": "Ami",
+      "self": "Vous",
+      "none": ""
+    }
   }
 }
