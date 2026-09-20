@@ -32,6 +32,23 @@ export default (sequelize, DataTypes) => {
     id_subscription: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    locale: {
+      type: DataTypes.STRING(5)
+    },
+    email_digest_enabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
+    // 0 = dimanche. Seules les offres payantes peuvent s'écarter de cette valeur.
+    email_digest_day: {
+      type: DataTypes.SMALLINT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    email_digest_last_sent_at: {
+      type: DataTypes.DATE
     }
   }, {
     tableName: 'Client',

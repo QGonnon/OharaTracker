@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { initDb } from './utils/index.js';
 import { scrapeAll } from './sites/index.js';
+import { startScheduler } from './utils/scheduler.js';
 import startApp from './app.js'
 
 // Load environment variables FIRST
@@ -12,5 +13,7 @@ initDb()
 // Lancer le scraping en arrière-plan toutes les 30 secondes
 scrapeAll()
 // setInterval(scrapeAll, 30000);
+
+startScheduler()
 
 startApp()

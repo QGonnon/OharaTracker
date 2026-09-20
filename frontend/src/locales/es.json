@@ -604,5 +604,13 @@
     "back_to_top": "Volver arriba",
     "opens_new_tab": "abre una pestaña nueva",
     "loading": "Cargando…"
+  },
+  "digest": {
+    "subject": "Tus {count} novedades de la semana",
+    "heading": "Hola {name}:",
+    "intro": "{count} obra(s) que sigues han publicado novedades esta semana.",
+    "item_detail": "{count} novedad(es) — última: {chapter}",
+    "cta": "Abrir mi biblioteca",
+    "footer": "Recibes este correo porque el informe semanal está activado en tu cuenta de Ohara Tracker."
   }
 }

@@ -604,5 +604,13 @@
     "back_to_top": "Retour en haut de la page",
     "opens_new_tab": "ouvre un nouvel onglet",
     "loading": "Chargement…"
+  },
+  "digest": {
+    "subject": "Vos {count} nouveautés de la semaine",
+    "heading": "Bonjour {name},",
+    "intro": "{count} œuvre(s) que vous suivez ont publié de nouvelles sorties cette semaine.",
+    "item_detail": "{count} nouvelle(s) sortie(s) — dernière : {chapter}",
+    "cta": "Ouvrir ma bibliothèque",
+    "footer": "Vous recevez ce message car le rapport hebdomadaire est activé sur votre compte Ohara Tracker."
   }
 }

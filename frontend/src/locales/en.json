@@ -604,5 +604,13 @@
     "back_to_top": "Back to top",
     "opens_new_tab": "opens in a new tab",
     "loading": "Loading…"
+  },
+  "digest": {
+    "subject": "Your {count} releases this week",
+    "heading": "Hi {name},",
+    "intro": "{count} of the titles you follow released something new this week.",
+    "item_detail": "{count} new release(s) — latest: {chapter}",
+    "cta": "Open my library",
+    "footer": "You receive this e-mail because the weekly report is enabled on your Ohara Tracker account."
   }
 }
