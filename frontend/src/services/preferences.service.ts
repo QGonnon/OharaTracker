@@ -34,3 +34,38 @@ class PreferencesService {
 }
 
 export default new PreferencesService()
+
+export interface ProfileAppearance {
+  avatarUrl: string | null
+  bannerUrl: string | null
+  theme: string
+  plan?: string
+  unlocked?: boolean
+  themes?: string[]
+}
+
+class AppearanceService {
+  async get(token: string): Promise<ProfileAppearance> {
+    const response = await fetch(`${API_BASE}/client/appearance`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error(`Erreur apparence: ${response.status}`)
+    return response.json()
+  }
+
+  async update(token: string, payload: Partial<ProfileAppearance>): Promise<ProfileAppearance> {
+    const response = await fetch(`${API_BASE}/client/appearance`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.message || 'Erreur lors de la sauvegarde')
+    return data
+  }
+}
+
+export const appearanceService = new AppearanceService()

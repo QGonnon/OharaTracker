@@ -343,6 +343,24 @@
       "thursday": "Jueves",
       "friday": "Viernes",
       "saturday": "Sábado"
+    },
+    "appearance": "Apariencia",
+    "appearance_sub": "Personaliza el escaparate de tu perfil.",
+    "appearance_locked": "Avatar animado, banner y temas exclusivos se incluyen en los planes Lite y Pro.",
+    "avatar_url": "URL del avatar",
+    "banner_url": "URL del banner",
+    "image_placeholder": "https://…",
+    "avatar_hint": "Se aceptan GIF animados.",
+    "theme": "Tema",
+    "appearance_saved": "Apariencia guardada.",
+    "appearance_error": "No se ha podido guardar la apariencia.",
+    "themes": {
+      "default": "Predeterminado",
+      "midnight": "Medianoche",
+      "sakura": "Sakura",
+      "sunset": "Atardecer",
+      "forest": "Bosque",
+      "mono": "Monocromo"
     }
   },
   "footer": {

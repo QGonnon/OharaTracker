@@ -161,6 +161,71 @@
             </form>
           </section>
 
+          <!-- Apparence -->
+          <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.appearance') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.appearance_sub') }}</p>
+            </div>
+
+            <div v-if="!appearanceUnlocked" class="px-6 py-6 text-center">
+              <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">{{ $t('profile.appearance_locked') }}</p>
+              <RouterLink :to="pricingLink" class="inline-block px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition">
+                {{ $t('profile.view_plans') }}
+              </RouterLink>
+            </div>
+
+            <form v-else class="px-6 py-6 space-y-5" @submit.prevent="saveAppearance">
+              <!-- Aperçu -->
+              <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600">
+                <div class="h-24 bg-gradient-to-r from-violet-500 to-indigo-600 bg-cover bg-center"
+                     :style="bannerUrl ? { backgroundImage: `url(${bannerUrl})` } : {}"></div>
+                <div class="flex items-center gap-3 px-4 py-3 -mt-8">
+                  <img v-if="avatarUrl" :src="avatarUrl" alt=""
+                       class="w-16 h-16 rounded-full object-cover border-4 border-white dark:border-slate-800" />
+                  <div v-else class="w-16 h-16 rounded-full bg-indigo-500 text-white grid place-items-center text-2xl font-bold border-4 border-white dark:border-slate-800">
+                    {{ userInitial }}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label for="profile-avatar" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.avatar_url') }}</label>
+                <input id="profile-avatar" v-model="avatarUrl" type="url" :placeholder="$t('profile.image_placeholder')"
+                       class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm" />
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ $t('profile.avatar_hint') }}</p>
+              </div>
+
+              <div>
+                <label for="profile-banner" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.banner_url') }}</label>
+                <input id="profile-banner" v-model="bannerUrl" type="url" :placeholder="$t('profile.image_placeholder')"
+                       class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm" />
+              </div>
+
+              <div>
+                <label for="profile-theme" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.theme') }}</label>
+                <select id="profile-theme" v-model="theme"
+                        class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm">
+                  <option v-for="name in themes" :key="name" :value="name">{{ $t(`profile.themes.${name}`) }}</option>
+                </select>
+              </div>
+
+              <div v-if="appearanceSuccess" role="status" aria-live="polite" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
+                {{ appearanceSuccess }}
+              </div>
+              <div v-if="appearanceError" role="alert" aria-live="assertive" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                {{ appearanceError }}
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" :disabled="appearanceLoading"
+                        class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-60 transition">
+                  {{ appearanceLoading ? $t('profile.saving') : $t('profile.save') }}
+                </button>
+              </div>
+            </form>
+          </section>
+
           <!-- Notifications -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">

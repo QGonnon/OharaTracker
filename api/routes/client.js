@@ -1,7 +1,8 @@
 import express from 'express';
 import { getClient, getClientPreferences, updateClientPreferences } from '../utils/database.js';
 import { authenticate } from '../utils/auth.js';
-import { getPlanForUser, limitsFor } from '../utils/plan.js';
+import { getPlanForUser, limitsFor, requireFeature } from '../utils/plan.js';
+import { THEMES, getAppearance, updateAppearance } from '../utils/appearance.js';
 import { LOCALES } from '../utils/seoRoutes.js';
 
 const router = express.Router();
@@ -61,6 +62,33 @@ router.patch('/preferences', authenticate, async (req, res) => {
         res.json(preferences);
     } catch (error) {
         console.error('❌ Erreur lors de la mise à jour des préférences:', error);
+        res.status(error.statusCode || 500).json({ message: error.message || 'Erreur serveur' });
+    }
+});
+
+router.get('/appearance', authenticate, async (req, res) => {
+    try {
+        const plan = await getPlanForUser(req.user.username);
+        const appearance = await getAppearance(req.user.username);
+
+        res.json({
+            ...appearance,
+            plan,
+            unlocked: limitsFor(plan).profileCustomization === true,
+            themes: THEMES,
+        });
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération de l\'apparence:', error);
+        res.status(error.statusCode || 500).json({ message: error.message || 'Erreur serveur' });
+    }
+});
+
+// Avatar animé, bannière et thèmes exclusifs sont vendus avec les offres payantes.
+router.patch('/appearance', authenticate, requireFeature('profileCustomization'), async (req, res) => {
+    try {
+        res.json(await updateAppearance(req.user.username, req.body));
+    } catch (error) {
+        console.error('❌ Erreur lors de la mise à jour de l\'apparence:', error);
         res.status(error.statusCode || 500).json({ message: error.message || 'Erreur serveur' });
     }
 });

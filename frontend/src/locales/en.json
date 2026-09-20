@@ -343,6 +343,24 @@
       "thursday": "Thursday",
       "friday": "Friday",
       "saturday": "Saturday"
+    },
+    "appearance": "Appearance",
+    "appearance_sub": "Customise how your profile looks.",
+    "appearance_locked": "Animated avatar, banner and exclusive themes come with the Lite and Pro plans.",
+    "avatar_url": "Avatar URL",
+    "banner_url": "Banner URL",
+    "image_placeholder": "https://…",
+    "avatar_hint": "Animated GIFs are supported.",
+    "theme": "Theme",
+    "appearance_saved": "Appearance saved.",
+    "appearance_error": "Could not save your appearance.",
+    "themes": {
+      "default": "Default",
+      "midnight": "Midnight",
+      "sakura": "Sakura",
+      "sunset": "Sunset",
+      "forest": "Forest",
+      "mono": "Monochrome"
     }
   },
   "footer": {

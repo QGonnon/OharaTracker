@@ -343,6 +343,24 @@
       "thursday": "Donnerstag",
       "friday": "Freitag",
       "saturday": "Samstag"
+    },
+    "appearance": "Erscheinungsbild",
+    "appearance_sub": "Gestalte die Vitrine deines Profils.",
+    "appearance_locked": "Animierter Avatar, Banner und exklusive Themes gehören zu Lite und Pro.",
+    "avatar_url": "Avatar-URL",
+    "banner_url": "Banner-URL",
+    "image_placeholder": "https://…",
+    "avatar_hint": "Animierte GIFs werden unterstützt.",
+    "theme": "Theme",
+    "appearance_saved": "Erscheinungsbild gespeichert.",
+    "appearance_error": "Erscheinungsbild konnte nicht gespeichert werden.",
+    "themes": {
+      "default": "Standard",
+      "midnight": "Mitternacht",
+      "sakura": "Sakura",
+      "sunset": "Sonnenuntergang",
+      "forest": "Wald",
+      "mono": "Monochrom"
     }
   },
   "footer": {

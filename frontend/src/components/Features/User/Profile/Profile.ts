@@ -3,7 +3,7 @@ import { useAuthStore } from '../../../../store/auth.module';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
 import SubscriptionService from '../../../../services/subscription.service';
-import PreferencesService from '../../../../services/preferences.service';
+import PreferencesService, { appearanceService } from '../../../../services/preferences.service';
 import { usePageSeo } from '../../../../seo/usePageSeo';
 import { localePath } from '../../../../seo/localePath';
 
@@ -46,6 +46,14 @@ export default defineComponent({
       preferencesLoading: false,
       preferencesSuccess: '',
       preferencesError: '',
+      avatarUrl: '',
+      bannerUrl: '',
+      theme: 'default',
+      themes: [] as string[],
+      appearanceUnlocked: false,
+      appearanceLoading: false,
+      appearanceSuccess: '',
+      appearanceError: '',
     };
   },
 
@@ -103,6 +111,7 @@ export default defineComponent({
       this.profileForm.username = fresh.username;
       this.profileForm.email = fresh.email;
       await this.loadPreferences();
+      await this.loadAppearance();
     } catch (err: any) {
       // Token invalide ou utilisateur introuvable → déconnexion forcée
       const authStore = useAuthStore();
@@ -123,6 +132,46 @@ export default defineComponent({
         this.canChooseDigestDay = preferences.limits?.chooseDigestDay === true;
       } catch {
         // Préférences indisponibles : la section reste sur ses valeurs par défaut.
+      }
+    },
+
+    async loadAppearance() {
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!token) return;
+
+      try {
+        const appearance = await appearanceService.get(token);
+        this.avatarUrl = appearance.avatarUrl ?? '';
+        this.bannerUrl = appearance.bannerUrl ?? '';
+        this.theme = appearance.theme;
+        this.themes = appearance.themes ?? [];
+        this.appearanceUnlocked = appearance.unlocked === true;
+      } catch {
+        // Apparence indisponible : la section garde ses valeurs par défaut.
+      }
+    },
+
+    async saveAppearance() {
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!token) return;
+
+      this.appearanceLoading = true;
+      this.appearanceSuccess = '';
+      this.appearanceError = '';
+      try {
+        const saved = await appearanceService.update(token, {
+          avatarUrl: this.avatarUrl.trim() || null,
+          bannerUrl: this.bannerUrl.trim() || null,
+          theme: this.theme,
+        });
+        this.avatarUrl = saved.avatarUrl ?? '';
+        this.bannerUrl = saved.bannerUrl ?? '';
+        this.theme = saved.theme;
+        this.appearanceSuccess = this.$t('profile.appearance_saved');
+      } catch (err: any) {
+        this.appearanceError = err.message || this.$t('profile.appearance_error');
+      } finally {
+        this.appearanceLoading = false;
       }
     },
 

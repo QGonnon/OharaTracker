@@ -49,6 +49,15 @@ export default (sequelize, DataTypes) => {
     },
     email_digest_last_sent_at: {
       type: DataTypes.DATE
+    },
+    avatar_url: {
+      type: DataTypes.STRING(300)
+    },
+    banner_url: {
+      type: DataTypes.STRING(300)
+    },
+    theme: {
+      type: DataTypes.STRING(20)
     }
   }, {
     tableName: 'Client',
