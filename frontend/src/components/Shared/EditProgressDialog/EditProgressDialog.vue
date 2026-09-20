@@ -33,6 +33,39 @@
       </div>
 
       <div>
+        <label for="edit-tags" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.tags') }}</label>
+        <MultiSelect
+          inputId="edit-tags"
+          v-model="editTags"
+          :options="availableTags"
+          optionLabel="label"
+          optionValue="id"
+          :placeholder="$t('edit_library.tags_placeholder')"
+          :showToggleAll="false"
+          display="chip"
+          class="w-full mt-2"
+        />
+        <div class="flex gap-2 mt-2">
+          <InputText
+            v-model="newTagLabel"
+            :placeholder="$t('edit_library.new_tag')"
+            maxlength="30"
+            class="flex-1"
+            @keyup.enter="createTag"
+          />
+          <Button
+            :label="$t('edit_library.add_tag')"
+            icon="pi pi-plus"
+            text
+            :loading="creatingTag"
+            :disabled="!newTagLabel.trim()"
+            @click="createTag"
+          />
+        </div>
+        <p v-if="tagError" role="alert" class="text-xs text-red-600 dark:text-red-400 mt-1">{{ tagError }}</p>
+      </div>
+
+      <div>
         <label for="edit-note" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.note') }}</label>
         <Textarea id="edit-note" v-model="editNote" rows="3" maxlength="2000" :placeholder="$t('edit_library.note_placeholder')" class="w-full mt-2" />
       </div>

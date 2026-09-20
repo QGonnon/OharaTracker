@@ -7,6 +7,8 @@ import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Rating from 'primevue/rating'
 import Textarea from 'primevue/textarea'
+import MultiSelect from 'primevue/multiselect'
+import TagService, { type ClientTag } from '../../../services/tag.service'
 import { useAuthStore } from '../../../store/auth.module'
 import { useLibraryStore } from '../../../store/library.module'
 import { useMangaStore } from '../../../store/manga.module'
@@ -18,7 +20,7 @@ import type { EditDialogRow, EditDialogType } from './editDialogConfig'
 // vit ici ; les différences entre manga et anime sont isolées dans editDialogConfig.ts.
 export default defineComponent({
   name: 'EditProgressDialog',
-  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch, Rating, Textarea },
+  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch, Rating, Textarea, MultiSelect },
   props: {
     type: { type: String as () => EditDialogType, required: true },
     visible: { type: Boolean, required: true },
@@ -40,6 +42,12 @@ export default defineComponent({
     const editNotify = ref<boolean>(false)
     const editScore = ref<number | null>(null)
     const editNote = ref<string>('')
+    const availableTags = ref<ClientTag[]>([])
+    const editTags = ref<number[]>([])
+    const initialTags = ref<number[]>([])
+    const newTagLabel = ref('')
+    const tagError = ref('')
+    const creatingTag = ref(false)
     const valueOptions = ref<{ label: string; value: string }[]>([])
     const rows = ref<EditDialogRow[]>([])
     // Les `value` sont les libellés historiques stockés en base : les traduire casserait
@@ -82,6 +90,55 @@ export default defineComponent({
       }
     })
 
+    const loadTags = async (idLibrary?: number) => {
+      const token = authStore.user?.accessToken
+      if (!token) return
+
+      try {
+        const { tags } = await TagService.list(token)
+        availableTags.value = tags
+        const applied = idLibrary ? tags.filter(tag => tag.works.includes(idLibrary)).map(tag => tag.id) : []
+        editTags.value = [...applied]
+        initialTags.value = [...applied]
+      } catch {
+        availableTags.value = []
+      }
+    }
+
+    const createTag = async () => {
+      const token = authStore.user?.accessToken
+      const label = newTagLabel.value.trim()
+      if (!token || !label) return
+
+      creatingTag.value = true
+      tagError.value = ''
+      try {
+        const tag = await TagService.create(token, label)
+        availableTags.value = [...availableTags.value, tag].sort((a, b) => a.label.localeCompare(b.label))
+        editTags.value = [...editTags.value, tag.id]
+        newTagLabel.value = ''
+      } catch (err) {
+        tagError.value = err instanceof Error ? err.message : 'Erreur'
+      } finally {
+        creatingTag.value = false
+      }
+    }
+
+    // Les (dé)associations ne sont poussées qu'à l'enregistrement, comme le reste du formulaire.
+    const persistTags = async (idLibrary: number) => {
+      const token = authStore.user?.accessToken
+      if (!token) return
+
+      const added = editTags.value.filter(id => !initialTags.value.includes(id))
+      const removed = initialTags.value.filter(id => !editTags.value.includes(id))
+
+      await Promise.all([
+        ...added.map(id => TagService.assign(token, id, idLibrary)),
+        ...removed.map(id => TagService.unassign(token, id, idLibrary)),
+      ])
+      initialTags.value = [...editTags.value]
+    }
+
     const resetFromItem = (item: any) => {
       editValue.value = config.value.getInitialValue(item)
       editValueCustom.value = ''
@@ -90,6 +147,9 @@ export default defineComponent({
       editNotify.value = !!item.notifyEnabled
       editScore.value = item.score === null || item.score === undefined ? null : Number(item.score)
       editNote.value = item.note ?? ''
+      newTagLabel.value = ''
+      tagError.value = ''
+      loadTags(item.id)
       if (item.id) fetchValueOptions(item.id)
     }
 
@@ -120,6 +180,7 @@ export default defineComponent({
           note: editNote.value.trim() || null,
         }
         const resJson = await libraryStore.updateLibraryEntry(body)
+        if (props.item.id) await persistTags(props.item.id)
         emit('updated', { ...config.value.buildUpdatedPayload(resJson, body), score: body.score, note: body.note })
         visibleLocal.value = false
       } catch (err) {
@@ -160,6 +221,12 @@ export default defineComponent({
       editNotify,
       editScore,
       editNote,
+      availableTags,
+      editTags,
+      newTagLabel,
+      tagError,
+      creatingTag,
+      createTag,
       valueOptions,
       statusOptions,
       save,

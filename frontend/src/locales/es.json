@@ -133,7 +133,9 @@
       "planned": "Planeado",
       "completed": "Completado",
       "dropped": "Abandonado"
-    }
+    },
+    "filter_tags": "Etiquetas",
+    "clear_tags": "Borrar todo"
   },
   "search": {
     "title": "Biblioteca",
@@ -237,7 +239,11 @@
     "save": "Guardar",
     "score": "Tu puntuación",
     "note": "Nota personal",
-    "note_placeholder": "Tus impresiones, por dónde vas..."
+    "note_placeholder": "Tus impresiones, por dónde vas...",
+    "tags": "Tus etiquetas",
+    "tags_placeholder": "Sin etiqueta",
+    "new_tag": "Nueva etiqueta",
+    "add_tag": "Añadir"
   },
   "edit_anime": {
     "title": "Editar anime",
@@ -255,7 +261,11 @@
     "save": "Guardar",
     "score": "Tu puntuación",
     "note": "Nota personal",
-    "note_placeholder": "Tus impresiones, por dónde vas..."
+    "note_placeholder": "Tus impresiones, por dónde vas...",
+    "tags": "Tus etiquetas",
+    "tags_placeholder": "Sin etiqueta",
+    "new_tag": "Nueva etiqueta",
+    "add_tag": "Añadir"
   },
   "notifications": {
     "title": "Notificaciones",

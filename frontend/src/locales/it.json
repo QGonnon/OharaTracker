@@ -133,7 +133,9 @@
       "planned": "Pianificato",
       "completed": "Completato",
       "dropped": "Abbandonato"
-    }
+    },
+    "filter_tags": "Tag",
+    "clear_tags": "Cancella tutto"
   },
   "search": {
     "title": "Libreria",
@@ -237,7 +239,11 @@
     "save": "Salva",
     "score": "Il tuo voto",
     "note": "Nota personale",
-    "note_placeholder": "Le tue impressioni, a che punto sei..."
+    "note_placeholder": "Le tue impressioni, a che punto sei...",
+    "tags": "I tuoi tag",
+    "tags_placeholder": "Nessun tag",
+    "new_tag": "Nuovo tag",
+    "add_tag": "Aggiungi"
   },
   "edit_anime": {
     "title": "Modifica anime",
@@ -255,7 +261,11 @@
     "save": "Salva",
     "score": "Il tuo voto",
     "note": "Nota personale",
-    "note_placeholder": "Le tue impressioni, a che punto sei..."
+    "note_placeholder": "Le tue impressioni, a che punto sei...",
+    "tags": "I tuoi tag",
+    "tags_placeholder": "Nessun tag",
+    "new_tag": "Nuovo tag",
+    "add_tag": "Aggiungi"
   },
   "notifications": {
     "title": "Notifiche",

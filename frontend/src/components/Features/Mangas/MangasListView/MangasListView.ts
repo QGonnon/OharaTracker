@@ -19,6 +19,7 @@ import { useLibraryStore } from '../../../../store/library.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
 import { localeMedia } from '../../../../seo/localePath'
+import TagService, { type ClientTag } from '../../../../services/tag.service'
 import { usePageSeo } from '../../../../seo/usePageSeo';
 
 export default defineComponent({
@@ -52,6 +53,26 @@ export default defineComponent({
         const searchQuery = ref('');
         const viewMode = ref<'list' | 'grid'>('list');
         const filterType = ref<'all' | 'anime' | 'lecture'>('all');
+        const tags = ref<ClientTag[]>([]);
+        const activeTagIds = ref<number[]>([]);
+
+        const loadTags = async () => {
+            const token = authStore.user?.accessToken;
+            if (!token) return;
+            try {
+                tags.value = (await TagService.list(token)).tags;
+                // Un tag supprimé ailleurs ne doit pas continuer à filtrer dans le vide.
+                activeTagIds.value = activeTagIds.value.filter(id => tags.value.some(tag => tag.id === id));
+            } catch {
+                tags.value = [];
+            }
+        };
+
+        const toggleTag = (id: number) => {
+            activeTagIds.value = activeTagIds.value.includes(id)
+                ? activeTagIds.value.filter(active => active !== id)
+                : [...activeTagIds.value, id];
+        };
 
         const filteredMangas = computed(() => {
             if (!searchQuery.value) return mangas.value;
@@ -64,12 +85,18 @@ export default defineComponent({
         });
 
         const displayedMangas = computed(() => {
-            const list = (filteredMangas.value || []).slice();
+            let list = (filteredMangas.value || []).slice();
             if (filterType.value === 'anime') {
-                return list.filter(m => mangaStore.isAnimeType(m));
+                list = list.filter(m => mangaStore.isAnimeType(m));
+            } else if (filterType.value === 'lecture') {
+                list = list.filter(m => !mangaStore.isAnimeType(m));
             }
-            if (filterType.value === 'lecture') {
-                return list.filter(m => !mangaStore.isAnimeType(m));
+
+            // Plusieurs tags sélectionnés = intersection : on affine, on n'élargit pas.
+            if (activeTagIds.value.length > 0) {
+                list = list.filter(manga => activeTagIds.value.every(
+                    id => tags.value.find(tag => tag.id === id)?.works.includes(Number(manga.id))
+                ));
             }
             return list;
         });
@@ -153,6 +180,7 @@ export default defineComponent({
             }
             editDialog.value = false;
             editAnimeDialog.value = false;
+            loadTags();
         };
 
         const onDialogDeleted = () => {
@@ -206,6 +234,7 @@ export default defineComponent({
 
         onMounted(async () => {
             await fetchMangas();
+            await loadTags();
             const q = route.query.editId
             if (q) {
                 const idToEdit = Number(q)
@@ -230,6 +259,10 @@ export default defineComponent({
             getCoverUrl,
             readingStatusLabel,
             readingStatusSeverity,
+            tags,
+            activeTagIds,
+            toggleTag,
+            loadTags,
             // edit bindings
             editDialog,
             editAnimeDialog,

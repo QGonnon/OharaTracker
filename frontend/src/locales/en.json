@@ -133,7 +133,9 @@
       "planned": "Planned",
       "completed": "Completed",
       "dropped": "Dropped"
-    }
+    },
+    "filter_tags": "Tags",
+    "clear_tags": "Clear all"
   },
   "search": {
     "title": "Library",
@@ -237,7 +239,11 @@
     "save": "Save",
     "score": "Your rating",
     "note": "Personal note",
-    "note_placeholder": "Your thoughts, where you left off..."
+    "note_placeholder": "Your thoughts, where you left off...",
+    "tags": "Your tags",
+    "tags_placeholder": "No tag",
+    "new_tag": "New tag",
+    "add_tag": "Add"
   },
   "edit_anime": {
     "title": "Edit anime",
@@ -255,7 +261,11 @@
     "save": "Save",
     "score": "Your rating",
     "note": "Personal note",
-    "note_placeholder": "Your thoughts, where you left off..."
+    "note_placeholder": "Your thoughts, where you left off...",
+    "tags": "Your tags",
+    "tags_placeholder": "No tag",
+    "new_tag": "New tag",
+    "add_tag": "Add"
   },
   "notifications": {
     "title": "Notifications",

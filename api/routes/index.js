@@ -5,6 +5,7 @@ import library from './library.js';
 import client from './client.js';
 import notifications from './notifications.js';
 import stripeRoutes from './stripe.js';
+import tags from './tags.js';
 
 
 const router = express.Router();
@@ -18,6 +19,7 @@ router
     .use('/library', library)
     .use('/client', client)
     .use('/notifications', notifications)
+    .use('/tags', tags)
     .use('/stripe', stripeRoutes);
 
 export default router;

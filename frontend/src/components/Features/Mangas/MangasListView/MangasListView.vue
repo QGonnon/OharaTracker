@@ -101,6 +101,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Filtre par tags personnels -->
+                        <div v-if="tags.length" class="flex items-center flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">{{ $t('library.filter_tags') }}</span>
+                            <Button
+                                v-for="tag in tags"
+                                :key="tag.id"
+                                :label="`${tag.label} (${tag.works.length})`"
+                                :severity="activeTagIds.includes(tag.id) ? 'info' : 'secondary'"
+                                :aria-pressed="activeTagIds.includes(tag.id)"
+                                class="!px-3"
+                                text
+                                rounded
+                                @click="toggleTag(tag.id)"
+                            />
+                            <Button
+                                v-if="activeTagIds.length"
+                                :label="$t('library.clear_tags')"
+                                icon="pi pi-times"
+                                severity="secondary"
+                                class="!px-3"
+                                text
+                                rounded
+                                @click="activeTagIds = []"
+                            />
+                        </div>
                     </template>
                 </Card>
 
