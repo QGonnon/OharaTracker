@@ -18,6 +18,8 @@ const MangasListView = () => import('../components/Features/Mangas/MangasListVie
 const Search = () => import('../components/Features/Search/Search.vue')
 const Profile = () => import('../components/Features/User/Profile/Profile.vue')
 const Stats = () => import('../components/Features/User/Stats/Stats.vue')
+const Watchlists = () => import('../components/Features/User/Watchlists/Watchlists.vue')
+const SharedWatchlist = () => import('../components/Features/User/Watchlists/SharedWatchlist.vue')
 const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
 const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
 
@@ -74,6 +76,20 @@ const mediaRoute = (kind: MediaKind, name: string): RouteRecordRaw => {
   }
 }
 
+// Une liste partagée vit sous le segment des listes, suffixé du jeton de partage :
+// pas de page fixe correspondante, donc pas de `pageRoute` possible.
+const sharedWatchlistRoute = (): RouteRecordRaw => {
+  const segments = pageSegmentAliases('watchlists')
+  return {
+    path: `/${L}/${segments[0]}/:token`,
+    alias: segments.slice(1).map(segment => `/${L}/${segment}/:token`),
+    name: 'SharedWatchlist',
+    component: SharedWatchlist,
+    props: true,
+    meta: { noindex: true },
+  }
+}
+
 const routes: RouteRecordRaw[] = [
   // Accueil : `/`, `/fr`, `/en`… Le `/home` historique est redirigé plus bas.
   {
@@ -96,6 +112,8 @@ const routes: RouteRecordRaw[] = [
   pageRoute('profile', 'Profile', Profile, { noindex: true, requiresAuth: true }),
   pageRoute('library', 'Library', MangasListView, { noindex: true, requiresAuth: true }),
   pageRoute('stats', 'Stats', Stats, { noindex: true, requiresAuth: true }),
+  pageRoute('watchlists', 'Watchlists', Watchlists, { noindex: true, requiresAuth: true }),
+  sharedWatchlistRoute(),
   pageRoute('notifications', 'Notifications', NotificationsView, { noindex: true, requiresAuth: true }),
 
   // Pages publiques indexables

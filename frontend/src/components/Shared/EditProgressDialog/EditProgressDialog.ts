@@ -9,6 +9,7 @@ import Rating from 'primevue/rating'
 import Textarea from 'primevue/textarea'
 import MultiSelect from 'primevue/multiselect'
 import TagService, { type ClientTag } from '../../../services/tag.service'
+import WatchlistService, { type Watchlist } from '../../../services/watchlist.service'
 import { useAuthStore } from '../../../store/auth.module'
 import { useLibraryStore } from '../../../store/library.module'
 import { useMangaStore } from '../../../store/manga.module'
@@ -48,6 +49,9 @@ export default defineComponent({
     const newTagLabel = ref('')
     const tagError = ref('')
     const creatingTag = ref(false)
+    const availableLists = ref<Watchlist[]>([])
+    const editLists = ref<number[]>([])
+    const initialLists = ref<number[]>([])
     const valueOptions = ref<{ label: string; value: string }[]>([])
     const rows = ref<EditDialogRow[]>([])
     // Les `value` sont les libellés historiques stockés en base : les traduire casserait
@@ -105,6 +109,37 @@ export default defineComponent({
       }
     }
 
+    const loadLists = async (idLibrary?: number) => {
+      const token = authStore.user?.accessToken
+      if (!token) return
+
+      try {
+        const { owned } = await WatchlistService.list(token)
+        availableLists.value = owned
+        const applied = idLibrary
+          ? owned.filter(list => list.works.some(work => work.idLibrary === idLibrary)).map(list => list.id)
+          : []
+        editLists.value = [...applied]
+        initialLists.value = [...applied]
+      } catch {
+        availableLists.value = []
+      }
+    }
+
+    const persistLists = async (idLibrary: number) => {
+      const token = authStore.user?.accessToken
+      if (!token) return
+
+      const added = editLists.value.filter(id => !initialLists.value.includes(id))
+      const removed = initialLists.value.filter(id => !editLists.value.includes(id))
+
+      await Promise.all([
+        ...added.map(id => WatchlistService.addWork(token, id, idLibrary)),
+        ...removed.map(id => WatchlistService.removeWork(token, id, idLibrary)),
+      ])
+      initialLists.value = [...editLists.value]
+    }
+
     const createTag = async () => {
       const token = authStore.user?.accessToken
       const label = newTagLabel.value.trim()
@@ -150,6 +185,7 @@ export default defineComponent({
       newTagLabel.value = ''
       tagError.value = ''
       loadTags(item.id)
+      loadLists(item.id)
       if (item.id) fetchValueOptions(item.id)
     }
 
@@ -180,7 +216,10 @@ export default defineComponent({
           note: editNote.value.trim() || null,
         }
         const resJson = await libraryStore.updateLibraryEntry(body)
-        if (props.item.id) await persistTags(props.item.id)
+        if (props.item.id) {
+          await persistTags(props.item.id)
+          await persistLists(props.item.id)
+        }
         emit('updated', { ...config.value.buildUpdatedPayload(resJson, body), score: body.score, note: body.note })
         visibleLocal.value = false
       } catch (err) {
@@ -227,6 +266,8 @@ export default defineComponent({
       tagError,
       creatingTag,
       createTag,
+      availableLists,
+      editLists,
       valueOptions,
       statusOptions,
       save,

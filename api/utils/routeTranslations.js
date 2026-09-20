@@ -30,6 +30,7 @@ export const PAGE_SEGMENTS = {
     profile: { fr: 'profil', en: 'profile', de: 'profil', it: 'profilo', es: 'perfil' },
     library: { fr: 'bibliotheque', en: 'library', de: 'bibliothek', it: 'biblioteca', es: 'biblioteca' },
     stats: { fr: 'statistiques', en: 'stats', de: 'statistiken', it: 'statistiche', es: 'estadisticas' },
+    watchlists: { fr: 'listes', en: 'lists', de: 'listen', it: 'liste', es: 'listas' },
     notifications: {
         fr: 'notifications', en: 'notifications', de: 'benachrichtigungen',
         it: 'notifiche', es: 'notificaciones',

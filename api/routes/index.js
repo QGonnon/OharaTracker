@@ -7,6 +7,7 @@ import notifications from './notifications.js';
 import stripeRoutes from './stripe.js';
 import tags from './tags.js';
 import stats from './stats.js';
+import watchlists from './watchlists.js';
 
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router
     .use('/notifications', notifications)
     .use('/tags', tags)
     .use('/stats', stats)
+    .use('/watchlists', watchlists)
     .use('/stripe', stripeRoutes);
 
 export default router;

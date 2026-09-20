@@ -65,6 +65,21 @@
         <p v-if="tagError" role="alert" class="text-xs text-red-600 dark:text-red-400 mt-1">{{ tagError }}</p>
       </div>
 
+      <div v-if="availableLists.length">
+        <label for="edit-lists" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.lists') }}</label>
+        <MultiSelect
+          inputId="edit-lists"
+          v-model="editLists"
+          :options="availableLists"
+          optionLabel="title"
+          optionValue="id"
+          :placeholder="$t('edit_library.lists_placeholder')"
+          :showToggleAll="false"
+          display="chip"
+          class="w-full mt-2"
+        />
+      </div>
+
       <div>
         <label for="edit-note" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.note') }}</label>
         <Textarea id="edit-note" v-model="editNote" rows="3" maxlength="2000" :placeholder="$t('edit_library.note_placeholder')" class="w-full mt-2" />

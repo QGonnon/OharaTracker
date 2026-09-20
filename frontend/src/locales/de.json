@@ -15,7 +15,8 @@
     "open_menu": "Navigationsmenü öffnen",
     "close_menu": "Navigationsmenü schließen",
     "user_menu": "Kontomenü",
-    "stats": "Statistiken"
+    "stats": "Statistiken",
+    "watchlists": "Meine Listen"
   },
   "auth": {
     "login_subtitle": "Anmeldung",
@@ -244,7 +245,9 @@
     "tags": "Deine Tags",
     "tags_placeholder": "Kein Tag",
     "new_tag": "Neuer Tag",
-    "add_tag": "Hinzufügen"
+    "add_tag": "Hinzufügen",
+    "lists": "Deine Listen",
+    "lists_placeholder": "Keine Liste"
   },
   "edit_anime": {
     "title": "Anime bearbeiten",
@@ -266,7 +269,9 @@
     "tags": "Deine Tags",
     "tags_placeholder": "Kein Tag",
     "new_tag": "Neuer Tag",
-    "add_tag": "Hinzufügen"
+    "add_tag": "Hinzufügen",
+    "lists": "Deine Listen",
+    "lists_placeholder": "Keine Liste"
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -669,5 +674,37 @@
     "filter_since": "Seit",
     "all_types": "Alle",
     "apply": "Anwenden"
+  },
+  "watchlists": {
+    "title": "Meine Merklisten",
+    "subtitle": "Titel bündeln, teilen und den Listen anderer folgen.",
+    "create": "Liste erstellen",
+    "name": "Listenname",
+    "description": "Beschreibung (optional)",
+    "add": "Erstellen",
+    "creating": "Wird erstellt...",
+    "loading": "Wird geladen...",
+    "mine": "Meine Listen",
+    "followed": "Gefolgte Listen",
+    "empty_mine": "Du hast noch keine Liste.",
+    "empty_followed": "Du folgst noch keiner Liste.",
+    "empty_list": "Diese Liste ist leer.",
+    "go_library": "Aus meiner Bibliothek hinzufügen",
+    "works_count": "{n} Titel",
+    "followers": "{n} Abonnent(en)",
+    "share": "Teilen",
+    "shared": "Geteilt",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "delete": "Liste löschen",
+    "remove_work": "Aus der Liste entfernen",
+    "unfollow": "Nicht mehr folgen",
+    "follow": "Dieser Liste folgen",
+    "following_in_progress": "Wird hinzugefügt...",
+    "now_following": "Folgt",
+    "login_to_follow": "Zum Folgen anmelden",
+    "by": "von {name}",
+    "quota_reached": "Dein Tarif erlaubt {n} Liste(n).",
+    "see_plans": "Angebote ansehen"
   }
 }

@@ -15,7 +15,8 @@
     "open_menu": "Abrir el menú de navegación",
     "close_menu": "Cerrar el menú de navegación",
     "user_menu": "Menú de la cuenta",
-    "stats": "Estadísticas"
+    "stats": "Estadísticas",
+    "watchlists": "Mis listas"
   },
   "auth": {
     "login_subtitle": "Inicio de sesión",
@@ -244,7 +245,9 @@
     "tags": "Tus etiquetas",
     "tags_placeholder": "Sin etiqueta",
     "new_tag": "Nueva etiqueta",
-    "add_tag": "Añadir"
+    "add_tag": "Añadir",
+    "lists": "Tus listas",
+    "lists_placeholder": "Ninguna lista"
   },
   "edit_anime": {
     "title": "Editar anime",
@@ -266,7 +269,9 @@
     "tags": "Tus etiquetas",
     "tags_placeholder": "Sin etiqueta",
     "new_tag": "Nueva etiqueta",
-    "add_tag": "Añadir"
+    "add_tag": "Añadir",
+    "lists": "Tus listas",
+    "lists_placeholder": "Ninguna lista"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -669,5 +674,37 @@
     "filter_since": "Desde",
     "all_types": "Todos",
     "apply": "Aplicar"
+  },
+  "watchlists": {
+    "title": "Mis listas de seguimiento",
+    "subtitle": "Agrupa obras, compártelas y sigue las de otros.",
+    "create": "Crear una lista",
+    "name": "Nombre de la lista",
+    "description": "Descripción (opcional)",
+    "add": "Crear",
+    "creating": "Creando...",
+    "loading": "Cargando...",
+    "mine": "Mis listas",
+    "followed": "Listas seguidas",
+    "empty_mine": "Todavía no tienes ninguna lista.",
+    "empty_followed": "Aún no sigues ninguna lista.",
+    "empty_list": "Esta lista está vacía.",
+    "go_library": "Añadir desde mi biblioteca",
+    "works_count": "{n} obra(s)",
+    "followers": "{n} seguidor(es)",
+    "share": "Compartir",
+    "shared": "Compartida",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "delete": "Eliminar la lista",
+    "remove_work": "Quitar de la lista",
+    "unfollow": "Dejar de seguir",
+    "follow": "Seguir esta lista",
+    "following_in_progress": "Añadiendo...",
+    "now_following": "Siguiendo",
+    "login_to_follow": "Inicia sesión para seguir",
+    "by": "por {name}",
+    "quota_reached": "Tu plan está limitado a {n} lista(s).",
+    "see_plans": "Ver los planes"
   }
 }

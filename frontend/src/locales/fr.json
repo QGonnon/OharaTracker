@@ -15,7 +15,8 @@
     "open_menu": "Ouvrir le menu de navigation",
     "close_menu": "Fermer le menu de navigation",
     "user_menu": "Menu du compte",
-    "stats": "Statistiques"
+    "stats": "Statistiques",
+    "watchlists": "Mes listes"
   },
   "auth": {
     "login_subtitle": "Connexion",
@@ -244,7 +245,9 @@
     "tags": "Vos tags",
     "tags_placeholder": "Aucun tag",
     "new_tag": "Nouveau tag",
-    "add_tag": "Ajouter"
+    "add_tag": "Ajouter",
+    "lists": "Vos listes",
+    "lists_placeholder": "Aucune liste"
   },
   "edit_anime": {
     "title": "Éditer l'anime",
@@ -266,7 +269,9 @@
     "tags": "Vos tags",
     "tags_placeholder": "Aucun tag",
     "new_tag": "Nouveau tag",
-    "add_tag": "Ajouter"
+    "add_tag": "Ajouter",
+    "lists": "Vos listes",
+    "lists_placeholder": "Aucune liste"
   },
   "notifications": {
     "title": "Notifications",
@@ -669,5 +674,37 @@
     "filter_since": "Depuis le",
     "all_types": "Tous",
     "apply": "Appliquer"
+  },
+  "watchlists": {
+    "title": "Mes listes de suivi",
+    "subtitle": "Regroupez des œuvres, partagez-les, suivez celles des autres.",
+    "create": "Créer une liste",
+    "name": "Nom de la liste",
+    "description": "Description (facultatif)",
+    "add": "Créer",
+    "creating": "Création...",
+    "loading": "Chargement...",
+    "mine": "Mes listes",
+    "followed": "Listes suivies",
+    "empty_mine": "Vous n'avez pas encore de liste.",
+    "empty_followed": "Vous ne suivez aucune liste pour le moment.",
+    "empty_list": "Cette liste est vide.",
+    "go_library": "Ajouter depuis ma bibliothèque",
+    "works_count": "{n} œuvre(s)",
+    "followers": "{n} abonné(s)",
+    "share": "Partager",
+    "shared": "Partagée",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "delete": "Supprimer la liste",
+    "remove_work": "Retirer de la liste",
+    "unfollow": "Ne plus suivre",
+    "follow": "Suivre cette liste",
+    "following_in_progress": "Ajout...",
+    "now_following": "Liste suivie",
+    "login_to_follow": "Se connecter pour suivre",
+    "by": "par {name}",
+    "quota_reached": "Votre offre est limitée à {n} liste(s).",
+    "see_plans": "Voir les offres"
   }
 }

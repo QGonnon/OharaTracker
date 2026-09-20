@@ -15,7 +15,8 @@
     "open_menu": "Apri il menu di navigazione",
     "close_menu": "Chiudi il menu di navigazione",
     "user_menu": "Menu account",
-    "stats": "Statistiche"
+    "stats": "Statistiche",
+    "watchlists": "Le mie liste"
   },
   "auth": {
     "login_subtitle": "Accesso",
@@ -244,7 +245,9 @@
     "tags": "I tuoi tag",
     "tags_placeholder": "Nessun tag",
     "new_tag": "Nuovo tag",
-    "add_tag": "Aggiungi"
+    "add_tag": "Aggiungi",
+    "lists": "Le tue liste",
+    "lists_placeholder": "Nessuna lista"
   },
   "edit_anime": {
     "title": "Modifica anime",
@@ -266,7 +269,9 @@
     "tags": "I tuoi tag",
     "tags_placeholder": "Nessun tag",
     "new_tag": "Nuovo tag",
-    "add_tag": "Aggiungi"
+    "add_tag": "Aggiungi",
+    "lists": "Le tue liste",
+    "lists_placeholder": "Nessuna lista"
   },
   "notifications": {
     "title": "Notifiche",
@@ -669,5 +674,37 @@
     "filter_since": "Dal",
     "all_types": "Tutti",
     "apply": "Applica"
+  },
+  "watchlists": {
+    "title": "Le mie liste di seguito",
+    "subtitle": "Raggruppa opere, condividile e segui quelle degli altri.",
+    "create": "Crea una lista",
+    "name": "Nome della lista",
+    "description": "Descrizione (facoltativa)",
+    "add": "Crea",
+    "creating": "Creazione...",
+    "loading": "Caricamento...",
+    "mine": "Le mie liste",
+    "followed": "Liste seguite",
+    "empty_mine": "Non hai ancora nessuna lista.",
+    "empty_followed": "Non segui ancora nessuna lista.",
+    "empty_list": "Questa lista è vuota.",
+    "go_library": "Aggiungi dalla mia biblioteca",
+    "works_count": "{n} opera/e",
+    "followers": "{n} follower",
+    "share": "Condividi",
+    "shared": "Condivisa",
+    "copy": "Copia",
+    "copied": "Copiato!",
+    "delete": "Elimina la lista",
+    "remove_work": "Rimuovi dalla lista",
+    "unfollow": "Smetti di seguire",
+    "follow": "Segui questa lista",
+    "following_in_progress": "Aggiunta...",
+    "now_following": "Seguita",
+    "login_to_follow": "Accedi per seguire",
+    "by": "di {name}",
+    "quota_reached": "Il tuo piano è limitato a {n} lista/e.",
+    "see_plans": "Vedi i piani"
   }
 }

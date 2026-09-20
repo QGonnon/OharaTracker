@@ -15,7 +15,8 @@
     "open_menu": "Open navigation menu",
     "close_menu": "Close navigation menu",
     "user_menu": "Account menu",
-    "stats": "Statistics"
+    "stats": "Statistics",
+    "watchlists": "My lists"
   },
   "auth": {
     "login_subtitle": "Login",
@@ -244,7 +245,9 @@
     "tags": "Your tags",
     "tags_placeholder": "No tag",
     "new_tag": "New tag",
-    "add_tag": "Add"
+    "add_tag": "Add",
+    "lists": "Your lists",
+    "lists_placeholder": "No list"
   },
   "edit_anime": {
     "title": "Edit anime",
@@ -266,7 +269,9 @@
     "tags": "Your tags",
     "tags_placeholder": "No tag",
     "new_tag": "New tag",
-    "add_tag": "Add"
+    "add_tag": "Add",
+    "lists": "Your lists",
+    "lists_placeholder": "No list"
   },
   "notifications": {
     "title": "Notifications",
@@ -669,5 +674,37 @@
     "filter_since": "Since",
     "all_types": "All",
     "apply": "Apply"
+  },
+  "watchlists": {
+    "title": "My watch lists",
+    "subtitle": "Group titles, share them, follow other people's.",
+    "create": "Create a list",
+    "name": "List name",
+    "description": "Description (optional)",
+    "add": "Create",
+    "creating": "Creating...",
+    "loading": "Loading...",
+    "mine": "My lists",
+    "followed": "Followed lists",
+    "empty_mine": "You have no list yet.",
+    "empty_followed": "You are not following any list yet.",
+    "empty_list": "This list is empty.",
+    "go_library": "Add from my library",
+    "works_count": "{n} title(s)",
+    "followers": "{n} follower(s)",
+    "share": "Share",
+    "shared": "Shared",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "delete": "Delete the list",
+    "remove_work": "Remove from list",
+    "unfollow": "Unfollow",
+    "follow": "Follow this list",
+    "following_in_progress": "Adding...",
+    "now_following": "Following",
+    "login_to_follow": "Log in to follow",
+    "by": "by {name}",
+    "quota_reached": "Your plan is limited to {n} list(s).",
+    "see_plans": "See the plans"
   }
 }
