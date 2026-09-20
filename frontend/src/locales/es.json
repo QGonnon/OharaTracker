@@ -137,7 +137,11 @@
       "dropped": "Abandonado"
     },
     "filter_tags": "Etiquetas",
-    "clear_tags": "Borrar todo"
+    "clear_tags": "Borrar todo",
+    "saved_views": "Vistas",
+    "save_view": "Guardar",
+    "name_view": "Nombre de la vista",
+    "delete_view": "Eliminar la vista"
   },
   "search": {
     "title": "Biblioteca",

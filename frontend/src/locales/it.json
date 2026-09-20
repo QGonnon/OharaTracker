@@ -137,7 +137,11 @@
       "dropped": "Abbandonato"
     },
     "filter_tags": "Tag",
-    "clear_tags": "Cancella tutto"
+    "clear_tags": "Cancella tutto",
+    "saved_views": "Viste",
+    "save_view": "Salva",
+    "name_view": "Nome della vista",
+    "delete_view": "Elimina la vista"
   },
   "search": {
     "title": "Libreria",

@@ -137,7 +137,11 @@
       "dropped": "Abgebrochen"
     },
     "filter_tags": "Tags",
-    "clear_tags": "Alle löschen"
+    "clear_tags": "Alle löschen",
+    "saved_views": "Ansichten",
+    "save_view": "Speichern",
+    "name_view": "Name der Ansicht",
+    "delete_view": "Ansicht löschen"
   },
   "search": {
     "title": "Bibliothek",

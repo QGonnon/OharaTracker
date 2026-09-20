@@ -102,6 +102,49 @@
                             </div>
                         </div>
 
+                        <!-- Vues enregistrées -->
+                        <div v-if="filterQuota !== 0" class="flex items-center flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">{{ $t('library.saved_views') }}</span>
+                            <span v-for="filter in savedFilters" :key="filter.id" class="inline-flex items-center">
+                                <Button
+                                    :label="filter.label"
+                                    severity="secondary"
+                                    class="!px-3"
+                                    text
+                                    rounded
+                                    @click="applySavedFilter(filter)"
+                                />
+                                <Button
+                                    icon="pi pi-times"
+                                    severity="secondary"
+                                    class="!px-1"
+                                    text
+                                    rounded
+                                    :aria-label="$t('library.delete_view')"
+                                    @click="deleteSavedFilter(filter)"
+                                />
+                            </span>
+                            <span class="inline-flex items-center gap-2 ml-auto">
+                                <InputText
+                                    v-model="newFilterLabel"
+                                    :placeholder="$t('library.name_view')"
+                                    maxlength="40"
+                                    class="!py-1 text-sm"
+                                    @keyup.enter="saveCurrentFilter"
+                                />
+                                <Button
+                                    :label="$t('library.save_view')"
+                                    icon="pi pi-bookmark"
+                                    text
+                                    rounded
+                                    :loading="savingFilter"
+                                    :disabled="!newFilterLabel.trim()"
+                                    @click="saveCurrentFilter"
+                                />
+                            </span>
+                            <p v-if="filterError" role="alert" class="w-full text-xs text-red-600 dark:text-red-400">{{ filterError }}</p>
+                        </div>
+
                         <!-- Filtre par tags personnels -->
                         <div v-if="tags.length" class="flex items-center flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                             <span class="text-sm text-slate-500 dark:text-slate-400">{{ $t('library.filter_tags') }}</span>

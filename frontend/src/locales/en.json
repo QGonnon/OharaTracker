@@ -137,7 +137,11 @@
       "dropped": "Dropped"
     },
     "filter_tags": "Tags",
-    "clear_tags": "Clear all"
+    "clear_tags": "Clear all",
+    "saved_views": "Views",
+    "save_view": "Save",
+    "name_view": "View name",
+    "delete_view": "Delete the view"
   },
   "search": {
     "title": "Library",

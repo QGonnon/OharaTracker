@@ -20,6 +20,7 @@ import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
 import { localeMedia } from '../../../../seo/localePath'
 import TagService, { type ClientTag } from '../../../../services/tag.service'
+import FilterService, { type SavedFilter } from '../../../../services/filter.service'
 import { usePageSeo } from '../../../../seo/usePageSeo';
 
 export default defineComponent({
@@ -66,6 +67,64 @@ export default defineComponent({
             } catch {
                 tags.value = [];
             }
+        };
+
+        const savedFilters = ref<SavedFilter[]>([]);
+        const filterQuota = ref<number | null>(0);
+        const newFilterLabel = ref('');
+        const filterError = ref('');
+        const savingFilter = ref(false);
+
+        const loadSavedFilters = async () => {
+            const token = authStore.user?.accessToken;
+            if (!token) return;
+            try {
+                const data = await FilterService.list(token);
+                savedFilters.value = data.filters;
+                filterQuota.value = data.quota;
+            } catch {
+                savedFilters.value = [];
+            }
+        };
+
+        // La vue enregistree est l'etat complet de la barre d'outils, tags compris.
+        const saveCurrentFilter = async () => {
+            const token = authStore.user?.accessToken;
+            const label = newFilterLabel.value.trim();
+            if (!token || !label) return;
+
+            savingFilter.value = true;
+            filterError.value = '';
+            try {
+                const saved = await FilterService.save(token, label, {
+                    searchQuery: searchQuery.value,
+                    filterType: filterType.value,
+                    viewMode: viewMode.value,
+                    tagIds: activeTagIds.value,
+                });
+                savedFilters.value = [...savedFilters.value.filter(f => f.id !== saved.id), saved];
+                newFilterLabel.value = '';
+            } catch (err) {
+                filterError.value = err instanceof Error ? err.message : 'Erreur';
+            } finally {
+                savingFilter.value = false;
+            }
+        };
+
+        const applySavedFilter = (filter: SavedFilter) => {
+            const payload = filter.payload as Record<string, any>;
+            searchQuery.value = payload.searchQuery ?? '';
+            filterType.value = payload.filterType ?? 'all';
+            viewMode.value = payload.viewMode ?? 'list';
+            // Un tag supprime depuis l'enregistrement ne doit pas vider la vue en silence.
+            activeTagIds.value = (payload.tagIds ?? []).filter((id: number) => tags.value.some(tag => tag.id === id));
+        };
+
+        const deleteSavedFilter = async (filter: SavedFilter) => {
+            const token = authStore.user?.accessToken;
+            if (!token) return;
+            await FilterService.remove(token, filter.id);
+            savedFilters.value = savedFilters.value.filter(f => f.id !== filter.id);
         };
 
         const toggleTag = (id: number) => {
@@ -235,6 +294,7 @@ export default defineComponent({
         onMounted(async () => {
             await fetchMangas();
             await loadTags();
+            await loadSavedFilters();
             const q = route.query.editId
             if (q) {
                 const idToEdit = Number(q)
@@ -263,6 +323,14 @@ export default defineComponent({
             activeTagIds,
             toggleTag,
             loadTags,
+            savedFilters,
+            filterQuota,
+            newFilterLabel,
+            filterError,
+            savingFilter,
+            saveCurrentFilter,
+            applySavedFilter,
+            deleteSavedFilter,
             // edit bindings
             editDialog,
             editAnimeDialog,
