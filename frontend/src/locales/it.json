@@ -234,7 +234,10 @@
     "notify": "Ricevi notifiche",
     "delete": "Elimina",
     "cancel": "Annulla",
-    "save": "Salva"
+    "save": "Salva",
+    "score": "Il tuo voto",
+    "note": "Nota personale",
+    "note_placeholder": "Le tue impressioni, a che punto sei..."
   },
   "edit_anime": {
     "title": "Modifica anime",
@@ -249,7 +252,10 @@
     "notify": "Ricevi notifiche",
     "delete": "Elimina",
     "cancel": "Annulla",
-    "save": "Salva"
+    "save": "Salva",
+    "score": "Il tuo voto",
+    "note": "Nota personale",
+    "note_placeholder": "Le tue impressioni, a che punto sei..."
   },
   "notifications": {
     "title": "Notifiche",

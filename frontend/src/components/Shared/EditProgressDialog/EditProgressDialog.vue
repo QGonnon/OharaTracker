@@ -27,6 +27,16 @@
         <label for="edit-status" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t(config.labels.status) }}</label>
         <Dropdown inputId="edit-status" v-model="editStatus" :options="statusOptions" optionLabel="label" optionValue="value" class="w-full mt-2" />
       </div>
+      <div>
+        <label for="edit-score" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.score') }}</label>
+        <Rating inputId="edit-score" v-model="editScore" :stars="10" class="mt-2" />
+      </div>
+
+      <div>
+        <label for="edit-note" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.note') }}</label>
+        <Textarea id="edit-note" v-model="editNote" rows="3" maxlength="2000" :placeholder="$t('edit_library.note_placeholder')" class="w-full mt-2" />
+      </div>
+
       <div class="flex items-center justify-between">
         <label for="edit-notify" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t(config.labels.notify) }}</label>
         <ToggleSwitch inputId="edit-notify" v-model="editNotify" />

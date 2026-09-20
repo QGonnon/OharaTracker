@@ -81,7 +81,18 @@ router.get('/user', authenticate, async (req, res) => {
 });
 
 router.patch('/user', authenticate, async (req, res) => {
-    const { id, lastChapter, readingStatus, title, site, notifyEnabled } = req.body;
+    const { id, lastChapter, readingStatus, title, site, notifyEnabled, score, note } = req.body;
+
+    if (score !== undefined && score !== null) {
+        const value = Number(score);
+        if (!Number.isFinite(value) || value < 0 || value > 10) {
+            return res.status(400).json({ message: 'Note invalide : attendu un nombre entre 0 et 10' });
+        }
+    }
+
+    if (note !== undefined && note !== null && String(note).length > 2000) {
+        return res.status(400).json({ message: 'Commentaire trop long (2000 caractères maximum)' });
+    }
 
     try {
         const result = await updateUserLibrary({
@@ -91,6 +102,8 @@ router.patch('/user', authenticate, async (req, res) => {
             title,
             site: site || null,
             notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
+            score: score === undefined || score === null || score === '' ? null : Number(score),
+            note: note === undefined ? null : note,
             username: req.user.username,
         });
 

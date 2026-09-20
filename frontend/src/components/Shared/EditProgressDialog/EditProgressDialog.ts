@@ -5,6 +5,8 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
+import Rating from 'primevue/rating'
+import Textarea from 'primevue/textarea'
 import { useAuthStore } from '../../../store/auth.module'
 import { useLibraryStore } from '../../../store/library.module'
 import { useMangaStore } from '../../../store/manga.module'
@@ -16,7 +18,7 @@ import type { EditDialogRow, EditDialogType } from './editDialogConfig'
 // vit ici ; les différences entre manga et anime sont isolées dans editDialogConfig.ts.
 export default defineComponent({
   name: 'EditProgressDialog',
-  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch },
+  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch, Rating, Textarea },
   props: {
     type: { type: String as () => EditDialogType, required: true },
     visible: { type: Boolean, required: true },
@@ -36,6 +38,8 @@ export default defineComponent({
     const editStatus = ref<string>('')
     const editSource = ref<string>('')
     const editNotify = ref<boolean>(false)
+    const editScore = ref<number | null>(null)
+    const editNote = ref<string>('')
     const valueOptions = ref<{ label: string; value: string }[]>([])
     const rows = ref<EditDialogRow[]>([])
     // Les `value` sont les libellés historiques stockés en base : les traduire casserait
@@ -84,6 +88,8 @@ export default defineComponent({
       editStatus.value = item.readingStatus || ''
       editSource.value = config.value.getInitialSource(item)
       editNotify.value = !!item.notifyEnabled
+      editScore.value = item.score === null || item.score === undefined ? null : Number(item.score)
+      editNote.value = item.note ?? ''
       if (item.id) fetchValueOptions(item.id)
     }
 
@@ -108,9 +114,13 @@ export default defineComponent({
       saving.value = true
       try {
         const chosenValue = editValue.value === 'manual' ? editValueCustom.value : editValue.value
-        const body = config.value.buildSaveBody(props.item, editSource.value, chosenValue, editStatus.value, editNotify.value)
+        const body = {
+          ...config.value.buildSaveBody(props.item, editSource.value, chosenValue, editStatus.value, editNotify.value),
+          score: editScore.value,
+          note: editNote.value.trim() || null,
+        }
         const resJson = await libraryStore.updateLibraryEntry(body)
-        emit('updated', config.value.buildUpdatedPayload(resJson, body))
+        emit('updated', { ...config.value.buildUpdatedPayload(resJson, body), score: body.score, note: body.note })
         visibleLocal.value = false
       } catch (err) {
         console.error(`Erreur sauvegarde édition (${props.type}):`, err)
@@ -148,6 +158,8 @@ export default defineComponent({
       editStatus,
       editSource,
       editNotify,
+      editScore,
+      editNote,
       valueOptions,
       statusOptions,
       save,

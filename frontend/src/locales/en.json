@@ -234,7 +234,10 @@
     "notify": "Receive notifications",
     "delete": "Delete",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "score": "Your rating",
+    "note": "Personal note",
+    "note_placeholder": "Your thoughts, where you left off..."
   },
   "edit_anime": {
     "title": "Edit anime",
@@ -249,7 +252,10 @@
     "notify": "Receive notifications",
     "delete": "Delete",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "score": "Your rating",
+    "note": "Personal note",
+    "note_placeholder": "Your thoughts, where you left off..."
   },
   "notifications": {
     "title": "Notifications",

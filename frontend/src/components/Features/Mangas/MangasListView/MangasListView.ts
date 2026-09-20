@@ -147,6 +147,8 @@ export default defineComponent({
             if (idx >= 0) {
                 if (payload?.lastChapter !== undefined) mangas.value[idx].userLastChapter = payload.lastChapter;
                 if (payload?.readingStatus !== undefined) mangas.value[idx].readingStatus = payload.readingStatus;
+                if (payload?.score !== undefined) mangas.value[idx].score = payload.score;
+                if (payload?.note !== undefined) mangas.value[idx].note = payload.note;
                 editingManga.value = mangas.value[idx];
             }
             editDialog.value = false;

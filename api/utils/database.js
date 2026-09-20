@@ -362,7 +362,7 @@ async function getUserLibrary(username) {
     );
 }
 
-async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, notifyEnabled, username }) {
+async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, notifyEnabled, score, note, username }) {
     let idLibrary = id;
 
     if (!idLibrary) {
@@ -406,13 +406,17 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
             `UPDATE libraryusage
              SET last_chapter = COALESCE(:lastChapter, last_chapter),
                  reading_status = COALESCE(:readingStatus, reading_status),
-                 notify_enabled = COALESCE(:notifyEnabled, notify_enabled)
+                 notify_enabled = COALESCE(:notifyEnabled, notify_enabled),
+                 score = COALESCE(:score, score),
+                 note = COALESCE(:note, note)
              WHERE id_library = :id_library AND name_client = :username AND id_source = :id_source`,
             {
                 replacements: {
                     lastChapter: lastChapter || null,
                     readingStatus: readingStatus || null,
                     notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
+                    score: score ?? null,
+                    note: note ?? null,
                     id_library: idLibrary,
                     id_source: idSource,
                     username,
@@ -422,8 +426,8 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
         );
     } else {
         await sequelize.query(
-            `INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status, notify_enabled)
-             VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus, COALESCE(:notifyEnabled, false))`,
+            `INSERT INTO libraryusage (id_library, name_client, id_source, last_chapter, reading_status, notify_enabled, score, note)
+             VALUES (:id_library, :username, :id_source, :lastChapter, :readingStatus, COALESCE(:notifyEnabled, false), :score, :note)`,
             {
                 replacements: {
                     id_library: idLibrary,
@@ -432,6 +436,8 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
                     lastChapter: lastChapter || null,
                     readingStatus: readingStatus || null,
                     notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
+                    score: score ?? null,
+                    note: note ?? null,
                 },
                 type: QueryTypes.INSERT,
             }

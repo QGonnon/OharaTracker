@@ -234,7 +234,10 @@
     "notify": "Benachrichtigungen erhalten",
     "delete": "Löschen",
     "cancel": "Abbrechen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "score": "Deine Bewertung",
+    "note": "Persönliche Notiz",
+    "note_placeholder": "Deine Eindrücke, wo du stehst..."
   },
   "edit_anime": {
     "title": "Anime bearbeiten",
@@ -249,7 +252,10 @@
     "notify": "Benachrichtigungen erhalten",
     "delete": "Löschen",
     "cancel": "Abbrechen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "score": "Deine Bewertung",
+    "note": "Persönliche Notiz",
+    "note_placeholder": "Deine Eindrücke, wo du stehst..."
   },
   "notifications": {
     "title": "Benachrichtigungen",
