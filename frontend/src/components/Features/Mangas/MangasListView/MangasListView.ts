@@ -17,6 +17,7 @@ import { useMangaStore } from '../../../../store/manga.module'
 import { useLibraryStore } from '../../../../store/library.module'
 import type { Manga } from '../../../../types/index'
 import { slugify } from '../../../../utils'
+import { localeMedia } from '../../../../seo/localePath'
 import { usePageSeo } from '../../../../seo/usePageSeo';
 
 export default defineComponent({
@@ -169,8 +170,8 @@ export default defineComponent({
             mangaStore.getChapterUrl(manga, manga.userLastChapter) ?? manga.chapterUrl;
 
         const navigateToInfo = (manga: Manga) => {
-            const routeName = mangaStore.isAnimeType(manga) ? 'AnimeInfo' : 'MangaInfo';
-            router.push({ name: routeName, params: { name: slugify(manga.title) } });
+            const kind = mangaStore.resolveMediaKind(null, manga.type);
+            router.push(localeMedia(kind, slugify(manga.title)));
         };
 
         const getCoverUrl = (manga: Manga): string => mangaStore.getCoverUrl(manga);
