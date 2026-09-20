@@ -102,3 +102,22 @@ class DiscoveryPreferencesService {
 }
 
 export const discoveryPreferencesService = new DiscoveryPreferencesService()
+
+export interface FeatureMatrix {
+  plan: string
+  limits: Record<string, number | boolean | null>
+  earlyAccess: boolean
+  beta: { key: string; unlocked: boolean }[]
+}
+
+class FeatureService {
+  async get(token: string): Promise<FeatureMatrix> {
+    const response = await fetch(`${API_BASE}/features`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error('Erreur lors du chargement des fonctionnalités')
+    return response.json()
+  }
+}
+
+export const featureService = new FeatureService()

@@ -373,6 +373,16 @@
       "sunset": "Sonnenuntergang",
       "forest": "Wald",
       "mono": "Monochrom"
+    },
+    "early_access": "Früher Zugang",
+    "early_access_on": "Dein Tarif gibt dir Neuerungen als Erstes.",
+    "early_access_off": "Die Tarife Lite und Pro geben dir Neuerungen als Erstes.",
+    "beta_locked": "Höherer Tarif",
+    "beta": {
+      "customDiscovery": "Anpassbare Entdeckung",
+      "personalizedRecommendations": "Personalisierte Empfehlungen",
+      "advancedStats": "Erweiterte Statistiken",
+      "smartSuggestions": "Intelligente Vorschläge"
     }
   },
   "footer": {

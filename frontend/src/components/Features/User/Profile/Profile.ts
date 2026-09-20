@@ -3,7 +3,7 @@ import { useAuthStore } from '../../../../store/auth.module';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
 import SubscriptionService from '../../../../services/subscription.service';
-import PreferencesService, { appearanceService } from '../../../../services/preferences.service';
+import PreferencesService, { appearanceService, featureService, type FeatureMatrix } from '../../../../services/preferences.service';
 import { usePageSeo } from '../../../../seo/usePageSeo';
 import { localePath } from '../../../../seo/localePath';
 
@@ -54,6 +54,7 @@ export default defineComponent({
       appearanceLoading: false,
       appearanceSuccess: '',
       appearanceError: '',
+      features: null as FeatureMatrix | null,
     };
   },
 
@@ -112,6 +113,7 @@ export default defineComponent({
       this.profileForm.email = fresh.email;
       await this.loadPreferences();
       await this.loadAppearance();
+      await this.loadFeatures();
     } catch (err: any) {
       // Token invalide ou utilisateur introuvable → déconnexion forcée
       const authStore = useAuthStore();
@@ -148,6 +150,17 @@ export default defineComponent({
         this.appearanceUnlocked = appearance.unlocked === true;
       } catch {
         // Apparence indisponible : la section garde ses valeurs par défaut.
+      }
+    },
+
+    async loadFeatures() {
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!token) return;
+
+      try {
+        this.features = await featureService.get(token);
+      } catch {
+        this.features = null;
       }
     },
 

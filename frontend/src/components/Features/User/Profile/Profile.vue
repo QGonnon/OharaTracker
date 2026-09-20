@@ -161,6 +161,25 @@
             </form>
           </section>
 
+          <!-- Accès anticipé -->
+          <section v-if="features" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.early_access') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                {{ features.earlyAccess ? $t('profile.early_access_on') : $t('profile.early_access_off') }}
+              </p>
+            </div>
+            <ul class="px-6 py-6 space-y-3">
+              <li v-for="item in features.beta" :key="item.key" class="flex items-center gap-3 text-sm">
+                <i class="pi text-xs" :class="item.unlocked ? 'pi-check-circle text-green-600 dark:text-green-400' : 'pi-lock text-slate-400 dark:text-slate-500'" aria-hidden="true"></i>
+                <span class="flex-1" :class="item.unlocked ? 'text-slate-700 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400'">
+                  {{ $t(`profile.beta.${item.key}`) }}
+                </span>
+                <span v-if="!item.unlocked" class="text-xs font-semibold text-violet-600 dark:text-violet-400">{{ $t('profile.beta_locked') }}</span>
+              </li>
+            </ul>
+          </section>
+
           <!-- Apparence -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">

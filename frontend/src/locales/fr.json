@@ -373,6 +373,16 @@
       "sunset": "Crépuscule",
       "forest": "Forêt",
       "mono": "Monochrome"
+    },
+    "early_access": "Accès anticipé",
+    "early_access_on": "Votre offre vous donne accès aux nouveautés en avant-première.",
+    "early_access_off": "Les offres Lite et Pro donnent accès aux nouveautés en avant-première.",
+    "beta_locked": "Offre supérieure",
+    "beta": {
+      "customDiscovery": "Découverte personnalisable",
+      "personalizedRecommendations": "Recommandations personnalisées",
+      "advancedStats": "Statistiques avancées",
+      "smartSuggestions": "Suggestions intelligentes"
     }
   },
   "footer": {

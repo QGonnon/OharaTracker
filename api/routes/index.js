@@ -13,6 +13,7 @@ import filters from './filters.js';
 import community from './community.js';
 import partners from './partners.js';
 import gamification from './gamification.js';
+import features from './features.js';
 
 
 const router = express.Router();
@@ -33,6 +34,7 @@ router
     .use('/filters', filters)
     .use('/community', community)
     .use('/partners', partners)
+    .use('/features', features)
     .use('/', gamification)
     .use('/stripe', stripeRoutes);
 

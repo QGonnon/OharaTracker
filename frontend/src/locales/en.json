@@ -373,6 +373,16 @@
       "sunset": "Sunset",
       "forest": "Forest",
       "mono": "Monochrome"
+    },
+    "early_access": "Early access",
+    "early_access_on": "Your plan gives you new features first.",
+    "early_access_off": "The Lite and Pro plans give you new features first.",
+    "beta_locked": "Higher plan",
+    "beta": {
+      "customDiscovery": "Customisable Discovery",
+      "personalizedRecommendations": "Personalised recommendations",
+      "advancedStats": "Advanced statistics",
+      "smartSuggestions": "Smart suggestions"
     }
   },
   "footer": {
