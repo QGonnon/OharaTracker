@@ -14,7 +14,8 @@
     "main": "Main navigation",
     "open_menu": "Open navigation menu",
     "close_menu": "Close navigation menu",
-    "user_menu": "Account menu"
+    "user_menu": "Account menu",
+    "stats": "Statistics"
   },
   "auth": {
     "login_subtitle": "Login",
@@ -645,5 +646,28 @@
     "item_detail": "{count} new release(s) — latest: {chapter}",
     "cta": "Open my library",
     "footer": "You receive this e-mail because the weekly report is enabled on your Ohara Tracker account."
+  },
+  "stats": {
+    "title": "Your reading statistics",
+    "subtitle": "What your library says about your habits.",
+    "loading": "Crunching numbers...",
+    "works_tracked": "Titles tracked",
+    "chapters_read": "Chapters read",
+    "episodes_watched": "Episodes watched",
+    "average_score": "Average rating ({n} rated)",
+    "by_status": "Breakdown by status",
+    "completion": "{n}% of your titles are completed",
+    "top_genres": "Most frequent genres",
+    "activity": "Releases per month across your titles",
+    "score_distribution": "Your rating distribution",
+    "top_rated": "Your highest rated",
+    "empty": "No data yet.",
+    "locked_title": "Advanced statistics",
+    "locked_desc": "Genres, monthly activity and rating distribution come with the Lite and Pro plans.",
+    "see_plans": "See the plans",
+    "filter_type": "Type",
+    "filter_since": "Since",
+    "all_types": "All",
+    "apply": "Apply"
   }
 }

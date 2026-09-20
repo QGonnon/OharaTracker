@@ -131,6 +131,7 @@ export default defineComponent({
 
     const userMenuItems = computed<MenuItem[]>(() => [
       { label: t('nav.profile'), icon: 'pi pi-user',     command: () => router.push({ name: 'Profile' }) },
+      { label: t('nav.stats'),   icon: 'pi pi-chart-bar', command: () => router.push({ name: 'Stats' }) },
       { separator: true },
       { label: t('nav.logout'),  icon: 'pi pi-sign-out', command: handleLogout },
     ])

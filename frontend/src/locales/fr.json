@@ -14,7 +14,8 @@
     "main": "Navigation principale",
     "open_menu": "Ouvrir le menu de navigation",
     "close_menu": "Fermer le menu de navigation",
-    "user_menu": "Menu du compte"
+    "user_menu": "Menu du compte",
+    "stats": "Statistiques"
   },
   "auth": {
     "login_subtitle": "Connexion",
@@ -645,5 +646,28 @@
     "item_detail": "{count} nouvelle(s) sortie(s) — dernière : {chapter}",
     "cta": "Ouvrir ma bibliothèque",
     "footer": "Vous recevez ce message car le rapport hebdomadaire est activé sur votre compte Ohara Tracker."
+  },
+  "stats": {
+    "title": "Vos statistiques de lecture",
+    "subtitle": "Ce que vos suivis disent de vos habitudes.",
+    "loading": "Calcul en cours...",
+    "works_tracked": "Œuvres suivies",
+    "chapters_read": "Chapitres lus",
+    "episodes_watched": "Épisodes vus",
+    "average_score": "Note moyenne ({n} notées)",
+    "by_status": "Répartition par statut",
+    "completion": "{n} % de vos œuvres sont terminées",
+    "top_genres": "Genres les plus présents",
+    "activity": "Sorties par mois sur vos suivis",
+    "score_distribution": "Distribution de vos notes",
+    "top_rated": "Vos meilleures notes",
+    "empty": "Pas encore de données.",
+    "locked_title": "Statistiques avancées",
+    "locked_desc": "Genres, activité mensuelle et distribution des notes sont inclus dans les offres Lite et Pro.",
+    "see_plans": "Voir les offres",
+    "filter_type": "Type",
+    "filter_since": "Depuis le",
+    "all_types": "Tous",
+    "apply": "Appliquer"
   }
 }

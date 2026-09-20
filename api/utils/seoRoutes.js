@@ -23,7 +23,7 @@ import { getCatalogForSitemap } from './catalog.js';
     { key: 'cookies', priority: '0.2', changefreq: 'yearly' },
 ];
 
-const PRIVATE_PAGE_KEYS = ['login', 'register', 'profile', 'library', 'notifications'];
+const PRIVATE_PAGE_KEYS = ['login', 'register', 'profile', 'library', 'notifications', 'stats'];
 
 const CHUNK = 10000; // max URL par fichier sitemap (limite du protocole : 50 000)
 

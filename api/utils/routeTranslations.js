@@ -29,6 +29,7 @@ export const PAGE_SEGMENTS = {
     register: { fr: 'inscription', en: 'register', de: 'registrieren', it: 'registrati', es: 'registro' },
     profile: { fr: 'profil', en: 'profile', de: 'profil', it: 'profilo', es: 'perfil' },
     library: { fr: 'bibliotheque', en: 'library', de: 'bibliothek', it: 'biblioteca', es: 'biblioteca' },
+    stats: { fr: 'statistiques', en: 'stats', de: 'statistiken', it: 'statistiche', es: 'estadisticas' },
     notifications: {
         fr: 'notifications', en: 'notifications', de: 'benachrichtigungen',
         it: 'notifiche', es: 'notificaciones',

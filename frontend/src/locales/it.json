@@ -14,7 +14,8 @@
     "main": "Navigazione principale",
     "open_menu": "Apri il menu di navigazione",
     "close_menu": "Chiudi il menu di navigazione",
-    "user_menu": "Menu account"
+    "user_menu": "Menu account",
+    "stats": "Statistiche"
   },
   "auth": {
     "login_subtitle": "Accesso",
@@ -645,5 +646,28 @@
     "item_detail": "{count} nuova/e uscita/e — ultima: {chapter}",
     "cta": "Apri la mia biblioteca",
     "footer": "Ricevi questa e-mail perché il rapporto settimanale è attivo sul tuo account Ohara Tracker."
+  },
+  "stats": {
+    "title": "Le tue statistiche di lettura",
+    "subtitle": "Cosa dice la tua biblioteca delle tue abitudini.",
+    "loading": "Calcolo in corso...",
+    "works_tracked": "Opere seguite",
+    "chapters_read": "Capitoli letti",
+    "episodes_watched": "Episodi visti",
+    "average_score": "Voto medio ({n} votate)",
+    "by_status": "Ripartizione per stato",
+    "completion": "Il {n} % delle tue opere è completato",
+    "top_genres": "Generi più presenti",
+    "activity": "Uscite al mese sulle tue opere",
+    "score_distribution": "Distribuzione dei tuoi voti",
+    "top_rated": "I tuoi voti più alti",
+    "empty": "Ancora nessun dato.",
+    "locked_title": "Statistiche avanzate",
+    "locked_desc": "Generi, attività mensile e distribuzione dei voti sono inclusi in Lite e Pro.",
+    "see_plans": "Vedi i piani",
+    "filter_type": "Tipo",
+    "filter_since": "Dal",
+    "all_types": "Tutti",
+    "apply": "Applica"
   }
 }

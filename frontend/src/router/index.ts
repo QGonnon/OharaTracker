@@ -17,6 +17,7 @@ const Discovery = () => import('../components/Features/Discovery/Discovery.vue')
 const MangasListView = () => import('../components/Features/Mangas/MangasListView/MangasListView.vue')
 const Search = () => import('../components/Features/Search/Search.vue')
 const Profile = () => import('../components/Features/User/Profile/Profile.vue')
+const Stats = () => import('../components/Features/User/Stats/Stats.vue')
 const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
 const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
 
@@ -94,6 +95,7 @@ const routes: RouteRecordRaw[] = [
   pageRoute('register', 'Register', Register, { noindex: true }),
   pageRoute('profile', 'Profile', Profile, { noindex: true, requiresAuth: true }),
   pageRoute('library', 'Library', MangasListView, { noindex: true, requiresAuth: true }),
+  pageRoute('stats', 'Stats', Stats, { noindex: true, requiresAuth: true }),
   pageRoute('notifications', 'Notifications', NotificationsView, { noindex: true, requiresAuth: true }),
 
   // Pages publiques indexables
