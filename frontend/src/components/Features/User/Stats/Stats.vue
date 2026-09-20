@@ -54,6 +54,41 @@
           </div>
         </div>
 
+        <!-- Badges -->
+        <section v-if="badges.length" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 mb-6">
+          <h2 class="text-lg font-bold mb-4">{{ $t('stats.badges') }}</h2>
+          <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <li v-for="badge in badges" :key="badge.key"
+                class="rounded-xl border p-4" :class="tierClass(badge.tier)">
+              <p class="font-bold text-sm">{{ $t(`stats.badge.${badge.key}`) }}</p>
+              <p class="text-xs mt-0.5 opacity-80">
+                {{ badge.tier ? $t(`stats.tier.${badge.tier}`) : $t('stats.badge_locked') }}
+              </p>
+              <div class="mt-2 h-1.5 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+                <span class="block h-full rounded-full bg-current opacity-70" :style="{ width: badge.progress + '%' }"></span>
+              </div>
+              <p class="text-xs mt-1 tabular-nums opacity-80">
+                {{ badge.next ? `${badge.value} / ${badge.next}` : badge.value }}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Classement entre amis -->
+        <section v-if="ranking.length > 1" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 mb-6">
+          <h2 class="text-lg font-bold mb-1">{{ $t('stats.ranking') }}</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">{{ $t('stats.ranking_desc') }}</p>
+          <ol class="space-y-2">
+            <li v-for="row in ranking" :key="row.username"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl"
+                :class="row.isMe ? 'bg-indigo-50 dark:bg-indigo-900/30' : ''">
+              <span class="w-6 text-sm font-bold tabular-nums text-slate-500 dark:text-slate-400">{{ row.rank }}</span>
+              <span class="flex-1 min-w-0 truncate text-sm" :class="row.isMe ? 'font-bold' : ''">{{ row.username }}</span>
+              <span class="text-sm tabular-nums text-slate-600 dark:text-slate-300">{{ row.worksTracked }}</span>
+            </li>
+          </ol>
+        </section>
+
         <!-- Répartition par statut -->
         <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 mb-6">
           <h2 class="text-lg font-bold mb-1">{{ $t('stats.by_status') }}</h2>

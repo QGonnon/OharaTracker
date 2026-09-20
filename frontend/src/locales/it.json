@@ -704,7 +704,25 @@
     "filter_type": "Tipo",
     "filter_since": "Dal",
     "all_types": "Tutti",
-    "apply": "Applica"
+    "apply": "Applica",
+    "badges": "Distintivi",
+    "badge_locked": "Non ancora sbloccato",
+    "ranking": "Classifica tra amici",
+    "ranking_desc": "Basata sulle opere seguite. Visibile solo a te.",
+    "badge": {
+      "librarian": "Bibliotecario",
+      "marathoner": "Maratoneta",
+      "critic": "Critico",
+      "finisher": "Finalizzatore",
+      "social": "Socievole",
+      "curator": "Curatore",
+      "explorer": "Esploratore"
+    },
+    "tier": {
+      "bronze": "Bronzo",
+      "silver": "Argento",
+      "gold": "Oro"
+    }
   },
   "watchlists": {
     "title": "Le mie liste di seguito",

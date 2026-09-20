@@ -704,7 +704,25 @@
     "filter_type": "Typ",
     "filter_since": "Seit",
     "all_types": "Alle",
-    "apply": "Anwenden"
+    "apply": "Anwenden",
+    "badges": "Abzeichen",
+    "badge_locked": "Noch nicht freigeschaltet",
+    "ranking": "Rangliste unter Freunden",
+    "ranking_desc": "Basiert auf verfolgten Titeln. Nur für dich sichtbar.",
+    "badge": {
+      "librarian": "Bibliothekar",
+      "marathoner": "Marathonläufer",
+      "critic": "Kritiker",
+      "finisher": "Vollender",
+      "social": "Gesellig",
+      "curator": "Kurator",
+      "explorer": "Entdecker"
+    },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Silber",
+      "gold": "Gold"
+    }
   },
   "watchlists": {
     "title": "Meine Merklisten",

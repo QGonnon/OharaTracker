@@ -704,7 +704,25 @@
     "filter_type": "Type",
     "filter_since": "Since",
     "all_types": "All",
-    "apply": "Apply"
+    "apply": "Apply",
+    "badges": "Badges",
+    "badge_locked": "Not unlocked yet",
+    "ranking": "Ranking among friends",
+    "ranking_desc": "Based on tracked titles. Only you can see it.",
+    "badge": {
+      "librarian": "Librarian",
+      "marathoner": "Marathoner",
+      "critic": "Critic",
+      "finisher": "Finisher",
+      "social": "Social",
+      "curator": "Curator",
+      "explorer": "Explorer"
+    },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold"
+    }
   },
   "watchlists": {
     "title": "My watch lists",

@@ -704,7 +704,25 @@
     "filter_type": "Type",
     "filter_since": "Depuis le",
     "all_types": "Tous",
-    "apply": "Appliquer"
+    "apply": "Appliquer",
+    "badges": "Badges",
+    "badge_locked": "Pas encore débloqué",
+    "ranking": "Classement entre amis",
+    "ranking_desc": "Fondé sur le nombre d'œuvres suivies. Visible de vous seul.",
+    "badge": {
+      "librarian": "Bibliothécaire",
+      "marathoner": "Marathonien",
+      "critic": "Critique",
+      "finisher": "Finisseur",
+      "social": "Sociable",
+      "curator": "Curateur",
+      "explorer": "Explorateur"
+    },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or"
+    }
   },
   "watchlists": {
     "title": "Mes listes de suivi",

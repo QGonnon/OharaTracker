@@ -41,3 +41,42 @@ class StatsService {
 }
 
 export default new StatsService()
+
+export interface Badge {
+  key: string
+  value: number
+  tier: 'bronze' | 'silver' | 'gold' | null
+  earned: boolean
+  next: number | null
+  progress: number
+}
+
+export interface FriendRank {
+  rank: number
+  username: string
+  avatarUrl: string | null
+  worksTracked: number
+  completed: number
+  averageScore: number | null
+  isMe: boolean
+}
+
+class GamificationService {
+  async badges(token: string): Promise<Badge[]> {
+    const response = await fetch(`${API_BASE}/badges`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error('Erreur lors du chargement des badges')
+    return response.json()
+  }
+
+  async friendRanking(token: string): Promise<FriendRank[]> {
+    const response = await fetch(`${API_BASE}/leaderboard/friends`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error('Erreur lors du chargement du classement')
+    return response.json()
+  }
+}
+
+export const gamificationService = new GamificationService()

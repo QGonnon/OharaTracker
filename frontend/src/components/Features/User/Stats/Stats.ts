@@ -2,7 +2,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import { useAuthStore } from '../../../../store/auth.module'
-import StatsService, { type ReadingStats } from '../../../../services/stats.service'
+import StatsService, { gamificationService, type ReadingStats, type Badge, type FriendRank } from '../../../../services/stats.service'
 import { usePageSeo } from '../../../../seo/usePageSeo'
 import { localePath } from '../../../../seo/localePath'
 
@@ -27,6 +27,8 @@ export default defineComponent({
     const error = ref('')
     const filterType = ref('')
     const filterSince = ref('')
+    const badges = ref<Badge[]>([])
+    const ranking = ref<FriendRank[]>([])
 
     const load = async () => {
       const token = authStore.user?.accessToken
@@ -42,6 +44,13 @@ export default defineComponent({
           type: filterType.value || undefined,
           since: filterSince.value || undefined,
         })
+        // Badges et classement sont accessoires : leur echec ne doit pas vider la page.
+        const [badgeData, rankData] = await Promise.all([
+          gamificationService.badges(token).catch(() => []),
+          gamificationService.friendRanking(token).catch(() => []),
+        ])
+        badges.value = badgeData
+        ranking.value = rankData
       } catch (err) {
         error.value = err instanceof Error ? err.message : 'Erreur'
       } finally {
@@ -71,7 +80,12 @@ export default defineComponent({
     onMounted(load)
 
     return {
-      stats, loading, error, filterType, filterSince, load,
+      stats, loading, error, filterType, filterSince, load, badges, ranking,
+      tierClass: (tier: string | null) => ({
+        gold: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700',
+        silver: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-500',
+        bronze: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-700',
+      }[tier ?? ''] ?? 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700'),
       statusLabel, statusKey, ratio,
       maxStatus, maxGenre, maxMonth, maxScore, completionRate,
       pricingLink: computed(() => localePath('pricing')),
