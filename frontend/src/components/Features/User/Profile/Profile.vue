@@ -161,6 +161,67 @@
             </form>
           </section>
 
+          <!-- Notifications -->
+          <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('profile.notifications') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.notifications_sub') }}</p>
+            </div>
+            <form class="px-6 py-6 space-y-5" @submit.prevent="savePreferences">
+              <div class="flex items-center justify-between gap-4">
+                <label for="profile-digest-enabled" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  {{ $t('profile.weekly_digest') }}
+                  <span class="block font-normal text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.weekly_digest_desc') }}</span>
+                </label>
+                <input
+                  id="profile-digest-enabled"
+                  v-model="emailDigestEnabled"
+                  type="checkbox"
+                  class="h-5 w-5 flex-shrink-0 accent-indigo-600 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <label for="profile-digest-day" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                  {{ $t('profile.digest_day') }}
+                  <span v-if="!canChooseDigestDay" class="ml-2 px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 text-xs font-semibold">Pro</span>
+                </label>
+                <select
+                  id="profile-digest-day"
+                  v-model.number="emailDigestDay"
+                  :disabled="!canChooseDigestDay || !emailDigestEnabled"
+                  class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
+                >
+                  <option :value="0">{{ $t('profile.days.sunday') }}</option>
+                  <option :value="1">{{ $t('profile.days.monday') }}</option>
+                  <option :value="2">{{ $t('profile.days.tuesday') }}</option>
+                  <option :value="3">{{ $t('profile.days.wednesday') }}</option>
+                  <option :value="4">{{ $t('profile.days.thursday') }}</option>
+                  <option :value="5">{{ $t('profile.days.friday') }}</option>
+                  <option :value="6">{{ $t('profile.days.saturday') }}</option>
+                </select>
+                <p v-if="!canChooseDigestDay" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">{{ $t('profile.digest_day_locked') }}</p>
+              </div>
+
+              <div v-if="preferencesSuccess" role="status" aria-live="polite" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
+                {{ preferencesSuccess }}
+              </div>
+              <div v-if="preferencesError" role="alert" aria-live="assertive" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                {{ preferencesError }}
+              </div>
+
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  :disabled="preferencesLoading"
+                  class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-sm shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-60 transition"
+                >
+                  {{ preferencesLoading ? $t('profile.saving') : $t('profile.save') }}
+                </button>
+              </div>
+            </form>
+          </section>
+
           <!-- Abonnement -->
           <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">

@@ -299,7 +299,24 @@
     "logout_title": "Abmelden",
     "logout_description": "Beende deine aktuelle Sitzung auf diesem Gerät",
     "strength_of": "Passwortstärke: {level}",
-    "default_username": "Benutzer"
+    "default_username": "Benutzer",
+    "notifications": "Benachrichtigungen",
+    "notifications_sub": "Lege fest, wie du von Neuerscheinungen erfährst.",
+    "weekly_digest": "Wöchentlicher E-Mail-Bericht",
+    "weekly_digest_desc": "Eine Zusammenfassung der Neuerscheinungen deiner Titel.",
+    "digest_day": "Versandtag",
+    "digest_day_locked": "Der Bericht kommt sonntags. Mit Pro wählst du deinen Tag.",
+    "preferences_saved": "Einstellungen gespeichert.",
+    "preferences_error": "Einstellungen konnten nicht gespeichert werden.",
+    "days": {
+      "sunday": "Sonntag",
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag"
+    }
   },
   "footer": {
     "tagline": "Deine eine Bibliothek für Manga, Manhwa, Manhua und Anime, ohne zehn verschiedene Plattformen jonglieren zu müssen.",

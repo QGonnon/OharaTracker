@@ -3,6 +3,7 @@ import { useAuthStore } from '../../../../store/auth.module';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import AuthService from '../../../../services/auth.service';
 import SubscriptionService from '../../../../services/subscription.service';
+import PreferencesService from '../../../../services/preferences.service';
 import { usePageSeo } from '../../../../seo/usePageSeo';
 import { localePath } from '../../../../seo/localePath';
 
@@ -39,6 +40,12 @@ export default defineComponent({
       passwordLoading: false,
       passwordSuccess: '',
       passwordError: '',
+      emailDigestEnabled: true,
+      emailDigestDay: 0,
+      canChooseDigestDay: false,
+      preferencesLoading: false,
+      preferencesSuccess: '',
+      preferencesError: '',
     };
   },
 
@@ -95,6 +102,7 @@ export default defineComponent({
       this.hasActiveStripeSubscription = fresh.hasActiveStripeSubscription || false;
       this.profileForm.username = fresh.username;
       this.profileForm.email = fresh.email;
+      await this.loadPreferences();
     } catch (err: any) {
       // Token invalide ou utilisateur introuvable → déconnexion forcée
       const authStore = useAuthStore();
@@ -104,6 +112,42 @@ export default defineComponent({
   },
 
   methods: {
+    async loadPreferences() {
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!token) return;
+
+      try {
+        const preferences = await PreferencesService.get(token);
+        this.emailDigestEnabled = preferences.emailDigestEnabled;
+        this.emailDigestDay = preferences.emailDigestDay;
+        this.canChooseDigestDay = preferences.limits?.chooseDigestDay === true;
+      } catch {
+        // Préférences indisponibles : la section reste sur ses valeurs par défaut.
+      }
+    },
+
+    async savePreferences() {
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!token) return;
+
+      this.preferencesLoading = true;
+      this.preferencesSuccess = '';
+      this.preferencesError = '';
+      try {
+        const saved = await PreferencesService.update(token, {
+          emailDigestEnabled: this.emailDigestEnabled,
+          emailDigestDay: this.emailDigestDay,
+        });
+        this.emailDigestEnabled = saved.emailDigestEnabled;
+        this.emailDigestDay = saved.emailDigestDay;
+        this.preferencesSuccess = this.$t('profile.preferences_saved');
+      } catch (err: any) {
+        this.preferencesError = err.message || this.$t('profile.preferences_error');
+      } finally {
+        this.preferencesLoading = false;
+      }
+    },
+
     async submitProfile() {
       this.profileLoading = true;
       this.profileSuccess = '';

@@ -299,7 +299,24 @@
     "logout_title": "Se déconnecter",
     "logout_description": "Terminer votre session en cours sur cet appareil",
     "strength_of": "Force du mot de passe : {level}",
-    "default_username": "Utilisateur"
+    "default_username": "Utilisateur",
+    "notifications": "Notifications",
+    "notifications_sub": "Choisissez comment vous êtes prévenu des nouvelles sorties.",
+    "weekly_digest": "Rapport hebdomadaire par e-mail",
+    "weekly_digest_desc": "Un récapitulatif des sorties des œuvres que vous suivez.",
+    "digest_day": "Jour de réception",
+    "digest_day_locked": "Le rapport est envoyé le dimanche. Passez à l'offre Pro pour choisir votre jour.",
+    "preferences_saved": "Préférences enregistrées.",
+    "preferences_error": "Impossible d'enregistrer les préférences.",
+    "days": {
+      "sunday": "Dimanche",
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi"
+    }
   },
   "footer": {
     "tagline": "Votre bibliothèque unique pour suivre mangas, manhwas, manhuas et animés, en français, sans jongler entre dix plateformes.",

@@ -935,6 +935,54 @@ function getAllMangas(callback) {
 }
 
 
+async function getClientPreferences(username) {
+    const rows = await sequelize.query(
+        `SELECT
+            email_digest_enabled AS "emailDigestEnabled",
+            email_digest_day     AS "emailDigestDay",
+            locale               AS "locale"
+         FROM "Client"
+         WHERE name = :username`,
+        { replacements: { username }, type: QueryTypes.SELECT }
+    );
+
+    if (rows.length === 0) {
+        const error = new Error('Client introuvable');
+        error.statusCode = 404;
+        throw error;
+    }
+
+    return rows[0];
+}
+
+// Mise à jour partielle : seules les préférences présentes dans le corps sont écrites.
+async function updateClientPreferences(username, { emailDigestEnabled, emailDigestDay, locale }) {
+    const assignments = [];
+    const replacements = { username };
+
+    if (typeof emailDigestEnabled === 'boolean') {
+        assignments.push('email_digest_enabled = :emailDigestEnabled');
+        replacements.emailDigestEnabled = emailDigestEnabled;
+    }
+    if (emailDigestDay !== undefined) {
+        assignments.push('email_digest_day = :emailDigestDay');
+        replacements.emailDigestDay = emailDigestDay;
+    }
+    if (locale !== undefined) {
+        assignments.push('locale = :locale');
+        replacements.locale = locale;
+    }
+
+    if (assignments.length > 0) {
+        await sequelize.query(
+            `UPDATE "Client" SET ${assignments.join(', ')} WHERE name = :username`,
+            { replacements, type: QueryTypes.UPDATE }
+        );
+    }
+
+    return getClientPreferences(username);
+}
+
 function getClient(username, callback) {
     sequelize.query(
         `SELECT
@@ -1011,6 +1059,8 @@ export {
     updateUserLibrary,
     deleteUserLibrary,
     getClient,
+    getClientPreferences,
+    updateClientPreferences,
     getUserNotifications,
     getUnreadNotificationCount,
     markNotificationRead,

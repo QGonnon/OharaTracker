@@ -299,7 +299,24 @@
     "logout_title": "Sign out",
     "logout_description": "End your current session on this device",
     "strength_of": "Password strength: {level}",
-    "default_username": "User"
+    "default_username": "User",
+    "notifications": "Notifications",
+    "notifications_sub": "Choose how you hear about new releases.",
+    "weekly_digest": "Weekly e-mail report",
+    "weekly_digest_desc": "A recap of new releases for the titles you follow.",
+    "digest_day": "Delivery day",
+    "digest_day_locked": "The report is sent on Sundays. Upgrade to Pro to pick your day.",
+    "preferences_saved": "Preferences saved.",
+    "preferences_error": "Could not save your preferences.",
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    }
   },
   "footer": {
     "tagline": "Your one library to track manga, manhwa, manhua and anime, without juggling ten different platforms.",

@@ -299,7 +299,24 @@
     "logout_title": "Cerrar sesión",
     "logout_description": "Terminar tu sesión actual en este dispositivo",
     "strength_of": "Seguridad de la contraseña: {level}",
-    "default_username": "Usuario"
+    "default_username": "Usuario",
+    "notifications": "Notificaciones",
+    "notifications_sub": "Elige cómo quieres enterarte de las novedades.",
+    "weekly_digest": "Informe semanal por correo",
+    "weekly_digest_desc": "Un resumen de las novedades de las obras que sigues.",
+    "digest_day": "Día de recepción",
+    "digest_day_locked": "El informe se envía los domingos. Pasa a Pro para elegir tu día.",
+    "preferences_saved": "Preferencias guardadas.",
+    "preferences_error": "No se han podido guardar las preferencias.",
+    "days": {
+      "sunday": "Domingo",
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado"
+    }
   },
   "footer": {
     "tagline": "Tu biblioteca única para seguir mangas, manhwas, manhuas y animes, sin usar diez plataformas distintas.",
