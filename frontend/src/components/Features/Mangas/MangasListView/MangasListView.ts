@@ -1,4 +1,5 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import Card from 'primevue/card'
@@ -38,6 +39,7 @@ export default defineComponent({
     },
     setup() {
       usePageSeo('library', { noindex: true });
+        const { t } = useI18n()
         const router = useRouter()
         const route = useRoute()
         const authStore = useAuthStore()
@@ -176,6 +178,30 @@ export default defineComponent({
 
         const getCoverUrl = (manga: Manga): string => mangaStore.getCoverUrl(manga);
 
+        // Les statuts sont stockés en base avec leurs libellés français historiques.
+        const READING_STATUS_KEYS: Record<string, string> = {
+            'En cours': 'reading',
+            'Prévus': 'planned',
+            'Terminé': 'completed',
+            'Abandonné': 'dropped',
+        };
+
+        const readingStatusLabel = (status?: string | null): string => {
+            if (!status) return '';
+            const key = READING_STATUS_KEYS[status];
+            return key ? t(`library.status.${key}`) : status;
+        };
+
+        const readingStatusSeverity = (status?: string | null): string => {
+            switch (status) {
+                case 'En cours': return 'info';
+                case 'Terminé': return 'success';
+                case 'Prévus': return 'secondary';
+                case 'Abandonné': return 'danger';
+                default: return 'info';
+            }
+        };
+
         onMounted(async () => {
             await fetchMangas();
             const q = route.query.editId
@@ -200,6 +226,8 @@ export default defineComponent({
             openChapter,
             getUserLastChapterUrl,
             getCoverUrl,
+            readingStatusLabel,
+            readingStatusSeverity,
             // edit bindings
             editDialog,
             editAnimeDialog,

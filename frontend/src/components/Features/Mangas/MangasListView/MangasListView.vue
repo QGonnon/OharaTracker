@@ -135,8 +135,8 @@
                             <Column field="status" :header="$t('library.col_status')" sortable style="min-width: 120px;">
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.readingStatus || data.status || 'Inconnu'"
-                                        :severity="(data.readingStatus ? 'info' : (data.status === 'Ongoing' ? 'success' : data.status === 'Completed' ? 'info' : 'warning'))"
+                                        :value="data.readingStatus ? readingStatusLabel(data.readingStatus) : (data.status || $t('library.unknown'))"
+                                        :severity="(data.readingStatus ? readingStatusSeverity(data.readingStatus) : (data.status === 'Ongoing' ? 'success' : data.status === 'Completed' ? 'info' : 'warning'))"
                                     />
                                 </template>
                             </Column>
@@ -266,7 +266,7 @@
                                 </span>
                             </div>
                             <div class="flex items-center justify-between mt-1">
-                                <Tag v-if="manga.readingStatus || manga.status" :value="manga.readingStatus || manga.status" :severity="(manga.readingStatus ? 'info' : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))" />
+                                <Tag v-if="manga.readingStatus || manga.status" :value="manga.readingStatus ? readingStatusLabel(manga.readingStatus) : manga.status" :severity="(manga.readingStatus ? readingStatusSeverity(manga.readingStatus) : (manga.status === 'Ongoing' ? 'success' : manga.status === 'Completed' ? 'info' : 'warning'))" />
                                 <span v-if="manga.note" class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 ml-2" v-tooltip.top="manga.note">
                                     <i class="pi pi-comment mr-1" aria-hidden="true"></i>{{ manga.note }}
                                 </span>

@@ -128,7 +128,13 @@
     "empty_reading": "No reading found in your library.",
     "followed_count": "{n} tracked",
     "edit_item": "Edit {title}",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "status": {
+      "reading": "Reading",
+      "planned": "Planned",
+      "completed": "Completed",
+      "dropped": "Dropped"
+    }
   },
   "search": {
     "title": "Library",

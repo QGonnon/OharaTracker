@@ -128,7 +128,13 @@
     "edit_item": "Modifica {title}",
     "unknown": "Sconosciuto",
     "col_last_episode_seen": "Ultimo episodio visto",
-    "col_last_episode": "Ultimo episodio"
+    "col_last_episode": "Ultimo episodio",
+    "status": {
+      "reading": "In corso",
+      "planned": "Pianificato",
+      "completed": "Completato",
+      "dropped": "Abbandonato"
+    }
   },
   "search": {
     "title": "Libreria",

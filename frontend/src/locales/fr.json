@@ -127,7 +127,13 @@
     "empty_reading": "Aucune lecture trouvée dans votre bibliothèque.",
     "followed_count": "{n} suivis",
     "edit_item": "Modifier {title}",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "status": {
+      "reading": "En cours",
+      "planned": "Prévu",
+      "completed": "Terminé",
+      "dropped": "Abandonné"
+    }
   },
   "search": {
     "title": "Bibliothèque",

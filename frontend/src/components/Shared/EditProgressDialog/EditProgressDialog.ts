@@ -1,4 +1,5 @@
 import { defineComponent, ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -23,6 +24,7 @@ export default defineComponent({
   },
   emits: ['update:visible', 'updated', 'deleted'],
   setup(props, { emit }) {
+    const { t } = useI18n()
     const authStore = useAuthStore()
     const libraryStore = useLibraryStore()
     const mangaStore = useMangaStore()
@@ -36,10 +38,13 @@ export default defineComponent({
     const editNotify = ref<boolean>(false)
     const valueOptions = ref<{ label: string; value: string }[]>([])
     const rows = ref<EditDialogRow[]>([])
-    const statusOptions = ref([
-      { label: 'En cours', value: 'En cours' },
-      { label: 'Abandonné', value: 'Abandonné' },
-      { label: 'Prévus', value: 'Prévus' }
+    // Les `value` sont les libellés historiques stockés en base : les traduire casserait
+    // les bibliothèques existantes. Seul l'affichage suit la langue de l'interface.
+    const statusOptions = computed(() => [
+      { label: t('library.status.reading'), value: 'En cours' },
+      { label: t('library.status.planned'), value: 'Prévus' },
+      { label: t('library.status.completed'), value: 'Terminé' },
+      { label: t('library.status.dropped'), value: 'Abandonné' }
     ])
     const saving = ref(false)
     const deleting = ref(false)
