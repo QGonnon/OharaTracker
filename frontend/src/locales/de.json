@@ -51,7 +51,6 @@
     "quickstart_label": "Schnellstart",
     "quickstart_heading": "So funktioniert es",
     "cta_heading": "Bereit loszulegen?",
-    "cta_desc": "Schließe dich Tausenden von Lesern an, die ihre Sammlung bereits mit OharaTracker verwalten.",
     "footer": "Kostenlos · Werbefrei · Open Source",
     "personalized_tracking": "Personalisiertes Tracking",
     "personalized_tracking_text": "Behalte den Überblick über deine Lesungen mit anpassbaren Listen, Notizen und Status.",
@@ -200,7 +199,8 @@
     "release_date": "Veröffentlichungsdatum",
     "average_score": "Durchschnittliche Bewertung",
     "user_score": "Meine Bewertung",
-    "season": "Staffel {n}"
+    "season": "Staffel {n}",
+    "watch_film": "Film ansehen"
   },
   "latest": {
     "title": "Neueste Veröffentlichungen",

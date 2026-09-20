@@ -194,7 +194,7 @@
           <div class="flex flex-col sm:flex-row gap-3">
           <Button
             v-if="chapterUrl"
-            :label="isAnime ? $t('manga.watch_episode', { ep: lastChapter.split('.')[1], season: lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: lastChapter })"
+            :label="isFilm ? $t('manga.watch_film') : (isAnime ? $t('manga.watch_episode', { ep: lastChapter.split('.')[1], season: lastChapter.split('.')[0] }) : $t('manga.read_chapter', { n: lastChapter }))"
             :icon="isAnime ? 'pi pi-play' : 'pi pi-book'"
             iconPos="left"
             severity="primary"

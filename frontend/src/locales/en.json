@@ -83,7 +83,6 @@
     "steps3_title": "Track and never miss a release",
     "steps3_desc": "Enable notifications, update your progress, and let OharaTracker alert you whenever something new drops.",
     "cta_heading": "Ready to centralize your media?",
-    "cta_desc": "Join thousands of users already tracking their manga, anime and series on OharaTracker.",
     "footer": "Free sign-up · No commitment · No ads",
     "screenshot_library_alt": "Screenshot of the personal library",
     "screenshot_discovery_alt": "Screenshot of the discovery page",
@@ -200,7 +199,8 @@
     "total_seasons": "Seasons",
     "release_date": "Release date",
     "average_score": "Average score",
-    "user_score": "My score"
+    "user_score": "My score",
+    "watch_film": "Watch the film"
   },
   "latest": {
     "title": "Latest Releases",
@@ -324,12 +324,6 @@
     "blog": "Blog"
   },
   "static": {
-    "about": {
-      "label": "About",
-      "title": "About OharaTracker",
-      "p1": "OharaTracker is a personal project built for people who read and watch a lot of manga, manhwa and anime, and got tired of juggling ten different sites to keep track of it all.",
-      "p2": "Our goal is simple: one clean, fast, ad-free place to organize your library, follow releases and never lose your progress again."
-    },
     "pricing": {
       "label": "Pricing",
       "title": "Simple, transparent pricing",
