@@ -179,7 +179,12 @@
     "read_now": "Leer ahora",
     "details": "Detalles",
     "catalog": "Catálogo",
-    "page_title": "Descubre manga y anime"
+    "page_title": "Descubre manga y anime",
+    "for_you": "Para ti",
+    "for_you_desc": "Sugerido a partir de los géneros que sigues.",
+    "for_you_popular": "Lo más seguido ahora mismo, mientras tu biblioteca crece.",
+    "for_you_locked": "Las sugerencias inteligentes se incluyen en los planes Lite y Pro.",
+    "see_plans": "Ver los planes"
   },
   "manga": {
     "loading": "Cargando manga...",

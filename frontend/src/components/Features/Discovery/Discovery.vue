@@ -58,6 +58,38 @@
       </div>
     </div>
 
+    <!-- SUGGESTIONS PERSONNALISÉES -->
+    <section v-if="isLoggedIn && (suggestions.length || suggestionsLocked)" class="px-8 pt-10">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-1 h-6 rounded bg-gradient-to-b from-violet-500 to-pink-400"></span>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $t('discovery.for_you') }}</h2>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 ml-4">
+        {{ suggestionsFallback ? $t('discovery.for_you_popular') : $t('discovery.for_you_desc') }}
+      </p>
+
+      <div v-if="suggestionsLocked" class="rounded-2xl border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-900/20 p-6 text-center">
+        <p class="text-sm text-violet-800 dark:text-violet-200 mb-3">{{ $t('discovery.for_you_locked') }}</p>
+        <RouterLink :to="pricingLink" class="inline-block px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition">
+          {{ $t('discovery.see_plans') }}
+        </RouterLink>
+      </div>
+
+      <div v-else class="flex gap-4 overflow-x-auto pb-2">
+        <RouterLink
+          v-for="item in suggestions"
+          :key="item.id"
+          :to="suggestionPath(item)"
+          class="flex-shrink-0 w-36 group"
+        >
+          <img :src="suggestionCover(item)" :alt="item.title" loading="lazy"
+               class="w-full aspect-[2/3] object-cover rounded-xl border border-gray-200 dark:border-gray-700 group-hover:border-violet-400 transition" />
+          <span class="block text-sm font-semibold mt-2 line-clamp-2 text-gray-800 dark:text-gray-200">{{ item.title }}</span>
+          <span v-if="item.genres.length" class="block text-xs text-gray-600 dark:text-gray-300 line-clamp-1">{{ item.genres.join(' · ') }}</span>
+        </RouterLink>
+      </div>
+    </section>
+
     <!-- TRENDING STRIP -->
     <section v-if="trending.length && activeGenre === '' && activeType === 'all'" class="px-8 pt-10">
       <div class="flex items-center gap-3 mb-4">

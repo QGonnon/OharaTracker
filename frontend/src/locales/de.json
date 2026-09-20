@@ -179,7 +179,12 @@
     "read_now": "Jetzt lesen",
     "details": "Details",
     "catalog": "Katalog",
-    "page_title": "Manga und Anime entdecken"
+    "page_title": "Manga und Anime entdecken",
+    "for_you": "Für dich",
+    "for_you_desc": "Vorgeschlagen anhand der Genres, denen du folgst.",
+    "for_you_popular": "Derzeit am meisten verfolgt, bis deine Bibliothek wächst.",
+    "for_you_locked": "Intelligente Vorschläge gehören zu den Tarifen Lite und Pro.",
+    "see_plans": "Angebote ansehen"
   },
   "manga": {
     "loading": "Manga wird geladen...",

@@ -179,7 +179,12 @@
     "read_now": "Read now",
     "details": "Details",
     "catalog": "Catalog",
-    "page_title": "Discover manga and anime"
+    "page_title": "Discover manga and anime",
+    "for_you": "For you",
+    "for_you_desc": "Suggested from the genres you follow.",
+    "for_you_popular": "Most followed right now, while your library fills up.",
+    "for_you_locked": "Smart suggestions come with the Lite and Pro plans.",
+    "see_plans": "See the plans"
   },
   "manga": {
     "loading": "Loading manga...",

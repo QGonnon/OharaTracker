@@ -7,7 +7,9 @@ import type { Manga } from '../../../types/index';
 import { useSeo } from '../../../seo/useSeo';
 import { breadcrumbJsonLd, collectionJsonLd } from '../../../seo/jsonld';
 import { DEFAULT_LOCALE, isLocale, absoluteUrl, homePath, pagePath, type Locale } from '../../../seo/config';
-import { localeMedia } from '../../../seo/localePath';
+import { localeMedia, localePath } from '../../../seo/localePath';
+import { useAuthStore } from '../../../store/auth.module';
+import SuggestionService, { type Suggestion } from '../../../services/suggestion.service';
 
 export default defineComponent({
   name: 'Discovery',
@@ -16,7 +18,11 @@ export default defineComponent({
   },
   setup() {
     const mangaStore = useMangaStore();
+    const authStore = useAuthStore();
     const { t, locale } = useI18n();
+    const suggestions = ref<Suggestion[]>([]);
+    const suggestionsLocked = ref(false);
+    const suggestionsFallback = ref(false);
     const featuredMangas = ref<Manga[]>([]);
     const featuredAnimes = ref<Manga[]>([]);
     const loading = ref(true);
@@ -112,7 +118,25 @@ export default defineComponent({
       }
     };
 
-    onMounted(fetchMangas);
+    // Les suggestions ne concernent qu'un compte connecté : elles dérivent de sa bibliothèque.
+    const fetchSuggestions = async () => {
+      const token = authStore.user?.accessToken;
+      if (!token) return;
+
+      try {
+        const result = await SuggestionService.get(token);
+        suggestions.value = result.items;
+        suggestionsLocked.value = result.locked === true;
+        suggestionsFallback.value = result.fallback;
+      } catch {
+        suggestions.value = [];
+      }
+    };
+
+    onMounted(() => {
+      fetchMangas();
+      fetchSuggestions();
+    });
 
     const currentLocale = computed<Locale>(() =>
       isLocale(locale.value) ? locale.value : DEFAULT_LOCALE
@@ -143,7 +167,18 @@ export default defineComponent({
       ]),
     });
 
+    const suggestionPath = (item: Suggestion): string => localeMedia(item.kind, item.slug);
+
+    const suggestionCover = (item: Suggestion): string => mangaStore.getCoverUrl(item as any);
+
     return {
+      suggestions,
+      suggestionsLocked,
+      suggestionsFallback,
+      suggestionPath,
+      suggestionCover,
+      isLoggedIn: computed(() => authStore.isLoggedIn),
+      pricingLink: computed(() => localePath('pricing')),
       workPath,
       featuredMangas,
       featuredAnimes,
