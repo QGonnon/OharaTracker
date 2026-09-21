@@ -155,7 +155,9 @@
     "modify_criteria": "Essayez de modifier vos critères de recherche",
     "label": "Rechercher une œuvre",
     "results_label": "résultat(s)",
-    "loading": "Recherche en cours…"
+    "loading": "Recherche en cours…",
+    "loading_more": "Chargement des résultats suivants…",
+    "end_of_results": "Vous avez atteint la fin des résultats"
   },
   "discovery": {
     "trending": "Tendances",
@@ -593,6 +595,7 @@
   },
   "common": {
     "close": "Fermer",
+    "back_to_top": "Retour en haut de la page",
     "opens_new_tab": "ouvre un nouvel onglet",
     "loading": "Chargement…"
   }

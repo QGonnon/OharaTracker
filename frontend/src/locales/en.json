@@ -156,7 +156,9 @@
     "modify_criteria": "Try modifying your search criteria",
     "label": "Search for a title",
     "results_label": "result(s)",
-    "loading": "Searching…"
+    "loading": "Searching…",
+    "loading_more": "Loading more results…",
+    "end_of_results": "You've reached the end of the results"
   },
   "discovery": {
     "trending": "Trending",
@@ -599,6 +601,7 @@
   },
   "common": {
     "close": "Close",
+    "back_to_top": "Back to top",
     "opens_new_tab": "opens in a new tab",
     "loading": "Loading…"
   }

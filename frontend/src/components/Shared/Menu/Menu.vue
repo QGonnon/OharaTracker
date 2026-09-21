@@ -4,7 +4,10 @@
          :aria-label="$t('nav.main')">
 
       <div class="topbar-logo text-2xl font-bold">
-        <RouterLink :to="homeLink" class="hover:opacity-80 transition-opacity">Ohara Tracker</RouterLink>
+        <RouterLink :to="homeLink" class="hover:opacity-80 transition-opacity">
+          <img src="../../../assets/OharaTracker.svg" alt="Logo" class="inline-block w-8 h-8 mr-2" />
+          Ohara Tracker
+        </RouterLink>
       </div>
 
       <!-- Desktop nav links -->

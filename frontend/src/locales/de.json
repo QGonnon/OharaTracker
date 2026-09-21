@@ -156,7 +156,9 @@
     "modify_criteria": "Versuche, deine Suchkriterien anzupassen",
     "label": "Nach einem Titel suchen",
     "results_label": "Ergebnis(se)",
-    "loading": "Suche läuft…"
+    "loading": "Suche läuft…",
+    "loading_more": "Weitere Ergebnisse werden geladen…",
+    "end_of_results": "Du hast das Ende der Ergebnisse erreicht"
   },
   "discovery": {
     "trending": "Trends",
@@ -593,6 +595,7 @@
   },
   "common": {
     "close": "Schließen",
+    "back_to_top": "Zurück nach oben",
     "opens_new_tab": "öffnet einen neuen Tab",
     "loading": "Wird geladen…"
   }

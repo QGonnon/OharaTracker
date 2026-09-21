@@ -270,16 +270,34 @@
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div v-if="searchResults.length > 0" class="mt-8 flex justify-center">
-        <Paginator
-          :rows="itemsPerPage"
-          :totalRecords="totalResults"
-          :rowsPerPageOptions="[12, 24, 48]"
-          @page="onPageChange"
-        />
+      <!-- Infinite scroll sentinel -->
+      <div ref="scrollSentinel" class="mt-8 flex justify-center" aria-hidden="true"></div>
+
+      <div
+        v-if="!isLoading && searchResults.length > 0"
+        class="mt-2 flex justify-center text-gray-600 dark:text-gray-300"
+        role="status"
+        aria-live="polite"
+      >
+        <span v-if="hasMore" class="flex items-center gap-2">
+          <ProgressSpinner style="width: 1.5rem; height: 1.5rem" strokeWidth="6" aria-hidden="true" />
+          {{ $t('search.loading_more') }}
+        </span>
+        <span v-else>{{ $t('search.end_of_results') }}</span>
       </div>
     </div>
+
+    <!-- Retour en haut de page -->
+    <Transition name="back-to-top-fade">
+      <Button
+        v-show="showBackToTop"
+        icon="pi pi-arrow-up"
+        rounded
+        :aria-label="$t('common.back_to_top')"
+        class="back-to-top"
+        @click="scrollToTop"
+      />
+    </Transition>
   </div>
 </template>
 

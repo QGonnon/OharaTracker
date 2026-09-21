@@ -93,6 +93,10 @@ export const useMangaStore = defineStore('manga', {
       return MangaService.getLastChapterInfo(manga);
     },
 
+    getChapterUrl(manga: Manga, chapterNumber?: string): string | undefined {
+      return MangaService.getChapterUrl(manga, chapterNumber);
+    },
+
     getSeasonEpisodeStats(manga: Manga): { totalEpisodes?: number; totalSeasons?: number } {
       return MangaService.getSeasonEpisodeStats(manga);
     },

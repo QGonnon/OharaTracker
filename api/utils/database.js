@@ -983,7 +983,7 @@ function getClient(username, callback) {
                         .filter(row => row.libraryId !== null)
                         .map(row => ({
                             libraryId: row.libraryId,
-                            lastReadChapter: row.lastReadChapter,
+                            lastReadChapter: row.lastReadChapter ?? "0.00",
                             readingStatus: row.readingStatus,
                             clientScore: row.clientScore,
                             clientNote: row.clientNote,
