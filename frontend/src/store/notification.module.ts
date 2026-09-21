@@ -168,5 +168,29 @@ export const useNotificationStore = defineStore('notification', {
         return 'subscribe-failed';
       }
     },
+
+    // Coupe les notifications push : on se désabonne côté navigateur ET côté
+    // serveur. Oublier le second laisserait le backend pousser dans le vide
+    // jusqu'à ce que le service de push déclare l'abonnement périmé.
+    async disablePush(): Promise<boolean> {
+      this.pushError = '';
+      const token = useAuthStore().currentUser?.accessToken;
+      if (!this.pushSupported || !token) return false;
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await NotificationService.unsubscribePush(token, subscription.endpoint);
+          await subscription.unsubscribe();
+        }
+        this.pushEnabled = false;
+        return true;
+      } catch (err) {
+        this.pushError = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+        console.error('Erreur lors de la désactivation des notifications push:', err);
+        return false;
+      }
+    },
   },
 });

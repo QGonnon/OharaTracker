@@ -155,4 +155,50 @@ router.patch('/appearance', authenticate, requireFeature('profileCustomization')
     }
 });
 
+// Suppression définitive du compte. Le RGPD impose un droit d'effacement réel :
+// on retire les données personnelles, pas seulement l'accès. Les œuvres du
+// catalogue, elles, sont partagées et ne doivent évidemment pas disparaître.
+router.delete('/', authenticate, async (req, res) => {
+    const username = req.user.username;
+
+    if (req.body?.confirm !== username) {
+        return res.status(400).json({ message: 'Confirmation invalide : saisissez votre pseudo exact' });
+    }
+
+    const transaction = await sequelize.transaction();
+    try {
+        const scoped = [
+            'DELETE FROM "Activity" WHERE name_client = :username',
+            'DELETE FROM "Friendship" WHERE name_client = :username OR name_friend = :username',
+            'DELETE FROM "WatchlistFollower" WHERE name_client = :username',
+            'DELETE FROM "WatchlistItem" WHERE id_watchlist IN (SELECT id FROM "Watchlist" WHERE name_client = :username)',
+            'DELETE FROM "WatchlistFollower" WHERE id_watchlist IN (SELECT id FROM "Watchlist" WHERE name_client = :username)',
+            'DELETE FROM "Watchlist" WHERE name_client = :username',
+            'DELETE FROM "ClientTagAssignment" WHERE id_client_tag IN (SELECT id FROM "ClientTag" WHERE name_client = :username)',
+            'DELETE FROM "ClientTag" WHERE name_client = :username',
+            'DELETE FROM "SavedFilter" WHERE name_client = :username',
+            'DELETE FROM "Notification" WHERE name_client = :username',
+            'DELETE FROM libraryusage WHERE name_client = :username',
+            'DELETE FROM "ClientCategoryAssignment" WHERE name_client = :username',
+            'DELETE FROM "PushSubscription" WHERE id_client = (SELECT id FROM "Client" WHERE name = :username)',
+            'DELETE FROM "Client" WHERE name = :username',
+        ];
+
+        for (const statement of scoped) {
+            await sequelize.query(statement, {
+                replacements: { username },
+                type: QueryTypes.DELETE,
+                transaction,
+            });
+        }
+
+        await transaction.commit();
+        res.json({ message: 'Compte supprimé' });
+    } catch (error) {
+        await transaction.rollback();
+        console.error('❌ Erreur lors de la suppression du compte:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la suppression du compte' });
+    }
+});
+
 export default router;

@@ -103,9 +103,17 @@ class DiscoveryPreferencesService {
 
 export const discoveryPreferencesService = new DiscoveryPreferencesService()
 
+export interface PlanContentEntry {
+  key: string
+  kind: 'quota' | 'flag'
+  value: number | boolean | null // null = illimité
+  included: boolean
+}
+
 export interface FeatureMatrix {
   plan: string
   limits: Record<string, number | boolean | null>
+  content: PlanContentEntry[]
   earlyAccess: boolean
   beta: { key: string; unlocked: boolean }[]
 }
@@ -121,3 +129,21 @@ class FeatureService {
 }
 
 export const featureService = new FeatureService()
+
+class AccountService {
+  // Suppression définitive : l'API exige le pseudo exact en confirmation.
+  async remove(token: string, confirm: string): Promise<void> {
+    const response = await fetch(`${API_BASE}/client`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ confirm })
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.message || 'Suppression impossible')
+  }
+}
+
+export const accountService = new AccountService()
