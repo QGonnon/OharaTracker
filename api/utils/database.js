@@ -949,6 +949,20 @@ function getAllMangas(callback) {
 }
 
 
+// Nombre d'œuvres sur lesquelles l'utilisateur reçoit les sorties en direct.
+// Sert à faire respecter le quota de l'offre, que le Web Push ignorait jusqu'ici.
+async function countLiveNotifyFollows(username, exceptLibraryId = null) {
+    const rows = await sequelize.query(
+        `SELECT COUNT(DISTINCT id_library)::int AS count
+         FROM libraryusage
+         WHERE name_client = :username
+           AND notify_enabled = true
+           AND (:exceptLibraryId::int IS NULL OR id_library <> :exceptLibraryId)`,
+        { replacements: { username, exceptLibraryId }, type: QueryTypes.SELECT }
+    );
+    return rows[0]?.count ?? 0;
+}
+
 async function getClientPreferences(username) {
     const rows = await sequelize.query(
         `SELECT
@@ -1074,6 +1088,7 @@ export {
     deleteUserLibrary,
     getClient,
     getClientPreferences,
+    countLiveNotifyFollows,
     updateClientPreferences,
     getUserNotifications,
     getUnreadNotificationCount,

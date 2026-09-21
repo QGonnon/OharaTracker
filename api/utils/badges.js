@@ -3,14 +3,17 @@ import { sequelize } from './database.js';
 
 // Les badges sont dérivés à la lecture plutôt que stockés : aucune table à
 // resynchroniser, et un badge reste vrai même si l'utilisateur retire une œuvre.
+// Paliers calibrés pour qu'un badge se mérite. Attention aux métriques
+// trompeuses : une seule œuvre porte déjà une dizaine de genres, donc
+// `genres` monte beaucoup plus vite que le nombre d'œuvres suivies.
 const BADGES = [
     { key: 'librarian', metric: 'worksTracked', tiers: [10, 50, 100] },
     { key: 'marathoner', metric: 'chaptersRead', tiers: [100, 1000, 5000] },
     { key: 'critic', metric: 'ratings', tiers: [10, 50, 200] },
     { key: 'finisher', metric: 'completed', tiers: [5, 25, 100] },
-    { key: 'social', metric: 'friends', tiers: [1, 10, 50] },
-    { key: 'curator', metric: 'lists', tiers: [1, 5, 20] },
-    { key: 'explorer', metric: 'genres', tiers: [5, 20, 50] },
+    { key: 'social', metric: 'friends', tiers: [3, 10, 50] },
+    { key: 'curator', metric: 'lists', tiers: [3, 10, 25] },
+    { key: 'explorer', metric: 'genres', tiers: [25, 75, 150] },
 ];
 
 const TIER_NAMES = ['bronze', 'silver', 'gold'];

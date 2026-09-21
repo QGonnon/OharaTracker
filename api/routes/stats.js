@@ -11,7 +11,7 @@ router.get('/', authenticate, async (req, res) => {
     try {
         const plan = await getPlanForUser(req.user.username);
         const limits = limitsFor(plan);
-        const canFilter = limits.personalizedRecommendations === true;
+        const canFilter = limits.advancedStatsFilters === true;
 
         const type = canFilter && req.query.type ? String(req.query.type) : null;
         const since = canFilter && req.query.since ? new Date(String(req.query.since)) : null;

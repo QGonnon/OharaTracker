@@ -5,8 +5,10 @@ import {
     getUserLibrary,
     isLibraryInUserLibrary,
     updateUserLibrary,
+    countLiveNotifyFollows,
 } from '../utils/database.js';
 import { authenticate } from '../utils/auth.js';
+import { getPlanForUser, limitsFor, withinQuota } from '../utils/plan.js';
 
 const router = express.Router();
 
@@ -92,6 +94,21 @@ router.patch('/user', authenticate, async (req, res) => {
 
     if (note !== undefined && note !== null && String(note).length > 2000) {
         return res.status(400).json({ message: 'Commentaire trop long (2000 caractères maximum)' });
+    }
+
+    // Les notifications de sortie en direct sont limitées par l'offre : sans ce
+    // contrôle, un compte gratuit pouvait les activer sur tout son catalogue.
+    if (notifyEnabled === true) {
+        const plan = await getPlanForUser(req.user.username);
+        const used = await countLiveNotifyFollows(req.user.username, id ? Number(id) : null);
+
+        if (!withinQuota(plan, 'livePushFollows', used)) {
+            return res.status(402).json({
+                message: `Votre offre ${plan} limite les notifications en direct à ${limitsFor(plan).livePushFollows} œuvre(s)`,
+                feature: 'livePushFollows',
+                plan,
+            });
+        }
     }
 
     try {
