@@ -1,6 +1,7 @@
 import { QueryTypes } from 'sequelize';
 import { sequelize } from './database.js';
 import { slugCandidates, slugify, resolveMediaKind } from './slug.js';
+import { publicAverage } from './score.js';
 
 // Vue légère du catalogue (une ligne par œuvre, sans les chapitres) pour les écrans
 // de listing, qui n'ont pas besoin des mégaoctets renvoyés par GET /chapters.
@@ -91,6 +92,13 @@ export async function getWorkBySlug(slug) {
         });
     }
 
+    const [ratings] = await sequelize.query(
+        `SELECT ROUND(AVG(score), 1) AS average, COUNT(*)::int AS votes
+         FROM libraryusage
+         WHERE id_library = :idLibrary AND score IS NOT NULL`,
+        { replacements: { idLibrary: match.id }, type: QueryTypes.SELECT }
+    );
+
     return {
         id: match.id,
         title: match.title,
@@ -106,5 +114,8 @@ export async function getWorkBySlug(slug) {
         coverUrl: match.coverUrl,
         updatedAt: match.updatedAt,
         sites,
+        // Moyenne des notes des utilisateurs, ou null tant que les votes sont
+        // trop peu nombreux pour qu'elle veuille dire quelque chose.
+        ...publicAverage(ratings?.average, ratings?.votes),
     };
 }

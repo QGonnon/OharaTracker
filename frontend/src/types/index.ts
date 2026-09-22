@@ -34,7 +34,10 @@ export interface Manga {
   totalEpisodes?: number | string,
   totalSeasons?: number | string,
   releaseDate?: string,
-  averageScore?: number,
+  /** Moyenne communautaire, ou null tant que les votes sont trop peu nombreux. */
+  averageScore?: number | null,
+  /** Nombre de notes ayant servi a la moyenne. */
+  ratingCount?: number,
   // La note de l'utilisateur vit dans `score` (voir plus haut). Un second champ
   // `userScore`, jamais renseigne, avait fait croire a la fiche qu'elle n'avait
   // pas de note : il est retire pour que l'erreur ne puisse pas se reproduire.

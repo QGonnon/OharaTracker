@@ -41,6 +41,9 @@ export function slugCandidates(title: string): string[] {
 export const SCORE_MAX = 5
 export const SCORE_STEP = 0.5
 
+/** Seuil de votes en dessous duquel l'API ne publie pas de moyenne communautaire. */
+export const MIN_RATINGS_FOR_AVERAGE = 10
+
 /** Arrondit au demi-point le plus proche, borné au barème. */
 export function roundScoreToStep(value: number): number {
   const clamped = Math.min(Math.max(value, 0), SCORE_MAX)

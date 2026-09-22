@@ -221,6 +221,9 @@
     "total_seasons": "Seasons",
     "release_date": "Release date",
     "average_score": "Average score",
+    "not_available": "N/A",
+    "not_enough_ratings": "Average shown from {n} ratings onwards",
+    "rating_count": "{n} rating(s)",
     "user_score": "My score",
     "watch_film": "Watch the film"
   },
@@ -603,10 +606,6 @@
       {
         "q": "How can I cancel my subscription?",
         "a": "Go to My Profile → Plan, then click “Manage my subscription” to open the billing portal. Cancelling takes effect at the end of the period you have already paid for: you keep access until then, and no refund is issued."
-      },
-      {
-        "q": "When will Elite tier be introduced?",
-        "a": "No release date yet. It will roll out as soon as the tier is ready. If you're subscribed to Lite or Pro, you'll be able to upgrade to it as soon as it's available."
       },
       {
         "q": "Can I pay using crypto?",

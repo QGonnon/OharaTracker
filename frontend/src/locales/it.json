@@ -220,6 +220,9 @@
     "total_seasons": "Stagioni",
     "release_date": "Data di uscita",
     "average_score": "Punteggio medio",
+    "not_available": "N/D",
+    "not_enough_ratings": "Media mostrata a partire da {n} voti",
+    "rating_count": "{n} voto/i",
     "user_score": "Il mio punteggio",
     "season": "Stagione {n}",
     "watch_film": "Guarda il film"
@@ -603,10 +606,6 @@
       {
         "q": "Come posso annullare il mio abbonamento?",
         "a": "Vai su Il mio profilo → Piano, poi clicca su « Gestisci il mio abbonamento » per aprire il portale di fatturazione. La disdetta ha effetto alla fine del periodo già pagato: mantieni l’accesso fino ad allora e non viene effettuato alcun rimborso."
-      },
-      {
-        "q": "Quando sarà introdotto il piano Elite?",
-        "a": "Non c'è ancora una data di rilascio fissata. Sarà lanciato non appena la funzionalità sarà pronta. Se sei abbonato a Lite o Pro, potrai passare a questo nuovo piano non appena sarà disponibile."
       },
       {
         "q": "Posso pagare in criptovaluta?",

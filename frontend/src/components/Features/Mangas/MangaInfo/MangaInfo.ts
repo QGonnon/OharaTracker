@@ -17,6 +17,7 @@ import Divider from 'primevue/divider'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import EditAnimeDialog from '../../../Shared/EditAnimeDialog/EditAnimeDialog.vue'
 import StarRating from '../../../Shared/StarRating/StarRating.vue'
+import { MIN_RATINGS_FOR_AVERAGE } from '../../../../utils'
 import type { Manga } from '../../../../types/index'
 import { useMangaStore } from '../../../../store/manga.module'
 import { useLibraryStore } from '../../../../store/library.module'
@@ -54,6 +55,15 @@ export default defineComponent({
     // et `onUpdated` renseignent) ; `userScore` n'a jamais existé sur l'objet.
     // Le pilote pg renvoie les NUMERIC sous forme de chaine ("3.5") : sans cette
     // conversion, StarRating recevrait une chaine et n'afficherait aucune etoile.
+    // Moyenne communautaire : l'API la renvoie deja a null tant que le nombre de
+    // votes est sous le seuil, il n'y a donc pas de regle a redupliquer ici.
+    const communityScore = computed(() => {
+      const raw = manga.value.averageScore
+      if (raw === null || raw === undefined) return null
+      const value = Number(raw)
+      return Number.isFinite(value) ? value : null
+    })
+
     const userScore = computed(() => {
       const raw = manga.value.score
       if (raw === null || raw === undefined) return null
@@ -339,6 +349,8 @@ export default defineComponent({
       isLoggedIn,
       isAnime,
       userScore,
+      communityScore,
+      minRatings: MIN_RATINGS_FOR_AVERAGE,
       totalEpisodes,
       totalSeasons,
       mediaKind,

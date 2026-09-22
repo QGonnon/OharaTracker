@@ -220,6 +220,9 @@
     "total_seasons": "Staffeln",
     "release_date": "Veröffentlichungsdatum",
     "average_score": "Durchschnittliche Bewertung",
+    "not_available": "N/A",
+    "not_enough_ratings": "Durchschnitt wird ab {n} Bewertungen angezeigt",
+    "rating_count": "{n} Bewertung(en)",
     "user_score": "Meine Bewertung",
     "season": "Staffel {n}",
     "watch_film": "Film ansehen"
@@ -603,10 +606,6 @@
       {
         "q": "Wie kann ich mein Abo kündigen?",
         "a": "Gehen Sie zu Mein Profil → Tarif und klicken Sie auf „Abonnement verwalten“, um das Rechnungsportal zu öffnen. Die Kündigung wird zum Ende des bereits bezahlten Zeitraums wirksam: Bis dahin behalten Sie den Zugriff, eine Rückerstattung erfolgt nicht."
-      },
-      {
-        "q": "Wann wird die Elite-Stufe eingeführt?",
-        "a": "Es gibt noch kein Veröffentlichungsdatum. Sie wird eingeführt, sobald die Funktion bereit ist. Wenn du Lite oder Pro abonniert hast, kannst du sobald verfügbar auf diese neue Stufe upgraden."
       },
       {
         "q": "Kann ich mit Kryptowährung bezahlen?",

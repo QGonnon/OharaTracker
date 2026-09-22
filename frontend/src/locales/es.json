@@ -220,6 +220,9 @@
     "total_seasons": "Temporadas",
     "release_date": "Fecha de estreno",
     "average_score": "Puntuación media",
+    "not_available": "N/D",
+    "not_enough_ratings": "La media se muestra a partir de {n} valoraciones",
+    "rating_count": "{n} valoración(es)",
     "user_score": "Mi puntuación",
     "season": "Temporada {n}",
     "watch_film": "Ver la película"
@@ -603,10 +606,6 @@
       {
         "q": "¿Cómo cancelo mi suscripción?",
         "a": "Ve a Mi perfil → Plan y haz clic en «Gestionar mi suscripción» para abrir el portal de facturación. La cancelación surte efecto al final del periodo ya pagado: conservas el acceso hasta entonces y no se realiza ningún reembolso."
-      },
-      {
-        "q": "¿Cuándo estará disponible el plan Elite?",
-        "a": "Todavía no hay fecha de lanzamiento fijada. Se lanzará en cuanto la función esté lista. Si estás suscrito a Lite o Pro, podrás pasar a este nuevo plan en cuanto esté disponible."
       },
       {
         "q": "¿Puedo pagar con criptomonedas?",

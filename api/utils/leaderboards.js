@@ -1,6 +1,7 @@
 import { QueryTypes } from 'sequelize';
 import { sequelize } from './database.js';
 import { slugify, resolveMediaKind } from './slug.js';
+import { publicAverage } from './score.js';
 
 const WORKS_LIMIT = 20;
 
@@ -10,7 +11,8 @@ async function getWorksLeaderboard({ limit = WORKS_LIMIT } = {}) {
         `SELECT l.id, l.name AS title, lt.type AS type,
                 l.cover_path AS "coverPath", l.cover_url AS "coverUrl",
                 COUNT(DISTINCT lu.name_client)::int AS followers,
-                ROUND(AVG(lu.score), 2) AS "averageScore"
+                ROUND(AVG(lu.score), 1) AS "averageScore",
+                COUNT(lu.score)::int AS "ratingCount"
          FROM "Library" l
          JOIN libraryusage lu ON lu.id_library = l.id
          LEFT JOIN "LibrarySource" ls ON ls.id_library = l.id
@@ -30,7 +32,9 @@ async function getWorksLeaderboard({ limit = WORKS_LIMIT } = {}) {
             coverPath: row.coverPath,
             coverUrl: row.coverUrl,
             followers: row.followers,
-            averageScore: row.averageScore === null ? null : Number(row.averageScore),
+            // Même seuil que la fiche d'une œuvre : une moyenne calculée sur trop
+            // peu de votes ne doit pas non plus servir à classer.
+            ...publicAverage(row.averageScore, row.ratingCount),
         }));
 }
 

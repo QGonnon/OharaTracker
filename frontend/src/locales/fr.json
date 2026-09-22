@@ -221,6 +221,9 @@
     "total_seasons": "Saisons",
     "release_date": "Date de parution",
     "average_score": "Score moyen",
+    "not_available": "N/A",
+    "not_enough_ratings": "Moyenne affichée à partir de {n} notes",
+    "rating_count": "{n} note(s)",
     "user_score": "Mon score",
     "watch_film": "Regarder le film"
   },
@@ -603,10 +606,6 @@
       {
         "q": "Comment annuler mon abonnement ?",
         "a": "Rendez-vous dans Mon Profil → Offre, puis cliquez sur « Gérer mon abonnement » pour ouvrir le portail de facturation. L’annulation prend effet à la fin de la période déjà payée : vous conservez l’accès jusque-là, et aucun remboursement n’est effectué."
-      },
-      {
-        "q": "Quand l'offre Elite sera-t-elle disponible ?",
-        "a": "Aucune date de sortie n'est encore fixée. Elle sera déployée dès que la fonctionnalité sera prête. Si vous êtes abonné Lite ou Pro, vous pourrez passer à cette nouvelle offre dès sa disponibilité."
       },
       {
         "q": "Puis-je payer en crypto-monnaie ?",
