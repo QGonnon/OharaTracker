@@ -51,6 +51,8 @@ export default defineComponent({
       }
     }
 
+    // Quota nul = la création de listes n'est pas incluse dans l'offre, ce qui n'est
+    // pas la même chose qu'un quota atteint : le message affiché diffère.
     const quotaReached = computed(() =>
       quotas.value.owned !== null && owned.value.length >= quotas.value.owned
     )

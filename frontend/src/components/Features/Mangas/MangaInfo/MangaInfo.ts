@@ -49,7 +49,9 @@ export default defineComponent({
     const isInLibrary = ref<boolean>(false)
     const isLoggedIn = computed(() => authStore.isLoggedIn)
     const isAnime = computed(() => mangaStore.isAnimeType(manga.value))
-    const userScore = computed(() => manga.value.userScore ?? null)
+    // La note personnelle est stockée dans `score` (c'est ce que `checkLibraryStatus`
+    // et `onUpdated` renseignent) ; `userScore` n'a jamais existé sur l'objet.
+    const userScore = computed(() => manga.value.score ?? null)
 
     const seasonEpisodeStats = computed(() => mangaStore.getSeasonEpisodeStats(manga.value))
     const totalEpisodes = computed(() => manga.value.totalEpisodes ?? seasonEpisodeStats.value.totalEpisodes)

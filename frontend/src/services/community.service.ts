@@ -4,7 +4,8 @@ export interface CommunityProfile {
   username: string
   avatarUrl: string | null
   bannerUrl?: string | null
-  worksTracked: number
+  /** null quand le profil est privé et n'est pas encore un ami : l'activité est masquée. */
+  worksTracked: number | null
   averageScore?: number | null
   friendStatus: 'none' | 'pending' | 'accepted' | 'self'
   isPublic?: boolean

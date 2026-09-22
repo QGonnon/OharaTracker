@@ -299,6 +299,8 @@
     "delete": "Delete",
     "new_chapter": "Chapter {chapter} of {title} is available",
     "new_episode": "Episode {chapter} of {title} is available",
+    "friend_request": "{username} wants to add you as a friend",
+    "friend_accepted": "{username} accepted your friend request",
     "enable_push": "Enable push notifications",
     "push_denied": "Notification permission was denied. You can enable it in your browser settings.",
     "push_subscribe_failed": "Push notifications could not be enabled on this browser ({error}). Check that no extension is blocking notifications.",
@@ -456,6 +458,8 @@
       "current_plan_cta": "Current plan",
       "upgrade_cta": "Upgrade",
       "downgrade_cta": "Downgrade",
+      "checkout_success": "Payment confirmed. Your {plan} plan is active — if it is not showing yet, reload the page in a few seconds.",
+      "checkout_cancel": "Payment cancelled. You have not been charged.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "€4.99",
@@ -812,6 +816,7 @@
     "login_to_follow": "Log in to follow",
     "by": "by {name}",
     "quota_reached": "Your plan is limited to {n} list(s).",
+    "quota_none": "Creating your own lists is not included in the Free plan.",
     "see_plans": "See the plans"
   },
   "community": {
@@ -823,6 +828,7 @@
     "find": "Find a profile",
     "search_placeholder": "Username (min. 2 characters)",
     "no_result": "No public profile found.",
+    "private_profile": "Private profile — their activity stays hidden",
     "add": "Add",
     "accept": "Accept",
     "decline": "Decline",

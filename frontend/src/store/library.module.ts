@@ -81,11 +81,16 @@ export const useLibraryStore = defineStore('library', {
         const usage = this.clientInfo.libraryUsage;
         const idx = usage.findIndex((u: any) => u.libraryId === libraryId);
         if (idx >= 0) {
+          // Le cache n'est pas rechargé après une écriture : tout champ oublié ici
+          // réapparaît à sa valeur précédente dès qu'on rouvre la fiche. Score et
+          // note personnelle doivent donc y être reportés comme le reste.
           usage[idx] = {
             ...usage[idx],
             lastReadChapter: payload.lastChapter,
             readingStatus: payload.readingStatus,
             ...(payload.notifyEnabled !== undefined ? { notifyEnabled: payload.notifyEnabled } : {}),
+            ...(payload.score !== undefined ? { clientScore: payload.score } : {}),
+            ...(payload.note !== undefined ? { clientNote: payload.note } : {}),
           };
         }
       }

@@ -1,3 +1,10 @@
+// Langues servies par le site et locale de repli. Définies ici, à côté des segments
+// qu'elles indexent, pour que seoRoutes.js et siteUrls.js lisent la même liste.
+export const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
+export const DEFAULT_LOCALE = 'en';
+
+export const normalizeLocale = locale => (LOCALES.includes(locale) ? locale : DEFAULT_LOCALE);
+
 export const MEDIA_SEGMENTS = {
     lecture: { fr: 'manga', en: 'manga', de: 'manga', it: 'manga', es: 'manga' },
     serie: { fr: 'anime', en: 'anime', de: 'anime', it: 'anime', es: 'anime' },

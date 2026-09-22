@@ -7,9 +7,8 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../../store/auth.module'
 import { useNotificationStore } from '../../../store/notification.module'
 import { useMangaStore } from '../../../store/manga.module'
-import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
-import { localeMedia } from '../../../seo/localePath'
+import { notificationMessage, openNotificationTarget } from './notificationDisplay'
 
 export default defineComponent({
   name: 'NotificationBell',
@@ -27,15 +26,7 @@ export default defineComponent({
     const badgeValue = computed(() => (unreadCount.value > 9 ? '9+' : String(unreadCount.value)))
     const recentNotifications = computed(() => notificationStore.items.slice(0, 6))
 
-    const isAnime = (n: AppNotification) => mangaStore.isAnimeType({
-      type: n.mediaType ?? '',
-      sites: n.site ? { [n.site]: { site: n.site, mangaUrl: '', chapterUrl: '', chapters: [] } } : {}
-    })
-
-    const messageFor = (n: AppNotification) => t(
-      isAnime(n) ? 'notifications.new_episode' : 'notifications.new_chapter',
-      { chapter: n.chapter, title: n.title }
-    )
+    const messageFor = (n: AppNotification) => notificationMessage(n, t, mangaStore)
 
     const toggle = (event: Event) => {
       panelRef.value?.toggle(event)
@@ -47,11 +38,7 @@ export default defineComponent({
     const openNotification = (n: AppNotification) => {
       notificationStore.markAsRead(n.id)
       panelRef.value?.hide()
-      if (n.chapterUrl) {
-        window.open(n.chapterUrl, '_blank')
-      } else {
-        router.push(localeMedia(mangaStore.resolveMediaKind(null, n.mediaType ?? undefined), slugify(n.title)))
-      }
+      openNotificationTarget(n, router, mangaStore)
     }
 
     const markAllAsRead = () => notificationStore.markAllAsRead()

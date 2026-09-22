@@ -65,7 +65,13 @@
         >
           <template #content>
             <div class="flex items-center gap-4">
+              <span
+                v-if="isSocialNotification(n)"
+                class="w-12 h-16 rounded-md flex-shrink-0 grid place-items-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                <i class="pi pi-user-plus text-lg" aria-hidden="true"></i>
+              </span>
               <img
+                v-else
                 :src="getCoverUrl(n)"
                 alt=""
                 class="w-12 h-16 object-cover rounded-md flex-shrink-0" width="48" height="64" loading="lazy" decoding="async" />

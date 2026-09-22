@@ -1,10 +1,14 @@
 import express from 'express';
 import stripe from '../utils/stripe.js';
 import { getBillingProfile } from '../utils/billing.js';
+import { pageUrl } from '../utils/siteUrls.js';
 import { authenticate } from '../utils/auth.js';
 
 const router = express.Router();
-const FRONTEND_URL = `${process.env.SITE_URL}`;
+
+// Stripe renvoie le client sur ces URL après le paiement : elles doivent pointer
+// vers des routes réelles du site, donc préfixées par la locale et traduites.
+const returnTo = (key, req) => pageUrl(key, req.body?.locale);
 
 const PLAN_PRICE_IDS = {
     lite: process.env.STRIPE_PRICE_ID_LITE,
@@ -33,8 +37,8 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
             customer_email: client.stripeCustomerId ? undefined : client.email,
             client_reference_id: String(client.id),
             metadata: { plan },
-            success_url: `${FRONTEND_URL}/pricing?checkout=success`,
-            cancel_url: `${FRONTEND_URL}/pricing?checkout=cancel`,
+            success_url: `${returnTo('pricing', req)}?checkout=success`,
+            cancel_url: `${returnTo('pricing', req)}?checkout=cancel`,
         });
 
         res.json({ url: session.url });
@@ -67,7 +71,7 @@ router.post('/create-plan-change-session', authenticate, async (req, res) => {
 
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: customerId,
-            return_url: `${FRONTEND_URL}/pricing?checkout=success`,
+            return_url: `${returnTo('pricing', req)}?checkout=success`,
             flow_data: {
                 type: 'subscription_update_confirm',
                 subscription_update_confirm: {
@@ -94,7 +98,7 @@ router.post('/create-portal-session', authenticate, async (req, res) => {
 
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: client.stripeCustomerId,
-            return_url: `${FRONTEND_URL}/profile`,
+            return_url: returnTo('profile', req),
         });
 
         res.json({ url: portalSession.url });

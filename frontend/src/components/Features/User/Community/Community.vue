@@ -60,7 +60,9 @@
                 </span>
                 <div class="min-w-0 flex-1">
                   <p class="text-sm font-semibold truncate">{{ profile.username }}</p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400">{{ $t('community.works', { n: profile.worksTracked }) }}</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    {{ profile.worksTracked === null ? $t('community.private_profile') : $t('community.works', { n: profile.worksTracked }) }}
+                  </p>
                 </div>
                 <button v-if="profile.friendStatus === 'none'" type="button" @click="addFriend(profile)"
                         class="px-3 py-1.5 rounded-lg border border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 text-xs font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex-shrink-0">

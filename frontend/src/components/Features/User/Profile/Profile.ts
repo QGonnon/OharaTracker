@@ -326,7 +326,7 @@ export default defineComponent({
       this.portalLoading = true;
       this.subscriptionError = '';
       try {
-        const { url } = await SubscriptionService.createPortalSession();
+        const { url } = await SubscriptionService.createPortalSession(this.$i18n.locale);
         window.location.href = url;
       } catch (err: any) {
         this.subscriptionError = err.message || this.$t('profile.subscription_error');

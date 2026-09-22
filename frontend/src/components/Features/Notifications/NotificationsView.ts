@@ -8,10 +8,9 @@ import { useI18n } from 'vue-i18n'
 import Menu from '../../Shared/Menu/Menu.vue'
 import { useNotificationStore } from '../../../store/notification.module'
 import { useMangaStore } from '../../../store/manga.module'
-import { slugify } from '../../../utils'
 import type { AppNotification } from '../../../types/index'
 import { usePageSeo } from '../../../seo/usePageSeo';
-import { localeMedia } from '../../../seo/localePath'
+import { notificationMessage, openNotificationTarget, isSocialNotification } from '../../Shared/NotificationBell/notificationDisplay'
 
 export default defineComponent({
   name: 'NotificationsView',
@@ -30,29 +29,18 @@ export default defineComponent({
     const pushSupported = computed(() => notificationStore.pushSupported)
     const pushEnabled = computed(() => notificationStore.pushEnabled)
 
-    const isAnime = (n: AppNotification) => mangaStore.isAnimeType({
-      type: n.mediaType ?? '',
-      sites: n.site ? { [n.site]: { site: n.site, mangaUrl: '', chapterUrl: '', chapters: [] } } : {}
-    })
+    const messageFor = (n: AppNotification) => notificationMessage(n, t, mangaStore)
 
-    const messageFor = (n: AppNotification) => t(
-      isAnime(n) ? 'notifications.new_episode' : 'notifications.new_chapter',
-      { chapter: n.chapter, title: n.title }
-    )
-
-    const getCoverUrl = (n: AppNotification) => mangaStore.getCoverUrl({
+    // Un événement social n'a pas de couverture : on affiche une icône à la place.
+    const getCoverUrl = (n: AppNotification) => isSocialNotification(n) ? '' : mangaStore.getCoverUrl({
       coverPath: n.coverPath ?? '',
       coverUrl: n.coverUrl ?? '',
-      title: n.title
+      title: n.title ?? ''
     })
 
     const openNotification = (n: AppNotification) => {
       notificationStore.markAsRead(n.id)
-      if (n.chapterUrl) {
-        window.open(n.chapterUrl, '_blank')
-      } else {
-        router.push(localeMedia(mangaStore.resolveMediaKind(null, n.mediaType ?? undefined), slugify(n.title)))
-      }
+      openNotificationTarget(n, router, mangaStore)
     }
 
     const remove = (n: AppNotification, event: Event) => {
@@ -85,6 +73,7 @@ export default defineComponent({
       pushEnabled,
       messageFor,
       getCoverUrl,
+      isSocialNotification,
       openNotification,
       remove,
       enablePush,

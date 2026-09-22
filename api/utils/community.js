@@ -1,5 +1,5 @@
 import { QueryTypes } from 'sequelize';
-import { sequelize } from './database.js';
+import { sequelize, createSocialNotification } from './database.js';
 
 const fail = (message, statusCode) => {
     const error = new Error(message);
@@ -21,7 +21,9 @@ async function recordActivity(username, idLibrary, type, detail = null) {
     }
 }
 
-// Recherche parmi les seuls profils ayant accepté d'être trouvables.
+// Un profil privé reste trouvable et peut recevoir une demande d'ami : c'est son
+// activité qui est masquée, pas son existence. Sans cela le bouton « Ajouter »
+// n'était jamais atteignable pour ces comptes — et `is_public` vaut false par défaut.
 async function searchProfiles(query, viewer) {
     const term = String(query ?? '').trim();
     if (term.length < 2) return [];
@@ -30,11 +32,15 @@ async function searchProfiles(query, viewer) {
         `SELECT
             c.name                                  AS username,
             c.avatar_url                            AS "avatarUrl",
-            (SELECT COUNT(*) FROM libraryusage lu WHERE lu.name_client = c.name)::int AS "worksTracked",
+            c.is_public                             AS "isPublic",
+            CASE WHEN c.is_public OR COALESCE(f.status, '') = 'accepted'
+                 THEN (SELECT COUNT(*) FROM libraryusage lu WHERE lu.name_client = c.name)::int
+                 ELSE NULL
+            END                                     AS "worksTracked",
             COALESCE(f.status, 'none')              AS "friendStatus"
          FROM "Client" c
          LEFT JOIN "Friendship" f ON f.name_client = :viewer AND f.name_friend = c.name
-         WHERE c.is_public = true AND c.name ILIKE :term AND c.name <> :viewer
+         WHERE c.name ILIKE :term AND c.name <> :viewer
          ORDER BY c.name ASC
          LIMIT 20`,
         { replacements: { term: `%${term}%`, viewer }, type: QueryTypes.SELECT }
@@ -167,9 +173,14 @@ async function requestFriend(username, target) {
             `UPDATE "Friendship" SET status = 'accepted' WHERE name_client = :target AND name_friend = :username`,
             { replacements: { username, target }, type: QueryTypes.UPDATE }
         );
+        // L'autre avait déjà invité : de son point de vue, sa demande vient d'être acceptée.
+        await createSocialNotification(target, username, 'friend_accepted');
         return 'accepted';
     }
 
+    // Sans cette notification, la demande n'est visible qu'en se rendant soi-même
+    // sur la page Communauté.
+    await createSocialNotification(target, username, 'friend_request');
     return 'pending';
 }
 
@@ -188,6 +199,8 @@ async function acceptFriend(username, requester) {
          ON CONFLICT (name_client, name_friend) DO UPDATE SET status = 'accepted'`,
         { replacements: { username, requester }, type: QueryTypes.INSERT }
     );
+
+    await createSocialNotification(requester, username, 'friend_accepted');
 }
 
 // Retirer un ami coupe la relation des deux côtés : elle n'a pas de sens à sens unique.
@@ -200,7 +213,13 @@ async function removeFriend(username, other) {
     );
 }
 
-async function getFriendFeed(username, { limit = 40 } = {}) {
+// Le fil est volontairement borné : au-delà, il n'est plus lu et la requête
+// grossit avec le nombre d'amis. FEED_LIMIT fait foi, y compris si le client
+// demande davantage.
+const FEED_LIMIT = 50;
+
+async function getFriendFeed(username, { limit = FEED_LIMIT } = {}) {
+    const capped = Math.min(Math.max(Number.parseInt(limit, 10) || FEED_LIMIT, 1), FEED_LIMIT);
     const rows = await sequelize.query(
         `SELECT a.name_client AS username, a.type, a.detail, a.created_at AS "createdAt",
                 c.avatar_url AS "avatarUrl",
@@ -215,7 +234,7 @@ async function getFriendFeed(username, { limit = 40 } = {}) {
          LEFT JOIN "LibraryType" lt ON ls.id_library_type = lt.id
          ORDER BY a.created_at DESC
          LIMIT :limit`,
-        { replacements: { username, limit }, type: QueryTypes.SELECT }
+        { replacements: { username, limit: capped }, type: QueryTypes.SELECT }
     );
 
     return rows;
@@ -230,6 +249,7 @@ async function setProfileVisibility(username, isPublic) {
 }
 
 export {
+    FEED_LIMIT,
     recordActivity,
     searchProfiles,
     getPublicProfile,

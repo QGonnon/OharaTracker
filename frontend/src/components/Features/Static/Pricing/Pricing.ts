@@ -1,6 +1,6 @@
 import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Menu from '../../../Shared/Menu/Menu.vue';
 import Button from 'primevue/button'
 import { useAuthStore } from '../../../../store/auth.module';
@@ -54,17 +54,33 @@ export default defineComponent({
       ]),
     });
     const router = useRouter();
+    const route = useRoute();
     const authStore = useAuthStore();
     const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null);
     const currentPlanName = ref('Free');
+    const checkoutOutcome = ref<'success' | 'cancel' | null>(null);
 
-    onMounted(async () => {
+    const refreshPlan = async () => {
       if (!authStore.isLoggedIn) return;
       try {
         const me = await AuthService.getMe();
         currentPlanName.value = me.subscription || 'Free';
       } catch (error) {
         currentPlanName.value = 'Free';
+      }
+    };
+
+    onMounted(async () => {
+      await refreshPlan();
+
+      // Retour depuis Stripe : sans ce retour visible, un paiement réussi ne se
+      // distingue pas d'un clic sans effet. Le plan est relu car c'est le webhook,
+      // pas la redirection, qui l'a mis à jour côté serveur.
+      const outcome = route.query.checkout;
+      if (outcome === 'success' || outcome === 'cancel') {
+        checkoutOutcome.value = outcome;
+        if (outcome === 'success') await refreshPlan();
+        router.replace({ path: route.path, query: {} });
       }
     });
 
@@ -111,10 +127,11 @@ export default defineComponent({
       }
 
       checkoutLoadingPlan.value = plan;
+      checkoutOutcome.value = null;
       try {
         const { url } = isPlanChange(plan)
-          ? await SubscriptionService.createPlanChangeSession(plan)
-          : await SubscriptionService.createCheckoutSession(plan);
+          ? await SubscriptionService.createPlanChangeSession(plan, locale.value)
+          : await SubscriptionService.createCheckoutSession(plan, locale.value);
         window.location.href = url;
       } catch (error) {
         console.error('Erreur lors de la création de la session de paiement:', error);
@@ -126,6 +143,8 @@ export default defineComponent({
       faqLink: computed(() => localePath('faq')),
       contactLink: computed(() => localePath('contact')),
       checkoutLoadingPlan,
+      checkoutOutcome,
+      currentPlanName,
       handleCheckout,
       isLiteDisabled,
       isProDisabled,

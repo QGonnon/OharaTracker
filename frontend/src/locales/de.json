@@ -299,6 +299,8 @@
     "delete": "Löschen",
     "new_chapter": "Kapitel {chapter} von {title} ist verfügbar",
     "new_episode": "Episode {chapter} von {title} ist verfügbar",
+    "friend_request": "{username} möchte Sie als Freund hinzufügen",
+    "friend_accepted": "{username} hat Ihre Freundschaftsanfrage angenommen",
     "enable_push": "Push-Benachrichtigungen aktivieren",
     "push_denied": "Die Benachrichtigungsberechtigung wurde verweigert. Du kannst sie in den Browsereinstellungen aktivieren.",
     "push_subscribe_failed": "Push-Benachrichtigungen konnten in diesem Browser nicht aktiviert werden ({error}). Prüfe, ob eine Erweiterung Benachrichtigungen blockiert.",
@@ -456,6 +458,8 @@
       "current_plan_cta": "Aktueller Plan",
       "upgrade_cta": "Upgraden",
       "downgrade_cta": "Herabstufen",
+      "checkout_success": "Zahlung bestätigt. Ihr {plan}-Tarif ist aktiv — falls er noch nicht angezeigt wird, laden Sie die Seite in wenigen Sekunden neu.",
+      "checkout_cancel": "Zahlung abgebrochen. Es wurde nichts abgebucht.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",
@@ -812,6 +816,7 @@
     "login_to_follow": "Zum Folgen anmelden",
     "by": "von {name}",
     "quota_reached": "Dein Tarif erlaubt {n} Liste(n).",
+    "quota_none": "Das Erstellen eigener Listen ist im Free-Tarif nicht enthalten.",
     "see_plans": "Angebote ansehen"
   },
   "community": {
@@ -823,6 +828,7 @@
     "find": "Profil suchen",
     "search_placeholder": "Benutzername (mind. 2 Zeichen)",
     "no_result": "Kein öffentliches Profil gefunden.",
+    "private_profile": "Privates Profil — die Aktivität bleibt verborgen",
     "add": "Hinzufügen",
     "accept": "Annehmen",
     "decline": "Ablehnen",

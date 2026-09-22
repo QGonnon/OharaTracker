@@ -299,6 +299,8 @@
     "delete": "Supprimer",
     "new_chapter": "Le chapitre {chapter} de {title} est disponible",
     "new_episode": "L'épisode {chapter} de {title} est disponible",
+    "friend_request": "{username} souhaite vous ajouter en ami",
+    "friend_accepted": "{username} a accepté votre demande d’ami",
     "enable_push": "Activer les notifications push",
     "push_denied": "La permission de notification a été refusée. Vous pouvez l'activer dans les paramètres de votre navigateur.",
     "push_subscribe_failed": "Impossible d'activer les notifications push sur ce navigateur ({error}). Vérifiez qu'aucune extension ne bloque les notifications.",
@@ -456,6 +458,8 @@
       "current_plan_cta": "Offre actuelle",
       "upgrade_cta": "Mettre à niveau",
       "downgrade_cta": "Rétrograder",
+      "checkout_success": "Paiement confirmé. Votre offre {plan} est active — si elle n’apparaît pas encore, rechargez la page dans quelques secondes.",
+      "checkout_cancel": "Paiement annulé. Aucun montant n’a été débité.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",
@@ -812,6 +816,7 @@
     "login_to_follow": "Se connecter pour suivre",
     "by": "par {name}",
     "quota_reached": "Votre offre est limitée à {n} liste(s).",
+    "quota_none": "La création de listes personnelles n’est pas incluse dans l’offre Free.",
     "see_plans": "Voir les offres"
   },
   "community": {
@@ -823,6 +828,7 @@
     "find": "Trouver un profil",
     "search_placeholder": "Pseudo (2 caractères min.)",
     "no_result": "Aucun profil public trouvé.",
+    "private_profile": "Profil privé — son activité restera masquée",
     "add": "Ajouter",
     "accept": "Accepter",
     "decline": "Refuser",

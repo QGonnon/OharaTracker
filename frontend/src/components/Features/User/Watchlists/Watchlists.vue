@@ -32,7 +32,7 @@
           </button>
         </form>
         <p v-if="quotaReached" class="text-sm text-slate-500 dark:text-slate-400 mt-3">
-          {{ $t('watchlists.quota_reached', { n: quotas.owned }) }}
+          {{ quotas.owned === 0 ? $t('watchlists.quota_none') : $t('watchlists.quota_reached', { n: quotas.owned }) }}
           <RouterLink :to="pricingLink" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">{{ $t('watchlists.see_plans') }}</RouterLink>
         </p>
       </section>

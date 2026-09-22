@@ -299,6 +299,8 @@
     "delete": "Elimina",
     "new_chapter": "Il capitolo {chapter} di {title} è disponibile",
     "new_episode": "L'episodio {chapter} di {title} è disponibile",
+    "friend_request": "{username} vuole aggiungerti agli amici",
+    "friend_accepted": "{username} ha accettato la tua richiesta di amicizia",
     "enable_push": "Attiva le notifiche push",
     "push_denied": "Il permesso per le notifiche è stato negato. Puoi attivarlo nelle impostazioni del browser.",
     "push_subscribe_failed": "Impossibile attivare le notifiche push su questo browser ({error}). Controlla che nessuna estensione blocchi le notifiche.",
@@ -456,6 +458,8 @@
       "current_plan_cta": "Piano attuale",
       "upgrade_cta": "Passa a un piano superiore",
       "downgrade_cta": "Passa a un piano inferiore",
+      "checkout_success": "Pagamento confermato. Il tuo piano {plan} è attivo — se non compare ancora, ricarica la pagina tra qualche secondo.",
+      "checkout_cancel": "Pagamento annullato. Non è stato addebitato alcun importo.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
       "lite_price": "4,99 €",
@@ -812,6 +816,7 @@
     "login_to_follow": "Accedi per seguire",
     "by": "di {name}",
     "quota_reached": "Il tuo piano è limitato a {n} lista/e.",
+    "quota_none": "La creazione di liste personali non è inclusa nel piano Free.",
     "see_plans": "Vedi i piani"
   },
   "community": {
@@ -823,6 +828,7 @@
     "find": "Trova un profilo",
     "search_placeholder": "Nome utente (min. 2 caratteri)",
     "no_result": "Nessun profilo pubblico trovato.",
+    "private_profile": "Profilo privato — la sua attività resta nascosta",
     "add": "Aggiungi",
     "accept": "Accetta",
     "decline": "Rifiuta",

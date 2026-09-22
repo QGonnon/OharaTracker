@@ -1,9 +1,6 @@
-import { MEDIA_SEGMENTS, PAGE_SEGMENTS } from './routeTranslations.js';
+import { LOCALES, DEFAULT_LOCALE, MEDIA_SEGMENTS, PAGE_SEGMENTS } from './routeTranslations.js';
 import { urlset, urlEntry, abs, xmlSanitize } from './xml.js';
 import { getCatalogForSitemap } from './catalog.js';
-
- const LOCALES = ['fr', 'en', 'de', 'it', 'es'];
- const DEFAULT_LOCALE = 'en';
 
 // Pages de compte (connexion, profil...) volontairement absentes : elles sont en noindex.
  const INDEXABLE_PAGES = [

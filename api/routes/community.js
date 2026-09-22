@@ -8,6 +8,7 @@ import {
     removeFriend,
     getFriendFeed,
     setProfileVisibility,
+    FEED_LIMIT,
 } from '../utils/community.js';
 import { authenticate } from '../utils/auth.js';
 
@@ -30,7 +31,7 @@ router.get('/search', authenticate, async (req, res) => {
 
 router.get('/feed', authenticate, async (req, res) => {
     try {
-        const limit = Math.min(Number.parseInt(req.query.limit, 10) || 40, 100);
+        const limit = Math.min(Number.parseInt(req.query.limit, 10) || FEED_LIMIT, FEED_LIMIT);
         res.json(await getFriendFeed(req.user.username, { limit }));
     } catch (error) {
         fail(res, error, 'Erreur lors de la récupération du fil d\'actualité');

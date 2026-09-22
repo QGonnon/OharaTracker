@@ -480,11 +480,14 @@ async function deleteUserLibrary({ title, site, username }) {
 }
 
 async function getUserNotifications(username, { unreadOnly = false, limit = 50 } = {}) {
+    // LEFT JOIN sur Library : les notifications sociales (demande d'ami) ne portent
+    // sur aucune oeuvre. Un INNER JOIN les ferait disparaître silencieusement.
     return sequelize.query(
         `SELECT
             n.id,
             n.type,
             n.chapter,
+            n.actor,
             n.is_read AS "isRead",
             n.created_at AS "createdAt",
             l.id AS "idLibrary",
@@ -496,7 +499,7 @@ async function getUserNotifications(username, { unreadOnly = false, limit = 50 }
             ls.url AS "mangaUrl",
             s.name AS site
          FROM "Notification" n
-         JOIN "Library" l ON l.id = n.id_library
+         LEFT JOIN "Library" l ON l.id = n.id_library
          LEFT JOIN "Chapters" c ON c.id_library = n.id_library AND c.id_source = n.id_source AND c.chapter = n.chapter
          LEFT JOIN "LibrarySource" ls ON ls.id_library = n.id_library AND ls.id_source = n.id_source
          LEFT JOIN "LibraryType" lt ON lt.id = ls.id_library_type
@@ -509,6 +512,24 @@ async function getUserNotifications(username, { unreadOnly = false, limit = 50 }
             type: QueryTypes.SELECT,
         }
     );
+}
+
+// Notification sans oeuvre associée : événements sociaux (demande d'ami acceptée
+// ou reçue). `actor` porte le pseudo à l'origine de l'événement.
+// Volontairement tolérant : prévenir quelqu'un ne doit jamais faire échouer
+// l'action qui l'a déclenchée.
+async function createSocialNotification(recipient, actor, type) {
+    if (!recipient || !actor || recipient === actor) return;
+
+    try {
+        await sequelize.query(
+            `INSERT INTO "Notification" (name_client, actor, type, created_at)
+             VALUES (:recipient, :actor, :type, NOW())`,
+            { replacements: { recipient, actor, type }, type: QueryTypes.INSERT }
+        );
+    } catch (err) {
+        console.error('❌ Notification sociale non enregistrée:', err.message);
+    }
 }
 
 async function getUnreadNotificationCount(username) {
@@ -1091,6 +1112,7 @@ export {
     countLiveNotifyFollows,
     updateClientPreferences,
     getUserNotifications,
+    createSocialNotification,
     getUnreadNotificationCount,
     markNotificationRead,
     markAllNotificationsRead,

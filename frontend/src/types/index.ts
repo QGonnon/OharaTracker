@@ -64,12 +64,16 @@ export interface ChapterInfo {
 
 export interface AppNotification {
   id: number;
+  /** 'new_chapter' | 'friend_request' | 'friend_accepted' */
   type: string;
-  chapter: string;
+  /** null pour un événement social : il ne porte sur aucune oeuvre. */
+  chapter: string | null;
+  /** Pseudo à l'origine d'un événement social. */
+  actor?: string | null;
   isRead: boolean;
   createdAt: string;
-  idLibrary: number;
-  title: string;
+  idLibrary: number | null;
+  title: string | null;
   coverPath?: string | null;
   coverUrl?: string | null;
   mediaType?: string | null;
