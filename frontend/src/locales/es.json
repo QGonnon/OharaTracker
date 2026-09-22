@@ -589,7 +589,7 @@
     "items": [
       {
         "q": "¿Puedo probar Pro?",
-        "a": "Sí, puedes probar Pro sin ningún riesgo. Puedes cancelar en cualquier momento antes de la fecha de renovación, sin perder el acceso a las funciones Pro. De hecho, puedes cancelar justo después de suscribirte para aprovechar un mes de prueba."
+        "a": "No existe una versión de prueba: los planes Lite y Pro son de pago desde el primer día y los pagos no se reembolsan. Ahora bien, si cancelas durante la suscripción, conservas el acceso a todas las funciones de tu plan hasta el final del periodo ya pagado."
       },
       {
         "q": "¿Qué pasa si cambio de plan?",
@@ -601,7 +601,7 @@
       },
       {
         "q": "¿Cómo cancelo mi suscripción?",
-        "a": "Ve a Ajustes → Precios. La cancelación tiene efecto al final del ciclo de facturación en curso."
+        "a": "Ve a Mi perfil → Plan y haz clic en «Gestionar mi suscripción» para abrir el portal de facturación. La cancelación surte efecto al final del periodo ya pagado: conservas el acceso hasta entonces y no se realiza ningún reembolso."
       },
       {
         "q": "¿Cuándo estará disponible el plan Elite?",

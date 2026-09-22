@@ -589,7 +589,7 @@
     "items": [
       {
         "q": "Posso provare Pro?",
-        "a": "Sì, puoi provare Pro senza alcun rischio. Puoi annullare in qualsiasi momento prima della data di rinnovo, senza perdere l'accesso alle funzionalità Pro. Puoi persino annullare subito dopo l'iscrizione per approfittare di un mese di prova."
+        "a": "Non esiste una versione di prova: i piani Lite e Pro sono a pagamento dal primo giorno e i pagamenti non vengono rimborsati. Se però disdici durante l’abbonamento, mantieni l’accesso a tutte le funzionalità del tuo piano fino alla fine del periodo già pagato."
       },
       {
         "q": "Cosa succede se cambio piano?",
@@ -601,7 +601,7 @@
       },
       {
         "q": "Come posso annullare il mio abbonamento?",
-        "a": "Vai su Impostazioni → Prezzi. La disdetta ha effetto alla fine del ciclo di fatturazione in corso."
+        "a": "Vai su Il mio profilo → Piano, poi clicca su « Gestisci il mio abbonamento » per aprire il portale di fatturazione. La disdetta ha effetto alla fine del periodo già pagato: mantieni l’accesso fino ad allora e non viene effettuato alcun rimborso."
       },
       {
         "q": "Quando sarà introdotto il piano Elite?",

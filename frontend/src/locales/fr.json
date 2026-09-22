@@ -589,7 +589,7 @@
     "items": [
       {
         "q": "Puis-je essayer Pro ?",
-        "a": "Oui, vous pouvez essayer Pro sans aucun risque. Vous pouvez annuler à tout moment avant la date de renouvellement, sans perdre l'accès aux fonctionnalités Pro. Vous pouvez même annuler dès votre abonnement pour profiter d'un mois d'essai."
+        "a": "Il n’existe pas de version d’essai : les offres Lite et Pro sont payantes dès le premier jour, et les paiements ne sont pas remboursés. En revanche, si vous annulez en cours d’abonnement, vous gardez l’accès à toutes les fonctionnalités de votre offre jusqu’à la fin de la période déjà payée."
       },
       {
         "q": "Que se passe-t-il si je change d'offre ?",
@@ -601,7 +601,7 @@
       },
       {
         "q": "Comment annuler mon abonnement ?",
-        "a": "Rendez-vous dans Paramètres → Tarifs. L'annulation prend effet à la fin du cycle de facturation en cours."
+        "a": "Rendez-vous dans Mon Profil → Offre, puis cliquez sur « Gérer mon abonnement » pour ouvrir le portail de facturation. L’annulation prend effet à la fin de la période déjà payée : vous conservez l’accès jusque-là, et aucun remboursement n’est effectué."
       },
       {
         "q": "Quand l'offre Elite sera-t-elle disponible ?",

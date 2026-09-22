@@ -589,7 +589,7 @@
     "items": [
       {
         "q": "Can I trial Pro?",
-        "a": "Yes, you can try Pro without any risk. You have the flexibility to cancel at any time before the renewal date, and you won't lose access to the Pro features. In fact, you can cancel as soon as you subscribe to try out Pro for a month."
+        "a": "There is no free trial: the Lite and Pro plans are paid from day one, and payments are not refunded. If you cancel mid-subscription, however, you keep access to every feature of your plan until the end of the period you have already paid for."
       },
       {
         "q": "What happens if I upgrade or downgrade?",
@@ -601,7 +601,7 @@
       },
       {
         "q": "How can I cancel my subscription?",
-        "a": "Go to Settings → Pricing. Cancellation takes effect at the end of the current billing cycle."
+        "a": "Go to My Profile → Plan, then click “Manage my subscription” to open the billing portal. Cancelling takes effect at the end of the period you have already paid for: you keep access until then, and no refund is issued."
       },
       {
         "q": "When will Elite tier be introduced?",

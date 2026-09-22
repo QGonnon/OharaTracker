@@ -589,7 +589,7 @@
     "items": [
       {
         "q": "Kann ich Pro testen?",
-        "a": "Ja, du kannst Pro völlig risikofrei ausprobieren. Du kannst jederzeit vor dem Verlängerungsdatum kündigen, ohne den Zugang zu den Pro-Funktionen zu verlieren. Du kannst sogar direkt nach dem Abschluss kündigen, um einen Monat lang Pro zu testen."
+        "a": "Es gibt keine kostenlose Testversion: Die Tarife Lite und Pro sind ab dem ersten Tag kostenpflichtig, und Zahlungen werden nicht erstattet. Wenn Sie während des Abos kündigen, behalten Sie jedoch bis zum Ende des bereits bezahlten Zeitraums Zugriff auf alle Funktionen Ihres Tarifs."
       },
       {
         "q": "Was passiert, wenn ich mein Abo wechsle?",
@@ -601,7 +601,7 @@
       },
       {
         "q": "Wie kann ich mein Abo kündigen?",
-        "a": "Gehe zu Einstellungen → Preise. Die Kündigung wird zum Ende des aktuellen Abrechnungszeitraums wirksam."
+        "a": "Gehen Sie zu Mein Profil → Tarif und klicken Sie auf „Abonnement verwalten“, um das Rechnungsportal zu öffnen. Die Kündigung wird zum Ende des bereits bezahlten Zeitraums wirksam: Bis dahin behalten Sie den Zugriff, eine Rückerstattung erfolgt nicht."
       },
       {
         "q": "Wann wird die Elite-Stufe eingeführt?",
