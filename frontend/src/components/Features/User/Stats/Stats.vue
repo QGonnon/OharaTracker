@@ -49,7 +49,9 @@
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.episodes_watched') }}</p>
           </div>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ stats.averageScore ?? '—' }}</p>
+            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+              {{ stats.averageScore === null ? '—' : $t('rating.value', { score: formatScore(stats.averageScore), max: scoreMax }) }}
+            </p>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.average_score', { n: stats.ratedCount }) }}</p>
           </div>
         </div>
@@ -144,7 +146,7 @@
               <p v-if="!stats.advanced.scoreDistribution.length" class="text-sm text-slate-500 dark:text-slate-400">{{ $t('stats.empty') }}</p>
               <ul v-else class="space-y-2">
                 <li v-for="row in stats.advanced.scoreDistribution" :key="row.score" class="flex items-center gap-3">
-                  <span class="w-8 text-sm tabular-nums">{{ row.score }}</span>
+                  <span class="w-10 text-sm tabular-nums">{{ formatScore(row.score) }}/{{ scoreMax }}</span>
                   <span class="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <span class="block h-full rounded-full bg-amber-500" :style="{ width: ratio(row.count, maxScore) + '%' }"></span>
                   </span>
@@ -160,7 +162,7 @@
                 <li v-for="work in stats.advanced.topRated" :key="work.title" class="flex items-center justify-between gap-3 text-sm">
                   <span class="truncate" :title="work.title">{{ work.title }}</span>
                   <span class="font-semibold text-amber-600 dark:text-amber-400 tabular-nums flex-shrink-0">
-                    <i class="pi pi-star-fill text-xs mr-1" aria-hidden="true"></i>{{ work.score }}
+                    <i class="pi pi-star-fill text-xs mr-1" aria-hidden="true"></i>{{ $t('rating.value', { score: formatScore(work.score), max: scoreMax }) }}
                   </span>
                 </li>
               </ol>

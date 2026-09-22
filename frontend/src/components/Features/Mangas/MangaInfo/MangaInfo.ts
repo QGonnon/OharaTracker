@@ -16,6 +16,7 @@ import Chip from 'primevue/chip'
 import Divider from 'primevue/divider'
 import EditLibraryDialog from '../../../Shared/EditLibraryDialog/EditLibraryDialog.vue'
 import EditAnimeDialog from '../../../Shared/EditAnimeDialog/EditAnimeDialog.vue'
+import StarRating from '../../../Shared/StarRating/StarRating.vue'
 import type { Manga } from '../../../../types/index'
 import { useMangaStore } from '../../../../store/manga.module'
 import { useLibraryStore } from '../../../../store/library.module'
@@ -29,7 +30,7 @@ export default defineComponent({
   name: 'MangaInfo',
   components: {
     Menu, Card, Button, Message, Tag, Chip, Divider,
-    EditLibraryDialog, EditAnimeDialog
+    EditLibraryDialog, EditAnimeDialog, StarRating
   },
 
   setup() {
@@ -51,7 +52,14 @@ export default defineComponent({
     const isAnime = computed(() => mangaStore.isAnimeType(manga.value))
     // La note personnelle est stockée dans `score` (c'est ce que `checkLibraryStatus`
     // et `onUpdated` renseignent) ; `userScore` n'a jamais existé sur l'objet.
-    const userScore = computed(() => manga.value.score ?? null)
+    // Le pilote pg renvoie les NUMERIC sous forme de chaine ("3.5") : sans cette
+    // conversion, StarRating recevrait une chaine et n'afficherait aucune etoile.
+    const userScore = computed(() => {
+      const raw = manga.value.score
+      if (raw === null || raw === undefined) return null
+      const value = Number(raw)
+      return Number.isFinite(value) ? value : null
+    })
 
     const seasonEpisodeStats = computed(() => mangaStore.getSeasonEpisodeStats(manga.value))
     const totalEpisodes = computed(() => manga.value.totalEpisodes ?? seasonEpisodeStats.value.totalEpisodes)

@@ -9,6 +9,7 @@ import {
 } from '../utils/database.js';
 import { authenticate } from '../utils/auth.js';
 import { getPlanForUser, limitsFor, withinQuota } from '../utils/plan.js';
+import { parseScore, SCORE_MAX, SCORE_STEP } from '../utils/score.js';
 
 const router = express.Router();
 
@@ -85,11 +86,15 @@ router.get('/user', authenticate, async (req, res) => {
 router.patch('/user', authenticate, async (req, res) => {
     const { id, lastChapter, readingStatus, title, site, notifyEnabled, score, note } = req.body;
 
-    if (score !== undefined && score !== null) {
-        const value = Number(score);
-        if (!Number.isFinite(value) || value < 0 || value > 10) {
-            return res.status(400).json({ message: 'Note invalide : attendu un nombre entre 0 et 10' });
-        }
+    // Champ absent = inchangé ; champ présent à null = effacé. Les deux cas sont
+    // distincts, sinon on ne peut jamais retirer une note deja posee.
+    const scoreSent = Object.hasOwn(req.body ?? {}, 'score');
+    const parsedScore = scoreSent ? parseScore(score) : undefined;
+
+    if (scoreSent && parsedScore === undefined) {
+        return res.status(400).json({
+            message: `Note invalide : attendu un multiple de ${SCORE_STEP} entre 0 et ${SCORE_MAX}`,
+        });
     }
 
     if (note !== undefined && note !== null && String(note).length > 2000) {
@@ -119,8 +124,8 @@ router.patch('/user', authenticate, async (req, res) => {
             title,
             site: site || null,
             notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
-            score: score === undefined || score === null || score === '' ? null : Number(score),
-            note: note === undefined ? null : note,
+            score: parsedScore,
+            note: Object.hasOwn(req.body ?? {}, 'note') ? (note === '' ? null : note) : undefined,
             username: req.user.username,
         });
 

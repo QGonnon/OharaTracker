@@ -35,3 +35,22 @@ export function slugify(text: string) {
 export function slugCandidates(title: string): string[] {
   return [...new Set([slugify(title), slugifyLegacy(title)].filter(Boolean))]
 }
+
+// Barème des notes personnelles. Doit rester aligné sur api/utils/score.js :
+// le serveur refuse toute note qui n'est pas un multiple de SCORE_STEP entre 0 et SCORE_MAX.
+export const SCORE_MAX = 5
+export const SCORE_STEP = 0.5
+
+/** Arrondit au demi-point le plus proche, borné au barème. */
+export function roundScoreToStep(value: number): number {
+  const clamped = Math.min(Math.max(value, 0), SCORE_MAX)
+  return Math.round(clamped / SCORE_STEP) * SCORE_STEP
+}
+
+/** « 4 », « 3,5 » — sans décimale inutile, dans la langue de l'interface. */
+export function formatScore(value: number | string | null | undefined, locale = 'fr'): string {
+  if (value === null || value === undefined || value === '') return ''
+  const n = Number(value)
+  if (!Number.isFinite(n)) return ''
+  return n.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 1 })
+}

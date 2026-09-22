@@ -161,8 +161,9 @@
                   <i class="pi pi-star-fill text-warning mt-1" aria-hidden="true"></i>
                   <div>
                     <p class="text-sm text-surface-500 dark:text-surface-400">{{ $t('manga.user_score') }}</p>
-                    <p class="text-base font-medium text-surface-900 dark:text-surface-0">
-                      {{ userScore ?? $t('manga.unknown') }}
+                    <StarRating v-if="userScore !== null" :model-value="userScore" readonly size="text-base" class="mt-0.5" />
+                    <p v-else class="text-base font-medium text-surface-900 dark:text-surface-0">
+                      {{ $t('manga.unknown') }}
                     </p>
                   </div>
                 </div>

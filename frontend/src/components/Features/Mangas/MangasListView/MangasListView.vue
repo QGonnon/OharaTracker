@@ -249,6 +249,17 @@
                                 </template>
                             </Column>
 
+                            <!-- Score Column : la note n'apparaissait qu'en vue grille,
+                                 alors que la vue tableau est celle par defaut. -->
+                            <Column field="score" :header="$t('library.col_score')" sortable style="min-width: 110px;">
+                                <template #body="{ data }">
+                                    <span v-if="data.score != null" class="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-medium text-sm tabular-nums">
+                                        <i class="pi pi-star-fill text-xs" aria-hidden="true"></i>{{ $t('rating.value', { score: formatScore(data.score), max: scoreMax }) }}
+                                    </span>
+                                    <span v-else class="text-sm text-slate-400 dark:text-slate-500">—</span>
+                                </template>
+                            </Column>
+
                             <!-- Actions Column -->
                             <Column :header="$t('library.col_actions')" style="min-width: 120px;">
                                 <template #body="{ data }">
@@ -330,8 +341,8 @@
                                     <i class="pi pi-book mr-1" aria-hidden="true"></i>
                                     Ch. {{ manga.userLastChapter || manga.lastChapter }}
                                 </span>
-                                <span v-if="manga.score != null" class="flex items-center gap-1 text-amber-700 font-medium text-xs">
-                                    <i class="pi pi-star-fill" aria-hidden="true"></i>{{ manga.score }}
+                                <span v-if="manga.score != null" class="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-medium text-xs">
+                                    <i class="pi pi-star-fill" aria-hidden="true"></i>{{ $t('rating.value', { score: formatScore(manga.score), max: scoreMax }) }}
                                 </span>
                             </div>
                             <div class="flex items-center justify-between mt-1">

@@ -122,6 +122,7 @@
     "col_last_episode_seen": "Last Episode Seen",
     "col_last_episode": "Latest Episode",
     "col_type": "Type",
+    "col_score": "My rating",
     "col_actions": "Actions",
     "edit": "Edit",
     "reload": "Reload",
@@ -854,5 +855,11 @@
       "self": "You",
       "none": ""
     }
+  },
+  "rating": {
+    "label": "Your rating, out of {max} stars",
+    "value": "{score}/{max}",
+    "none": "No rating",
+    "clear": "Clear"
   }
 }

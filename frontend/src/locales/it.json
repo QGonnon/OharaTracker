@@ -120,6 +120,7 @@
     "col_last_read": "Ultimo capitolo letto",
     "col_last_chapter": "Ultimo capitolo",
     "col_type": "Tipo",
+    "col_score": "Il mio voto",
     "col_actions": "Azioni",
     "edit": "Modifica",
     "reload": "Ricarica",
@@ -854,5 +855,11 @@
       "self": "Tu",
       "none": ""
     }
+  },
+  "rating": {
+    "label": "Il tuo voto, su {max} stelle",
+    "value": "{score}/{max}",
+    "none": "Nessun voto",
+    "clear": "Cancella"
   }
 }

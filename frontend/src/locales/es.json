@@ -120,6 +120,7 @@
     "col_last_read": "Último capítulo leído",
     "col_last_chapter": "Último capítulo",
     "col_type": "Tipo",
+    "col_score": "Mi valoración",
     "col_actions": "Acciones",
     "edit": "Editar",
     "reload": "Recargar",
@@ -854,5 +855,11 @@
       "self": "Tú",
       "none": ""
     }
+  },
+  "rating": {
+    "label": "Tu valoración, sobre {max} estrellas",
+    "value": "{score}/{max}",
+    "none": "Sin valoración",
+    "clear": "Borrar"
   }
 }

@@ -17,7 +17,7 @@ import { useAuthStore } from '../../../../store/auth.module'
 import { useMangaStore } from '../../../../store/manga.module'
 import { useLibraryStore } from '../../../../store/library.module'
 import type { Manga } from '../../../../types/index'
-import { slugify } from '../../../../utils'
+import { slugify, formatScore, SCORE_MAX } from '../../../../utils'
 import { localeMedia } from '../../../../seo/localePath'
 import TagService, { type ClientTag } from '../../../../services/tag.service'
 import FilterService, { type SavedFilter } from '../../../../services/filter.service'
@@ -41,7 +41,7 @@ export default defineComponent({
     },
     setup() {
       usePageSeo('library', { noindex: true });
-        const { t } = useI18n()
+        const { t, locale } = useI18n()
         const router = useRouter()
         const route = useRoute()
         const authStore = useAuthStore()
@@ -304,6 +304,8 @@ export default defineComponent({
         });
 
         return {
+            scoreMax: SCORE_MAX,
+            formatScore: (value: number | string | null | undefined) => formatScore(value, locale.value),
             mangas,
             clientInfo,
             filteredMangas,

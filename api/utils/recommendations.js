@@ -1,6 +1,7 @@
 import { QueryTypes } from 'sequelize';
 import { sequelize } from './database.js';
 import { slugify, resolveMediaKind } from './slug.js';
+import { SCORE_NEUTRAL } from './score.js';
 
 const DEFAULT_LIMIT = 12;
 
@@ -13,7 +14,7 @@ const PROFILE_WEIGHTS = {
                     WHEN 'Abandonné' THEN -1
                     WHEN 'Terminé'   THEN 1.5
                     ELSE 1
-               END * COALESCE(lu.score, 5) / 5`,
+               END * COALESCE(lu.score, ${SCORE_NEUTRAL}) / ${SCORE_NEUTRAL}`,
 };
 
 async function getRecommendations(username, { mode = 'simple', limit = DEFAULT_LIMIT, kind = null } = {}) {

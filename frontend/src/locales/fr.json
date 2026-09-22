@@ -122,6 +122,7 @@
     "col_last_episode_seen": "Dernier épisode vu",
     "col_last_episode": "Dernier épisode",
     "col_type": "Type",
+    "col_score": "Ma note",
     "col_actions": "Actions",
     "edit": "Éditer",
     "reload": "Recharger",
@@ -854,5 +855,11 @@
       "self": "Vous",
       "none": ""
     }
+  },
+  "rating": {
+    "label": "Votre note, sur {max} étoiles",
+    "value": "{score}/{max}",
+    "none": "Pas de note",
+    "clear": "Effacer"
   }
 }

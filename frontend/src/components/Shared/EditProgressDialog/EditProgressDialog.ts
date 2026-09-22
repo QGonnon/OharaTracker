@@ -5,9 +5,9 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
-import Rating from 'primevue/rating'
 import Textarea from 'primevue/textarea'
 import MultiSelect from 'primevue/multiselect'
+import StarRating from '../StarRating/StarRating.vue'
 import TagService, { type ClientTag } from '../../../services/tag.service'
 import WatchlistService, { type Watchlist } from '../../../services/watchlist.service'
 import { useAuthStore } from '../../../store/auth.module'
@@ -21,7 +21,7 @@ import type { EditDialogRow, EditDialogType } from './editDialogConfig'
 // vit ici ; les différences entre manga et anime sont isolées dans editDialogConfig.ts.
 export default defineComponent({
   name: 'EditProgressDialog',
-  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch, Rating, Textarea, MultiSelect },
+  components: { Dialog, Dropdown, InputText, Button, ToggleSwitch, StarRating, Textarea, MultiSelect },
   props: {
     type: { type: String as () => EditDialogType, required: true },
     visible: { type: Boolean, required: true },

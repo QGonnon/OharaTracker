@@ -29,7 +29,7 @@
       </div>
       <div>
         <label for="edit-score" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('edit_library.score') }}</label>
-        <Rating inputId="edit-score" v-model="editScore" :stars="10" class="mt-2" />
+        <StarRating inputId="edit-score" v-model="editScore" class="mt-2" />
       </div>
 
       <div>

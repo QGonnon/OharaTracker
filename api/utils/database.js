@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { SCORE_MAX } from './score.js';
 import { QueryTypes, Sequelize } from 'sequelize';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -404,21 +405,27 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
         }
     );
 
+    // COALESCE traite `null` comme « champ absent » : c'est ce qu'on veut pour les
+    // champs que l'appelant peut omettre, mais cela rendait impossible d'effacer une
+    // note ou un commentaire. Pour ces deux-là, `undefined` = ne pas toucher et
+    // `null` = vider, ce que porte le drapeau ...Provided.
     if (existing.length > 0) {
         await sequelize.query(
             `UPDATE libraryusage
              SET last_chapter = COALESCE(:lastChapter, last_chapter),
                  reading_status = COALESCE(:readingStatus, reading_status),
                  notify_enabled = COALESCE(:notifyEnabled, notify_enabled),
-                 score = COALESCE(:score, score),
-                 note = COALESCE(:note, note)
+                 score = CASE WHEN :scoreProvided THEN :score ELSE score END,
+                 note  = CASE WHEN :noteProvided  THEN :note  ELSE note  END
              WHERE id_library = :id_library AND name_client = :username AND id_source = :id_source`,
             {
                 replacements: {
                     lastChapter: lastChapter || null,
                     readingStatus: readingStatus || null,
                     notifyEnabled: typeof notifyEnabled === 'boolean' ? notifyEnabled : null,
+                    scoreProvided: score !== undefined,
                     score: score ?? null,
+                    noteProvided: note !== undefined,
                     note: note ?? null,
                     id_library: idLibrary,
                     id_source: idSource,
@@ -450,7 +457,7 @@ async function updateUserLibrary({ id, lastChapter, readingStatus, title, site, 
     const { recordActivity } = await import('./community.js');
     await recordActivity(username, idLibrary,
         readingStatus === 'Terminé' ? 'completed' : (score ? 'rated' : 'progress'),
-        readingStatus === 'Terminé' ? null : (score ? `${score}/10` : lastChapter || null));
+        readingStatus === 'Terminé' ? null : (score ? `${score}/${SCORE_MAX}` : lastChapter || null));
 
     return { idLibrary: idLibrary };
 }
@@ -1082,7 +1089,9 @@ function getClient(username, callback) {
                             libraryId: row.libraryId,
                             lastReadChapter: row.lastReadChapter ?? "0.00",
                             readingStatus: row.readingStatus,
-                            clientScore: row.clientScore,
+                            // Le pilote pg rend les NUMERIC sous forme de chaine ("3.5") :
+                            // l'API expose un nombre, pour que le front n'ait pas a convertir.
+                            clientScore: row.clientScore === null ? null : Number(row.clientScore),
                             clientNote: row.clientNote,
                             sourceId: row.sourceId,
                         })),

@@ -66,13 +66,16 @@ async function getAdvancedStats(username, { since = null } = {}) {
         { replacements: { username }, type: QueryTypes.SELECT }
     );
 
-    const scoreDistribution = await sequelize.query(
-        `SELECT FLOOR(lu.score)::int AS score, COUNT(*)::int AS count
+    // Le barème autorise les demi-étoiles : arrondir à l'entier fusionnerait 3 et 3,5
+    // dans la même barre et ferait disparaître la moitié des notes possibles.
+    const scoreDistributionRows = await sequelize.query(
+        `SELECT lu.score AS score, COUNT(*)::int AS count
          FROM libraryusage lu
          WHERE lu.name_client = :username AND lu.score IS NOT NULL
          GROUP BY 1 ORDER BY 1 ASC`,
         { replacements: { username }, type: QueryTypes.SELECT }
     );
+    const scoreDistribution = scoreDistributionRows.map(row => ({ score: Number(row.score), count: row.count }));
 
     // Volume de sorties publiées sur les œuvres suivies : le rythme réel du suivi.
     const monthlyActivity = await sequelize.query(

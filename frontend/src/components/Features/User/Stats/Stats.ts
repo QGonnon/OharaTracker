@@ -1,10 +1,12 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import Menu from '../../../Shared/Menu/Menu.vue'
 import { useAuthStore } from '../../../../store/auth.module'
 import StatsService, { gamificationService, type ReadingStats, type Badge, type FriendRank } from '../../../../services/stats.service'
 import { usePageSeo } from '../../../../seo/usePageSeo'
 import { localePath } from '../../../../seo/localePath'
+import { formatScore, SCORE_MAX } from '../../../../utils'
 
 const READING_STATUS_KEYS: Record<string, string> = {
   'En cours': 'reading',
@@ -19,6 +21,7 @@ export default defineComponent({
 
   setup() {
     usePageSeo('stats', { noindex: true })
+    const { locale } = useI18n()
     const router = useRouter()
     const authStore = useAuthStore()
 
@@ -80,6 +83,8 @@ export default defineComponent({
     onMounted(load)
 
     return {
+      scoreMax: SCORE_MAX,
+      formatScore: (value: number | string | null | undefined) => formatScore(value, locale.value),
       stats, loading, error, filterType, filterSince, load, badges, ranking,
       tierClass: (tier: string | null) => ({
         gold: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700',
