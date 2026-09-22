@@ -1,11 +1,30 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { QueryTypes } from 'sequelize';
-import { sequelize } from '../utils/database.js';
+import {
+    findClientByNameOrEmail,
+    createClient,
+    findClientByEmail,
+    findGoogleClientByEmail,
+    createGoogleClient,
+    linkGoogleId,
+    getAccountProfile,
+    findClientByName,
+    isUsernameTaken,
+    isEmailTakenByAnother,
+    renameClient,
+    getPasswordRecord,
+    setPassword,
+} from '../utils/accounts.js';
 import { authenticate, JWT_SECRET } from '../utils/auth.js';
 
 const router = express.Router();
+
+const issueToken = user => jwt.sign(
+    { id: user.id, username: user.name ?? user.username, email: user.email },
+    JWT_SECRET,
+    { expiresIn: '24h' }
+);
 
 router.post('/signup', async (req, res) => {
     const { username, email, password, referralCode } = req.body;
@@ -19,48 +38,18 @@ router.post('/signup', async (req, res) => {
     }
 
     try {
-        const existing = await sequelize.query(
-            'SELECT name FROM "Client" WHERE name = :username OR email = :email LIMIT 1',
-            { replacements: { username, email }, type: QueryTypes.SELECT }
-        );
-
-        if (existing.length > 0) {
+        if (await findClientByNameOrEmail(username, email)) {
             return res.status(400).json({ message: 'Nom d\'utilisateur ou email déjà utilisé' });
         }
 
-        await sequelize.query(
-            `INSERT INTO "Subscription" (id, name) VALUES (1, 'Free') ON CONFLICT (id) DO NOTHING`,
-            { type: QueryTypes.INSERT }
-        );
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
-
-        // Un code d'affiliation inconnu ne bloque pas l'inscription : il est simplement ignoré.
-        const referrer = referralCode
-            ? await sequelize.query(
-                'SELECT affiliate_code FROM "Partner" WHERE affiliate_code = :code AND is_active = true LIMIT 1',
-                { replacements: { code: String(referralCode).slice(0, 24) }, type: QueryTypes.SELECT }
-            )
-            : [];
-
-        await sequelize.query(
-            `INSERT INTO "Client" (name, code, email, password, id_subscription, referred_by)
-             VALUES (:username, :code, :email, :password, 1, :referredBy)`,
-            {
-                replacements: {
-                    username,
-                    code: randomSuffix,
-                    email,
-                    password: hashedPassword,
-                    referredBy: referrer[0]?.affiliate_code ?? null,
-                },
-                type: QueryTypes.INSERT
-            }
-        );
+        await createClient({
+            username,
+            email,
+            hashedPassword: await bcrypt.hash(password, 10),
+            referralCode,
+        });
 
         res.status(201).json({ message: 'Utilisateur créé avec succès' });
-
     } catch (error) {
         console.error('❌ Erreur lors de l\'inscription:', error);
         res.status(500).json({ message: 'Erreur serveur lors de l\'inscription' });
@@ -75,36 +64,21 @@ router.post('/signin', async (req, res) => {
     }
 
     try {
-        const users = await sequelize.query(
-            'SELECT id, name, code, email, password FROM "Client" WHERE email = :email LIMIT 1',
-            { replacements: { email }, type: QueryTypes.SELECT }
-        );
+        const user = await findClientByEmail(email);
 
-        if (users.length === 0) {
+        // Même message que le mot de passe erroné : distinguer les deux cas
+        // permettrait d'énumérer les adresses inscrites.
+        if (!user || !await bcrypt.compare(password, user.password)) {
             return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
         }
-
-        const user = users[0];
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, username: user.name, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '24h' }
-        );
 
         res.json({
             id: user.id,
             username: user.name,
             email: user.email,
             code: user.code,
-            accessToken: token
+            accessToken: issueToken(user),
         });
-
     } catch (error) {
         console.error('❌ Erreur lors de la connexion:', error);
         res.status(500).json({ message: 'Erreur serveur lors de la connexion' });
@@ -129,54 +103,23 @@ router.post('/google', async (req, res) => {
         const email = googleUser.email;
         const name = googleUser.name || googleUser.email.split('@')[0];
         const cleanName = name.replace(/\s+/g, '_').substring(0, 24);
-        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
         const googleId = googleUser.sub;
 
-        let users = await sequelize.query(
-            'SELECT id, name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
-            { replacements: { email }, type: QueryTypes.SELECT }
-        );
+        let user = await findGoogleClientByEmail(email);
 
-        if (users.length === 0) {
-            await sequelize.query(
-                `INSERT INTO "Subscription" (id, name) VALUES (1, 'Free') ON CONFLICT (id) DO NOTHING`,
-                { type: QueryTypes.INSERT }
-            );
-
-            await sequelize.query(
-                'INSERT INTO "Client" (name, code, email, password, google_id, id_subscription) VALUES (:name, :code, :email, :password, :googleId, 1)',
-                {
-                    replacements: { name: cleanName, code: randomSuffix, email, password: '', googleId },
-                    type: QueryTypes.INSERT
-                }
-            );
-
-            users = await sequelize.query(
-                'SELECT id, name, code, email, google_id FROM "Client" WHERE email = :email LIMIT 1',
-                { replacements: { email }, type: QueryTypes.SELECT }
-            );
-        } else if (!users[0].google_id) {
-            await sequelize.query(
-                'UPDATE "Client" SET google_id = :googleId WHERE email = :email',
-                { replacements: { googleId, email }, type: QueryTypes.UPDATE }
-            );
+        if (!user) {
+            user = await createGoogleClient({ name: cleanName, email, googleId });
+        } else if (!user.googleId) {
+            await linkGoogleId(email, googleId);
         }
-
-        const user = users[0];
-        const token = jwt.sign(
-            { id: user.id, username: user.name, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '24h' }
-        );
 
         res.json({
             id: user.id,
             username: user.name,
             email: user.email,
             code: user.code,
-            accessToken: token
+            accessToken: issueToken(user),
         });
-
     } catch (error) {
         console.error('❌ Erreur lors de la connexion Google:', error);
         res.status(500).json({ message: 'Erreur serveur lors de la connexion Google' });
@@ -184,27 +127,21 @@ router.post('/google', async (req, res) => {
 });
 
 router.get('/me', authenticate, async (req, res) => {
-    const username = req.user.username;
     try {
-        const users = await sequelize.query(
-            `SELECT c.name, c.code, c.email, c.password, c.google_id, c.stripe_subscription_id, s.name AS subscription_name
-             FROM "Client" c
-             INNER JOIN "Subscription" s ON s.id = c.id_subscription
-             WHERE c.name = :username LIMIT 1`,
-            { replacements: { username }, type: QueryTypes.SELECT }
-        );
-        if (users.length === 0) {
+        const user = await getAccountProfile(req.user.username);
+
+        if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
-        const user = users[0];
+
         res.json({
             username: user.name,
             code: user.code,
             email: user.email,
-            isGoogleUser: !!user.google_id,
+            isGoogleUser: !!user.googleId,
             hasPassword: !!user.password,
-            subscription: user.subscription_name,
-            hasActiveStripeSubscription: !!user.stripe_subscription_id
+            subscription: user.subscriptionName,
+            hasActiveStripeSubscription: !!user.stripeSubscriptionId,
         });
     } catch (error) {
         console.error('❌ Erreur lors de la récupération du profil:', error);
@@ -221,61 +158,29 @@ router.put('/profile', authenticate, async (req, res) => {
     }
 
     try {
-        const users = await sequelize.query(
-            'SELECT id, name, code, email FROM "Client" WHERE name = :currentUsername LIMIT 1',
-            { replacements: { currentUsername }, type: QueryTypes.SELECT }
-        );
+        const user = await findClientByName(currentUsername);
 
-        if (users.length === 0) {
+        if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
 
-        const user = users[0];
         const newUsername = username || user.name;
         const newEmail = email || user.email;
 
-        if (newUsername !== currentUsername) {
-            const conflict = await sequelize.query(
-                'SELECT name FROM "Client" WHERE name = :newUsername LIMIT 1',
-                { replacements: { newUsername }, type: QueryTypes.SELECT }
-            );
-            if (conflict.length > 0) {
-                return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris' });
-            }
+        if (newUsername !== currentUsername && await isUsernameTaken(newUsername)) {
+            return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris' });
         }
 
-        if (newEmail !== user.email) {
-            const conflict = await sequelize.query(
-                'SELECT name FROM "Client" WHERE email = :newEmail AND name != :currentUsername LIMIT 1',
-                { replacements: { newEmail, currentUsername }, type: QueryTypes.SELECT }
-            );
-            if (conflict.length > 0) {
-                return res.status(400).json({ message: 'Cette adresse email est déjà utilisée' });
-            }
+        if (newEmail !== user.email && await isEmailTakenByAnother(newEmail, currentUsername)) {
+            return res.status(400).json({ message: 'Cette adresse email est déjà utilisée' });
         }
 
-        if (newUsername !== currentUsername) {
-            await sequelize.query(
-                'UPDATE "ClientCategoryAssignment" SET name_client = :newUsername WHERE name_client = :currentUsername',
-                { replacements: { newUsername, currentUsername }, type: QueryTypes.UPDATE }
-            );
-        }
-
-        await sequelize.query(
-            'UPDATE "Client" SET name = :newUsername, email = :newEmail WHERE name = :currentUsername',
-            { replacements: { newUsername, newEmail, currentUsername }, type: QueryTypes.UPDATE }
-        );
-
-        const newToken = jwt.sign(
-            { id: user.id, username: newUsername, email: newEmail },
-            JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        await renameClient({ currentUsername, newUsername, newEmail });
 
         res.json({
             username: newUsername,
             email: newEmail,
-            accessToken: newToken,
+            accessToken: issueToken({ id: user.id, name: newUsername, email: newEmail }),
         });
     } catch (error) {
         console.error('❌ Erreur lors de la mise à jour du profil:', error);
@@ -288,39 +193,31 @@ router.post('/change-password', authenticate, async (req, res) => {
     const username = req.user.username;
 
     try {
-        const users = await sequelize.query(
-            'SELECT name, password, google_id FROM "Client" WHERE name = :username LIMIT 1',
-            { replacements: { username }, type: QueryTypes.SELECT }
-        );
+        const user = await getPasswordRecord(username);
 
-        if (users.length === 0) {
+        if (!user) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
 
-        const user = users[0];
-        const firstPasswordChange = !user.password && user.google_id;
+        // Un compte Google sans mot de passe en définit un pour la première fois :
+        // il n'y a alors aucun mot de passe actuel à confirmer.
+        const firstPasswordChange = !user.password && user.googleId;
 
         if ((!currentPassword || !newPassword) && !firstPasswordChange) {
             return res.status(400).json({ message: 'Les deux mots de passe sont requis' });
         }
 
-        if (newPassword.length < 6) {
+        if (!newPassword || newPassword.length < 6) {
             return res.status(400).json({ message: 'Le nouveau mot de passe doit contenir au moins 6 caractères' });
         }
 
-        const isValid = await bcrypt.compare(currentPassword, user.password);
-        if (!isValid && !firstPasswordChange) {
+        if (!firstPasswordChange && !await bcrypt.compare(currentPassword, user.password)) {
             return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await sequelize.query(
-            'UPDATE "Client" SET password = :password WHERE name = :username',
-            { replacements: { password: hashedPassword, username }, type: QueryTypes.UPDATE }
-        );
+        await setPassword(username, await bcrypt.hash(newPassword, 10));
 
         res.json({ message: 'Mot de passe modifié avec succès' });
-
     } catch (error) {
         console.error('❌ Erreur lors du changement de mot de passe:', error);
         res.status(500).json({ message: 'Erreur serveur lors du changement de mot de passe' });

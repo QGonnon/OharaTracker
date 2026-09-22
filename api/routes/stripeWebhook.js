@@ -1,6 +1,10 @@
-import { QueryTypes } from 'sequelize';
-import { sequelize } from '../utils/database.js';
 import stripe from '../utils/stripe.js';
+import {
+    getSubscriptionIdByName,
+    setClientSubscription,
+    downgradeBySubscriptionId,
+    setPlanBySubscriptionId,
+} from '../utils/billing.js';
 
 const PLAN_SUBSCRIPTION_NAMES = {
     lite: 'Lite',
@@ -12,54 +16,6 @@ const PLAN_BY_PRICE_ID = {
     [process.env.STRIPE_PRICE_ID_LITE]: 'lite',
     [process.env.STRIPE_PRICE_ID_PRO]: 'pro',
 };
-
-const subscriptionIdCache = new Map();
-
-async function getSubscriptionIdByName(name) {
-    if (subscriptionIdCache.has(name)) {
-        return subscriptionIdCache.get(name);
-    }
-
-    const rows = await sequelize.query(
-        'SELECT id FROM "Subscription" WHERE name = :name LIMIT 1',
-        { replacements: { name }, type: QueryTypes.SELECT }
-    );
-
-    if (rows.length === 0) {
-        throw new Error(`Plan d'abonnement "${name}" introuvable en base`);
-    }
-
-    subscriptionIdCache.set(name, rows[0].id);
-    return rows[0].id;
-}
-
-async function setClientSubscription(clientId, { subscriptionId, customerId, idSubscription }) {
-    await sequelize.query(
-        `UPDATE "Client"
-         SET id_subscription = :idSubscription,
-             stripe_customer_id = COALESCE(:customerId, stripe_customer_id),
-             stripe_subscription_id = :subscriptionId
-         WHERE id = :clientId`,
-        {
-            replacements: { clientId, idSubscription, customerId: customerId || null, subscriptionId: subscriptionId || null },
-            type: QueryTypes.UPDATE,
-        }
-    );
-}
-
-async function downgradeBySubscriptionId(stripeSubscriptionId) {
-    const freeId = await getSubscriptionIdByName(FREE_SUBSCRIPTION_NAME);
-
-    await sequelize.query(
-        `UPDATE "Client"
-         SET id_subscription = :freeId, stripe_subscription_id = NULL
-         WHERE stripe_subscription_id = :stripeSubscriptionId`,
-        {
-            replacements: { freeId, stripeSubscriptionId },
-            type: QueryTypes.UPDATE,
-        }
-    );
-}
 
 export default async function stripeWebhookHandler(req, res) {
     const signature = req.headers['stripe-signature'];
@@ -103,21 +59,16 @@ export default async function stripeWebhookHandler(req, res) {
                     : FREE_SUBSCRIPTION_NAME;
                 const idSubscription = await getSubscriptionIdByName(subscriptionName);
 
-                await sequelize.query(
-                    `UPDATE "Client"
-                     SET id_subscription = :idSubscription
-                     WHERE stripe_subscription_id = :subscriptionId`,
-                    {
-                        replacements: { idSubscription, subscriptionId: subscription.id },
-                        type: QueryTypes.UPDATE,
-                    }
-                );
+                await setPlanBySubscriptionId(subscription.id, idSubscription);
                 break;
             }
 
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object;
-                await downgradeBySubscriptionId(subscription.id);
+                await downgradeBySubscriptionId(
+                    subscription.id,
+                    await getSubscriptionIdByName(FREE_SUBSCRIPTION_NAME)
+                );
                 break;
             }
 

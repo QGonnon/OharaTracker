@@ -1,12 +1,9 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import { QueryTypes } from 'sequelize';
-import { sequelize } from '../utils/database.js';
 import stripe from '../utils/stripe.js';
+import { getBillingProfile } from '../utils/billing.js';
 import { authenticate } from '../utils/auth.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const FRONTEND_URL = `${process.env.SITE_URL}`;
 
 const PLAN_PRICE_IDS = {
@@ -23,22 +20,17 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
             return res.status(400).json({ message: 'Plan invalide' });
         }
 
-        const clients = await sequelize.query(
-            'SELECT id, email, stripe_customer_id FROM "Client" WHERE id = :id LIMIT 1',
-            { replacements: { id: req.user.id }, type: QueryTypes.SELECT }
-        );
+        const client = await getBillingProfile(req.user.id);
 
-        if (clients.length === 0) {
+        if (!client) {
             return res.status(404).json({ message: 'Utilisateur introuvable' });
         }
-
-        const client = clients[0];
 
         const session = await stripe.checkout.sessions.create({
             mode: 'subscription',
             line_items: [{ price: priceId, quantity: 1 }],
-            customer: client.stripe_customer_id || undefined,
-            customer_email: client.stripe_customer_id ? undefined : client.email,
+            customer: client.stripeCustomerId || undefined,
+            customer_email: client.stripeCustomerId ? undefined : client.email,
             client_reference_id: String(client.id),
             metadata: { plan },
             success_url: `${FRONTEND_URL}/pricing?checkout=success`,
@@ -63,16 +55,13 @@ router.post('/create-plan-change-session', authenticate, async (req, res) => {
             return res.status(400).json({ message: 'Plan invalide' });
         }
 
-        const clients = await sequelize.query(
-            'SELECT stripe_customer_id, stripe_subscription_id FROM "Client" WHERE id = :id LIMIT 1',
-            { replacements: { id: req.user.id }, type: QueryTypes.SELECT }
-        );
+        const client = await getBillingProfile(req.user.id);
 
-        if (clients.length === 0 || !clients[0].stripe_customer_id || !clients[0].stripe_subscription_id) {
+        if (!client?.stripeCustomerId || !client?.stripeSubscriptionId) {
             return res.status(400).json({ message: 'Aucun abonnement actif à modifier' });
         }
 
-        const { stripe_customer_id: customerId, stripe_subscription_id: subscriptionId } = clients[0];
+        const { stripeCustomerId: customerId, stripeSubscriptionId: subscriptionId } = client;
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const itemId = subscription.items.data[0].id;
 
@@ -97,17 +86,14 @@ router.post('/create-plan-change-session', authenticate, async (req, res) => {
 
 router.post('/create-portal-session', authenticate, async (req, res) => {
     try {
-        const clients = await sequelize.query(
-            'SELECT stripe_customer_id FROM "Client" WHERE id = :id LIMIT 1',
-            { replacements: { id: req.user.id }, type: QueryTypes.SELECT }
-        );
+        const client = await getBillingProfile(req.user.id);
 
-        if (clients.length === 0 || !clients[0].stripe_customer_id) {
+        if (!client?.stripeCustomerId) {
             return res.status(400).json({ message: 'Aucun abonnement Stripe associé à ce compte' });
         }
 
         const portalSession = await stripe.billingPortal.sessions.create({
-            customer: clients[0].stripe_customer_id,
+            customer: client.stripeCustomerId,
             return_url: `${FRONTEND_URL}/profile`,
         });
 

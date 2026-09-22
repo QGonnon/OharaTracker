@@ -1,6 +1,7 @@
 import express from 'express';
-import { QueryTypes } from 'sequelize';
-import { sequelize, getClient, getClientPreferences, updateClientPreferences } from '../utils/database.js';
+import { getClient, getClientPreferences, updateClientPreferences } from '../utils/database.js';
+import { getDiscoveryPreferences, updateDiscoveryPreferences } from '../utils/discovery.js';
+import { deleteAccount } from '../utils/accountDeletion.js';
 import { authenticate } from '../utils/auth.js';
 import { getPlanForUser, limitsFor, requireFeature } from '../utils/plan.js';
 import { THEMES, getAppearance, updateAppearance } from '../utils/appearance.js';
@@ -67,19 +68,12 @@ router.patch('/preferences', authenticate, async (req, res) => {
     }
 });
 
-const DISCOVERY_TYPES = ['all', 'manga', 'anime'];
-const MAX_PINNED_GENRES = 10;
-
 router.get('/discovery', authenticate, async (req, res) => {
     try {
         const plan = await getPlanForUser(req.user.username);
-        const rows = await sequelize.query(
-            'SELECT discovery_preferences AS preferences FROM "Client" WHERE name = :username',
-            { replacements: { username: req.user.username }, type: QueryTypes.SELECT }
-        );
 
         res.json({
-            preferences: rows[0]?.preferences ?? null,
+            preferences: await getDiscoveryPreferences(req.user.username),
             plan,
             unlocked: limitsFor(plan).customDiscovery === true,
         });
@@ -91,40 +85,11 @@ router.get('/discovery', authenticate, async (req, res) => {
 
 // Personnalisation de la page Découverte, réservée à l'offre Pro.
 router.patch('/discovery', authenticate, requireFeature('customDiscovery'), async (req, res) => {
-    const { defaultType, pinnedGenres, hideTrending, hideSpotlight } = req.body ?? {};
-
-    if (defaultType !== undefined && !DISCOVERY_TYPES.includes(defaultType)) {
-        return res.status(400).json({ message: 'Type par défaut inconnu' });
-    }
-    if (pinnedGenres !== undefined) {
-        if (!Array.isArray(pinnedGenres) || pinnedGenres.length > MAX_PINNED_GENRES) {
-            return res.status(400).json({ message: `Au maximum ${MAX_PINNED_GENRES} genres épinglés` });
-        }
-        if (pinnedGenres.some(genre => typeof genre !== 'string' || genre.length > 40)) {
-            return res.status(400).json({ message: 'Genre invalide' });
-        }
-    }
-
-    const preferences = {
-        defaultType: defaultType ?? 'all',
-        pinnedGenres: pinnedGenres ?? [],
-        hideTrending: hideTrending === true,
-        hideSpotlight: hideSpotlight === true,
-    };
-
     try {
-        await sequelize.query(
-            'UPDATE "Client" SET discovery_preferences = :preferences::jsonb WHERE name = :username',
-            {
-                replacements: { username: req.user.username, preferences: JSON.stringify(preferences) },
-                type: QueryTypes.UPDATE,
-            }
-        );
-
-        res.json({ preferences });
+        res.json({ preferences: await updateDiscoveryPreferences(req.user.username, req.body ?? {}) });
     } catch (error) {
         console.error('❌ Erreur lors de la personnalisation de la Découverte:', error);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(error.statusCode || 500).json({ message: error.message || 'Erreur serveur' });
     }
 });
 
@@ -155,9 +120,7 @@ router.patch('/appearance', authenticate, requireFeature('profileCustomization')
     }
 });
 
-// Suppression définitive du compte. Le RGPD impose un droit d'effacement réel :
-// on retire les données personnelles, pas seulement l'accès. Les œuvres du
-// catalogue, elles, sont partagées et ne doivent évidemment pas disparaître.
+// Suppression définitive du compte, confirmée par la saisie du pseudo exact.
 router.delete('/', authenticate, async (req, res) => {
     const username = req.user.username;
 
@@ -165,37 +128,10 @@ router.delete('/', authenticate, async (req, res) => {
         return res.status(400).json({ message: 'Confirmation invalide : saisissez votre pseudo exact' });
     }
 
-    const transaction = await sequelize.transaction();
     try {
-        const scoped = [
-            'DELETE FROM "Activity" WHERE name_client = :username',
-            'DELETE FROM "Friendship" WHERE name_client = :username OR name_friend = :username',
-            'DELETE FROM "WatchlistFollower" WHERE name_client = :username',
-            'DELETE FROM "WatchlistItem" WHERE id_watchlist IN (SELECT id FROM "Watchlist" WHERE name_client = :username)',
-            'DELETE FROM "WatchlistFollower" WHERE id_watchlist IN (SELECT id FROM "Watchlist" WHERE name_client = :username)',
-            'DELETE FROM "Watchlist" WHERE name_client = :username',
-            'DELETE FROM "ClientTagAssignment" WHERE id_client_tag IN (SELECT id FROM "ClientTag" WHERE name_client = :username)',
-            'DELETE FROM "ClientTag" WHERE name_client = :username',
-            'DELETE FROM "SavedFilter" WHERE name_client = :username',
-            'DELETE FROM "Notification" WHERE name_client = :username',
-            'DELETE FROM libraryusage WHERE name_client = :username',
-            'DELETE FROM "ClientCategoryAssignment" WHERE name_client = :username',
-            'DELETE FROM "PushSubscription" WHERE id_client = (SELECT id FROM "Client" WHERE name = :username)',
-            'DELETE FROM "Client" WHERE name = :username',
-        ];
-
-        for (const statement of scoped) {
-            await sequelize.query(statement, {
-                replacements: { username },
-                type: QueryTypes.DELETE,
-                transaction,
-            });
-        }
-
-        await transaction.commit();
+        await deleteAccount(username);
         res.json({ message: 'Compte supprimé' });
     } catch (error) {
-        await transaction.rollback();
         console.error('❌ Erreur lors de la suppression du compte:', error);
         res.status(500).json({ message: 'Erreur serveur lors de la suppression du compte' });
     }

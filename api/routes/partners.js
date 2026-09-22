@@ -1,6 +1,5 @@
 import express from 'express';
-import { QueryTypes } from 'sequelize';
-import { sequelize } from '../utils/database.js';
+import { getActivePartners } from '../utils/partners.js';
 import { LOCALES } from '../utils/seoRoutes.js';
 
 const router = express.Router();
@@ -12,18 +11,7 @@ router.get('/', async (req, res) => {
     const locale = LOCALES.includes(req.query.locale) ? req.query.locale : null;
 
     try {
-        const partners = await sequelize.query(
-            `SELECT name, kind, url, logo_url AS "logoUrl", description, locales,
-                    is_highlighted AS "isHighlighted"
-             FROM "Partner"
-             WHERE is_active = true
-               AND (:kind::text IS NULL OR kind = :kind)
-               AND (:locale::text IS NULL OR locales IS NULL OR :locale = ANY(locales))
-             ORDER BY is_highlighted DESC, name ASC`,
-            { replacements: { kind, locale }, type: QueryTypes.SELECT }
-        );
-
-        res.json(partners);
+        res.json(await getActivePartners({ kind, locale }));
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des partenaires:', error);
         res.status(500).json({ message: 'Erreur serveur' });
