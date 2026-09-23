@@ -462,7 +462,7 @@
       "current_plan_cta": "Offre actuelle",
       "upgrade_cta": "Mettre à niveau",
       "downgrade_cta": "Rétrograder",
-      "checkout_success": "Paiement confirmé. Votre offre {plan} est active — si elle n’apparaît pas encore, rechargez la page dans quelques secondes.",
+      "checkout_success": "Paiement confirmé. Votre offre {plan} est active.",
       "checkout_cancel": "Paiement annulé. Aucun montant n’a été débité.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
@@ -503,7 +503,9 @@
         "Créateurs de contenu (YouTube, Twitch...) : affiliation ou rémunération selon la collaboration"
       ],
       "partner_cta": "Nous contacter",
-      "faq_teaser": "Des questions sur les offres ou la facturation ?"
+      "faq_teaser": "Des questions sur les offres ou la facturation ?",
+      "checkout_pending": "Paiement confirmé. Activation de votre offre en cours…",
+      "checkout_slow": "Votre paiement a bien été pris en compte, mais votre offre n’est pas encore activée. Cela peut prendre encore quelques instants : rechargez la page. Si rien ne change, contactez-nous."
     },
     "blog": {
       "label": "Blog",

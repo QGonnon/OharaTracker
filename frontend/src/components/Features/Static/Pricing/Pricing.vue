@@ -14,15 +14,20 @@
         </p>
       </div>
 
-      <!-- Retour de Stripe : confirme au client que son paiement a bien abouti. -->
-      <div v-if="checkoutOutcome" role="status"
-           class="max-w-2xl mx-auto mb-10 px-5 py-4 rounded-xl border text-sm"
+      <!-- Retour de Stripe. « pending » tant que le webhook n'a pas change l'offre :
+           le paiement est confirme, l'activation ne l'est pas encore. -->
+      <div v-if="checkoutOutcome" role="status" aria-live="polite"
+           class="max-w-2xl mx-auto mb-10 px-5 py-4 rounded-xl border text-sm flex items-start gap-3"
            :class="checkoutOutcome === 'success'
              ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300'
              : 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'">
-        {{ checkoutOutcome === 'success'
-            ? $t('static.pricing.checkout_success', { plan: currentPlanName })
-            : $t('static.pricing.checkout_cancel') }}
+        <i v-if="checkoutOutcome === 'pending'" class="pi pi-spin pi-spinner mt-0.5" aria-hidden="true"></i>
+        <span>
+          {{ checkoutOutcome === 'success' ? $t('static.pricing.checkout_success', { plan: currentPlanName })
+           : checkoutOutcome === 'pending' ? $t('static.pricing.checkout_pending')
+           : checkoutOutcome === 'slow'    ? $t('static.pricing.checkout_slow')
+           : $t('static.pricing.checkout_cancel') }}
+        </span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-24">

@@ -462,7 +462,7 @@
       "current_plan_cta": "Plan actual",
       "upgrade_cta": "Mejorar plan",
       "downgrade_cta": "Bajar de plan",
-      "checkout_success": "Pago confirmado. Tu plan {plan} está activo — si aún no aparece, recarga la página en unos segundos.",
+      "checkout_success": "Pago confirmado. Tu plan {plan} está activo.",
       "checkout_cancel": "Pago cancelado. No se ha realizado ningún cargo.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
@@ -503,7 +503,9 @@
         "Creadores de contenido (YouTube, Twitch...): afiliación o remuneración según la colaboración"
       ],
       "partner_cta": "Contáctanos",
-      "faq_teaser": "¿Dudas sobre los planes o la facturación?"
+      "faq_teaser": "¿Dudas sobre los planes o la facturación?",
+      "checkout_pending": "Pago confirmado. Activando tu plan…",
+      "checkout_slow": "Tu pago se ha realizado, pero tu plan aún no está activo. Puede tardar unos instantes más: recarga la página. Si nada cambia, contáctanos."
     },
     "blog": {
       "label": "Blog",

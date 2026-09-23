@@ -462,7 +462,7 @@
       "current_plan_cta": "Aktueller Plan",
       "upgrade_cta": "Upgraden",
       "downgrade_cta": "Herabstufen",
-      "checkout_success": "Zahlung bestätigt. Ihr {plan}-Tarif ist aktiv — falls er noch nicht angezeigt wird, laden Sie die Seite in wenigen Sekunden neu.",
+      "checkout_success": "Zahlung bestätigt. Ihr {plan}-Tarif ist aktiv.",
       "checkout_cancel": "Zahlung abgebrochen. Es wurde nichts abgebucht.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
@@ -503,7 +503,9 @@
         "Content-Creator (YouTube, Twitch...): Affiliate-Partnerschaft oder Vergütung je nach Zusammenarbeit"
       ],
       "partner_cta": "Kontaktiere uns",
-      "faq_teaser": "Fragen zu den Angeboten oder zur Abrechnung?"
+      "faq_teaser": "Fragen zu den Angeboten oder zur Abrechnung?",
+      "checkout_pending": "Zahlung bestätigt. Ihr Tarif wird aktiviert…",
+      "checkout_slow": "Ihre Zahlung ist eingegangen, Ihr Tarif ist aber noch nicht aktiv. Es kann einen Moment dauern — laden Sie die Seite neu. Ändert sich nichts, melden Sie sich bei uns."
     },
     "blog": {
       "label": "Blog",

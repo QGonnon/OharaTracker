@@ -462,7 +462,7 @@
       "current_plan_cta": "Current plan",
       "upgrade_cta": "Upgrade",
       "downgrade_cta": "Downgrade",
-      "checkout_success": "Payment confirmed. Your {plan} plan is active — if it is not showing yet, reload the page in a few seconds.",
+      "checkout_success": "Payment confirmed. Your {plan} plan is active.",
       "checkout_cancel": "Payment cancelled. You have not been charged.",
       "lite_badge": "Lite",
       "lite_title": "Lite",
@@ -503,7 +503,9 @@
         "Content creators (YouTube, Twitch...): affiliation or compensation depending on the collaboration"
       ],
       "partner_cta": "Contact us",
-      "faq_teaser": "Questions about plans or billing?"
+      "faq_teaser": "Questions about plans or billing?",
+      "checkout_pending": "Payment confirmed. Activating your plan…",
+      "checkout_slow": "Your payment went through, but your plan is not active yet. It may take a moment longer — reload the page. If nothing changes, get in touch."
     },
     "blog": {
       "label": "Blog",

@@ -1,4 +1,4 @@
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Menu from '../../../Shared/Menu/Menu.vue';
@@ -58,30 +58,60 @@ export default defineComponent({
     const authStore = useAuthStore();
     const checkoutLoadingPlan = ref<'lite' | 'pro' | null>(null);
     const currentPlanName = ref('Free');
-    const checkoutOutcome = ref<'success' | 'cancel' | null>(null);
+    const checkoutOutcome = ref<'success' | 'pending' | 'slow' | 'cancel' | null>(null);
 
     const refreshPlan = async () => {
-      if (!authStore.isLoggedIn) return;
+      if (!authStore.isLoggedIn) return currentPlanName.value;
       try {
         const me = await AuthService.getMe();
         currentPlanName.value = me.subscription || 'Free';
       } catch (error) {
         currentPlanName.value = 'Free';
       }
+      return currentPlanName.value;
+    };
+
+    // Le paiement et l'activation sont deux choses distinctes : Stripe redirige
+    // dès le paiement, mais c'est le webhook qui change l'offre en base, un peu
+    // plus tard. On attend donc que l'offre bouge réellement avant de l'annoncer,
+    // au lieu d'affirmer « votre offre X est active » en relisant une valeur
+    // périmée — ce qui affichait « votre offre Free est active » après un achat.
+    const ACTIVATION_ATTEMPTS = 10;
+    const ACTIVATION_DELAY_MS = 2000;
+    let activationTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const waitForActivation = async (planBeforeCheckout: string) => {
+      for (let attempt = 0; attempt < ACTIVATION_ATTEMPTS; attempt++) {
+        await new Promise<void>(resolve => { activationTimer = setTimeout(resolve, ACTIVATION_DELAY_MS); });
+        if (await refreshPlan() !== planBeforeCheckout) {
+          checkoutOutcome.value = 'success';
+          return;
+        }
+      }
+      // L'offre n'a pas bougé : le dire franchement plutôt que de laisser croire
+      // que tout s'est bien passé.
+      checkoutOutcome.value = 'slow';
     };
 
     onMounted(async () => {
       await refreshPlan();
 
-      // Retour depuis Stripe : sans ce retour visible, un paiement réussi ne se
-      // distingue pas d'un clic sans effet. Le plan est relu car c'est le webhook,
-      // pas la redirection, qui l'a mis à jour côté serveur.
       const outcome = route.query.checkout;
       if (outcome === 'success' || outcome === 'cancel') {
-        checkoutOutcome.value = outcome;
-        if (outcome === 'success') await refreshPlan();
         router.replace({ path: route.path, query: {} });
+
+        if (outcome === 'cancel') {
+          checkoutOutcome.value = 'cancel';
+          return;
+        }
+
+        checkoutOutcome.value = 'pending';
+        waitForActivation(currentPlanName.value);
       }
+    });
+
+    onUnmounted(() => {
+      if (activationTimer) clearTimeout(activationTimer);
     });
 
     function isCurrentPlan(planKey: 'lite' | 'pro') {
