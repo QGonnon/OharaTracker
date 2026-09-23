@@ -30,7 +30,7 @@ describe('Slugs', () => {
 
 describe('Traductions', () => {
     test('fichiers de locale trouvés', () => assert.strictEqual(translationsAvailable(), true))
-    test('titre DE tarifs', () => assert.strictEqual(t('de', 'seo.pricing.title'), 'Preise — Gratis, Perso und Pro'))
+    test('titre DE tarifs', () => assert.strictEqual(t('de', 'seo.pricing.title'), 'Preise: Gratis, Lite und Pro'))
     test('interpolation ES', () => assert.strictEqual(
         t('es', 'seo.media.serie.title', { title: 'One Piece' }),
         'One Piece: episodios, temporadas y seguimiento'))

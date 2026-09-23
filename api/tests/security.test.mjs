@@ -53,7 +53,7 @@ describe('En-têtes de sécurité', () => {
         test('X-Powered-By masqué', () => assert.strictEqual(res.headers['x-powered-by'], undefined))
     })
 
-    describe('CSP — protections', () => {
+    describe('CSP : protections', () => {
         test("frame-ancestors 'none' (anti-clickjacking)", () => assert.ok(csp.includes("frame-ancestors 'none'")))
         test("object-src 'none'", () => assert.ok(csp.includes("object-src 'none'")))
         test("base-uri 'self'", () => assert.ok(csp.includes("base-uri 'self'")))
@@ -62,7 +62,7 @@ describe('En-têtes de sécurité', () => {
         test("pas d'unsafe-eval", () => assert.ok(!csp.includes("'unsafe-eval'")))
     })
 
-    describe("CSP — ce dont l'application a besoin", () => {
+    describe("CSP : ce dont l'application a besoin", () => {
         test('nonce présent sur script-src (JSON-LD)', () => assert.match(csp, /script-src[^;]*'nonce-[A-Za-z0-9+/=]+'/))
         test('Google Identity autorisé (script)', () => assert.match(csp, /script-src[^;]*https:\/\/accounts\.google\.com/))
         test('Google Identity autorisé (iframe)', () => assert.match(csp, /frame-src[^;]*https:\/\/accounts\.google\.com/))
@@ -76,7 +76,7 @@ describe('En-têtes de sécurité', () => {
     })
 
     // Régression : une CSP qui ne liste que l'origine du site bloque toutes les requêtes de données quand l'API est servie depuis une autre origine.
-    describe('CSP — API sur une origine distincte', () => {
+    describe('CSP : API sur une origine distincte', () => {
         let splitServer, splitCsp
 
         before(async () => {

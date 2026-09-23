@@ -11,7 +11,7 @@ const { createSpaMiddleware } = await import('../seo/spa.js')
 
 // Nécessite un build du frontend : sans frontend/dist/index.html le middleware ne se crée pas.
 const spa = createSpaMiddleware()
-const skip = spa ? false : 'frontend/dist absent — lancez `npm run build` dans frontend/'
+const skip = spa ? false : 'frontend/dist absent, lancez `npm run build` dans frontend/'
 
 describe('Middleware SPA (rendu SSR des métadonnées)', { skip }, () => {
     let server, port
@@ -68,7 +68,7 @@ describe('Middleware SPA (rendu SSR des métadonnées)', { skip }, () => {
             const fr = await get('/fr/tarifs')
             assert.strictEqual(fr.status, 200)
             assert.match(fr.body, /<html[^>]*\slang="fr"/)
-            assert.ok(fr.body.includes('<title>Tarifs — offres gratuite, Perso et Pro | Ohara Tracker</title>'))
+            assert.ok(fr.body.includes('<title>Tarifs : offres gratuite, Lite et Pro | Ohara Tracker</title>'))
             assert.ok(fr.body.includes('<link rel="canonical" href="https://oharatracker.com/fr/tarifs">'))
             assert.ok(fr.body.includes('hreflang="de" href="https://oharatracker.com/de/preise"'))
             assert.ok(fr.body.includes('hreflang="x-default" href="https://oharatracker.com/en/pricing"'))
@@ -103,7 +103,7 @@ describe('Middleware SPA (rendu SSR des métadonnées)', { skip }, () => {
         })
     })
 
-    describe('FAQ — balisage rendu côté serveur', () => {
+    describe('FAQ : balisage rendu côté serveur', () => {
         test('FAQPage présent avant exécution du JS', async () => {
             const faq = await get('/fr/faq')
             assert.ok(faq.body.includes('"@type":"FAQPage"'))
