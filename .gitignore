@@ -1,3 +1,5 @@
 .claude/
 cdn/
 CONTEXT.md
+# Scripts jetables d'exploration/debug (préfixe zz* : zzs-, zzt-, zzd-, zzv-, zzw-...)
+api/zz[a-z]-*
