@@ -3,7 +3,16 @@ import { sequelize } from './database.js';
 
 // `last_chapter` porte deux sémantiques : un numéro de chapitre pour la lecture,
 // une position "saison.épisode" pour les séries. On ne les additionne donc jamais ensemble.
-const ANIME_TYPES = ['Anime', 'anime'];
+//
+// La comparaison est insensible à la casse : la valeur réellement stockée en base
+// est 'ANIME' en majuscules. Une liste ['Anime', 'anime'] ne matchait donc AUCUNE
+// ligne — les épisodes étaient comptés comme des chapitres, et « Épisodes vus »
+// restait à 0 pour tout le monde.
+const IS_ANIME = "UPPER(COALESCE(lt.type, '')) = 'ANIME'";
+
+// `last_chapter` est une colonne texte : une valeur héritée non numérique ferait
+// tomber /api/stats en 500 au moment du cast.
+const NUMERIC_CHAPTER = "CASE WHEN lu.last_chapter ~ '^[0-9]+(\.[0-9]+)?$' THEN lu.last_chapter::numeric END";
 
 async function getBasicStats(username, { type = null, since = null } = {}) {
     const rows = await sequelize.query(
@@ -11,16 +20,15 @@ async function getBasicStats(username, { type = null, since = null } = {}) {
             COUNT(*)::int                                          AS "worksTracked",
             COUNT(*) FILTER (WHERE lu.score IS NOT NULL)::int       AS "ratedCount",
             ROUND(AVG(lu.score), 2)                                 AS "averageScore",
-            COALESCE(SUM(CASE WHEN lt.type NOT IN (:animeTypes) OR lt.type IS NULL
-                              THEN lu.last_chapter::numeric END), 0) AS "chaptersRead",
-            COALESCE(SUM(CASE WHEN lt.type IN (:animeTypes)
+            COALESCE(SUM(CASE WHEN NOT ${IS_ANIME} THEN ${NUMERIC_CHAPTER} END), 0) AS "chaptersRead",
+            COALESCE(SUM(CASE WHEN ${IS_ANIME} AND SPLIT_PART(lu.last_chapter, '.', 2) ~ '^[0-9]+$'
                               THEN SPLIT_PART(lu.last_chapter, '.', 2)::int END), 0) AS "episodesWatched"
          FROM libraryusage lu
          LEFT JOIN "LibrarySource" ls ON ls.id_library = lu.id_library AND ls.id_source = lu.id_source
          LEFT JOIN "LibraryType" lt ON ls.id_library_type = lt.id
          WHERE lu.name_client = :username
            AND (:type::text IS NULL OR lt.type = :type)`,
-        { replacements: { username, type, animeTypes: ANIME_TYPES }, type: QueryTypes.SELECT }
+        { replacements: { username, type }, type: QueryTypes.SELECT }
     );
 
     const byStatus = await sequelize.query(

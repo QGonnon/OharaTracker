@@ -775,7 +775,6 @@
     "ranking_desc": "Basata sulle opere seguite. Visibile solo a te.",
     "badge": {
       "librarian": "Bibliotecario",
-      "marathoner": "Maratoneta",
       "critic": "Critico",
       "finisher": "Finalizzatore",
       "social": "Socievole",
@@ -825,7 +824,7 @@
     "title": "Comunità",
     "subtitle": "Segui i tuoi amici e scopri cosa leggono.",
     "feed": "Attività",
-    "feed_empty": "Ancora nulla: aggiungi amici per vedere la loro attività.",
+    "feed_empty": "Niente da mostrare. Aggiungi amici per vedere la loro attività — gli amici con profilo privato non condividono la propria.",
     "loading": "Caricamento...",
     "find": "Trova un profilo",
     "search_placeholder": "Nome utente (min. 2 caratteri)",
@@ -841,7 +840,7 @@
     "pending_sent": "{n} richiesta/e in attesa di risposta.",
     "works": "{n} opera/e seguita/e",
     "visibility": "Visibilità del profilo",
-    "visibility_desc": "Un profilo pubblico è trovabile dal nome. La tua attività resta visibile solo agli amici.",
+    "visibility_desc": "Profilo pubblico: i tuoi amici vedono la tua attività. Profilo privato: resti trovabile e ti si può aggiungere, ma la tua attività è visibile solo a te.",
     "public": "Profilo pubblico",
     "private": "Profilo privato",
     "action": {
@@ -861,6 +860,8 @@
     "label": "Il tuo voto, su {max} stelle",
     "value": "{score}/{max}",
     "none": "Nessun voto",
-    "clear": "Cancella"
+    "clear": "Cancella",
+    "decrease": "Diminuisci il voto di {step}",
+    "increase": "Aumenta il voto di {step}"
   }
 }

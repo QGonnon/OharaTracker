@@ -775,7 +775,6 @@
     "ranking_desc": "Based on tracked titles. Only you can see it.",
     "badge": {
       "librarian": "Librarian",
-      "marathoner": "Marathoner",
       "critic": "Critic",
       "finisher": "Finisher",
       "social": "Social",
@@ -825,7 +824,7 @@
     "title": "Community",
     "subtitle": "Follow your friends and see what they are reading.",
     "feed": "Activity feed",
-    "feed_empty": "Nothing here yet — add friends to see their activity.",
+    "feed_empty": "Nothing to show. Add friends to see their activity — note that friends with a private profile do not share theirs.",
     "loading": "Loading...",
     "find": "Find a profile",
     "search_placeholder": "Username (min. 2 characters)",
@@ -841,7 +840,7 @@
     "pending_sent": "{n} request(s) awaiting an answer.",
     "works": "{n} title(s) tracked",
     "visibility": "Profile visibility",
-    "visibility_desc": "A public profile can be found by username. Your activity stays visible to friends only.",
+    "visibility_desc": "Public profile: your friends see your activity. Private profile: you stay findable and people can add you, but your activity is visible to you alone.",
     "public": "Public profile",
     "private": "Private profile",
     "action": {
@@ -861,6 +860,8 @@
     "label": "Your rating, out of {max} stars",
     "value": "{score}/{max}",
     "none": "No rating",
-    "clear": "Clear"
+    "clear": "Clear",
+    "decrease": "Decrease rating by {step}",
+    "increase": "Increase rating by {step}"
   }
 }

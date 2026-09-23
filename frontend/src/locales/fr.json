@@ -775,7 +775,6 @@
     "ranking_desc": "Fondé sur le nombre d'œuvres suivies. Visible de vous seul.",
     "badge": {
       "librarian": "Bibliothécaire",
-      "marathoner": "Marathonien",
       "critic": "Critique",
       "finisher": "Finisseur",
       "social": "Sociable",
@@ -825,7 +824,7 @@
     "title": "Communauté",
     "subtitle": "Suivez vos amis et découvrez ce qu'ils lisent.",
     "feed": "Fil d'actualité",
-    "feed_empty": "Rien à afficher : ajoutez des amis pour voir leur activité.",
+    "feed_empty": "Rien à afficher. Ajoutez des amis pour voir leur activité — et notez que les amis au profil privé ne partagent pas la leur.",
     "loading": "Chargement...",
     "find": "Trouver un profil",
     "search_placeholder": "Pseudo (2 caractères min.)",
@@ -841,7 +840,7 @@
     "pending_sent": "{n} demande(s) en attente de réponse.",
     "works": "{n} œuvre(s) suivie(s)",
     "visibility": "Visibilité du profil",
-    "visibility_desc": "Un profil public peut être trouvé par pseudo. Votre activité reste réservée à vos amis.",
+    "visibility_desc": "Profil public : vos amis voient votre activité. Profil privé : vous restez trouvable et on peut vous ajouter, mais votre activité n’est visible que de vous.",
     "public": "Profil public",
     "private": "Profil privé",
     "action": {
@@ -861,6 +860,8 @@
     "label": "Votre note, sur {max} étoiles",
     "value": "{score}/{max}",
     "none": "Pas de note",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "decrease": "Diminuer la note de {step}",
+    "increase": "Augmenter la note de {step}"
   }
 }

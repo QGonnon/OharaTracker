@@ -97,6 +97,7 @@ export default defineComponent({
       await refreshPlan();
 
       const outcome = route.query.checkout;
+      const sessionId = route.query.session_id;
       if (outcome === 'success' || outcome === 'cancel') {
         router.replace({ path: route.path, query: {} });
 
@@ -105,8 +106,33 @@ export default defineComponent({
           return;
         }
 
+        // Stripe renvoie sur l'origine declaree par SITE_URL cote serveur. Si ce
+        // n'est pas celle d'ou le client est parti, il revient sur une autre
+        // origine, donc sans sa session (localStorage est cloisonne par origine).
+        // Le dire tout de suite plutot que d'attendre vingt secondes pour rien.
+        if (!authStore.isLoggedIn) {
+          checkoutOutcome.value = 'slow';
+          return;
+        }
+
+        const planBefore = currentPlanName.value;
         checkoutOutcome.value = 'pending';
-        waitForActivation(currentPlanName.value);
+
+        // Chemin direct : on demande au serveur de relire la session de paiement
+        // et d'activer l'offre tout de suite. L'attente ci-dessous reste le filet
+        // pour les retours sans identifiant de session (portail de facturation).
+        if (typeof sessionId === 'string' && sessionId) {
+          try {
+            const { plan } = await SubscriptionService.confirmSession(sessionId);
+            currentPlanName.value = plan;
+            checkoutOutcome.value = 'success';
+            return;
+          } catch (error) {
+            console.error('Confirmation de la session de paiement impossible:', error);
+          }
+        }
+
+        waitForActivation(planBefore);
       }
     });
 

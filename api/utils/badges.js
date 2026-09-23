@@ -3,12 +3,18 @@ import { sequelize } from './database.js';
 
 // Les badges sont dérivés à la lecture plutôt que stockés : aucune table à
 // resynchroniser, et un badge reste vrai même si l'utilisateur retire une œuvre.
-// Paliers calibrés pour qu'un badge se mérite. Attention aux métriques
-// trompeuses : une seule œuvre porte déjà une dizaine de genres, donc
-// `genres` monte beaucoup plus vite que le nombre d'œuvres suivies.
+// Paliers calibrés pour qu'un badge se mérite.
+//
+// Attention aux métriques trompeuses. Deux cas rencontrés :
+//  - `genres` : une seule œuvre porte déjà une dizaine de genres, il monte donc
+//    beaucoup plus vite que le nombre d'œuvres suivies ;
+//  - un badge « chapitres lus » a existé ici : il sommait en fait `last_chapter`,
+//    c'est-à-dire des positions de lecture. Reprendre un manga au chapitre 985
+//    affichait 985 chapitres lus sans en avoir lu un seul. Il a été supprimé
+//    plutôt que recalibré : `finisher` compte déjà les œuvres terminées, lui
+//    honnêtement.
 const BADGES = [
     { key: 'librarian', metric: 'worksTracked', tiers: [10, 50, 100] },
-    { key: 'marathoner', metric: 'chaptersRead', tiers: [100, 1000, 5000] },
     { key: 'critic', metric: 'ratings', tiers: [10, 50, 200] },
     { key: 'finisher', metric: 'completed', tiers: [5, 25, 100] },
     { key: 'social', metric: 'friends', tiers: [3, 10, 50] },
@@ -22,10 +28,6 @@ async function getBadgeMetrics(username) {
     const [row] = await sequelize.query(
         `SELECT
             (SELECT COUNT(*) FROM libraryusage WHERE name_client = :username)::int AS "worksTracked",
-            (SELECT COALESCE(SUM(last_chapter::numeric), 0) FROM libraryusage lu
-             LEFT JOIN "LibrarySource" ls ON ls.id_library = lu.id_library AND ls.id_source = lu.id_source
-             LEFT JOIN "LibraryType" lt ON ls.id_library_type = lt.id
-             WHERE lu.name_client = :username AND COALESCE(lt.type, '') NOT IN ('Anime', 'anime'))::int AS "chaptersRead",
             (SELECT COUNT(*) FROM libraryusage WHERE name_client = :username AND score IS NOT NULL)::int AS "ratings",
             (SELECT COUNT(*) FROM libraryusage WHERE name_client = :username AND reading_status = 'Terminé')::int AS "completed",
             (SELECT COUNT(*) FROM "Friendship" WHERE name_client = :username AND status = 'accepted')::int AS "friends",

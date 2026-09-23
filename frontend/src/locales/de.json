@@ -775,7 +775,6 @@
     "ranking_desc": "Basiert auf verfolgten Titeln. Nur für dich sichtbar.",
     "badge": {
       "librarian": "Bibliothekar",
-      "marathoner": "Marathonläufer",
       "critic": "Kritiker",
       "finisher": "Vollender",
       "social": "Gesellig",
@@ -825,7 +824,7 @@
     "title": "Community",
     "subtitle": "Folge deinen Freunden und sieh, was sie lesen.",
     "feed": "Aktivitäten",
-    "feed_empty": "Noch nichts zu sehen — füge Freunde hinzu.",
+    "feed_empty": "Nichts anzuzeigen. Fügen Sie Freunde hinzu, um ihre Aktivität zu sehen — Freunde mit privatem Profil teilen ihre jedoch nicht.",
     "loading": "Wird geladen...",
     "find": "Profil suchen",
     "search_placeholder": "Benutzername (mind. 2 Zeichen)",
@@ -841,7 +840,7 @@
     "pending_sent": "{n} Anfrage(n) warten auf Antwort.",
     "works": "{n} verfolgte Titel",
     "visibility": "Sichtbarkeit des Profils",
-    "visibility_desc": "Ein öffentliches Profil ist über den Namen auffindbar. Deine Aktivität sehen nur Freunde.",
+    "visibility_desc": "Öffentliches Profil: Ihre Freunde sehen Ihre Aktivität. Privates Profil: Sie bleiben auffindbar und können hinzugefügt werden, aber Ihre Aktivität sehen nur Sie.",
     "public": "Öffentliches Profil",
     "private": "Privates Profil",
     "action": {
@@ -861,6 +860,8 @@
     "label": "Ihre Bewertung, von {max} Sternen",
     "value": "{score}/{max}",
     "none": "Keine Bewertung",
-    "clear": "Löschen"
+    "clear": "Löschen",
+    "decrease": "Bewertung um {step} verringern",
+    "increase": "Bewertung um {step} erhöhen"
   }
 }

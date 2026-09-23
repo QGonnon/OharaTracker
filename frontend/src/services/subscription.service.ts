@@ -23,6 +23,16 @@ class SubscriptionService {
     return response.data;
   }
 
+  /** Active l'offre au retour du paiement, sans dependre du webhook. */
+  async confirmSession(sessionId: string): Promise<{ plan: string }> {
+    const response = await axios.post(
+      `${API_BASE}/stripe/confirm-session`,
+      { sessionId },
+      { headers: authHeader() }
+    );
+    return response.data;
+  }
+
   async createPortalSession(locale: string): Promise<{ url: string }> {
     const response = await axios.post(
       `${API_BASE}/stripe/create-portal-session`,

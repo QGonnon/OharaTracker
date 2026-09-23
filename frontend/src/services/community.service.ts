@@ -10,6 +10,8 @@ export interface CommunityProfile {
   friendStatus: 'none' | 'pending' | 'accepted' | 'self'
   isPublic?: boolean
   activity?: FeedEntry[]
+  /** true quand le profil est prive : son activite n'est pas transmise. */
+  activityHidden?: boolean
 }
 
 export interface FeedEntry {

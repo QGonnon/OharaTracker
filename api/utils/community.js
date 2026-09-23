@@ -1,6 +1,11 @@
 import { QueryTypes } from 'sequelize';
 import { sequelize, createSocialNotification } from './database.js';
 
+// Regle unique de confidentialite : mon activite est a moi. Celle d'un autre
+// compte n'est lisible que s'il a rendu son profil public. L'amitie donne acces
+// a l'identite (pseudo, avatar, demande), jamais a l'activite.
+const canSeeActivity = (viewer, target, targetIsPublic) => viewer === target || targetIsPublic === true;
+
 const fail = (message, statusCode) => {
     const error = new Error(message);
     error.statusCode = statusCode;
@@ -33,7 +38,7 @@ async function searchProfiles(query, viewer) {
             c.name                                  AS username,
             c.avatar_url                            AS "avatarUrl",
             c.is_public                             AS "isPublic",
-            CASE WHEN c.is_public OR COALESCE(f.status, '') = 'accepted'
+            CASE WHEN c.is_public
                  THEN (SELECT COUNT(*) FROM libraryusage lu WHERE lu.name_client = c.name)::int
                  ELSE NULL
             END                                     AS "worksTracked",
@@ -72,6 +77,22 @@ async function getPublicProfile(target, viewer) {
         throw fail('Profil introuvable', 404);
     }
 
+    // Être ami d'un compte privé donne accès à son identité, pas à son activité.
+    // On n'exécute alors même pas les deux requêtes qui la produisent.
+    if (!canSeeActivity(viewer, target, profile.isPublic)) {
+        return {
+            username: profile.username,
+            avatarUrl: profile.avatarUrl,
+            bannerUrl: profile.bannerUrl,
+            isPublic: profile.isPublic,
+            friendStatus,
+            worksTracked: null,
+            averageScore: null,
+            activity: [],
+            activityHidden: true,
+        };
+    }
+
     const [summary] = await sequelize.query(
         `SELECT COUNT(*)::int AS "worksTracked", ROUND(AVG(score), 2) AS "averageScore"
          FROM libraryusage WHERE name_client = :target`,
@@ -99,6 +120,7 @@ async function getPublicProfile(target, viewer) {
         worksTracked: summary?.worksTracked ?? 0,
         averageScore: summary?.averageScore === null ? null : Number(summary?.averageScore),
         activity: dedupeActivity(recent),
+        activityHidden: false,
     };
 }
 
@@ -117,7 +139,11 @@ function dedupeActivity(rows) {
 async function listFriends(username) {
     const rows = await sequelize.query(
         `SELECT f.name_friend AS username, f.status, c.avatar_url AS "avatarUrl",
-                (SELECT COUNT(*) FROM libraryusage lu WHERE lu.name_client = f.name_friend)::int AS "worksTracked"
+                c.is_public AS "isPublic",
+                CASE WHEN c.is_public
+                     THEN (SELECT COUNT(*) FROM libraryusage lu WHERE lu.name_client = f.name_friend)::int
+                     ELSE NULL
+                END AS "worksTracked"
          FROM "Friendship" f
          JOIN "Client" c ON c.name = f.name_friend
          WHERE f.name_client = :username
@@ -232,6 +258,7 @@ async function getFriendFeed(username, { limit = FEED_LIMIT } = {}) {
          JOIN "Library" l ON l.id = a.id_library
          LEFT JOIN "LibrarySource" ls ON ls.id_library = l.id
          LEFT JOIN "LibraryType" lt ON ls.id_library_type = lt.id
+         WHERE c.is_public
          ORDER BY a.created_at DESC
          LIMIT :limit`,
         { replacements: { username, limit: capped }, type: QueryTypes.SELECT }
@@ -250,6 +277,7 @@ async function setProfileVisibility(username, isPublic) {
 
 export {
     FEED_LIMIT,
+    canSeeActivity,
     recordActivity,
     searchProfiles,
     getPublicProfile,

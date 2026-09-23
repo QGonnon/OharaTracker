@@ -46,6 +46,7 @@ declare module 'vue-router' {
     noindex?: boolean
     pageKey?: PageKey // source de vérité pour reconstruire l'URL canonique
     mediaKind?: MediaKind
+    tokenParam?: boolean // la route porte un `:token` à conserver dans l'URL canonique
   }
 }
 
@@ -87,7 +88,10 @@ const sharedWatchlistRoute = (): RouteRecordRaw => {
     name: 'SharedWatchlist',
     component: SharedWatchlist,
     props: true,
-    meta: { noindex: true },
+    // `pageKey` rattache la route au segment traduit des listes ; `tokenParam`
+    // dit a la canonicalisation de conserver le jeton. Sans les deux, l'URL
+    // canonique calculee valait `/fr` et le garde renvoyait a l'accueil.
+    meta: { noindex: true, pageKey: 'watchlists', tokenParam: true },
   }
 }
 
@@ -207,11 +211,22 @@ router.beforeEach(async (to, _from, next) => {
 })
 
 function canonicalPathFor(
-  to: { path: string; params: Record<string, unknown>; meta: { pageKey?: PageKey; mediaKind?: MediaKind } },
+  to: {
+    path: string
+    params: Record<string, unknown>
+    meta: { pageKey?: PageKey; mediaKind?: MediaKind; tokenParam?: boolean }
+  },
   locale: Locale
 ): string | null {
   if (to.meta.pageKey) {
-    return `/${locale}/${PAGE_SEGMENTS[to.meta.pageKey][locale]}`
+    const base = `/${locale}/${PAGE_SEGMENTS[to.meta.pageKey][locale]}`
+    if (!to.meta.tokenParam) return base
+
+    const token = String(to.params.token ?? '')
+    // Pas d'encodage : le jeton est en base64url, il n'a rien a encoder, et un
+    // ecart d'encodage entre le chemin calcule et le chemin reel ferait boucler
+    // la redirection du garde.
+    return token ? `${base}/${token}` : base
   }
   if (to.meta.mediaKind) {
     const slug = String(to.params.name ?? '')

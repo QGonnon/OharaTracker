@@ -45,8 +45,11 @@ async function getFriendsLeaderboard(username) {
         `WITH circle AS (
             SELECT :username AS name
             UNION
-            SELECT name_friend FROM "Friendship"
-            WHERE name_client = :username AND status = 'accepted'
+            -- Meme regle que le fil d'actualite : un ami au profil prive ne
+            -- figure pas au classement, qui expose des chiffres d'activite.
+            SELECT f.name_friend FROM "Friendship" f
+            JOIN "Client" c ON c.name = f.name_friend
+            WHERE f.name_client = :username AND f.status = 'accepted' AND c.is_public
         )
         SELECT c.name AS username,
                cl.avatar_url AS "avatarUrl",

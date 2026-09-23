@@ -76,7 +76,7 @@ export function canonicalizePath(path: string, locale: Locale = activeLocale()):
 export function switchLocalePath(
   route: {
     params: Record<string, unknown>
-    meta: { pageKey?: PageKey; mediaKind?: MediaKind }
+    meta: { pageKey?: PageKey; mediaKind?: MediaKind; tokenParam?: boolean }
     query?: Record<string, unknown>
     hash?: string
   },
@@ -84,7 +84,13 @@ export function switchLocalePath(
 ): string {
   const suffix = (route.hash as string) || ''
 
-  if (route.meta.pageKey) return `${localePath(route.meta.pageKey, locale)}${suffix}`
+  if (route.meta.pageKey) {
+    const base = localePath(route.meta.pageKey, locale)
+    // Une page portant un jeton (liste partagee) doit le garder en changeant de
+    // langue, sinon le selecteur renvoie sur la page privee « Mes listes ».
+    const token = route.meta.tokenParam ? String(route.params.token ?? '') : ''
+    return `${token ? `${base}/${token}` : base}${suffix}`
+  }
 
   if (route.meta.mediaKind) {
     const slug = String(route.params.name ?? '')

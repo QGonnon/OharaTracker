@@ -46,6 +46,17 @@ export default defineComponent({
         : t('rating.value', { score: formatted.value, max: SCORE_MAX })
     )
 
+    // Mesure faite en emulation mobile : une demi-etoile fait 8 x 20 px, tres en
+    // dessous des 44 x 44 recommandes (WCAG 2.5.5). Agrandir les etoiles n'est pas
+    // possible sans toucher au theme PrimeVue, qui impose leur taille. Deux boutons
+    // a taille conforme offrent donc le meme reglage a cote des etoiles.
+    const atMin = computed(() => (props.modelValue ?? 0) <= 0)
+    const atMax = computed(() => (props.modelValue ?? 0) >= SCORE_MAX)
+
+    /** Message lu par les lecteurs d'ecran apres un appui : le focus reste sur le
+     *  bouton, donc le curseur n'annonce rien de lui-meme. */
+    const announcement = ref('')
+
     const setValue = (value: number | null) => {
       if (props.readonly) return
       emit('update:modelValue', value === null ? null : roundScoreToStep(value))
@@ -64,6 +75,20 @@ export default defineComponent({
     }
 
     const clearPreview = () => { hovered.value = null }
+
+    /** Un appui = un demi-point, borne au bareme. */
+    const nudge = (direction: 1 | -1) => {
+      if (props.readonly) return
+
+      const next = roundScoreToStep((props.modelValue ?? 0) + direction * SCORE_STEP)
+      if (next === props.modelValue) return
+
+      setValue(next)
+      announcement.value = t('rating.value', { score: formatScore(next, locale.value), max: SCORE_MAX })
+    }
+
+    /** « 0,5 » ou « 0.5 » selon la langue, pour nommer les deux boutons. */
+    const stepText = computed(() => formatScore(SCORE_STEP, locale.value))
 
     const onKeydown = (event: KeyboardEvent) => {
       if (props.readonly) return
@@ -92,6 +117,11 @@ export default defineComponent({
       formatted,
       valueText,
       pick,
+      nudge,
+      atMin,
+      atMax,
+      stepText,
+      announcement,
       preview,
       clearPreview,
       onKeydown,

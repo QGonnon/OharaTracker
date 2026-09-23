@@ -1,16 +1,12 @@
 import stripe from '../utils/stripe.js';
 import {
     getSubscriptionIdByName,
-    setClientSubscription,
     downgradeBySubscriptionId,
     setPlanBySubscriptionId,
+    applyCheckoutSession,
+    PLAN_SUBSCRIPTION_NAMES,
+    FREE_SUBSCRIPTION_NAME,
 } from '../utils/billing.js';
-
-const PLAN_SUBSCRIPTION_NAMES = {
-    lite: 'Lite',
-    pro: 'Pro',
-};
-const FREE_SUBSCRIPTION_NAME = 'Free';
 
 const PLAN_BY_PRICE_ID = {
     [process.env.STRIPE_PRICE_ID_LITE]: 'lite',
@@ -32,19 +28,12 @@ export default async function stripeWebhookHandler(req, res) {
         switch (event.type) {
             case 'checkout.session.completed': {
                 const session = event.data.object;
-                const clientId = Number(session.client_reference_id);
-                const plan = session.metadata?.plan;
-                const subscriptionName = PLAN_SUBSCRIPTION_NAMES[plan];
 
-                if (clientId && subscriptionName) {
-                    const idSubscription = await getSubscriptionIdByName(subscriptionName);
-                    await setClientSubscription(clientId, {
-                        subscriptionId: session.subscription,
-                        customerId: session.customer,
-                        idSubscription,
+                if (!await applyCheckoutSession(session)) {
+                    console.error('❌ Webhook checkout.session.completed: plan ou client introuvable', {
+                        clientId: session.client_reference_id,
+                        plan: session.metadata?.plan,
                     });
-                } else {
-                    console.error('❌ Webhook checkout.session.completed: plan ou client introuvable', { clientId, plan });
                 }
                 break;
             }

@@ -1,6 +1,6 @@
 import express from 'express';
 import stripe from '../utils/stripe.js';
-import { getBillingProfile } from '../utils/billing.js';
+import { getBillingProfile, applyCheckoutSession } from '../utils/billing.js';
 import { pageUrl } from '../utils/siteUrls.js';
 import { authenticate } from '../utils/auth.js';
 
@@ -37,7 +37,7 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
             customer_email: client.stripeCustomerId ? undefined : client.email,
             client_reference_id: String(client.id),
             metadata: { plan },
-            success_url: `${returnTo('pricing', req)}?checkout=success`,
+            success_url: `${returnTo('pricing', req)}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${returnTo('pricing', req)}?checkout=cancel`,
         });
 
@@ -85,6 +85,47 @@ router.post('/create-plan-change-session', authenticate, async (req, res) => {
     } catch (error) {
         console.error('❌ Erreur lors de la création de la session de changement de plan Stripe:', error);
         res.status(500).json({ message: 'Erreur serveur lors du changement de plan' });
+    }
+});
+
+// Confirme l'activation au retour du paiement, sans attendre le webhook.
+//
+// Le webhook reste la source de verite pour tout le cycle de vie de l'abonnement
+// (renouvellement, changement de plan, resiliation). Mais faire dependre la
+// PREMIERE activation de lui seul rend le service muet des qu'il ne passe pas :
+// le client a paye et ne recoit rien, sans que personne ne s'en apercoive.
+// Stripe recommande explicitement de verifier la session au retour en plus du
+// webhook. Les deux chemins appellent la meme fonction et sont idempotents.
+router.post('/confirm-session', authenticate, async (req, res) => {
+    const sessionId = req.body?.sessionId;
+
+    if (typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) {
+        return res.status(400).json({ message: 'Identifiant de session invalide' });
+    }
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        // Sans ce controle, n'importe quel compte connecte pourrait s'attribuer
+        // l'abonnement paye par quelqu'un d'autre en rejouant son identifiant de session.
+        if (String(session.client_reference_id) !== String(req.user.id)) {
+            return res.status(403).json({ message: 'Cette session de paiement ne vous appartient pas' });
+        }
+
+        if (session.status !== 'complete' || session.payment_status !== 'paid') {
+            return res.status(409).json({ message: 'Paiement non finalise', status: session.payment_status });
+        }
+
+        const plan = await applyCheckoutSession(session);
+
+        if (!plan) {
+            return res.status(422).json({ message: 'Session de paiement incomplete' });
+        }
+
+        res.json({ plan });
+    } catch (error) {
+        console.error('❌ Erreur lors de la confirmation de la session Stripe:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la confirmation du paiement' });
     }
 });
 

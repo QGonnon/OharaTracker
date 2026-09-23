@@ -69,14 +69,6 @@ async function findClientIdByCustomerId(customerId) {
     return rows[0]?.id ?? null;
 }
 
-export {
-    getBillingProfile,
-    getSubscriptionIdByName,
-    setClientSubscription,
-    downgradeBySubscriptionId,
-    findClientIdByCustomerId,
-};
-
 // Applique un plan à partir de l'identifiant d'abonnement Stripe (webhook
 // customer.subscription.updated : on ne connaît que l'abonnement, pas le client).
 async function setPlanBySubscriptionId(stripeSubscriptionId, idSubscription) {
@@ -87,4 +79,43 @@ async function setPlanBySubscriptionId(stripeSubscriptionId, idSubscription) {
     );
 }
 
-export { setPlanBySubscriptionId };
+// Correspondance entre le plan porté par la session Stripe et le nom en base.
+const PLAN_SUBSCRIPTION_NAMES = { lite: 'Lite', pro: 'Pro' };
+const FREE_SUBSCRIPTION_NAME = 'Free';
+
+/**
+ * Applique une session de paiement terminée au compte qu'elle désigne.
+ *
+ * Partagé par deux chemins : le webhook `checkout.session.completed`, et la
+ * confirmation au retour du client. Un seul endroit décide donc de ce qu'une
+ * session veut dire — sinon les deux finiraient par diverger.
+ *
+ * Idempotent : rejouer la même session réécrit les mêmes valeurs.
+ * Renvoie le nom de l'offre appliquée, ou null si la session ne désigne rien.
+ */
+async function applyCheckoutSession(session) {
+    const clientId = Number(session?.client_reference_id);
+    const subscriptionName = PLAN_SUBSCRIPTION_NAMES[session?.metadata?.plan];
+
+    if (!Number.isInteger(clientId) || !subscriptionName) return null;
+
+    await setClientSubscription(clientId, {
+        subscriptionId: session.subscription,
+        customerId: session.customer,
+        idSubscription: await getSubscriptionIdByName(subscriptionName),
+    });
+
+    return subscriptionName;
+}
+
+export {
+    getBillingProfile,
+    getSubscriptionIdByName,
+    setClientSubscription,
+    setPlanBySubscriptionId,
+    downgradeBySubscriptionId,
+    findClientIdByCustomerId,
+    applyCheckoutSession,
+    PLAN_SUBSCRIPTION_NAMES,
+    FREE_SUBSCRIPTION_NAME,
+};
