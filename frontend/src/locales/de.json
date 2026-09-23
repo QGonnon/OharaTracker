@@ -505,7 +505,7 @@
       "partner_cta": "Kontaktiere uns",
       "faq_teaser": "Fragen zu den Angeboten oder zur Abrechnung?",
       "checkout_pending": "Zahlung bestätigt. Ihr Tarif wird aktiviert…",
-      "checkout_slow": "Ihre Zahlung ist eingegangen, Ihr Tarif ist aber noch nicht aktiv. Es kann einen Moment dauern — laden Sie die Seite neu. Ändert sich nichts, melden Sie sich bei uns."
+      "checkout_slow": "Ihre Zahlung ist eingegangen, Ihr Tarif ist aber noch nicht aktiv. Es kann einen Moment dauern. Laden Sie die Seite neu; ändert sich nichts, melden Sie sich bei uns."
     },
     "blog": {
       "label": "Blog",
@@ -623,7 +623,7 @@
   },
   "seo": {
     "home": {
-      "title": "Manga, Manhwa und Anime verfolgen — alles an einem Ort",
+      "title": "Manga, Manhwa und Anime verfolgen, alles an einem Ort",
       "description": "Verfolge deine Manga, Manhwa, Manhua und Anime in einer einzigen Bibliothek. Benachrichtigungen zu neuen Kapiteln, synchronisierter Fortschritt und Entdeckungen. Kostenlos."
     },
     "discovery": {
@@ -635,11 +635,11 @@
       "description": "Durchsuche Tausende Manga, Manhwa, Manhua, Anime und asiatische Filme. Finde eine Serie nach Titel, Genre oder Thema und verfolge ihre Veröffentlichungen."
     },
     "pricing": {
-      "title": "Preise — Gratis, Perso und Pro",
+      "title": "Preise: Gratis, Lite und Pro",
       "description": "Ohara Tracker ist kostenlos. Die Tarife Perso und Pro bieten zusätzlich gespeicherte Filter, bevorzugte Benachrichtigungen und ein anpassbares Dashboard."
     },
     "blog": {
-      "title": "Blog — Manga- und Anime-News",
+      "title": "Blog: Manga- und Anime-News",
       "description": "News zu Manga- und Anime-Veröffentlichungen, Anleitungen zum Lese-Tracking und Neuigkeiten zu Ohara Tracker."
     },
     "status": {
@@ -717,7 +717,7 @@
       "catalog": "Katalog"
     },
     "faq": {
-      "title": "FAQ — häufige Fragen zu Ohara Tracker",
+      "title": "FAQ: häufige Fragen zu Ohara Tracker",
       "description": "Wie du deine Manga und Anime verfolgst, dein Abo verwaltest und Veröffentlichungsbenachrichtigungen aktivierst: alle Antworten zu Ohara Tracker."
     }
   },
@@ -743,7 +743,7 @@
     "subject": "Deine {count} Neuerscheinungen der Woche",
     "heading": "Hallo {name},",
     "intro": "{count} Titel, denen du folgst, haben diese Woche Neues veröffentlicht.",
-    "item_detail": "{count} neue Veröffentlichung(en) — zuletzt: {chapter}",
+    "item_detail": "{count} neue Veröffentlichung(en), zuletzt: {chapter}",
     "cta": "Meine Bibliothek öffnen",
     "footer": "Du erhältst diese E-Mail, weil der Wochenbericht in deinem Ohara-Tracker-Konto aktiviert ist."
   },
@@ -824,12 +824,12 @@
     "title": "Community",
     "subtitle": "Folge deinen Freunden und sieh, was sie lesen.",
     "feed": "Aktivitäten",
-    "feed_empty": "Nichts anzuzeigen. Fügen Sie Freunde hinzu, um ihre Aktivität zu sehen — Freunde mit privatem Profil teilen ihre jedoch nicht.",
+    "feed_empty": "Nichts anzuzeigen. Fügen Sie Freunde hinzu, um ihre Aktivität zu sehen. Freunde mit privatem Profil teilen ihre nicht.",
     "loading": "Wird geladen...",
     "find": "Profil suchen",
     "search_placeholder": "Benutzername (mind. 2 Zeichen)",
     "no_result": "Kein öffentliches Profil gefunden.",
-    "private_profile": "Privates Profil — die Aktivität bleibt verborgen",
+    "private_profile": "Privates Profil: die Aktivität bleibt verborgen",
     "add": "Hinzufügen",
     "accept": "Annehmen",
     "decline": "Ablehnen",

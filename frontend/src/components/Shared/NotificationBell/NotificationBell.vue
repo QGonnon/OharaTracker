@@ -21,8 +21,8 @@
 
     <Popover ref="panelRef" class="notification-popover">
       <div class="w-80 max-w-[90vw]">
-        <div class="flex items-center justify-between px-3 py-2 border-b border-gray-100 dark:border-white/10">
-          <span class="font-semibold text-sm text-gray-900 dark:text-white">{{ $t('notifications.title') }}</span>
+        <div class="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-white/10">
+          <span class="font-semibold text-sm text-slate-900 dark:text-white">{{ $t('notifications.title') }}</span>
           <Button
             v-if="unreadCount > 0"
             :label="$t('notifications.mark_all_read')"
@@ -34,35 +34,35 @@
         </div>
 
         <div v-if="loading" class="flex items-center justify-center py-8">
-          <i class="pi pi-spin pi-spinner text-xl text-indigo-500"  aria-hidden="true"/>
+          <i class="pi pi-spin pi-spinner text-xl text-violet-500"  aria-hidden="true"/>
         </div>
 
-        <div v-else-if="recentNotifications.length === 0" class="py-8 text-center text-sm text-gray-600 dark:text-zinc-400">
-          <i class="pi pi-bell-slash text-2xl mb-2 block text-gray-300 dark:text-zinc-400"  aria-hidden="true"/>
+        <div v-else-if="recentNotifications.length === 0" class="py-8 text-center text-sm text-slate-600 dark:text-slate-400">
+          <i class="pi pi-bell-slash text-2xl mb-2 block text-slate-300 dark:text-slate-400"  aria-hidden="true"/>
           {{ $t('notifications.empty') }}
         </div>
 
-        <ul v-else class="max-h-96 overflow-y-auto divide-y divide-gray-100 dark:divide-white/5">
+        <ul v-else class="max-h-96 overflow-y-auto divide-y divide-slate-100 dark:divide-white/5">
           <li
             v-for="n in recentNotifications"
             :key="n.id"
-            :class="{ 'bg-indigo-50/60 dark:bg-indigo-500/5': !n.isRead }"
+            :class="{ 'bg-violet-50/60 dark:bg-violet-500/5': !n.isRead }"
           >
           <button
             type="button"
-            class="w-full text-left flex items-start gap-2 px-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-indigo-600"
+            class="w-full text-left flex items-start gap-2 px-3 py-2.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-violet-600"
             @click="openNotification(n)"
           >
             <span
               aria-hidden="true"
               class="mt-1.5 w-2 h-2 rounded-full flex-shrink-0"
-              :class="n.isRead ? 'bg-transparent' : 'bg-indigo-500'"
+              :class="n.isRead ? 'bg-transparent' : 'bg-violet-500'"
             />
             <div class="min-w-0">
-              <p class="text-sm text-gray-800 dark:text-zinc-200 line-clamp-2" :class="{ 'font-semibold': !n.isRead }">
+              <p class="text-sm text-slate-800 dark:text-slate-200 line-clamp-2" :class="{ 'font-semibold': !n.isRead }">
                 {{ messageFor(n) }}
               </p>
-              <time :datetime="n.createdAt" class="text-xs text-gray-600 dark:text-zinc-400">
+              <time :datetime="n.createdAt" class="text-xs text-slate-600 dark:text-slate-400">
                 {{ new Date(n.createdAt).toLocaleString($i18n.locale) }}
               </time>
             </div>
@@ -70,7 +70,7 @@
           </li>
         </ul>
 
-        <div class="px-3 py-2 border-t border-gray-100 dark:border-white/10 text-center">
+        <div class="px-3 py-2 border-t border-slate-100 dark:border-white/10 text-center">
           <Button :label="$t('notifications.see_all')" text size="small" class="!text-xs w-full" @click="goToAll" />
         </div>
       </div>

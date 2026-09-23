@@ -99,7 +99,7 @@ export default defineComponent({
     /**
      * Changer de langue = changer d'URL. Le router applique ensuite la nouvelle
      * langue (et la mémorise), donc l'URL, le contenu et le `<html lang>` restent
-     * toujours cohérents — condition nécessaire pour que les hreflang soient valides.
+     * toujours cohérents, condition nécessaire pour que les hreflang soient valides.
      */
     const selectLang = (code: SupportedLocale) => {
       langDropdownOpen.value = false

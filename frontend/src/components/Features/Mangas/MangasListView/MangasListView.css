@@ -102,7 +102,7 @@
 }
 
 .manga-dot.completed {
-    background-color: #6366f1;
+    background-color: #8b5cf6;
 }
 
 .manga-dot.hiatus {
@@ -140,7 +140,7 @@
 }
 
 .status-badge.completed {
-    background-color: #6366f1;
+    background-color: #8b5cf6;
     color: white;
 }
 
@@ -209,7 +209,7 @@
     filter: hue-rotate(120deg);
 }
 
-/* Filter transition — list view fade */
+/* Filter transition: list view fade */
 .filter-fade-enter-active {
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
@@ -225,7 +225,7 @@
     transform: translateY(-4px);
 }
 
-/* Filter transition — grid view stagger */
+/* Filter transition: grid view stagger */
 .filter-grid-enter-active {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }

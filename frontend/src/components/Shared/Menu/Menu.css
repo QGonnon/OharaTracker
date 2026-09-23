@@ -37,7 +37,7 @@
 
 /* Sélecteur sur la classe, pas <h1> : évitait un second titre de niveau 1 par page. */
 .layout-topbar .topbar-logo a {
-	background: linear-gradient(270deg, #4f46e5, #6366f1, #4338ca, #4f46e5);
+	background: linear-gradient(270deg, #7c3aed, #8b5cf6, #6d28d9, #7c3aed);
 	background-size: 300% 300%;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -59,11 +59,11 @@
 
 .nav-link--active {
 	position: relative;
-	color: #4f46e5;
+	color: #7c3aed;
 }
 
 .dark-theme .nav-link--active {
-	color: #818cf8;
+	color: #a78bfa;
 }
 
 .nav-link--active::after {
@@ -74,7 +74,7 @@
 	width: 55%;
 	height: 2px;
 	border-radius: 9999px;
-	background: linear-gradient(90deg, #4f46e5, #818cf8);
+	background: linear-gradient(90deg, #7c3aed, #a78bfa);
 	animation: underlinePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
@@ -95,9 +95,9 @@
 }
 
 .nav-theme-toggle:hover {
-	background: rgba(79, 70, 229, 0.08);
-	border-color: #4f46e5;
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.08);
+	border-color: #7c3aed;
+	color: #7c3aed;
 }
 
 .dark-theme .nav-theme-toggle {
@@ -105,9 +105,9 @@
 }
 
 .dark-theme .nav-theme-toggle:hover {
-	background: rgba(129, 140, 248, 0.12);
-	border-color: #818cf8;
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.12);
+	border-color: #a78bfa;
+	color: #a78bfa;
 }
 
 .nav-lang-wrapper {
@@ -130,9 +130,9 @@
 }
 
 .nav-lang-trigger:hover {
-	background: rgba(79, 70, 229, 0.08);
-	border-color: #4f46e5;
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.08);
+	border-color: #7c3aed;
+	color: #7c3aed;
 }
 
 .dark-theme .nav-lang-trigger {
@@ -140,9 +140,9 @@
 }
 
 .dark-theme .nav-lang-trigger:hover {
-	background: rgba(129, 140, 248, 0.12);
-	border-color: #818cf8;
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.12);
+	border-color: #a78bfa;
+	color: #a78bfa;
 }
 
 .nav-lang-code {
@@ -206,24 +206,24 @@
 }
 
 .nav-lang-option:hover {
-	background: rgba(79, 70, 229, 0.07);
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.07);
+	color: #7c3aed;
 }
 
 .dark-theme .nav-lang-option:hover {
-	background: rgba(129, 140, 248, 0.1);
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.1);
+	color: #a78bfa;
 }
 
 .nav-lang-option--active {
-	background: rgba(79, 70, 229, 0.08);
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.08);
+	color: #7c3aed;
 	font-weight: 600;
 }
 
 .dark-theme .nav-lang-option--active {
-	background: rgba(129, 140, 248, 0.12);
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.12);
+	color: #a78bfa;
 }
 
 .nav-lang-option-label {
@@ -293,27 +293,27 @@
 }
 
 .nav-lang-mobile-btn:hover {
-	background: rgba(79, 70, 229, 0.07);
-	border-color: #4f46e5;
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.07);
+	border-color: #7c3aed;
+	color: #7c3aed;
 }
 
 .dark-theme .nav-lang-mobile-btn:hover {
-	background: rgba(129, 140, 248, 0.1);
-	border-color: #818cf8;
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.1);
+	border-color: #a78bfa;
+	color: #a78bfa;
 }
 
 .nav-lang-mobile-btn--active {
-	background: rgba(79, 70, 229, 0.1);
-	border-color: #4f46e5;
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.1);
+	border-color: #7c3aed;
+	color: #7c3aed;
 }
 
 .dark-theme .nav-lang-mobile-btn--active {
-	background: rgba(129, 140, 248, 0.15);
-	border-color: #818cf8;
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.15);
+	border-color: #a78bfa;
+	color: #a78bfa;
 }
 
 .mobile-drawer .p-drawer {

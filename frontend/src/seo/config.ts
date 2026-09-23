@@ -34,7 +34,7 @@ export const SITE_URL: string = (
 
 export const SITE_NAME = 'Ohara Tracker'
 
-/** Compte Twitter/X officiel — `null` tant qu'il n'existe pas (mieux que pointer un handle bidon). */
+/** Compte Twitter/X officiel, `null` tant qu'il n'existe pas (mieux que pointer un handle bidon). */
 export const TWITTER_HANDLE: string | null = null
 
 export const SOCIAL_PROFILES = ['https://discord.gg/DfsFuSdDp']

@@ -1,4 +1,4 @@
-// Miroir exact de `frontend/src/utils.ts` — le slug doit être identique côté client et serveur.
+// Miroir exact de `frontend/src/utils.ts`, le slug doit être identique côté client et serveur.
 import { TRANSLITERATIONS } from './transliterations.js';
 
 /** Ancien slug : supprimait tout caractère non-ASCII. Conservé pour résoudre les URL déjà partagées. */

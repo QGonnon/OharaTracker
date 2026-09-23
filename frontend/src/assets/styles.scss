@@ -1,19 +1,22 @@
 @use 'primeicons/primeicons.css';
 @use 'layout/layout.scss';
 
+/* Accent de la marque. Ces variables PRIMENT sur le preset PrimeVue defini dans
+   main.ts : tant qu'elles sont la, changer le preset seul n'a aucun effet visible.
+   Les deux doivent donc etre modifies ensemble. Valeurs = palette violet de Tailwind. */
 :root {
-  --p-primary-color: #4f46e5;
-  --p-primary-hover-color: #4338ca;
-  --p-primary-active-color: #3730a3;
+  --p-primary-color: #7c3aed;
+  --p-primary-hover-color: #6d28d9;
+  --p-primary-active-color: #5b21b6;
   --p-primary-contrast-color: #ffffff;
 }
 
 .dark-theme {
-  --p-primary-color: #818cf8;
-  --p-primary-hover-color: #6366f1;
-  --p-primary-active-color: #4f46e5;
-  /* Texte blanc sur cet indigo clair ne donne que 2,98:1 ; sombre remonte à 5,36:1 (AA). */
-  --p-primary-contrast-color: #1e1b4b;
+  --p-primary-color: #a78bfa;
+  --p-primary-hover-color: #8b5cf6;
+  --p-primary-active-color: #7c3aed;
+  /* Texte blanc sur ce violet clair ne donne que 2,72:1 ; sombre remonte à 5,60:1 (AA). */
+  --p-primary-contrast-color: #2e1065;
 }
 
 /* Neutralise les animations sans les supprimer, pour que transitionend continue de se déclencher. */
@@ -35,7 +38,7 @@
 .nav-user-trigger:focus-visible,
 .footer-social-btn:focus-visible,
 .footer-link:focus-visible {
-  outline: 2px solid #4338ca;
+  outline: 2px solid #6d28d9;
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -48,7 +51,7 @@
   .nav-user-trigger:focus-visible,
   .footer-social-btn:focus-visible,
   .footer-link:focus-visible {
-    outline-color: #a5b4fc;
+    outline-color: #c4b5fd;
   }
 }
 

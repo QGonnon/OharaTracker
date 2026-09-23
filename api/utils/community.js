@@ -28,7 +28,7 @@ async function recordActivity(username, idLibrary, type, detail = null) {
 
 // Un profil privé reste trouvable et peut recevoir une demande d'ami : c'est son
 // activité qui est masquée, pas son existence. Sans cela le bouton « Ajouter »
-// n'était jamais atteignable pour ces comptes — et `is_public` vaut false par défaut.
+// n'était jamais atteignable pour ces comptes, et `is_public` vaut false par défaut.
 async function searchProfiles(query, viewer) {
     const term = String(query ?? '').trim();
     if (term.length < 2) return [];

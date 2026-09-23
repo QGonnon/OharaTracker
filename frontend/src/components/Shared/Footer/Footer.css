@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════
-   FOOTER — layout & theming
+   FOOTER : layout & theming
    (extends .layout-footer defined in assets/layout/_footer.scss)
    ══════════════════════════════════════════════════ */
 
@@ -13,7 +13,7 @@
 
 .footer-logo {
 	/* #c4b5fd retiré du dégradé : son contraste tombait à 1,85:1 sur fond blanc. */
-	background: linear-gradient(270deg, #4f46e5, #6366f1, #4338ca, #4f46e5);
+	background: linear-gradient(270deg, #7c3aed, #8b5cf6, #6d28d9, #7c3aed);
 	background-size: 300% 300%;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -53,7 +53,7 @@
 }
 
 .footer-link:hover {
-	color: #4f46e5;
+	color: #7c3aed;
 }
 
 .dark-theme .footer-link {
@@ -61,7 +61,7 @@
 }
 
 .dark-theme .footer-link:hover {
-	color: #818cf8;
+	color: #a78bfa;
 }
 
 .footer-social-btn {
@@ -76,9 +76,9 @@
 }
 
 .footer-social-btn:hover {
-	background: rgba(79, 70, 229, 0.08);
-	border-color: #4f46e5;
-	color: #4f46e5;
+	background: rgba(124, 58, 237, 0.08);
+	border-color: #7c3aed;
+	color: #7c3aed;
 }
 
 .dark-theme .footer-social-btn {
@@ -87,9 +87,9 @@
 }
 
 .dark-theme .footer-social-btn:hover {
-	background: rgba(129, 140, 248, 0.12);
-	border-color: #818cf8;
-	color: #818cf8;
+	background: rgba(167, 139, 250, 0.12);
+	border-color: #a78bfa;
+	color: #a78bfa;
 }
 
 .footer-bottom {

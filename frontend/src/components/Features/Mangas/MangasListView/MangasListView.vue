@@ -11,8 +11,8 @@
                 </div>
 
                 <div v-if="clientInfo" class="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                        <i class="pi pi-user text-indigo-600 dark:text-indigo-400 text-lg" aria-hidden="true"></i>
+                    <div class="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center">
+                        <i class="pi pi-user text-violet-600 dark:text-violet-400 text-lg" aria-hidden="true"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="font-semibold text-slate-900 dark:text-white text-sm">{{ clientInfo.clientName }}</span>
@@ -26,7 +26,7 @@
 
             <!-- Loading State -->
             <div v-if="loading" role="status" aria-live="polite" class="flex flex-col items-center justify-center py-20">
-                <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4" aria-hidden="true"></i>
+                <i class="pi pi-spin pi-spinner text-4xl text-violet-600 mb-4" aria-hidden="true"></i>
                 <p class="text-lg text-slate-600 dark:text-slate-400">{{ $t('library.loading') }}</p>
             </div>
 
@@ -192,7 +192,7 @@
                                 <template #body="{ data }">
                                     <button
                                         type="button"
-                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                        class="text-violet-600 dark:text-violet-400 hover:underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
                                         @click="navigateToInfo(data)"
                                     >
                                         {{ data.title }}
@@ -219,7 +219,7 @@
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
                                         text
-                                        class="text-indigo-600 dark:text-indigo-400"
+                                        class="text-violet-600 dark:text-violet-400"
                                     />
                                 </template>
                             </Column>
@@ -233,7 +233,7 @@
                                         icon="pi pi-arrow-up-right"
                                         iconPos="right"
                                         text
-                                        class="text-indigo-600 dark:text-indigo-400"
+                                        class="text-violet-600 dark:text-violet-400"
                                     />
                                 </template>
                             </Column>
@@ -256,7 +256,7 @@
                                     <span v-if="data.score != null" class="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-medium text-sm tabular-nums">
                                         <i class="pi pi-star-fill text-xs" aria-hidden="true"></i>{{ $t('rating.value', { score: formatScore(data.score), max: scoreMax }) }}
                                     </span>
-                                    <span v-else class="text-sm text-slate-400 dark:text-slate-500">—</span>
+                                    <span v-else class="text-sm text-slate-500 dark:text-slate-400">{{ $t('manga.not_available') }}</span>
                                 </template>
                             </Column>
 
@@ -303,7 +303,7 @@
                     <div
                         v-for="manga in displayedMangas"
                         :key="manga.id"
-                        class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        class="manga-card bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
                         role="link"
                         tabindex="0"
                         @click="navigateToInfo(manga)"
@@ -326,17 +326,17 @@
                             icon="pi pi-pencil"
                             rounded
                             text
-                            class="!absolute top-2 left-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-2"
+                            class="!absolute top-2 left-2 bg-violet-600 hover:bg-violet-700 text-white rounded-full p-2"
                             @click.stop="openEdit(manga)"
                             v-tooltip="$t('library.edit')"
                             :aria-label="$t('library.edit_item', { title: manga.title })"
                         />
 
                         <div class="p-4">
-                            <h2 class="font-semibold text-gray-900 dark:text-white line-clamp-2">
+                            <h2 class="font-semibold text-slate-900 dark:text-white line-clamp-2">
                                 {{ manga.title }}
                             </h2>
-                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-600 mt-1">
+                            <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400 mt-1">
                                 <span class="flex items-center" v-if="manga.userLastChapter || manga.lastChapter">
                                     <i class="pi pi-book mr-1" aria-hidden="true"></i>
                                     Ch. {{ manga.userLastChapter || manga.lastChapter }}

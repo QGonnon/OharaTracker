@@ -7,16 +7,16 @@
       <header class="flex items-center gap-4 mb-8">
         <img v-if="avatarUrl" :src="avatarUrl" alt=""
              class="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-sm" />
-        <div v-else class="w-16 h-16 rounded-full bg-indigo-500 text-white grid place-items-center text-2xl font-bold select-none">
+        <div v-else class="w-16 h-16 rounded-full bg-violet-500 text-white grid place-items-center text-2xl font-bold select-none">
           {{ userInitial }}
         </div>
         <div class="min-w-0">
           <h1 class="text-2xl font-bold text-slate-900 dark:text-white truncate">
-            {{ currentUser?.username }}<span class="text-slate-400 dark:text-slate-500 font-normal">#{{ currentUser?.code }}</span>
+            {{ currentUser?.username }}<span class="text-slate-500 dark:text-slate-400 font-normal">#{{ currentUser?.code }}</span>
           </h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 truncate">{{ currentUser?.email }}</p>
         </div>
-        <span class="ml-auto px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold flex-shrink-0">
+        <span class="ml-auto px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 text-sm font-semibold flex-shrink-0">
           {{ subscriptionName }}
         </span>
       </header>
@@ -40,12 +40,12 @@
               <div>
                 <label for="p-email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('profile.email') }}</label>
                 <input id="p-email" v-model="profileForm.email" type="email" :disabled="isGoogleUser" :placeholder="$t('profile.email_placeholder')"
-                       class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed" />
+                       class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed" />
               </div>
               <p v-if="profileSuccess" role="status" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">{{ profileSuccess }}</p>
               <p v-if="profileError" role="alert" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">{{ profileError }}</p>
               <div class="flex justify-end">
-                <button type="submit" :disabled="profileLoading" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 transition">
+                <button type="submit" :disabled="profileLoading" class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 transition">
                   {{ profileLoading ? $t('profile.saving') : $t('profile.save') }}
                 </button>
               </div>
@@ -85,7 +85,7 @@
               <p v-if="passwordSuccess" role="status" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">{{ passwordSuccess }}</p>
               <p v-if="passwordError" role="alert" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">{{ passwordError }}</p>
               <div class="flex justify-end">
-                <button type="submit" :disabled="passwordLoading" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 transition">
+                <button type="submit" :disabled="passwordLoading" class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 transition">
                   {{ passwordLoading ? $t('profile.changing') : $t('profile.change_password') }}
                 </button>
               </div>
@@ -108,11 +108,11 @@
 
             <form v-else class="px-6 py-6 space-y-5" @submit.prevent="saveAppearance">
               <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600">
-                <div class="h-24 bg-gradient-to-r from-violet-500 to-indigo-600 bg-cover bg-center"
+                <div class="h-24 bg-gradient-to-r from-violet-500 to-violet-600 bg-cover bg-center"
                      :style="bannerUrl ? { backgroundImage: `url(${bannerUrl})` } : {}"></div>
                 <div class="flex items-center gap-3 px-4 py-3 -mt-8">
                   <img v-if="avatarUrl" :src="avatarUrl" alt="" class="w-16 h-16 rounded-full object-cover border-4 border-white dark:border-slate-800" />
-                  <div v-else class="w-16 h-16 rounded-full bg-indigo-500 text-white grid place-items-center text-2xl font-bold border-4 border-white dark:border-slate-800">{{ userInitial }}</div>
+                  <div v-else class="w-16 h-16 rounded-full bg-violet-500 text-white grid place-items-center text-2xl font-bold border-4 border-white dark:border-slate-800">{{ userInitial }}</div>
                 </div>
               </div>
               <div>
@@ -135,7 +135,7 @@
               <p v-if="appearanceSuccess" role="status" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">{{ appearanceSuccess }}</p>
               <p v-if="appearanceError" role="alert" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">{{ appearanceError }}</p>
               <div class="flex justify-end">
-                <button type="submit" :disabled="appearanceLoading" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 transition">
+                <button type="submit" :disabled="appearanceLoading" class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 transition">
                   {{ appearanceLoading ? $t('profile.saving') : $t('profile.save') }}
                 </button>
               </div>
@@ -175,7 +175,7 @@
                     {{ $t('profile.weekly_digest') }}
                     <span class="block font-normal text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('profile.weekly_digest_desc') }}</span>
                   </label>
-                  <input id="p-digest" v-model="emailDigestEnabled" type="checkbox" class="h-5 w-5 flex-shrink-0 accent-indigo-600 cursor-pointer mt-1" />
+                  <input id="p-digest" v-model="emailDigestEnabled" type="checkbox" class="h-5 w-5 flex-shrink-0 accent-violet-600 cursor-pointer mt-1" />
                 </div>
 
                 <div>
@@ -184,7 +184,7 @@
                     <span v-if="!canChooseDigestDay" class="ml-2 px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 text-xs font-semibold">Pro</span>
                   </label>
                   <select id="p-day" v-model.number="emailDigestDay" :disabled="!canChooseDigestDay || !emailDigestEnabled"
-                          class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed">
+                          class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed">
                     <option :value="0">{{ $t('profile.days.sunday') }}</option>
                     <option :value="1">{{ $t('profile.days.monday') }}</option>
                     <option :value="2">{{ $t('profile.days.tuesday') }}</option>
@@ -199,7 +199,7 @@
                 <p v-if="preferencesSuccess" role="status" class="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">{{ preferencesSuccess }}</p>
                 <p v-if="preferencesError" role="alert" class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">{{ preferencesError }}</p>
                 <div class="flex justify-end">
-                  <button type="submit" :disabled="preferencesLoading" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 transition">
+                  <button type="submit" :disabled="preferencesLoading" class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 transition">
                     {{ preferencesLoading ? $t('profile.saving') : $t('profile.save') }}
                   </button>
                 </div>
@@ -248,17 +248,17 @@
             <div class="px-6 py-6 space-y-5">
               <div class="flex items-center justify-between">
                 <span class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.current_plan') }}</span>
-                <span class="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold">{{ subscriptionName }}</span>
+                <span class="px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 text-sm font-semibold">{{ subscriptionName }}</span>
               </div>
 
               <!-- Ce que l'offre inclut réellement -->
               <ul v-if="features" class="grid sm:grid-cols-2 gap-x-6 gap-y-2">
                 <li v-for="item in features.content" :key="item.key" class="flex items-center gap-2 text-sm">
                   <i class="pi text-xs flex-shrink-0" :class="item.included ? 'pi-check text-green-600 dark:text-green-400' : 'pi-minus text-slate-300 dark:text-slate-600'" aria-hidden="true"></i>
-                  <span :class="item.included ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'">
+                  <span :class="item.included ? 'text-slate-700 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400'">
                     {{ $t(`profile.plan_item.${item.key}`) }}
                     <template v-if="item.kind === 'quota' && item.included">
-                      — {{ item.value === null ? $t('profile.unlimited') : item.value }}
+                      : {{ item.value === null ? $t('profile.unlimited') : item.value }}
                     </template>
                   </span>
                 </li>
@@ -269,13 +269,13 @@
               <div v-if="hasActiveStripeSubscription" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                 <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.manage_subscription_desc') }}</p>
                 <button :disabled="portalLoading" @click="toStripePortalManageSubscription"
-                        class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 transition flex-shrink-0">
+                        class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 transition flex-shrink-0">
                   {{ portalLoading ? $t('profile.opening_portal') : $t('profile.manage_subscription') }}
                 </button>
               </div>
               <div v-else class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                 <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('profile.no_subscription') }}</p>
-                <RouterLink :to="pricingLink" class="inline-block px-6 py-2.5 rounded-xl border border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 font-semibold text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex-shrink-0">
+                <RouterLink :to="pricingLink" class="inline-block px-6 py-2.5 rounded-xl border border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400 font-semibold text-sm hover:bg-violet-50 dark:hover:bg-violet-900/30 transition flex-shrink-0">
                   {{ $t('profile.view_plans') }}
                 </RouterLink>
               </div>
@@ -329,7 +329,7 @@
               <button type="button" @click="goToSection(id)"
                       class="w-full text-left whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition border-l-2"
                       :class="activeSection === id
-                        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-indigo-500'
+                        ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border-violet-500'
                         : 'text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800'">
                 {{ $t(`profile.nav.${id}`) }}
               </button>

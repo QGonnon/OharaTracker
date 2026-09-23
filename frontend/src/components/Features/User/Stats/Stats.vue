@@ -29,7 +29,7 @@
             <label for="stats-since" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ $t('stats.filter_since') }}</label>
             <input id="stats-since" v-model="filterSince" type="date" class="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2 text-sm" />
           </div>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition">
+          <button type="submit" class="px-5 py-2 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition">
             {{ $t('stats.apply') }}
           </button>
         </form>
@@ -37,20 +37,20 @@
         <!-- Compteurs -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ stats.worksTracked }}</p>
+            <p class="text-3xl font-bold text-violet-600 dark:text-violet-400">{{ stats.worksTracked }}</p>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.works_tracked') }}</p>
           </div>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ stats.chaptersRead }}</p>
+            <p class="text-3xl font-bold text-violet-600 dark:text-violet-400">{{ stats.chaptersRead }}</p>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.chapters_read') }}</p>
           </div>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ stats.episodesWatched }}</p>
+            <p class="text-3xl font-bold text-violet-600 dark:text-violet-400">{{ stats.episodesWatched }}</p>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.episodes_watched') }}</p>
           </div>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-              {{ stats.averageScore === null ? '—' : $t('rating.value', { score: formatScore(stats.averageScore), max: scoreMax }) }}
+            <p class="text-3xl font-bold text-violet-600 dark:text-violet-400">
+              {{ stats.averageScore === null ? $t('manga.not_available') : $t('rating.value', { score: formatScore(stats.averageScore), max: scoreMax }) }}
             </p>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $t('stats.average_score', { n: stats.ratedCount }) }}</p>
           </div>
@@ -83,7 +83,7 @@
           <ol class="space-y-2">
             <li v-for="row in ranking" :key="row.username"
                 class="flex items-center gap-3 px-3 py-2 rounded-xl"
-                :class="row.isMe ? 'bg-indigo-50 dark:bg-indigo-900/30' : ''">
+                :class="row.isMe ? 'bg-violet-50 dark:bg-violet-900/30' : ''">
               <span class="w-6 text-sm font-bold tabular-nums text-slate-500 dark:text-slate-400">{{ row.rank }}</span>
               <span class="flex-1 min-w-0 truncate text-sm" :class="row.isMe ? 'font-bold' : ''">{{ row.username }}</span>
               <span class="text-sm tabular-nums text-slate-600 dark:text-slate-300">{{ row.worksTracked }}</span>
@@ -101,7 +101,7 @@
                 {{ statusKey(row.label) ? $t(`library.status.${statusKey(row.label)}`) : row.label }}
               </span>
               <span class="flex-1 h-2.5 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-                <span class="block h-full rounded-full bg-indigo-500" :style="{ width: ratio(row.count, maxStatus) + '%' }"></span>
+                <span class="block h-full rounded-full bg-violet-500" :style="{ width: ratio(row.count, maxStatus) + '%' }"></span>
               </span>
               <span class="w-10 text-right text-sm font-semibold tabular-nums">{{ row.count }}</span>
             </li>
@@ -131,11 +131,11 @@
               <div v-for="row in stats.advanced.monthlyActivity" :key="row.month" class="flex flex-col items-center gap-1 flex-1 min-w-[38px]">
                 <span class="text-xs text-slate-500 dark:text-slate-400 tabular-nums">{{ row.count }}</span>
                 <span
-                  class="w-full rounded-t bg-indigo-500/80"
+                  class="w-full rounded-t bg-violet-500/80"
                   :style="{ height: Math.max(4, ratio(row.count, maxMonth)) + '%' }"
                   :title="`${row.month}: ${row.count}`"
                 ></span>
-                <span class="text-[10px] text-slate-400 dark:text-slate-500">{{ row.month.slice(2) }}</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400">{{ row.month.slice(2) }}</span>
               </div>
             </div>
           </section>

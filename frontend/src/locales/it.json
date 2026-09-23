@@ -623,7 +623,7 @@
   },
   "seo": {
     "home": {
-      "title": "Segui manga, manhwa e anime — tutto in un unico posto",
+      "title": "Segui manga, manhwa e anime, tutto in un unico posto",
       "description": "Segui i tuoi manga, manhwa, manhua e anime in un’unica libreria. Notifiche di uscita dei capitoli, progressi sincronizzati e scoperte. Gratis."
     },
     "discovery": {
@@ -635,11 +635,11 @@
       "description": "Cerca tra migliaia di manga, manhwa, manhua, anime e film asiatici. Trova una serie per titolo, genere o tema e segui le sue uscite."
     },
     "pricing": {
-      "title": "Prezzi — piani Gratis, Perso e Pro",
+      "title": "Prezzi: piani Gratis, Lite e Pro",
       "description": "Ohara Tracker è gratuito per seguire le tue letture. I piani Perso e Pro aggiungono filtri salvati, notifiche prioritarie e dashboard personalizzabile."
     },
     "blog": {
-      "title": "Blog — notizie su manga e anime",
+      "title": "Blog: notizie su manga e anime",
       "description": "Notizie sulle uscite di manga e anime, guide al tracciamento delle letture e novità di Ohara Tracker."
     },
     "status": {
@@ -717,7 +717,7 @@
       "catalog": "Catalogo"
     },
     "faq": {
-      "title": "FAQ — domande frequenti su Ohara Tracker",
+      "title": "FAQ: domande frequenti su Ohara Tracker",
       "description": "Come seguire i tuoi manga e anime, gestire il tuo abbonamento, attivare le notifiche di uscita: tutte le risposte su Ohara Tracker."
     }
   },
@@ -743,7 +743,7 @@
     "subject": "Le tue {count} novità della settimana",
     "heading": "Ciao {name},",
     "intro": "{count} opere che segui hanno pubblicato novità questa settimana.",
-    "item_detail": "{count} nuova/e uscita/e — ultima: {chapter}",
+    "item_detail": "{count} nuova/e uscita/e, ultima: {chapter}",
     "cta": "Apri la mia biblioteca",
     "footer": "Ricevi questa e-mail perché il rapporto settimanale è attivo sul tuo account Ohara Tracker."
   },
@@ -824,12 +824,12 @@
     "title": "Comunità",
     "subtitle": "Segui i tuoi amici e scopri cosa leggono.",
     "feed": "Attività",
-    "feed_empty": "Niente da mostrare. Aggiungi amici per vedere la loro attività — gli amici con profilo privato non condividono la propria.",
+    "feed_empty": "Niente da mostrare. Aggiungi amici per vedere la loro attività. Gli amici con profilo privato non condividono la propria.",
     "loading": "Caricamento...",
     "find": "Trova un profilo",
     "search_placeholder": "Nome utente (min. 2 caratteri)",
     "no_result": "Nessun profilo pubblico trovato.",
-    "private_profile": "Profilo privato — la sua attività resta nascosta",
+    "private_profile": "Profilo privato: la sua attività resta nascosta",
     "add": "Aggiungi",
     "accept": "Accetta",
     "decline": "Rifiuta",

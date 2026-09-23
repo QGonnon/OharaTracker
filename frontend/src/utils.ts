@@ -50,7 +50,7 @@ export function roundScoreToStep(value: number): number {
   return Math.round(clamped / SCORE_STEP) * SCORE_STEP
 }
 
-/** « 4 », « 3,5 » — sans décimale inutile, dans la langue de l'interface. */
+/** « 4 », « 3,5 », sans décimale inutile, dans la langue de l'interface. */
 export function formatScore(value: number | string | null | undefined, locale = 'fr'): string {
   if (value === null || value === undefined || value === '') return ''
   const n = Number(value)

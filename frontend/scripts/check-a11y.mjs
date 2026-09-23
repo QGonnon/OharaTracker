@@ -74,13 +74,31 @@ for (const file of walk(SRC)) {
   }
 
   // 7. Couleurs à contraste connu insuffisant.
-  const WEAK = ['text-gray-400', 'dark:text-zinc-500', 'dark:text-zinc-600',
-    'placeholder-slate-400', 'text-orange-500', 'text-amber-500', 'text-blue-500']
-  for (const cls of WEAK) {
-    const idx = source.indexOf(cls)
-    if (idx !== -1) {
-      report(file, lineOf(source, idx), 'contraste insuffisant',
-        `${cls} est sous 4,5:1 — utiliser la nuance 600/700`)
+  //
+  // La nuance 400 passe sur fond sombre et échoue sur fond clair : la règle doit
+  // donc distinguer `dark:text-slate-400` (correct) de `text-slate-400` (2,8:1 sur
+  // blanc). D'où des expressions plutôt que de simples sous-chaînes, et un
+  // signalement de TOUTES les occurrences, pas seulement de la première.
+  //
+  // Les familles gray et zinc ne sont plus utilisées par le projet, mais restent
+  // surveillées : les réintroduire ramènerait le problème sans prévenir.
+  const WEAK = [
+    { motif: /(?<!dark:)\btext-(?:slate|gray|zinc|neutral)-400\b/g, note: 'sous 4,5:1 sur fond clair, passer en 500 ou 600' },
+    { motif: /(?<!dark:)\btext-(?:slate|gray|zinc|neutral)-300\b/g, note: 'sous 4,5:1 sur fond clair, passer en 500 ou 600' },
+    { motif: /\bdark:text-(?:slate|gray|zinc|neutral)-(?:500|600)\b/g, note: 'trop sombre sur fond sombre, passer en 300 ou 400' },
+    { motif: /\bplaceholder-(?:slate|gray|zinc)-400\b/g, note: 'placeholder illisible, passer en 500' },
+    { motif: /\btext-(?:orange|amber|blue)-500\b/g, note: 'sous 4,5:1, passer en 600 ou 700' },
+  ]
+
+  for (const { motif, note } of WEAK) {
+    for (const m of source.matchAll(motif)) {
+      // Un glyphe décoratif (aria-hidden) ne porte aucune information : WCAG 1.4.3
+      // ne lui impose pas de contraste. C'est le cas de l'étoile vide d'une note
+      // ou du tiret d'une option non incluse, qui doivent justement rester pâles.
+      const ligne = source.slice(source.lastIndexOf('\n', m.index) + 1, source.indexOf('\n', m.index))
+      if (ligne.includes('aria-hidden')) continue
+
+      report(file, lineOf(source, m.index), 'contraste insuffisant', `${m[0]} : ${note}`)
     }
   }
 }

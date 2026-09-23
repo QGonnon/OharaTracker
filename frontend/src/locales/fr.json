@@ -623,7 +623,7 @@
   },
   "seo": {
     "home": {
-      "title": "Suivi de mangas, manhwas et animés — tout au même endroit",
+      "title": "Suivi de mangas, manhwas et animés, tout au même endroit",
       "description": "Suivez vos mangas, manhwas, manhuas et animés dans une seule bibliothèque. Notifications de sortie de chapitre, progression synchronisée et découverte. Gratuit."
     },
     "discovery": {
@@ -635,11 +635,11 @@
       "description": "Recherchez parmi des milliers de mangas, manhwas, manhuas, animés et films asiatiques. Trouvez une série par titre, genre ou thème et suivez ses sorties."
     },
     "pricing": {
-      "title": "Tarifs — offres gratuite, Perso et Pro",
+      "title": "Tarifs : offres gratuite, Lite et Pro",
       "description": "Ohara Tracker est gratuit pour suivre vos lectures. Les offres Perso et Pro ajoutent filtres sauvegardés, notifications prioritaires et tableau de bord personnalisable."
     },
     "blog": {
-      "title": "Blog — actualités mangas, animés et nouveautés",
+      "title": "Blog : actualités mangas, animés et nouveautés",
       "description": "Actualités des sorties manga et animé, guides de suivi de lecture et nouveautés d'Ohara Tracker, en français."
     },
     "status": {
@@ -717,7 +717,7 @@
       "catalog": "Catalogue"
     },
     "faq": {
-      "title": "FAQ — questions fréquentes sur Ohara Tracker",
+      "title": "FAQ : questions fréquentes sur Ohara Tracker",
       "description": "Comment suivre vos mangas et animés, gérer votre abonnement, activer les notifications de sortie : toutes les réponses sur Ohara Tracker."
     }
   },
@@ -743,7 +743,7 @@
     "subject": "Vos {count} nouveautés de la semaine",
     "heading": "Bonjour {name},",
     "intro": "{count} œuvre(s) que vous suivez ont publié de nouvelles sorties cette semaine.",
-    "item_detail": "{count} nouvelle(s) sortie(s) — dernière : {chapter}",
+    "item_detail": "{count} nouvelle(s) sortie(s), dernière : {chapter}",
     "cta": "Ouvrir ma bibliothèque",
     "footer": "Vous recevez ce message car le rapport hebdomadaire est activé sur votre compte Ohara Tracker."
   },
@@ -824,12 +824,12 @@
     "title": "Communauté",
     "subtitle": "Suivez vos amis et découvrez ce qu'ils lisent.",
     "feed": "Fil d'actualité",
-    "feed_empty": "Rien à afficher. Ajoutez des amis pour voir leur activité — et notez que les amis au profil privé ne partagent pas la leur.",
+    "feed_empty": "Rien à afficher. Ajoutez des amis pour voir leur activité. Ceux dont le profil est privé ne partagent pas la leur.",
     "loading": "Chargement...",
     "find": "Trouver un profil",
     "search_placeholder": "Pseudo (2 caractères min.)",
     "no_result": "Aucun profil public trouvé.",
-    "private_profile": "Profil privé — son activité restera masquée",
+    "private_profile": "Profil privé : son activité restera masquée",
     "add": "Ajouter",
     "accept": "Accepter",
     "decline": "Refuser",

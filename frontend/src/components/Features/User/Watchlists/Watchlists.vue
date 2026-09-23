@@ -27,13 +27,13 @@
                    class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm" />
           </div>
           <button type="submit" :disabled="creating || quotaReached || !newTitle.trim()"
-                  class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                  class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition">
             {{ creating ? $t('watchlists.creating') : $t('watchlists.add') }}
           </button>
         </form>
         <p v-if="quotaReached" class="text-sm text-slate-500 dark:text-slate-400 mt-3">
           {{ quotas.owned === 0 ? $t('watchlists.quota_none') : $t('watchlists.quota_reached', { n: quotas.owned }) }}
-          <RouterLink :to="pricingLink" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">{{ $t('watchlists.see_plans') }}</RouterLink>
+          <RouterLink :to="pricingLink" class="text-violet-600 dark:text-violet-400 font-semibold hover:underline">{{ $t('watchlists.see_plans') }}</RouterLink>
         </p>
       </section>
 
@@ -51,7 +51,7 @@
               <div class="min-w-0">
                 <h3 class="font-bold text-slate-900 dark:text-white">{{ list.title }}</h3>
                 <p v-if="list.description" class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ list.description }}</p>
-                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   {{ $t('watchlists.works_count', { n: list.works.length }) }} · {{ $t('watchlists.followers', { n: list.followerCount }) }}
                 </p>
               </div>
@@ -94,7 +94,7 @@
             </ul>
             <p v-else class="text-sm text-slate-500 dark:text-slate-400 mt-4">
               {{ $t('watchlists.empty_list') }}
-              <RouterLink :to="libraryLink" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">{{ $t('watchlists.go_library') }}</RouterLink>
+              <RouterLink :to="libraryLink" class="text-violet-600 dark:text-violet-400 font-semibold hover:underline">{{ $t('watchlists.go_library') }}</RouterLink>
             </p>
           </article>
         </section>
@@ -109,7 +109,7 @@
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div class="min-w-0">
                 <h3 class="font-bold text-slate-900 dark:text-white">{{ list.title }}</h3>
-                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   {{ $t('watchlists.by', { name: list.owner }) }} · {{ $t('watchlists.works_count', { n: list.works.length }) }}
                 </p>
               </div>

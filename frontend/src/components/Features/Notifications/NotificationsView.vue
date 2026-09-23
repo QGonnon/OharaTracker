@@ -29,7 +29,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" role="status" aria-live="polite" class="flex flex-col items-center justify-center py-20">
-        <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4" aria-hidden="true"></i>
+        <i class="pi pi-spin pi-spinner text-4xl text-violet-600 mb-4" aria-hidden="true"></i>
         <p class="text-lg text-slate-600 dark:text-slate-400">{{ $t('library.loading') }}</p>
       </div>
 
@@ -60,14 +60,14 @@
           v-for="n in notifications"
           :key="n.id"
           class="cursor-pointer hover:shadow-md transition-shadow"
-          :class="{ 'border-l-4 border-indigo-500': !n.isRead }"
+          :class="{ 'border-l-4 border-violet-500': !n.isRead }"
           @click="openNotification(n)"
         >
           <template #content>
             <div class="flex items-center gap-4">
               <span
                 v-if="isSocialNotification(n)"
-                class="w-12 h-16 rounded-md flex-shrink-0 grid place-items-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                class="w-12 h-16 rounded-md flex-shrink-0 grid place-items-center bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                 <i class="pi pi-user-plus text-lg" aria-hidden="true"></i>
               </span>
               <img
@@ -76,12 +76,12 @@
                 alt=""
                 class="w-12 h-16 object-cover rounded-md flex-shrink-0" width="48" height="64" loading="lazy" decoding="async" />
               <div class="flex-1 min-w-0">
-                <p class="text-sm text-slate-800 dark:text-zinc-200" :class="{ 'font-semibold': !n.isRead }">
+                <p class="text-sm text-slate-800 dark:text-slate-200" :class="{ 'font-semibold': !n.isRead }">
                   {{ messageFor(n) }}
                 </p>
                 <div class="flex items-center gap-2 mt-1">
                   <Tag v-if="!n.isRead" value="•" severity="info" class="!px-1.5 !py-0" />
-                  <span class="text-xs text-slate-400 dark:text-slate-500">{{ new Date(n.createdAt).toLocaleString() }}</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">{{ new Date(n.createdAt).toLocaleString() }}</span>
                 </div>
               </div>
               <Button

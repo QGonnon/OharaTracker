@@ -14,13 +14,13 @@
           <div class="min-w-0">
             <h1 class="text-3xl font-bold text-slate-900 dark:text-white">{{ list.title }}</h1>
             <p v-if="list.description" class="text-slate-500 dark:text-slate-400 mt-1">{{ list.description }}</p>
-            <p class="text-sm text-slate-400 dark:text-slate-500 mt-2">
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
               {{ $t('watchlists.by', { name: list.owner }) }} · {{ $t('watchlists.works_count', { n: list.works.length }) }} · {{ $t('watchlists.followers', { n: list.followerCount }) }}
             </p>
           </div>
 
           <RouterLink v-if="!isLoggedIn" :to="loginLink"
-                      class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition flex-shrink-0">
+                      class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition flex-shrink-0">
             {{ $t('watchlists.login_to_follow') }}
           </RouterLink>
           <RouterLink v-else-if="followed" :to="watchlistsLink"
@@ -28,7 +28,7 @@
             {{ $t('watchlists.now_following') }}
           </RouterLink>
           <button v-else type="button" :disabled="following" @click="follow"
-                  class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-60 transition flex-shrink-0">
+                  class="px-6 py-2.5 rounded-xl bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 disabled:opacity-60 transition flex-shrink-0">
             {{ following ? $t('watchlists.following_in_progress') : $t('watchlists.follow') }}
           </button>
         </header>
@@ -37,7 +37,7 @@
           <li v-for="work in list.works" :key="work.idLibrary">
             <RouterLink :to="workLink(work)" class="block group">
               <img :src="coverUrl(work)" :alt="work.title" loading="lazy"
-                   class="w-full aspect-[2/3] object-cover rounded-xl border border-slate-200 dark:border-slate-700 group-hover:border-indigo-400 transition" />
+                   class="w-full aspect-[2/3] object-cover rounded-xl border border-slate-200 dark:border-slate-700 group-hover:border-violet-400 transition" />
               <span class="block text-sm mt-2 line-clamp-2 text-slate-700 dark:text-slate-300">{{ work.title }}</span>
             </RouterLink>
           </li>

@@ -69,14 +69,14 @@
     "community_text": "Share your profile, compare libraries with friends and see what the community is following right now.",
     "screenshots_label": "Preview",
     "screenshots_heading": "See OharaTracker in action",
-    "screenshots_desc": "A clean interface built for media enthusiasts — manga, anime, series.",
+    "screenshots_desc": "A clean interface built for media enthusiasts: manga, anime, series.",
     "screenshot_library_title": "Library",
     "screenshot_library_desc": "List or cover view, filters, tags, notes and statuses: your collection organized the way you want.",
     "screenshot_tracking_title": "Free & Premium tracking",
     "screenshot_tracking_desc": "Compare features across tiers and upgrade in one click when you're ready.",
     "screenshot_tracking_badge": "Popular",
     "screenshot_profile_title": "User profile",
-    "screenshot_profile_desc": "Your reading history, statistics and recent activity — visible to friends if you choose.",
+    "screenshot_profile_desc": "Your reading history, statistics and recent activity, visible to friends if you choose.",
     "quickstart_label": "Quick start",
     "quickstart_heading": "Up and running in under a minute",
     "steps1_title": "Create your account",
@@ -505,7 +505,7 @@
       "partner_cta": "Contact us",
       "faq_teaser": "Questions about plans or billing?",
       "checkout_pending": "Payment confirmed. Activating your plan…",
-      "checkout_slow": "Your payment went through, but your plan is not active yet. It may take a moment longer — reload the page. If nothing changes, get in touch."
+      "checkout_slow": "Your payment went through, but your plan is not active yet. It may take a moment longer, so try reloading the page. If nothing changes, get in touch."
     },
     "blog": {
       "label": "Blog",
@@ -623,7 +623,7 @@
   },
   "seo": {
     "home": {
-      "title": "Track manga, manhwa and anime — all in one place",
+      "title": "Track manga, manhwa and anime, all in one place",
       "description": "Track your manga, manhwa, manhua and anime in a single library. Chapter release notifications, synced progress and discovery. Free to use."
     },
     "discovery": {
@@ -635,11 +635,11 @@
       "description": "Search thousands of manga, manhwa, manhua, anime and Asian films. Find a series by title, genre or theme and track its releases."
     },
     "pricing": {
-      "title": "Pricing — Free, Personal and Pro plans",
+      "title": "Pricing: Free, Lite and Pro plans",
       "description": "Ohara Tracker is free to track your reading. Personal and Pro plans add saved filters, priority notifications and a customisable dashboard."
     },
     "blog": {
-      "title": "Blog — manga and anime news and updates",
+      "title": "Blog: manga and anime news and updates",
       "description": "Manga and anime release news, reading-tracker guides and Ohara Tracker product updates."
     },
     "status": {
@@ -717,7 +717,7 @@
       "catalog": "Catalogue"
     },
     "faq": {
-      "title": "FAQ — frequently asked questions about Ohara Tracker",
+      "title": "FAQ: frequently asked questions about Ohara Tracker",
       "description": "How to track your manga and anime, manage your subscription, enable release notifications: every answer about Ohara Tracker."
     }
   },
@@ -743,7 +743,7 @@
     "subject": "Your {count} releases this week",
     "heading": "Hi {name},",
     "intro": "{count} of the titles you follow released something new this week.",
-    "item_detail": "{count} new release(s) — latest: {chapter}",
+    "item_detail": "{count} new release(s), latest: {chapter}",
     "cta": "Open my library",
     "footer": "You receive this e-mail because the weekly report is enabled on your Ohara Tracker account."
   },
@@ -824,12 +824,12 @@
     "title": "Community",
     "subtitle": "Follow your friends and see what they are reading.",
     "feed": "Activity feed",
-    "feed_empty": "Nothing to show. Add friends to see their activity — note that friends with a private profile do not share theirs.",
+    "feed_empty": "Nothing to show. Add friends to see their activity. Friends with a private profile do not share theirs.",
     "loading": "Loading...",
     "find": "Find a profile",
     "search_placeholder": "Username (min. 2 characters)",
     "no_result": "No public profile found.",
-    "private_profile": "Private profile — their activity stays hidden",
+    "private_profile": "Private profile: their activity stays hidden",
     "add": "Add",
     "accept": "Accept",
     "decline": "Decline",

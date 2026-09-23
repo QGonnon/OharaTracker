@@ -17,7 +17,7 @@ const esc = value => String(value ?? '')
 const localeOf = client => (LOCALES.includes(client.locale) ? client.locale : DEFAULT_LOCALE);
 
 // Destinataires dont le rapport tombe aujourd'hui et qui n'ont pas déjà été servis
-// cette semaine — la garde sur last_sent_at rend le job rejouable sans doublon.
+// cette semaine, la garde sur last_sent_at rend le job rejouable sans doublon.
 async function getDueRecipients(now = new Date()) {
     return sequelize.query(
         `SELECT id, name, email, locale, email_digest_day AS "digestDay"

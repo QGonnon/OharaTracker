@@ -9,7 +9,7 @@ import { SCORE_MAX, SCORE_STEP, roundScoreToStep, formatScore } from '../../../u
 //
 // Accessibilité : le widget entier porte role="slider" et se pilote au clavier
 // (flèches, Début, Fin). Les demi-zones cliquables ne sont que des cibles de
-// souris — elles ne captent pas le focus, la sémantique reste sur le slider.
+// souris : elles ne captent pas le focus, la sémantique reste sur le slider.
 export default defineComponent({
   name: 'StarRating',
 

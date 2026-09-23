@@ -1,5 +1,5 @@
 <template>
-  <Card class="manga-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer w-full h-full">
+  <Card class="manga-card bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer w-full h-full">
     <!-- Image -->
     <template #header>
       <div class="aspect-[3/4] overflow-hidden">
@@ -11,7 +11,7 @@
     </template>
 
     <template #title>
-      <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white px-2 truncate">
+      <h2 class="text-center text-lg font-semibold text-slate-800 dark:text-white px-2 truncate">
         {{ manga.title }}
       </h2>
     </template>
@@ -23,7 +23,7 @@
     <template #content>
       <div class="p-4">
         <div class="flex-grow flex flex-col justify-center text-center px-3">
-          <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $t('cards.last_chapter') }} {{ manga.lastChapter }}</p>
+          <p class="text-slate-600 dark:text-slate-300 text-sm truncate">{{ $t('cards.last_chapter') }} {{ manga.lastChapter }}</p>
         </div>
       </div>
     </template>

@@ -75,7 +75,7 @@ export default defineComponent({
     // dès le paiement, mais c'est le webhook qui change l'offre en base, un peu
     // plus tard. On attend donc que l'offre bouge réellement avant de l'annoncer,
     // au lieu d'affirmer « votre offre X est active » en relisant une valeur
-    // périmée — ce qui affichait « votre offre Free est active » après un achat.
+    // périmée, ce qui affichait « votre offre Free est active » après un achat.
     const ACTIVATION_ATTEMPTS = 10;
     const ACTIVATION_DELAY_MS = 2000;
     let activationTimer: ReturnType<typeof setTimeout> | null = null;

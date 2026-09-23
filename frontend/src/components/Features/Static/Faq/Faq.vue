@@ -1,17 +1,17 @@
 <template>
   <Menu />
 
-  <section class="min-h-[70vh] bg-white dark:bg-zinc-950 py-20">
+  <section class="min-h-[70vh] bg-white dark:bg-slate-950 py-20">
     <div class="max-w-3xl mx-auto px-6">
 
       <div class="text-center mb-12">
         <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
           {{ $t('faq.label') }}
         </span>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+        <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">
           {{ $t('faq.title') }}
         </h1>
-        <p class="text-gray-600 dark:text-zinc-400 leading-relaxed">
+        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
           {{ $t('faq.subtitle') }}
         </p>
       </div>
@@ -29,16 +29,16 @@
             {{ item.q }}
           </AccordionHeader>
           <AccordionContent>
-            <p class="text-gray-600 dark:text-zinc-400 leading-relaxed">{{ item.a }}</p>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">{{ item.a }}</p>
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
 
       <!-- Maillage interne : une page FAQ isolée ne transmet rien ; ces deux
            liens la relient aux pages qui convertissent. -->
-      <nav class="mt-12 pt-8 border-t border-gray-100 dark:border-white/5 text-center"
+      <nav class="mt-12 pt-8 border-t border-slate-100 dark:border-white/5 text-center"
            :aria-label="$t('faq.more_label')">
-        <p class="text-sm text-gray-600 dark:text-zinc-400 mb-4">{{ $t('faq.more_text') }}</p>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">{{ $t('faq.more_text') }}</p>
         <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
           <RouterLink :to="pricingLink" class="text-sm font-semibold text-violet-600 dark:text-violet-400 hover:underline">
             {{ $t('footer.pricing') }}

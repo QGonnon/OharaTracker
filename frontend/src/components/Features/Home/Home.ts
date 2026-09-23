@@ -77,9 +77,9 @@ export default defineComponent({
 
     const mockItems = [
       { title: "One Piece",      chapter: "1110", statusKey: "home.mock_status_ongoing",  severity: "info"      as const, color: "bg-gradient-to-br from-orange-300 to-orange-500" },
-      { title: "Jujutsu Kaisen", chapter: "265",  statusKey: "home.mock_status_finished", severity: "success"   as const, color: "bg-gradient-to-br from-purple-400 to-indigo-600" },
+      { title: "Jujutsu Kaisen", chapter: "265",  statusKey: "home.mock_status_finished", severity: "success"   as const, color: "bg-gradient-to-br from-purple-400 to-violet-600" },
       { title: "Chainsaw Man",   chapter: "172",  statusKey: "home.mock_status_ongoing",  severity: "info"      as const, color: "bg-gradient-to-br from-red-400 to-orange-500" },
-      { title: "Berserk",        chapter: "374",  statusKey: "home.mock_status_planned",  severity: "secondary" as const, color: "bg-gradient-to-br from-zinc-500 to-zinc-700" },
+      { title: "Berserk",        chapter: "374",  statusKey: "home.mock_status_planned",  severity: "secondary" as const, color: "bg-gradient-to-br from-slate-500 to-slate-700" },
       { title: "Vinland Saga",   chapter: "212",  statusKey: "home.mock_status_paused",   severity: "warn"      as const, color: "bg-gradient-to-br from-amber-300 to-amber-500" },
     ];
 

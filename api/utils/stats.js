@@ -6,7 +6,7 @@ import { sequelize } from './database.js';
 //
 // La comparaison est insensible à la casse : la valeur réellement stockée en base
 // est 'ANIME' en majuscules. Une liste ['Anime', 'anime'] ne matchait donc AUCUNE
-// ligne — les épisodes étaient comptés comme des chapitres, et « Épisodes vus »
+// ligne, les épisodes étaient comptés comme des chapitres, et « Épisodes vus »
 // restait à 0 pour tout le monde.
 const IS_ANIME = "UPPER(COALESCE(lt.type, '')) = 'ANIME'";
 

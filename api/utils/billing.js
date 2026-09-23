@@ -88,7 +88,7 @@ const FREE_SUBSCRIPTION_NAME = 'Free';
  *
  * Partagé par deux chemins : le webhook `checkout.session.completed`, et la
  * confirmation au retour du client. Un seul endroit décide donc de ce qu'une
- * session veut dire — sinon les deux finiraient par diverger.
+ * session veut dire, sinon les deux finiraient par diverger.
  *
  * Idempotent : rejouer la même session réécrit les mêmes valeurs.
  * Renvoie le nom de l'offre appliquée, ou null si la session ne désigne rien.

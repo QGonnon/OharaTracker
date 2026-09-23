@@ -111,7 +111,7 @@ const routes: RouteRecordRaw[] = [
   pageRoute('discovery', 'Discovery', Discovery),
   pageRoute('search', 'Search', Search),
 
-  // Compte — jamais indexé : contenu privé, ou page sans valeur en recherche
+  // Compte, jamais indexé : contenu privé, ou page sans valeur en recherche
   pageRoute('login', 'Login', Login, { noindex: true }),
   pageRoute('register', 'Register', Register, { noindex: true }),
   pageRoute('profile', 'Profile', Profile, { noindex: true, requiresAuth: true }),

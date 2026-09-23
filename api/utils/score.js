@@ -1,5 +1,5 @@
 // Barème des notes personnelles : 5 étoiles, demi-étoile autorisée.
-// Seule source de vérité côté serveur — la validation, l'affichage dans le fil
+// Seule source de vérité côté serveur : la validation, l'affichage dans le fil
 // d'activité et la pondération des recommandations s'y réfèrent, plutôt que de
 // recoder « 10 » ou « 5 » chacun de leur côté.
 const SCORE_MAX = 5;

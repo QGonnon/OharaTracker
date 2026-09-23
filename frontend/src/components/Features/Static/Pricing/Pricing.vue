@@ -1,15 +1,15 @@
 <template>
   <Menu />
-  <section class="min-h-[70vh] bg-white dark:bg-zinc-950 py-20">
+  <section class="min-h-[70vh] bg-white dark:bg-slate-950 py-20">
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-14">
         <span class="inline-block text-violet-600 dark:text-violet-400 text-sm font-semibold uppercase tracking-widest mb-3">
           {{ $t('static.pricing.label') }}
         </span>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+        <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">
           {{ $t('static.pricing.title') }}
         </h1>
-        <p class="text-gray-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
+        <p class="text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
           {{ $t('static.pricing.desc') }}
         </p>
       </div>
@@ -32,19 +32,19 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-24">
         <!-- Lite -->
-        <div class="flex flex-col p-8 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-zinc-900">
-          <span class="text-xs font-semibold uppercase tracking-widest text-gray-600 dark:text-zinc-400 mb-2">
+        <div class="flex flex-col p-8 rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-slate-900">
+          <span class="text-xs font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-400 mb-2">
             {{ $t('static.pricing.lite_badge') }}
           </span>
-          <h2 class="font-bold text-gray-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.lite_title') }}</h2>
-          <p class="text-2xl font-extrabold text-gray-900 dark:text-white mb-0.5">{{ $t('static.pricing.lite_price') }}</p>
-          <p class="text-xs text-gray-600 dark:text-zinc-400 mb-6">{{ $t('static.pricing.lite_price_sub') }}</p>
+          <h2 class="font-bold text-slate-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.lite_title') }}</h2>
+          <p class="text-2xl font-extrabold text-slate-900 dark:text-white mb-0.5">{{ $t('static.pricing.lite_price') }}</p>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-6">{{ $t('static.pricing.lite_price_sub') }}</p>
 
           <ul class="flex flex-col gap-2.5 mb-8 flex-1">
             <li
               v-for="feature in $tm('static.pricing.lite_features')"
               :key="feature"
-              class="flex items-start gap-2 text-sm text-gray-600 dark:text-zinc-300"
+              class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"
             >
               <i class="pi pi-check text-violet-500 mt-0.5 text-xs"  aria-hidden="true"/>
               <span>{{ feature }}</span>
@@ -65,15 +65,15 @@
           <span class="inline-block w-fit text-xs font-semibold uppercase tracking-widest text-violet-600 dark:text-violet-300 bg-violet-100 dark:bg-violet-500/20 rounded-full px-2.5 py-1 mb-2">
             {{ $t('static.pricing.pro_badge') }}
           </span>
-          <h2 class="font-bold text-gray-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.pro_title') }}</h2>
-          <p class="text-2xl font-extrabold text-gray-900 dark:text-white mb-0.5">{{ $t('static.pricing.pro_price') }}</p>
+          <h2 class="font-bold text-slate-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.pro_title') }}</h2>
+          <p class="text-2xl font-extrabold text-slate-900 dark:text-white mb-0.5">{{ $t('static.pricing.pro_price') }}</p>
           <p class="text-xs text-violet-700 dark:text-violet-400 mb-6">{{ $t('static.pricing.pro_price_sub') }}</p>
 
           <ul class="flex flex-col gap-2.5 mb-8 flex-1">
             <li
               v-for="feature in $tm('static.pricing.pro_features')"
               :key="feature"
-              class="flex items-start gap-2 text-sm text-gray-600 dark:text-zinc-300"
+              class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"
             >
               <i class="pi pi-check text-violet-500 mt-0.5 text-xs"  aria-hidden="true"/>
               <span>{{ feature }}</span>
@@ -94,16 +94,16 @@
           <span class="text-xs font-semibold uppercase tracking-widest text-orange-700 dark:text-orange-400 mb-2">
             {{ $t('static.pricing.partner_badge') }}
           </span>
-          <h2 class="font-bold text-gray-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.partner_title') }}</h2>
-          <p class="text-2xl font-extrabold text-gray-900 dark:text-white mb-0.5">{{ $t('static.pricing.partner_price') }}</p>
+          <h2 class="font-bold text-slate-900 dark:text-white text-xl mb-1">{{ $t('static.pricing.partner_title') }}</h2>
+          <p class="text-2xl font-extrabold text-slate-900 dark:text-white mb-0.5">{{ $t('static.pricing.partner_price') }}</p>
           <p class="text-xs text-orange-700 dark:text-orange-400 mb-6">{{ $t('static.pricing.partner_price_sub') }}</p>
-          <p class="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed mb-6">{{ $t('static.pricing.partner_desc') }}</p>
+          <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">{{ $t('static.pricing.partner_desc') }}</p>
 
           <ul class="flex flex-col gap-2.5 mb-8 flex-1">
             <li
               v-for="feature in $tm('static.pricing.partner_features')"
               :key="feature"
-              class="flex items-start gap-2 text-sm text-gray-600 dark:text-zinc-300"
+              class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"
             >
               <i class="pi pi-check text-orange-700 mt-0.5 text-xs"  aria-hidden="true"/>
               <span>{{ feature }}</span>
@@ -117,7 +117,7 @@
       </div>
 
       <div class="max-w-3xl mx-auto text-center">
-        <p class="text-gray-600 dark:text-zinc-400 mb-3">{{ $t('static.pricing.faq_teaser') }}</p>
+        <p class="text-slate-600 dark:text-slate-400 mb-3">{{ $t('static.pricing.faq_teaser') }}</p>
         <RouterLink :to="faqLink" class="text-sm font-semibold text-violet-600 dark:text-violet-400 hover:underline">
           {{ $t('faq.title') }} →
         </RouterLink>

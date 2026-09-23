@@ -59,12 +59,12 @@ const breadcrumb = (locale, trail) => ({
 // qui n'exécutent pas JS ; gère aussi les vrais codes 301/404 qu'une SPA ne peut pas émettre.
 export function createSpaMiddleware() {
     if (!fs.existsSync(INDEX)) {
-        console.warn(`⚠️  SEO : ${INDEX} introuvable — le rendu serveur des métadonnées est désactivé.`);
+        console.warn(`⚠️  SEO : ${INDEX} introuvable, le rendu serveur des métadonnées est désactivé.`);
         console.warn('   Lancez `npm run build` dans frontend/ pour l\'activer.');
         return null;
     }
     if (!translationsAvailable()) {
-        console.warn('⚠️  SEO : fichiers de traduction introuvables — titres et descriptions non traduits.');
+        console.warn('⚠️  SEO : fichiers de traduction introuvables, titres et descriptions non traduits.');
     }
 
     const router = express.Router();

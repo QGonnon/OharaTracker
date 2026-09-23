@@ -6,7 +6,7 @@
     <button
       v-if="!readonly"
       type="button"
-      class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed"
+      class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 disabled:opacity-40 disabled:cursor-not-allowed"
       :aria-label="$t('rating.decrease', { step: stepText })"
       :disabled="atMin"
       @click="nudge(-1)"
@@ -17,7 +17,7 @@
     <div
       :id="inputId"
       class="inline-flex items-center gap-0.5"
-      :class="readonly ? '' : 'cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'"
+      :class="readonly ? '' : 'cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600'"
       :role="readonly ? 'img' : 'slider'"
       :tabindex="readonly ? undefined : 0"
       :aria-label="$t('rating.label', { max })"
@@ -60,7 +60,7 @@
     <button
       v-if="!readonly"
       type="button"
-      class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed"
+      class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 disabled:opacity-40 disabled:cursor-not-allowed"
       :aria-label="$t('rating.increase', { step: stepText })"
       :disabled="atMax"
       @click="nudge(1)"
@@ -75,7 +75,7 @@
     <button
       v-if="!readonly && modelValue !== null"
       type="button"
-      class="inline-flex min-h-11 items-center px-2 text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 underline"
+      class="inline-flex min-h-11 items-center px-2 text-xs text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 underline"
       @click="clear"
     >
       {{ $t('rating.clear') }}

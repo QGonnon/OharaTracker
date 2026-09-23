@@ -9,11 +9,11 @@
           <RouterLink :to="homeLink" class="text-xl font-extrabold footer-logo w-fit">
             Ohara Tracker
           </RouterLink>
-          <p class="text-sm text-gray-600 dark:text-zinc-400 max-w-xs leading-relaxed">
+          <p class="text-sm text-slate-600 dark:text-slate-400 max-w-xs leading-relaxed">
             {{ $t('footer.tagline') }}
           </p>
           <div class="footer-bottom mt-0 pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p class="text-xs text-gray-600 dark:text-zinc-400">
+            <p class="text-xs text-slate-600 dark:text-slate-400">
                 &copy; {{ year }} Ohara Tracker - {{ $t('footer.rights') }}
             </p>
           </div>

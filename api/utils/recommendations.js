@@ -6,7 +6,7 @@ import { SCORE_NEUTRAL } from './score.js';
 const DEFAULT_LIMIT = 12;
 
 // Deux profils de goût. `simple` compte les genres suivis ; `weighted` pondère par la
-// note donnée et dévalue les genres des œuvres abandonnées — c'est la nuance qui
+// note donnée et dévalue les genres des œuvres abandonnées. C'est la nuance qui
 // sépare les suggestions de l'offre Lite des recommandations de l'offre Pro.
 const PROFILE_WEIGHTS = {
     simple: '1',
