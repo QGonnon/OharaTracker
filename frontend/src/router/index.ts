@@ -10,32 +10,32 @@ import {
 // L'accueil est importé directement (page d'entrée la plus fréquente) ; le reste est à la demande.
 import Home from '../components/Features/Home/Home.vue'
 
-const MangaInfo = () => import('../components/Features/Mangas/MangaInfo/MangaInfo.vue')
-const Login = () => import('../components/Auth/Login/Login.vue')
-const Register = () => import('../components/Auth/Register/Register.vue')
-const Discovery = () => import('../components/Features/Discovery/Discovery.vue')
-const MangasListView = () => import('../components/Features/Mangas/MangasListView/MangasListView.vue')
-const Search = () => import('../components/Features/Search/Search.vue')
-const Profile = () => import('../components/Features/User/Profile/Profile.vue')
-const Stats = () => import('../components/Features/User/Stats/Stats.vue')
-const Watchlists = () => import('../components/Features/User/Watchlists/Watchlists.vue')
-const SharedWatchlist = () => import('../components/Features/User/Watchlists/SharedWatchlist.vue')
-const Community = () => import('../components/Features/User/Community/Community.vue')
-const NotificationsView = () => import('../components/Features/Notifications/NotificationsView.vue')
-const NotFound = () => import('../components/Features/Static/NotFound/NotFound.vue')
+import MangaInfo from'../components/Features/Mangas/MangaInfo/MangaInfo.vue'
+import Login from'../components/Auth/Login/Login.vue'
+import Register from'../components/Auth/Register/Register.vue'
+import Discovery from'../components/Features/Discovery/Discovery.vue'
+import MangasListView from'../components/Features/Mangas/MangasListView/MangasListView.vue'
+import Search from'../components/Features/Search/Search.vue'
+import Profile from'../components/Features/User/Profile/Profile.vue'
+import Stats from'../components/Features/User/Stats/Stats.vue'
+import Watchlists from'../components/Features/User/Watchlists/Watchlists.vue'
+import SharedWatchlist from'../components/Features/User/Watchlists/SharedWatchlist.vue'
+import Community from'../components/Features/User/Community/Community.vue'
+import NotificationsView from'../components/Features/Notifications/NotificationsView.vue'
+import NotFound from'../components/Features/Static/NotFound/NotFound.vue'
 
-const Pricing = () => import('../components/Features/Static/Pricing/Pricing.vue')
-const Blog = () => import('../components/Features/Static/Blog/Blog.vue')
-const Faq = () => import('../components/Features/Static/Faq/Faq.vue')
-const Status = () => import('../components/Features/Static/Status/Status.vue')
-const Changelog = () => import('../components/Features/Static/Changelog/Changelog.vue')
-const Suggestions = () => import('../components/Features/Static/Suggestions/Suggestions.vue')
-const SupportedSites = () => import('../components/Features/Static/SupportedSites/SupportedSites.vue')
-const OfficialPartners = () => import('../components/Features/Static/OfficialPartners/OfficialPartners.vue')
-const Contact = () => import('../components/Features/Static/Contact/Contact.vue')
-const Terms = () => import('../components/Features/Static/Terms/Terms.vue')
-const Privacy = () => import('../components/Features/Static/Privacy/Privacy.vue')
-const Cookies = () => import('../components/Features/Static/Cookies/Cookies.vue')
+import Pricing from'../components/Features/Static/Pricing/Pricing.vue'
+import Blog from'../components/Features/Static/Blog/Blog.vue'
+import Faq from'../components/Features/Static/Faq/Faq.vue'
+import Status from'../components/Features/Static/Status/Status.vue'
+import Changelog from'../components/Features/Static/Changelog/Changelog.vue'
+import Suggestions from'../components/Features/Static/Suggestions/Suggestions.vue'
+import SupportedSites from'../components/Features/Static/SupportedSites/SupportedSites.vue'
+import OfficialPartners from'../components/Features/Static/OfficialPartners/OfficialPartners.vue'
+import Contact from'../components/Features/Static/Contact/Contact.vue'
+import Terms from'../components/Features/Static/Terms/Terms.vue'
+import Privacy from'../components/Features/Static/Privacy/Privacy.vue'
+import Cookies from'../components/Features/Static/Cookies/Cookies.vue'
 
 // Optionnel pour que les anciennes URL sans préfixe matchent encore ; beforeEach les redirige.
 const L = ':locale(fr|en|de|it|es)?'
